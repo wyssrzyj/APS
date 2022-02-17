@@ -1,0 +1,62 @@
+.form {
+  display: flex;
+  padding: 16px;
+}
+
+.tabelEdit {
+  position: relative;
+  display: inline-flex;
+  padding: 0px 8px;
+  line-height: 16px;
+  border-right: 1px solid #333333;
+  cursor: pointer;
+
+  &:nth-last-child(1) {
+    border-right: none;
+  }
+
+  &:nth-child(2) {
+    .moreEdit {
+      position: absolute;
+      top: 16px;
+      left: 0;
+      z-index: 2;
+      display: none;
+      width: max-content;
+      height: max-content;
+      padding: 16px;
+      background: #ffffff;
+      border: 1px solid #efefef;
+    }
+
+    .moreEditItem {
+      margin-bottom: 16px;
+
+      &:nth-last-child(1) {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &:nth-child(2):hover {
+    .moreEdit {
+      display: block;
+    }
+  }
+}
+
+.departmentTable {
+  margin: 0 16px;
+}
+
+.modalForm {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.departmentBox {
+  padding: 32px;
+}
+.addDepartment {
+  margin: 0 16px 16px;
+}

@@ -1,0 +1,63 @@
+@import '@/css/common.less';
+
+.department-manage {
+  padding: 20px;
+  overflow: hidden;
+
+  .left {
+    float: left;
+    width: 300px;
+    margin-right: 20px;
+  }
+
+  .right {
+    display: grid;
+    margin-left: 320px;
+  }
+
+  .department-container {
+    min-height: 600px;
+    padding: 16px;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px 1px #eee;
+
+    .department-header {
+      height: 36px;
+      padding-left: 8px;
+      font-size: 16px;
+      line-height: 36px;
+      background-color: rgb(226 226 226 / 50%);
+      border-bottom: 1px solid #eee;
+    }
+
+    .tree-container {
+      min-height: 500px;
+      padding: 12px 20px;
+
+      .ant-tree-treenode-disabled {
+        .ant-tree-node-content-wrapper {
+          cursor: default;
+        }
+      }
+
+      .tree-list {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .tree-list-left {
+          padding-right: 10px;
+          color: black !important;
+        }
+
+        .tree-icon {
+          margin: 0 4px;
+          font-size: 12px;
+          color: rgb(0 0 0 / 60%);
+        }
+      }
+    }
+  }
+}

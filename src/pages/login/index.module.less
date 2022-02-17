@@ -1,0 +1,234 @@
+@import '@/css/common.less';
+
+.content {
+  display: flex;
+  width: 100vw;
+  height: 100%;
+  cursor: pointer;
+  background: url('https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/platform/loginBanner.jpg')
+    center center no-repeat;
+  background-size: cover;
+}
+
+.editionCenter {
+  position: relative;
+  width: 1200px;
+  height: calc 100vh -255px;
+  margin: 0 auto;
+}
+
+.bannerLeft {
+  flex: 99;
+  float: left;
+  height: 100%;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: 100%;
+}
+
+.right {
+  width: 700px;
+  width: 400px;
+  height: 440px;
+  padding: 14px 40px 0;
+  background: #fff;
+
+  :global {
+    input:-internal-autofill-selected {
+      background: #fff !important;
+    }
+
+    .ant-input-affix-wrapper {
+      border: none !important;
+      border-bottom: 1px solid #e4e4e4 !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    .ant-form-item-has-error .ant-input-affix-wrapper {
+      border-bottom: 1px solid #ff4d4f !important;
+    }
+
+    .ant-input {
+      height: 48px !important;
+      padding-left: 12px !important;
+      line-height: 48px !important;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    .ant-tabs-tab-active {
+      .ant-tabs-tab-btn {
+        font-size: 20px !important;
+        font-weight: bold !important;
+        color: #333 !important;
+      }
+    }
+
+    .ant-tabs-nav-list {
+      display: flex;
+      width: 100% !important;
+    }
+
+    .ant-tabs-tab {
+      flex: 1;
+      justify-content: center;
+      height: 55px !important;
+    }
+
+    .ant-tabs-ink-bar {
+      width: 80px !important;
+      height: 4px !important;
+      border-radius: 10px !important;
+      transform: translateX(10px);
+    }
+  }
+}
+
+.userLogin {
+  :global {
+    .ant-tabs-ink-bar {
+      transform: translateX(25px);
+    }
+  }
+}
+
+.phoneLogin {
+  :global {
+    .ant-tabs-ink-bar {
+      transform: translateX(25px);
+    }
+  }
+}
+
+.icon {
+  font-size: 20px;
+  color: #333;
+}
+
+.loginOperation {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0 32px;
+}
+
+.btn {
+  width: 100%;
+  height: 40px;
+}
+
+.verificationBox {
+  display: flex;
+}
+
+.registerBtn {
+  display: block;
+  margin: 16px auto 0;
+}
+
+.rightContent {
+  padding-top: 28px;
+}
+
+.errorText {
+  font-size: 14px;
+  color: #ff4d4f;
+  visibility: hidden;
+}
+
+.errorIcon {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.showError {
+  visibility: visible;
+}
+
+.otherLogin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 22px;
+  padding-top: 56px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #999;
+
+  &::before {
+    display: block;
+    width: 60px;
+    height: 1px;
+    margin-right: 12px;
+    content: '';
+    background: #e4e4e4;
+  }
+
+  &::after {
+    display: block;
+    width: 60px;
+    height: 1px;
+    margin-left: 12px;
+    content: '';
+    background: #e4e4e4;
+  }
+}
+
+.otherIcon {
+  font-size: 40px;
+}
+
+.otherBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.forgetPwd {
+  cursor: pointer;
+}
+
+.resetBox {
+  width: 400px;
+  height: 440px;
+  padding: 25px 50px;
+  background: #fff;
+
+  :global {
+    .ant-input-affix-wrapper {
+      border: none !important;
+      border-bottom: 1px solid #e4e4e4 !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    .ant-input {
+      padding-left: 12px !important;
+    }
+  }
+}
+
+.title {
+  margin-bottom: 48px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.resetBtnBox {
+  display: flex;
+  justify-content: space-between;
+}
+
+.resetBtn {
+  width: 40%;
+  height: 40px;
+}
