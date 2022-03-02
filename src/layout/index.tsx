@@ -37,6 +37,7 @@ const Layout = (props: LayoutProps) => {
 
   return (
     <div className={styles.container}>
+      {/*  */}
       {!headerFlag && <Header />}
       <div className={styles.body}>
         {!headerFlag && <Menu />}

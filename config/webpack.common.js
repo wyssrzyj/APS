@@ -34,7 +34,7 @@ module.exports = {
     new friendlyErrorsWebpackPlugin(),
     // new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      title: '厨师项目',
+      title: '初始项目',
       template: path.resolve(__dirname, '../index.html'),
       filename: 'index.html'
       // favicon: path.resolve(__dirname, '../src/assets/favicon.ico'),

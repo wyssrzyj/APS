@@ -19,7 +19,7 @@ export const departmentLists = async () => {
   }
 }
 
-export const userInfoLists = async (params) => {
+export const userInfoLists = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post('/api/basic/staff/list', params)
     return res
@@ -28,7 +28,7 @@ export const userInfoLists = async (params) => {
   }
 }
 
-export const moreOperation = async (staffId) => {
+export const moreOperation = async (staffId: string) => {
   try {
     const res: ResponseProps = await axios.delete('/api/basic/staff/delete', {
       staffId
@@ -39,7 +39,7 @@ export const moreOperation = async (staffId) => {
   }
 }
 
-export const operationUser = async (params) => {
+export const operationUser = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post('/api/basic/staff/save', params)
     return res

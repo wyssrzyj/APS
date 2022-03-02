@@ -11,6 +11,9 @@ const Home = () => {
   const [count, setCount] = useState(0)
   const [name, setName] = useState('zf')
 
+  const filteredTodoListState = useRecoilValue(
+    commonState.filteredTodoListState
+  )
   const [factoryName] = useRecoilState(commonState.factoryName)
   const allArea = useRecoilValue(commonState.allArea)
   console.log('🚀 ~ file: index.tsx ~ line 14 ~ Home ~ allArea', allArea)
@@ -39,7 +42,9 @@ const Home = () => {
 
       <Button>按钮</Button>
 
-      <div className={styles.nameText}>{name}</div>
+      <div className={styles.nameText}>
+        {name}-----------------{filteredTodoListState}
+      </div>
     </div>
   )
 }

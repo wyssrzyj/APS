@@ -27,7 +27,7 @@ const InfoTree = () => {
             return {
               title: o.deptName,
               key: `${parentId}-${id}-${o.id}`,
-              children: o.children.map((j) => {
+              children: o.children.map((j: any) => {
                 return {
                   title: j.deptName,
                   key: `${parentId}-${id}-${o.id}-${j.id}`

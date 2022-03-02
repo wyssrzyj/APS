@@ -6,6 +6,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
+    // 接口代理地址设置
     proxy: {
       '/api': 'http://192.168.69.130:8888/'
     }
@@ -15,6 +16,7 @@ export default defineConfig({
       less: {
         // 支持内联 JavaScript
         javascriptEnabled: true,
+        module: true,
         // 重写 less 变量，定制样式
         modifyVars: {
           '@primary-color': 'red'
@@ -24,6 +26,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      // 路径别名设置
       '@': resolve(__dirname, 'src')
     }
   }

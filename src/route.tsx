@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 
-// 懒加载路由
+// 懒加载路由 动态加载路由
 const Home = React.lazy(() => import('@/pages/home'))
 const Note = React.lazy(() => import('@/pages/note'))
 
@@ -16,11 +16,13 @@ const UserManage = React.lazy(() => import('@/pages/user'))
 const DepartmentManage = React.lazy(() => import('@/pages/department'))
 // 角色管理
 const RoleManage = React.lazy(() => import('@/pages/role'))
+const Demo = React.lazy(() => import('@/pages/demo'))
 
 const RouteList = () => {
   return (
     <Routes>
       <Route path="home/:id" element={<Home />} />
+      <Route path="demo" element={<Demo />} />
       <Route path="note" element={<Note />} />
       <Route path="userManage" element={<UserManage />} />
       <Route path="departmentManage" element={<DepartmentManage />} />
