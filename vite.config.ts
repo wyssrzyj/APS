@@ -6,6 +6,8 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
+    port: 8004,
+    open: true,
     // 接口代理地址设置
     proxy: {
       '/api': 'http://192.168.69.130:8888/'
