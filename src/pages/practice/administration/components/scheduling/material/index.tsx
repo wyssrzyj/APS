@@ -36,7 +36,6 @@ function Material(props: {
         footer={null}
         // onOk={handleOk}
         onCancel={onCancel}
-        // maskClosable={false}
       >
         <Tabs onChange={callback} type="card">
           {materialList.map(
