@@ -34,7 +34,6 @@ function Material(props: {
         visible={materialModal}
         centered={true}
         footer={null}
-        // onOk={handleOk}
         onCancel={onCancel}
       >
         <Tabs onChange={callback} type="card">
