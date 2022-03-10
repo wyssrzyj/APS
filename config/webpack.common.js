@@ -12,7 +12,7 @@ const { NODE_ENV } = process.env
 const port = 8005
 
 const hosts = new Map()
-hosts.set('development', 'http://192.168.69.130:8888/')
+hosts.set('development', 'http://192.168.69.88:8000')
 hosts.set('test', 'http://8.136.225.110:8888/')
 hosts.set('production', 'http://47.97.217.13:8888/')
 
@@ -89,7 +89,7 @@ module.exports = {
       'dev.uchat.com.cn'
     ],
     proxy: {
-      '/api': hosts.get(NODE_ENV),
+      '/aps': hosts.get(NODE_ENV),
       '/baiduApi': {
         target: 'https://aip.baidubce.com', //访问地址
         changeOrigin: true,

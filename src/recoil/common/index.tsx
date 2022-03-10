@@ -35,5 +35,33 @@ const allArea = atom({
   key: 'allArea',
   default: []
 })
+//存全局的数据
+const textState = atom({
+  key: 'textState', // unique ID (with respect to other atoms/selectors)
+  default: '150549' // default value (aka initial value)
+})
 
-export default { factoryName, dictionary, allArea, filteredTodoListState }
+const lyj = atom({
+  key: 'lyj', // unique ID (with respect to other atoms/selectors)
+  default: '空' // default value (aka initial value)
+})
+// 同步设置数据
+const charCountState = selector({
+  key: 'charCountState', // unique ID (with respect to other atoms/selectors)
+  get: ({ get }) => {
+    const text = get(lyj)
+    return text
+  }
+})
+
+//修改数据
+
+export default {
+  factoryName,
+  dictionary,
+  allArea,
+  filteredTodoListState,
+  textState,
+  charCountState,
+  lyj
+}

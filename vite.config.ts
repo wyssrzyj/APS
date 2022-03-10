@@ -8,9 +8,8 @@ export default defineConfig({
   server: {
     port: 8004,
     open: true,
-    // 接口代理地址设置
     proxy: {
-      '/api': 'http://192.168.69.130:8888/'
+      '/aps': 'http://192.168.69.88:8000'
     }
   },
   css: {

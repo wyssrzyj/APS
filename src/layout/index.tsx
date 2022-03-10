@@ -25,13 +25,11 @@ const Layout = (props: LayoutProps) => {
     // '/control-panel'
   ]
   const headerFlag = noUseHeaders.some((item) => pathname.includes(item))
-
   const setAreaData = useSetRecoilState(areaState.areaInfo)
-
   useEffect(() => {
     ;(async () => {
-      const res: any = await areaApis.getArea()
-      setAreaData(res)
+      // const res: any = await areaApis.getArea()
+      // setAreaData(res)
     })()
   }, [])
 

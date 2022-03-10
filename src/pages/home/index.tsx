@@ -24,7 +24,7 @@ const Home = () => {
 
   useEffect(() => {
     ;(async () => {
-      await commonApis.getInfo({})
+      // await commonApis.getInfo({})
     })()
 
     setTimeout(() => {
@@ -40,7 +40,7 @@ const Home = () => {
         count is: {count}
       </button>
 
-      <Button>按钮</Button>
+      <Button>阿斯蒂芬</Button>
 
       <div className={styles.nameText}>
         {name}-----------------{filteredTodoListState}

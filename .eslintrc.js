@@ -33,7 +33,6 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'jsx-a11y/accessible-emoji': 'off',
     'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': ['error'],
     'react/display-name': 'off',
     'jsx-a11y/no-static-element-interactions': 'off',
     'jsx-a11y/click-events-have-key-events': 'off',
@@ -47,7 +46,9 @@ module.exports = {
     'jsx-a11y/anchor-is-valid': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
     'no-case-declarations': 'off',
-    'no-irregular-whitespace': 'off'
+    'no-irregular-whitespace': 'off',
+    'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
+    '@typescript-eslint/no-unused-vars': 'off'
     // 'jsx-a11y/anchor-is-valid': [
     //   'error',
     //   {

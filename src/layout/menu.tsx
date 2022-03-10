@@ -8,7 +8,6 @@ import Icon from '@/components/Icon'
 
 import styles from './index.module.less'
 import { menus } from './menuConfigs'
-
 const { SubMenu } = Menu
 const MenuItem = Menu.Item
 
@@ -115,12 +114,11 @@ const MenuBox = () => {
   }
 
   const onOpenChange = (keys: any) => {
-    console.log('🚀 ~ file: menu.tsx ~ line 125 ~ MenuBox ~ keys', keys)
     setOpenKey(keys)
   }
 
   useEffect(() => {
-    getSelectKey(menus)
+    // getSelectKey(menus)
     // setCurrentMenu(menuKeys.get(location.pathname))
     // setOpenKeys(subsMap.get(location.pathname))
   }, [location.pathname])
@@ -139,13 +137,17 @@ const MenuBox = () => {
       }
     }
   }, [])
+  useEffect(() => {
+    // console.log('测试', currentMenu)
+    setCurrentMenu([location.pathname.slice(1)])
+  }, [location.pathname])
 
   return (
     <div className={classNames(styles.menu, collapsed && styles.miniMenu)}>
       <Menu
         selectedKeys={currentMenu}
-        openKeys={openKey}
-        defaultSelectedKeys={['classification']}
+        // openKeys={openKey}
+        // defaultSelectedKeys={['classification']}
         // defaultOpenKeys={[openKey]}
         mode="inline"
         inlineCollapsed={collapsed}
