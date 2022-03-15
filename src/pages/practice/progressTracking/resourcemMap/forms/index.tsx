@@ -55,7 +55,7 @@ function index(props: { FormData: any; treeData: any }) {
             <Form.Item
               {...layout}
               name="name"
-              label="工作模式"
+              label="选择工厂"
               //第4步 给每个form.Item添加getValueFromEvent事件
               //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
@@ -69,7 +69,7 @@ function index(props: { FormData: any; treeData: any }) {
             <Form.Item
               {...layout}
               name="teams"
-              label="工作班组"
+              label="选择车间"
               //第4步 给每个form.Item添加getValueFromEvent事件
               //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>

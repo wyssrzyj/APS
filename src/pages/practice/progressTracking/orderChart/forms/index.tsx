@@ -43,7 +43,7 @@ function index(props: { FormData: any; treeData: any }) {
     treeData,
     treeCheckable: true,
     showCheckedStrategy: SHOW_PARENT,
-    placeholder: '请选择车间'
+    placeholder: '请选择工厂'
   }
   return (
     <div>
@@ -54,22 +54,8 @@ function index(props: { FormData: any; treeData: any }) {
           <Col span={6}>
             <Form.Item
               {...layout}
-              name="name"
-              label="工作模式"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
-              }
-            >
-              <Input placeholder="请选择工厂" allowClear />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item
-              {...layout}
               name="teams"
-              label="工作班组"
+              label="选择工厂"
               //第4步 给每个form.Item添加getValueFromEvent事件
               //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>

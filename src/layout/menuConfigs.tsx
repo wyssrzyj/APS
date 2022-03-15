@@ -105,10 +105,16 @@ export const menus = [
         url: '/schedulingResults',
         children: [
           {
-            label: '派工计划1',
-            key: 'dispatchPan2',
-            icon: 'jack-yonghu1',
-            url: '/dispatchPan'
+            label: '资源甘特图',
+            key: 'resourcedMap',
+            icon: 'jack-ziyuan1',
+            url: '/resourcedMap'
+          },
+          {
+            label: '订单甘特图',
+            key: 'orderChart',
+            icon: 'jack-chartmixed',
+            url: '/orderChart'
           },
           {
             label: '资源负荷图',

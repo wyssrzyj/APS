@@ -57,11 +57,20 @@ const Rule = React.lazy(
   () => import('@/pages/practice/administration/components/rule')
 )
 // ----------------生产管理结束
-//进度跟踪 派工计划查看
+
+//进度跟踪 派工计划
 const DispatchPan = React.lazy(
   () => import('@/pages/practice/progressTracking/dispatchPan')
 )
-//进度跟踪 派工计划查看
+//排程结果 - 资源甘特图
+const ResourcedMap = React.lazy(
+  () => import('@/pages/practice/progressTracking/resourcemMap')
+)
+//排程结果 - 订单甘特图
+const OrderChart = React.lazy(
+  () => import('@/pages/practice/progressTracking/orderChart')
+)
+//排程结果 - 资源负荷图
 const SchedulingResults = React.lazy(
   () => import('@/pages/practice/progressTracking/schedulingResults')
 )
@@ -100,7 +109,12 @@ const RouteList = () => {
       <Route path="/rule" element={<Rule />} />
       {/* 进度跟踪 派工计划查看 */}
       <Route path="/dispatchPan" element={<DispatchPan />} />
-      {/* 进度跟踪 排程结果 */}
+
+      {/* 排程结果 -资源甘特图 */}
+      <Route path="/resourcedMap" element={<ResourcedMap />} />
+      {/* 排程结果 -订单甘特图 */}
+      <Route path="/orderChart" element={<OrderChart />} />
+      {/* 排程结果 -资源负荷图 */}
       <Route path="/schedulingResults" element={<SchedulingResults />} />
 
       {/* 无匹配路由 放置在最后一个路由的位置 */}

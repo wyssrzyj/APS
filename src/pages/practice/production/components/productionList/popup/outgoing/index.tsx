@@ -2,6 +2,7 @@ import { Button, Checkbox, Form, Input, InputNumber, Table } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import React, { useEffect, useState } from 'react'
 
+// import Excl from '@/components/excel/Import/index'
 import styles from './index.module.less'
 import Popup from './Popup/index'
 const Outgoing = () => {
@@ -212,6 +213,8 @@ const Outgoing = () => {
     )
   }
   const showModal = () => {
+    console.log('打印')
+
     setIsModalVisible(true)
   }
   return (
@@ -234,6 +237,7 @@ const Outgoing = () => {
           }}
         />
       </Form>
+      {/* <Excl /> */}
       <div>
         <Button onClick={showModal} type="primary">
           整单外发

@@ -84,7 +84,9 @@ const apiAxios = async (
     '/api/user/getUserByMobilePhone',
     '/api/user/login'
   ]
-  const instanceParams = {
+  const outFlag = url.includes('export') || url.includes('download')
+
+  const instanceParams: any = {
     method: method,
     url: url,
     data: method === 'POST' || method === 'PUT' ? params : null,
@@ -102,7 +104,9 @@ const apiAxios = async (
       cancels.push(c)
     })
   }
-
+  if (outFlag) {
+    instanceParams.responseType = 'blob'
+  }
   const flag = noTokenList.some((i) => url.includes(i))
   if (flag) {
     // 不需要携带token的接口  去除 token
@@ -112,6 +116,10 @@ const apiAxios = async (
   try {
     const responseData: any = await customAxios(instanceParams as any)
     // 接口状态码处理
+    if (outFlag) {
+      success && success()
+      return responseData
+    }
     if ([200, 400].includes(responseData.code)) {
       success && success()
       return responseData

@@ -89,7 +89,8 @@ function Production() {
               查看详情
             </div>
             <div className={styles.operation} onClick={() => editUser(true)}>
-              工艺&外发
+              <div> 工艺</div>
+              <div> 外发</div>
             </div>
           </div>
         )
