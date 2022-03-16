@@ -7,15 +7,13 @@ function Important(props) {
   const { itemCount, itemSize, data, start } = props
 
   // const  itemSize *
-  const [list, setList] = useState(data.test)
+  const [list, setList] = useState(data)
   useEffect(() => {
-    console.log('子数据', data)
-    setList(data.test)
-  }, [data.test])
-
-  //data 处理后的值
+    console.log('头部日期处理', data)
+    setList(data)
+  }, [data])
   // 样式
-  const itemStyle = { position: 'absolute', width: 100, height: 120 } //样式
+  const itemStyle = { position: 'absolute', width: 100, height: 60 } //样式
   return (
     <div>
       <div
@@ -23,17 +21,19 @@ function Important(props) {
         style={{
           position: 'relative',
           width: `${itemCount * itemSize}px`, //展示多少条*单个宽度 =总长度
-          height: `120px`
+          height: `60px`
         }}
       >
-        {/* 班组名 */}
         <div
-          className={styles.histogram_text}
+          // key={index}
+          className={styles.histogram}
           style={{
-            ...itemStyle
+            ...itemStyle,
+            left: 0 //每个都有各自的位置
           }}
         >
-          {data.name}
+          {/* 内容 */}
+          日期
         </div>
         {!isEmpty(list)
           ? list.map((item, index) => (
@@ -46,21 +46,7 @@ function Important(props) {
                 }}
               >
                 {/* 内容 */}
-                <div
-                  className={styles.sonx}
-                  style={{ height: `${100 - item.height}px` }}
-                ></div>
-
-                <div
-                  className={styles.son}
-                  style={{
-                    height: `${item.height}px`,
-                    lineHeight: `${item.height}px`,
-                    background: ' rgb(24, 199, 88)' //颜色控制
-                  }}
-                >
-                  {item.height}%
-                </div>
+                {item.date}
               </div>
             ))
           : null}

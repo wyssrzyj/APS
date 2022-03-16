@@ -3,13 +3,15 @@ import React, { useEffect, useState } from 'react'
 
 import index from '../forms'
 import Important from './important/index'
+import styles from './index.module.less'
+import Top from './top'
 function VirtuaIList(props) {
   const { itemCount, apiList } = props
   //height  容器高度
   // width 容器的宽度
   // itemCount 最多展示多少个
   //itemSize 每个条目有多宽
-  const width = 1000
+  const width = 1100
   const height = 600
   const itemSize = 100
 
@@ -28,8 +30,6 @@ function VirtuaIList(props) {
     const f = width / itemSize //可视区域展示多少条
     const maximum = itemCount - f //展示多少-可视区域=最多
     const arr = starts > maximum ? maximum : starts //做限制
-    console.log('从哪里截取', arr)
-
     setStart(arr)
   }
 
@@ -42,7 +42,7 @@ function VirtuaIList(props) {
           e.index = i
         })
         //*************可视范围是 10条 前渲染1条后渲染2条 一共渲染13 防止空白 2022.3.15 --21.35********
-        item.test = item.list.slice(start === 0 ? start : start - 1, end + 2)
+        item.test = item.list.slice(start === 0 ? start : start - 1, end + 2) //数据
       })
       setList(apiList)
     }
@@ -51,24 +51,25 @@ function VirtuaIList(props) {
   return (
     //最外层
     <div
+      className={styles.son}
       style={{
-        overflowX: 'auto',
         height,
         width
-        // border: '1px solid rgb(9, 8, 8)'
-        // padding: '20px'
       }}
       ref={scrollBox}
       onScroll={handleScroll}
     >
-      {/* 单个数据-BOOS */}
+      {/* 头部日期 */}
+      {!isEmpty(list) ? <Top itemSize={itemSize} data={list[0].test} /> : null}
+
+      {/* 单个数据-内容 */}
       {!isEmpty(list)
         ? list.map((item) => (
             <Important
               key={item.id}
               itemCount={itemCount}
               itemSize={itemSize}
-              data={item.test}
+              data={item}
               start={start}
             />
           ))
