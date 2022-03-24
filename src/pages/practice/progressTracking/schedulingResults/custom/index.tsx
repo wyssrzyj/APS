@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import styles from './index.module.less'
 
 const Custom = () => {
-  const scrollBox = React.createRef() //创建真实dom
+  const scrollBox: any = React.createRef() //创建真实dom
   const data = []
 
   for (let i = 0; i <= 30; i++) {

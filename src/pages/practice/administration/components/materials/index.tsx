@@ -1,4 +1,5 @@
 import { Button, Dropdown, Menu, message, Space, Table } from 'antd'
+import { any } from 'prop-types'
 import { SetStateAction, useState } from 'react'
 
 import { Title } from '@/components'
@@ -104,12 +105,13 @@ function Materials() {
     }
   }
   //删除
-  const start = (type) => {
+  const start = (type: any) => {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
       if (type === 1) {
         console.log('选中的删除id-齐套检查报告', selectedRowKeys)
+        const res: any = []
         // 导出elsx表格
         const blob = new Blob([res], { type: 'application/octet-stream' })
         const download = document.createElement('a')
@@ -354,11 +356,7 @@ function Materials() {
             物料齐套检查
           </Button>
           <Space wrap>
-            <Dropdown
-              overlay={menu}
-              placement="topLeft"
-              arrow={{ pointAtCenter: true }}
-            >
+            <Dropdown arrow overlay={menu} placement="topLeft">
               <Button type="primary">导出报告</Button>
             </Dropdown>
           </Space>

@@ -24,7 +24,7 @@ const Load = () => {
       value: 48
     }
   ]
-  const config = {
+  const config: any = {
     data,
     xField: 'value',
     yField: 'year',

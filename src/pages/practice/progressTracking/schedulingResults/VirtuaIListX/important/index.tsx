@@ -3,7 +3,12 @@ import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
 
-function Important(props) {
+function Important(props: {
+  itemCount: any
+  itemSize: any
+  data: any
+  start: any
+}) {
   const { itemCount, itemSize, data, start } = props
 
   // const  itemSize *
@@ -15,7 +20,7 @@ function Important(props) {
 
   //data 处理后的值
   // 样式
-  const itemStyle = { position: 'absolute', width: 100, height: 120 } //样式
+  const itemStyle: any = { position: 'absolute', width: 100, height: 120 } //样式
   return (
     <div>
       <div
@@ -36,7 +41,7 @@ function Important(props) {
           {data.name}
         </div>
         {!isEmpty(list)
-          ? list.map((item, index) => (
+          ? list.map((item: any, index: any) => (
               <div
                 key={index}
                 className={styles.histogram}

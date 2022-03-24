@@ -4,9 +4,9 @@ import Forms from './forms'
 // import Tables from './tables'
 import FormTable from './formTable/index'
 
-function TabPanes(props) {
+function TabPanes(props: any) {
   const { materialList, index, dataReset } = props
-  const dataProcessing = (e) => {
+  const dataProcessing = (e: any) => {
     dataReset && dataReset(e)
   }
 

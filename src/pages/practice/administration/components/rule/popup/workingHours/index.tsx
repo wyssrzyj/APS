@@ -4,14 +4,14 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
-function WorkingHours(props) {
+function WorkingHours(props: any) {
   const { onChange } = props
   const sum: any = [
     { day: '1', efficiency: '', key: 1 },
     { day: 0, efficiency: 0, key: new Date() }
   ]
   const [data, setData] = useState<any>(sum)
-  const processing = (e, index, type) => {
+  const processing = (e: any, index: any, type: any) => {
     console.log(e)
     console.log(index)
     console.log(type)
@@ -24,7 +24,7 @@ function WorkingHours(props) {
     setData([...data])
   }
 
-  const executionMethod = (type, index) => {
+  const executionMethod = (type: any, index: any) => {
     if (type === 'push') {
       data.push({ day: 0, efficiency: 0, key: new Date() })
       setData([...data])
@@ -44,7 +44,7 @@ function WorkingHours(props) {
   }, [data])
   return (
     <div className={styles.const}>
-      {data.map((_item, index) => (
+      {data.map((_item: any, index: any) => (
         <div className={styles.timePicker} key={_item.name}>
           <div className={styles.top}>
             <div className={styles.left}>

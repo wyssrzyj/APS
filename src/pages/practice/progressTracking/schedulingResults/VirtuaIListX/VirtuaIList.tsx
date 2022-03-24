@@ -5,7 +5,7 @@ import index from '../forms'
 import Important from './important/index'
 import styles from './index.module.less'
 import Top from './top'
-function VirtuaIList(props) {
+function VirtuaIList(props: any) {
   const { itemCount, apiList } = props
   //height  容器高度
   // width 容器的宽度
@@ -15,10 +15,10 @@ function VirtuaIList(props) {
   const height = 600
   const itemSize = 100
 
-  const scrollBox = React.createRef() //创建真实dom
+  const scrollBox: any = React.createRef() //创建真实dom
 
   const [start, setStart] = useState(0) //起始目录
-  const [list, setList] = useState([]) //保存处理后的数据
+  const [list, setList] = useState<any>([]) //保存处理后的数据
 
   const end = start + Math.floor(width / itemSize) //划过了几个+总长/单个宽度 +1是防止卡顿
 
@@ -36,9 +36,9 @@ function VirtuaIList(props) {
   //数据处理
   useEffect(() => {
     if (!isEmpty(apiList)) {
-      apiList.map((item, index) => {
+      apiList.map((item: { list: { index: any }[]; test: any }, index: any) => {
         //给数据添加下标 用于定位left位置的判断
-        item.list.map((e, i) => {
+        item.list.map((e: { index: any }, i: any) => {
           e.index = i
         })
         //*************可视范围是 10条 前渲染1条后渲染2条 一共渲染13 防止空白 2022.3.15 --21.35********
@@ -64,7 +64,7 @@ function VirtuaIList(props) {
 
       {/* 单个数据-内容 */}
       {!isEmpty(list)
-        ? list.map((item) => (
+        ? list.map((item: any) => (
             <Important
               key={item.id}
               itemCount={itemCount}

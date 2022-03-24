@@ -12,7 +12,7 @@ function stairs() {
           height={500}
           itemCount={data.length}
           itemSize={50}
-          renderItem={(data) => {
+          renderItem={(data: any) => {
             const { index, style } = data
             return (
               <div

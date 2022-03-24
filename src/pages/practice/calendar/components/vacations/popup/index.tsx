@@ -5,7 +5,7 @@ import { getChild } from '@/components/getChild'
 import { practice } from '@/recoil/apis'
 
 import WorkingHours from './workingHours/index'
-function Popup(props) {
+function Popup(props: any) {
   const { content, newlyAdded } = props
   const { isModalVisible, setIsModalVisible, type, edit } = content
   const { holidayAddition } = practice

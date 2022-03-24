@@ -30,7 +30,7 @@ function WorkingHours(props: { onChange: any; type: any; edit: any }) {
   }
   return (
     <div>
-      {data.map((_item, index: number) => (
+      {data.map((_item: any, index: number) => (
         <div className={styles.timePicker} key={_item.name}>
           <DatePicker
             defaultValue={moment(_item)}

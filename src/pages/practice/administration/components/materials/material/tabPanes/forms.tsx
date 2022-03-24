@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 
 import styles from './index.module.less'
 
-function TabPanes(props) {
+function TabPanes(props: any) {
   const { list } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()

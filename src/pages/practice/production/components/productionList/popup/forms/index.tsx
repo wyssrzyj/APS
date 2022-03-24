@@ -6,7 +6,7 @@ import { getChild } from '@/components/getChild'
 
 import styles from './index.module.less'
 
-function Forms(props) {
+function Forms(props: any) {
   const { formData, types } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()

@@ -5,7 +5,7 @@ import Bottom from './bottom'
 import Box from './box'
 import styles from './index.module.less'
 
-function Tables(props) {
+function Tables(props: any) {
   const { list, materialList, index } = props
   const [data, setData] = useState<any>([]) //总计数据
   const [newList, setNewList] = useState<any>([]) //存放数据用于更改

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 import styles from './index.module.less'
 
-function Tables(props) {
+function Tables(props: any) {
   const { getFormData, list, types } = props
 
   const map = new Map()

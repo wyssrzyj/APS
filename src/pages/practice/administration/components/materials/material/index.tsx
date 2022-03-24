@@ -29,16 +29,16 @@ function Material(props: {
     setMaterialModal(false)
   }
 
-  const dataReset = (e) => {
+  const dataReset = (e: any) => {
     console.log('暴露的值', e)
 
     setList(e)
   }
   const confirm = () => {
     if (!isEmpty(list)) {
-      const hangInTheAir = list.filter((item) => item.satisfy !== true) //长度为空才能关闭
+      const hangInTheAir = list.filter((item: any) => item.satisfy !== true) //长度为空才能关闭
       const sum: any = []
-      hangInTheAir.map((item) => {
+      hangInTheAir.map((item: any) => {
         sum.push(item.name)
       })
       message.warning(sum.join('、'))
@@ -57,7 +57,7 @@ function Material(props: {
       >
         <Tabs onChange={callback} type="card">
           {materialList &&
-            materialList.map((item, index) => (
+            materialList.map((item: any, index: any) => (
               <TabPane tab={item.name} key={item.id}>
                 <TabPanes
                   index={index}

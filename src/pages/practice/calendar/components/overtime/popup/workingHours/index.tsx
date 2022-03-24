@@ -4,7 +4,7 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
-function WorkingHours(props) {
+function WorkingHours(props: any) {
   const format = 'HH:mm'
   const { onChange, type, edit, time } = props
   const [data, setData] = useState<any>([])
@@ -24,7 +24,7 @@ function WorkingHours(props) {
         ])
       : setData(edit.timeList)
   }, [type, edit, time])
-  const onTime = (e, index) => {
+  const onTime = (e: any, index: any) => {
     // 开始时间
     const arr =
       Number(moment(e[0]).format('x')) -

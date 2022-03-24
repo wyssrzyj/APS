@@ -12,11 +12,11 @@ const layout = {
 }
 const opreationMap = { add: '新增', edit: '编辑', modify: '修改' }
 
-const DepartmentModal = (props) => {
-  const refForm = useRef(null)
+const DepartmentModal = (props: any) => {
+  const refForm: any = useRef(null)
   const { visible, handleOk, handleCancel, type } = props
   const handleModalOk = () => {
-    refForm.current.validateFields().then((values) => {
+    refForm.current.validateFields().then((values: any) => {
       handleOk()
       console.log(values)
     })

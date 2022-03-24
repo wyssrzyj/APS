@@ -57,7 +57,7 @@ function Popup(props: { content: any }) {
     form.resetFields()
   }, [])
 
-  const getFormData = (value) => {
+  const getFormData = (value: any) => {
     console.log('form的数据', value)
     setFormData(value)
   }

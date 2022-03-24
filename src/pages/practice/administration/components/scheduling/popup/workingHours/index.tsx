@@ -4,16 +4,16 @@ import moment from 'moment'
 import React, { useState } from 'react'
 
 import styles from './index.module.less'
-function WorkingHours(props) {
+function WorkingHours(props: any) {
   const { onChange } = props
   const sum: any = [{ name: '1', holiday: '' }]
   const [data, setData] = useState<any>(sum)
 
-  const end = (index, e) => {
+  const end = (index: any, e: any) => {
     data[index].holiday = moment(e).valueOf()
     onChange([...data])
   }
-  const executionMethod = (type, index) => {
+  const executionMethod = (type: any, index: any) => {
     if (type === 'push') {
       data.push({
         name: index + new Date().valueOf() * Math.random(),
@@ -27,7 +27,7 @@ function WorkingHours(props) {
   }
   return (
     <div>
-      {data.map((_item, index) => (
+      {data.map((_item: any, index: any) => (
         <div className={styles.timePicker} key={_item.name}>
           <DatePicker
             onChange={(e) => {

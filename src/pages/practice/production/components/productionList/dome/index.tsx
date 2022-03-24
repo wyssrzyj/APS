@@ -7,8 +7,8 @@ function Dame() {
    * @param func 函数
    * @param wait 延迟执行毫秒数
    */
-  let timeout
-  function debounce(func, wait) {
+  let timeout: any
+  function debounce(func: any, wait: any) {
     clearTimeout(timeout)
     timeout = setTimeout(() => {
       func()

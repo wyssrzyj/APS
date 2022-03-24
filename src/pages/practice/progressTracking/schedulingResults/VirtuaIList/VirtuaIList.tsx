@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 
-function VirtuaIList(props) {
+function VirtuaIList(props: any) {
   const { height, width, itemCount, itemSize, renderItem } = props
 
-  const scrollBox = React.createRef() //创建真实dom
+  const scrollBox: any = React.createRef() //创建真实dom
   // const  scrollBox=useRef()//创建真实dom
   //height  容器高度
   // width 容器的宽度

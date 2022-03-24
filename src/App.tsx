@@ -13,7 +13,7 @@ import RouteList from './route'
 
 const App = () => {
   // 根据不同环境使用env内容
-  const VITE_ACCESS_KEY_ID =
+  const VITE_ACCESS_KEY_ID: any =
     import.meta.env && import.meta.env.VITE_ACCESS_KEY_ID
       ? import.meta.env.VITE_ACCESS_KEY_ID
       : process.env.VITE_ACCESS_KEY_ID

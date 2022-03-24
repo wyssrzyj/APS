@@ -48,6 +48,6 @@ export const getChild = (rawData: any, InterfaceData: any[]) => {
     })
     return data
   }
-  const arr = getSubData(rawData, InterfaceData)
+  const arr: any = getSubData(rawData, InterfaceData)
   return arr.concat(custom(rawData, UnwantedData)) //合并返回出去
 }

@@ -109,7 +109,7 @@ function Edition() {
     setList(arr)
   }, [])
   useEffect(() => {
-    sumDome.map((item) => {
+    sumDome.map((item: any) => {
       item.key = item.id
     })
     setData(sumDome)

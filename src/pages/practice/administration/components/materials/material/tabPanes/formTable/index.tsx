@@ -179,10 +179,8 @@ const FormTable = (props: any) => {
             !v.adequate ? (
               <DatePicker
                 allowClear={false}
-                defaultValue={_item ? moment(_item) : null}
+                defaultValue={_item ? moment(_item) : undefined}
                 onChange={(e) => {
-                  console.log(_item)
-
                   onChange(e, v)
                 }}
               />
@@ -269,7 +267,7 @@ const FormTable = (props: any) => {
 
     //判断子项是否全部满足
     const CurrentData = materialList[index].tableData
-    function checkAdult(data) {
+    function checkAdult(data: any) {
       return data.adequate === true
     }
     // 给当前页的数据添加 一个状态 用于判断当前页是否全部打钩
