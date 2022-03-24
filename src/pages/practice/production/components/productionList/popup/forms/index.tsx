@@ -1,5 +1,5 @@
 import { Button, Col, Form, Image, Input, message, Row, TreeSelect } from 'antd'
-import { isEmpty, isNil } from 'lodash'
+import { debounce } from 'lodash' //防抖
 import React, { useEffect } from 'react'
 
 import { getChild } from '@/components/getChild'
@@ -7,12 +7,13 @@ import { getChild } from '@/components/getChild'
 import styles from './index.module.less'
 
 function Forms(props: any) {
-  const { formData, types } = props
+  const { FormData, data, types, list } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
+  const { validateFields } = form
   useEffect(() => {
-    form.setFieldsValue(formData)
-  }, [types, formData])
+    form.setFieldsValue(data)
+  }, [types, data])
 
   const { SHOW_PARENT } = TreeSelect
   const { TextArea } = Input
@@ -104,6 +105,25 @@ function Forms(props: any) {
     // form.resetFields() //清除form中的数据
     message.success('修改成功')
   }
+
+  const handleSubmit = debounce(async () => {
+    const values = await validateFields()
+    FormData && FormData(values)
+  }, 500)
+
+  const getValueFromEvent = (event: any, type = 'text') => {
+    // 可根据需要 通过 setFieldsValue 设置联动效果
+    setTimeout(async () => {
+      await handleSubmit()
+    })
+    // ****根据不同的返回不同的数据
+    if (type === 'input') {
+      return event.target.value
+    }
+
+    return event
+  }
+
   const tProps = {
     treeData,
     value: value,
@@ -156,6 +176,11 @@ function Forms(props: any) {
         <Row>
           <Col span={8}>
             <Form.Item label="所属工段" name="section">
+              {/* <Input
+                maxLength={100}
+                placeholder="请输入所属工段"
+                disabled={true}
+              /> */}
               <TreeSelect {...tProps} disabled={true} />
             </Form.Item>
           </Col>
@@ -170,7 +195,13 @@ function Forms(props: any) {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="固定用时" name="reservedTime">
+            <Form.Item
+              label="固定用时"
+              name="reservedTime"
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'input')
+              }
+            >
               <Input
                 maxLength={100}
                 placeholder="请输入固定用时"
@@ -182,7 +213,13 @@ function Forms(props: any) {
         </Row>
         <Row>
           <Col span={8}>
-            <Form.Item label="前准备" name="beforePrepareTime">
+            <Form.Item
+              label="前准备"
+              name="beforePrepareTime"
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'input')
+              }
+            >
               <Input
                 maxLength={100}
                 placeholder="请输入时间"
@@ -192,7 +229,13 @@ function Forms(props: any) {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="后准备" name="afterPrepareTime">
+            <Form.Item
+              label="后准备"
+              name="afterPrepareTime"
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'input')
+              }
+            >
               <Input
                 maxLength={100}
                 placeholder="请输入时间"
@@ -202,7 +245,13 @@ function Forms(props: any) {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="前工序完成量" name="beforeFinishAmount">
+            <Form.Item
+              label="前工序完成量"
+              name="beforeFinishAmount"
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'input')
+              }
+            >
               <Input
                 maxLength={100}
                 placeholder="请输入前工序完成量"
@@ -213,7 +262,13 @@ function Forms(props: any) {
         </Row>
         <Row>
           <Col span={8}>
-            <Form.Item label="前工序间隔时间" name="beforeWaitTime">
+            <Form.Item
+              label="前工序间隔时间"
+              name="beforeWaitTime"
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'input')
+              }
+            >
               <Input
                 maxLength={100}
                 placeholder="请输入时间"

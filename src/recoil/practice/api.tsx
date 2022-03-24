@@ -30,14 +30,17 @@ export const getArea = async () => {
   }
 }
 // 工序外发 - 显示
-export const processOutsourcing = async () => {
+export const processOutsourcing = async (params: any) => {
+  console.log('id', params)
+
   try {
     const res: ResponseProps =
-      (await axios.get(`/aps/outsource/out-process-get`)) || {}
+      (await axios.get(`/aps/outsource/out-process-get`, params)) || {}
 
     if (res.code === 200) {
-      res.data = res.data || []
-      return dealData(res.data)
+      console.log(res)
+
+      return res.data
     }
   } catch (e) {
     console.log(e)

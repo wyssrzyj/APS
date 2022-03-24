@@ -166,9 +166,9 @@ function Popup(props: any) {
             />
           </Form.Item>
           <Form.Item
-            label="工作时间"
+            label="节假日时间"
             name="holidayList"
-            rules={[{ required: true, message: '请选择工作时间!' }]}
+            rules={[{ required: true, message: '请选择节假日时间!' }]}
           >
             <WorkingHours type={type} onChange={undefined} edit={edit} />
           </Form.Item>
