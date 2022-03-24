@@ -12,6 +12,8 @@ import { Loading } from './pages/loading'
 import RouteList from './route'
 
 const App = () => {
+  console.log(process.env.VITE_ACCESS_KEY_ID, 'app.VITE_ACCESS_KEY_ID')
+  console.log(process.env.VITE_ACCESS_KEY_SECRET, 'app.VITE_ACCESS_KEY_SECRET')
   return (
     <ConfigProvider locale={zhCN}>
       {/* Recoil包裹器 */}
