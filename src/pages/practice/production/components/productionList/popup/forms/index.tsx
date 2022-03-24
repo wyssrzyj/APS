@@ -1,13 +1,18 @@
-import { Button, Col, Form, Image, Input, Row, TreeSelect } from 'antd'
-import React from 'react'
+import { Button, Col, Form, Image, Input, message, Row, TreeSelect } from 'antd'
+import { isEmpty, isNil } from 'lodash'
+import React, { useEffect } from 'react'
 
 import { getChild } from '@/components/getChild'
 
 import styles from './index.module.less'
 
-function index() {
+function Forms(props: any) {
+  const { formData, types } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
+  useEffect(() => {
+    form.setFieldsValue(formData)
+  }, [types, formData])
 
   const { SHOW_PARENT } = TreeSelect
   const { TextArea } = Input
@@ -82,13 +87,13 @@ function index() {
   ]
   const layout = {
     labelCol: {
-      span: 7
+      span: 10
     },
     wrapperCol: {
       span: 15
     }
   }
-  const btn = () => {
+  const executionMethod = () => {
     form.submit()
   }
   const onFinish = (values: any) => {
@@ -96,7 +101,8 @@ function index() {
     if (values.workTeam) {
       values.workTeam = getChild(values.workTeam, treeData) //下拉多选的处理
     }
-    form.resetFields() //清除form中的数据
+    // form.resetFields() //清除form中的数据
+    message.success('修改成功')
   }
   const tProps = {
     treeData,
@@ -120,75 +126,114 @@ function index() {
       >
         <Row>
           <Col span={8}>
-            <Form.Item label="序号" name="Serial">
-              <Input maxLength={100} placeholder="请输入序号" />
+            <Form.Item label="序号" name="idx">
+              <Input maxLength={100} placeholder="请输入序号" disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="工序名称" name="process">
-              <Input maxLength={100} placeholder="请输入工序名称" />
+            <Form.Item label="工序名称" name="productName">
+              <Input
+                maxLength={100}
+                placeholder="请输入工序名称"
+                disabled={true}
+              />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
               label="工序代码"
-              name="operation"
-              rules={[{ required: true, message: '请选择工序代码!' }]}
+              name="productCode"
+              // rules={[{ required: true, message: '请选择工序代码!' }]}
             >
-              <Input maxLength={100} placeholder="请选择工序代码" />
+              <Input
+                maxLength={100}
+                placeholder="请选择工序代码"
+                disabled={true}
+              />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={8}>
-            <Form.Item label="所属工段" name="workshop">
-              <TreeSelect {...tProps} />
+            <Form.Item label="所属工段" name="section">
+              <TreeSelect {...tProps} disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="工序耗时" name="processTime">
-              <Input maxLength={100} placeholder="请输入工序耗时" suffix="秒" />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label="备注" name="remarks">
-              <Input maxLength={100} placeholder="请输入备注" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={8}>
-            <Form.Item label="前准备" name="front">
-              <Input maxLength={100} placeholder="请输入时间" suffix="秒" />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label="后准备" name="after">
-              <Input maxLength={100} placeholder="请输入时间" suffix="秒" />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item label="前工序完成量" name="completion">
-              <Input maxLength={100} placeholder="请输入前工序完成量" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={8}>
-            <Form.Item label="工序图" name="creationTime">
-              <Image
-                width={100}
-                src="https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/mobile/index/tmp_ee6de613da4404e4ac9cc3935182f624b8a0b16953ff84e0.jpg"
+            <Form.Item label="工序耗时" name="secondPlan">
+              <Input
+                maxLength={100}
+                placeholder="请输入工序耗时"
+                suffix="秒"
+                disabled={true}
               />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="工艺说明" name="description">
-              <TextArea rows={4} placeholder="请输入工艺说明" />
+            <Form.Item label="固定用时" name="reservedTime">
+              <Input
+                maxLength={100}
+                placeholder="请输入固定用时"
+                suffix="天"
+                disabled={types}
+              />
             </Form.Item>
           </Col>
         </Row>
-        <Button className={styles.btn} type="primary" onClick={btn}>
+        <Row>
+          <Col span={8}>
+            <Form.Item label="前准备" name="beforePrepareTime">
+              <Input
+                maxLength={100}
+                placeholder="请输入时间"
+                suffix="秒"
+                disabled={types}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="后准备" name="afterPrepareTime">
+              <Input
+                maxLength={100}
+                placeholder="请输入时间"
+                suffix="秒"
+                disabled={types}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="前工序完成量" name="beforeFinishAmount">
+              <Input
+                maxLength={100}
+                placeholder="请输入前工序完成量"
+                disabled={types}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={8}>
+            <Form.Item label="前工序间隔时间" name="beforeWaitTime">
+              <Input
+                maxLength={100}
+                placeholder="请输入时间"
+                suffix="天"
+                disabled={types}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="工艺说明" name="note">
+              <TextArea rows={4} placeholder="请输入工艺说明" disabled={true} />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Button
+          className={styles.executionMethod}
+          type="primary"
+          disabled={types}
+          onClick={executionMethod}
+        >
           确认
         </Button>
       </Form>
@@ -196,4 +241,4 @@ function index() {
   )
 }
 
-export default index
+export default Forms

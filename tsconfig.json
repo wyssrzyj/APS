@@ -27,7 +27,8 @@
   "include": [
     // 通过终端的task，会自动监视ts代码变化输出结果到dist中
     "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.tsx",
+    "src/pages/practice/production/components/productionList/excel/Import/lib/Export2Excel.jsx"
   ], // 要打包的文件
   "exclude": [
     // 排除那些文件不打包

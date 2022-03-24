@@ -58,7 +58,7 @@ function index(props: { FormData: any }) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input placeholder="请输入生产单号" size="small" allowClear />
+              <Input placeholder="请输入生产单号" allowClear />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -72,7 +72,7 @@ function index(props: { FormData: any }) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input placeholder="请输入销售单号" size="small" allowClear />
+              <Input placeholder="请输入销售单号" allowClear />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -86,7 +86,7 @@ function index(props: { FormData: any }) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input placeholder="请输入产品名称" size="small" allowClear />
+              <Input placeholder="请输入产品名称" allowClear />
             </Form.Item>
           </Col>
         </Row>
@@ -102,7 +102,7 @@ function index(props: { FormData: any }) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input placeholder="请输入产品款号" size="small" allowClear />
+              <Input placeholder="请输入产品款号" allowClear />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -116,7 +116,7 @@ function index(props: { FormData: any }) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input placeholder="请输入客户款号" size="small" allowClear />
+              <Input placeholder="请输入客户款号" allowClear />
             </Form.Item>
           </Col>
           <Col span={8}>

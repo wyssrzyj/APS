@@ -2,7 +2,7 @@
   padding: 30px;
   // background: #6666661f;
 }
-.btn {
+.executionMethod {
   margin-right: 20px;
 }
 .content {
@@ -32,7 +32,7 @@
   padding: 30px;
   // background: #6666661f;
 }
-.btn {
+.executionMethod {
   margin-right: 20px;
 }
 .content {
@@ -57,4 +57,53 @@
 }
 .table {
   margin-top: 20px;
+}
+
+.animated {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+@-webkit-keyframes fadeInRight {
+  from {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+    opacity: 0;
+  }
+
+  to {
+    -webkit-transform: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+    opacity: 0;
+  }
+
+  to {
+    -webkit-transform: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.fadeInRight {
+  -webkit-animation-name: fadeInRight;
+  animation-name: fadeInRight;
+}
+.secondaryCategory {
+  width: 100%;
+  margin-top: 20px;
+  flex: 1;
+  height: 100%;
+  padding: 16px;
+  font-size: 16px;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 10px 1px #eee;
 }

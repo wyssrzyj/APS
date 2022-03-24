@@ -28,26 +28,30 @@ function Rule() {
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
-      title: '节假日名称',
+      title: '模板名称',
       align: 'center',
       dataIndex: 'name'
     },
     {
-      title: '节假日期',
+      title: '工作班组',
       align: 'center',
       dataIndex: 'age'
     },
     {
-      title: '创建人',
+      title: '初始效率',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'initial'
     },
     {
-      title: '创建时间',
+      title: '最终效率',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'final'
     },
-    ,
+    {
+      title: '备注',
+      align: 'center',
+      dataIndex: 'remarks'
+    },
     {
       title: '操作',
       align: 'center',
@@ -127,10 +131,80 @@ function Rule() {
     selectedRowKeys,
     onChange: onSelectChange
   }
-  const btn = () => {
+  const executionMethod = () => {
     setIsModalVisible(true)
     setType(true)
   }
+
+  // 假数据
+  const treeData = [
+    {
+      title: '工厂',
+      value: '1',
+      key: '1',
+      children: [
+        {
+          title: '工厂1',
+          value: '2',
+          key: '2'
+        },
+        {
+          title: '工厂2',
+          value: '3',
+          key: '3'
+        }
+      ]
+    },
+    {
+      title: '原料',
+      value: '2-9',
+      key: '2-9',
+      children: [
+        {
+          title: '大米',
+          value: '2-1',
+          key: '2-1'
+        },
+        {
+          title: '土豆',
+          value: '2-2',
+          key: '2-2'
+        },
+        {
+          title: '菠萝',
+          value: '2-3',
+          key: '2-3'
+        }
+      ]
+    },
+    {
+      title: '玩具',
+      value: '3-9',
+      key: '3-9',
+      children: [
+        {
+          title: '金铲铲的冠冕',
+          value: '3-1',
+          key: '3-1'
+        },
+        {
+          title: '残暴之力',
+          value: '3-2',
+          key: '3-2'
+        },
+        {
+          title: '末日寒冬',
+          value: '3-3',
+          key: '3-3'
+        }
+      ]
+    },
+    {
+      title: '蔬菜',
+      value: '4',
+      key: '4'
+    }
+  ]
   const content = { isModalVisible, setIsModalVisible, type }
   return (
     <div className={styles.qualification}>
@@ -139,9 +213,13 @@ function Rule() {
       </div>
       <div>
         <div className={styles.content}>
-          <Forms FormData={FormData}></Forms>
+          <Forms FormData={FormData} treeData={treeData}></Forms>
 
-          <Button className={styles.btn} type="primary" onClick={btn}>
+          <Button
+            className={styles.executionMethod}
+            type="primary"
+            onClick={executionMethod}
+          >
             新增
           </Button>
           <Button type="primary" danger onClick={start}>

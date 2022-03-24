@@ -95,7 +95,7 @@ function PersonnelTable() {
     setAutoExpandParent(false)
   }
 
-  const onCheck = (checkedKeysValue: React.SetStateAction<React.Key[]>) => {
+  const onCheck = (checkedKeysValue: any) => {
     setCheckedKeys(checkedKeysValue)
   }
 

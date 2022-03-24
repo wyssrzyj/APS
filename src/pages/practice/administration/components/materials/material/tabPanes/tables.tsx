@@ -5,7 +5,8 @@ import Bottom from './bottom'
 import Box from './box'
 import styles from './index.module.less'
 
-function Tables() {
+function Tables(props: any) {
+  const { list, materialList, index } = props
   const [data, setData] = useState<any>([]) //总计数据
   const [newList, setNewList] = useState<any>([]) //存放数据用于更改
   const titl = [
@@ -24,46 +25,52 @@ function Tables() {
     { name: '齐套日期', width: '150px' }
   ]
   useEffect(() => {
+    console.log('总数据', materialList[index].titls) //获取当前行的值
+    console.log('下标', index)
+    console.log('自数字', list)
+
     //假接口数据
-    const titls = [
-      {
-        number: '1',
-        id: 1,
-        colorName: '红色',
-        colorNumber: '色号',
-        size: '尺码',
-        OrderQuantity: '1', //订单数量
-        materialRequirements: '100', //物料需求数量
-        materialInventory: '80', //物料库存数量
-        materialTransit: '10', //物料在途数量
-        // halfInto: '1', //半成品冲销数量
-        // itemMissing: '0', //物料缺少数量
-        company: '单位',
-        adequate: false,
-        dateCompletion: '齐套日期'
-      },
-      {
-        number: '1',
-        id: 1,
-        colorName: '红色',
-        colorNumber: '色号',
-        size: '尺码',
-        OrderQuantity: '1', //订单数量
-        materialRequirements: '100', //物料需求数量
-        materialInventory: '80', //物料库存数量
-        materialTransit: '10', //物料在途数量
-        // halfInto: '1', //半成品冲销数量
-        // itemMissing: '0', //物料缺少数量
-        company: '单位',
-        adequate: false,
-        dateCompletion: '齐套日期'
-      }
-    ]
-    setNewList(titls)
-  }, [])
+    // const titls = [
+    //   {
+    //     number: '1',
+    //     id: 1,
+    //     colorName: '红色',
+    //     colorNumber: '色号',
+    //     size: '尺码',
+    //     OrderQuantity: '1', //订单数量
+    //     materialRequirements: '100', //物料需求数量
+    //     materialInventory: '80', //物料库存数量
+    //     materialTransit: '10', //物料在途数量
+    //     // halfInto: '1', //半成品冲销数量
+    //     // itemMissing: '0', //物料缺少数量
+    //     company: '单位',
+    //     adequate: false,
+    //     dateCompletion: '齐套日期'
+    //   },
+    //   {
+    //     number: '1',
+    //     id: 1,
+    //     colorName: '红色',
+    //     colorNumber: '色号',
+    //     size: '尺码',
+    //     OrderQuantity: '1', //订单数量
+    //     materialRequirements: '100', //物料需求数量
+    //     materialInventory: '80', //物料库存数量
+    //     materialTransit: '10', //物料在途数量
+    //     // halfInto: '1', //半成品冲销数量
+    //     // itemMissing: '0', //物料缺少数量
+    //     company: '单位',
+    //     adequate: false,
+    //     dateCompletion: '齐套日期'
+    //   }
+    // ]
+    setNewList(list)
+  }, [list, materialList, index])
 
   //处理后的新数据
   const newData = (e: any[]) => {
+    console.log('处理后的新数据', e)
+
     setNewList(e) //修改后的值重新放到useState中
     // 获取总计的数据
     if (!isEmpty(e)) {

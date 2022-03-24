@@ -62,7 +62,7 @@ function index(props: { FormData: any; treeData: any }) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input placeholder="请选择工厂" size="small" allowClear />
+              <Input placeholder="请选择工厂" allowClear />
             </Form.Item>
           </Col>
           <Col span={6}>

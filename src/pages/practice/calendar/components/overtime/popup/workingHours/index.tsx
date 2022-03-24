@@ -4,7 +4,7 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
-function WorkingHours(props) {
+function WorkingHours(props: any) {
   const format = 'HH:mm'
   const { onChange, type, edit, time } = props
   const [data, setData] = useState<any>([])
@@ -24,7 +24,7 @@ function WorkingHours(props) {
         ])
       : setData(edit.timeList)
   }, [type, edit, time])
-  const onTime = (e, index) => {
+  const onTime = (e: any, index: any) => {
     // 开始时间
     const arr =
       Number(moment(e[0]).format('x')) -
@@ -42,7 +42,7 @@ function WorkingHours(props) {
     //传递给外部
     onChange && onChange([...data])
   }, [data])
-  const btn = (type: string, index: number) => {
+  const executionMethod = (type: string, index: number) => {
     if (type === 'push') {
       const nyr = moment(Date.now()).format('YYYY-MM-DD ')
       const sf = moment(Date.now()).format('YYYY-MM-DD HH:mm')
@@ -83,20 +83,20 @@ function WorkingHours(props) {
               }}
             />
 
-            <div className={styles.btn}>
+            <div className={styles.executionMethod}>
               {index === 0 ? (
                 <Button
                   disabled={type === 3 ? true : false}
                   type="primary"
                   icon={<PlusOutlined />}
-                  onClick={() => btn('push', index)}
+                  onClick={() => executionMethod('push', index)}
                 />
               ) : (
                 <Button
                   disabled={type === 3 ? true : false}
                   type="primary"
                   icon={<MinusOutlined />}
-                  onClick={() => btn('mov', index)}
+                  onClick={() => executionMethod('mov', index)}
                 />
               )}
             </div>

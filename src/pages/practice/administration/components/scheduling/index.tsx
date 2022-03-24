@@ -5,7 +5,6 @@ import { Title } from '@/components'
 
 import Forms from './forms'
 import styles from './index.module.less'
-import Material from './material'
 import MovPopup from './movPopup'
 import Popup from './popup'
 import ProductionOrder from './productionOrder/index'
@@ -60,7 +59,7 @@ function Index() {
     setMaterialModal(true)
   }
 
-  const btn = () => {
+  const executionMethod = () => {
     setIsModalVisible(true)
   }
   const schedulingBtn = () => {
@@ -75,12 +74,7 @@ function Index() {
     { name: '22222', id: 2 },
     { name: '33333', id: 3 }
   ]
-  const materialList = [
-    { name: '账号1', id: 1231 },
-    { name: '账号12', id: 1232 },
-    { name: '账号13', id: 1233 },
-    { name: '账号14', id: 1234 }
-  ]
+
   return (
     <div className={styles.qualification}>
       <div>
@@ -91,16 +85,9 @@ function Index() {
           <Forms FormData={FormData}></Forms>
           <div className={styles.inspection}>
             <ProductionOrder list={list} />
-            <Button
-              className={styles.inspection_right}
-              type="primary"
-              onClick={materials}
-            >
-              物料齐套检查
-            </Button>
           </div>
           {/* 甘特图 */}
-          <Button type="primary" onClick={btn}>
+          <Button type="primary" onClick={executionMethod}>
             编辑
           </Button>
           <div>甘特图</div>
@@ -117,12 +104,6 @@ function Index() {
       <Button type="primary" onClick={scheduleBtn}>
         校验排程
       </Button>
-      {/* 物料齐套检查弹窗 */}
-      <Material
-        materialList={materialList}
-        materialModal={materialModal}
-        setMaterialModal={setMaterialModal}
-      />
       {/* //规则排程 */}
       <RuleScheduling scheduling={scheduling} setScheduling={setScheduling} />
       <Verification schedule={schedule} setSchedule={setSchedule} />

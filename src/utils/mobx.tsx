@@ -5,11 +5,11 @@ import {
 } from 'mobx-react'
 import React from 'react'
 
-export function inject(...args) {
-  return (componentClass) => _inject(...args)(_observer(componentClass))
+export function inject(...args: any) {
+  return (componentClass: any) => _inject(...args)(_observer(componentClass))
 }
 
-export function observer(target) {
+export function observer(target: any) {
   return _observer(target)
 }
 

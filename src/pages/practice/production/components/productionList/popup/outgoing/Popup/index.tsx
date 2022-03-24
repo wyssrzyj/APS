@@ -1,16 +1,18 @@
-import { DatePicker, Form, Modal } from 'antd'
+import { DatePicker, Form, Input, Modal, Radio } from 'antd'
 import moment from 'moment'
-import React from 'react'
+import React, { useState } from 'react'
 
-function index(props: { isModalVisible: any; setIsModalVisible: any }) {
+const Popup = (props: { isModalVisible: any; setIsModalVisible: any }) => {
   const { isModalVisible, setIsModalVisible } = props
-
+  const [value, setValue] = useState(1)
+  const onChange = (e: any) => {
+    setValue(e.target.value)
+  }
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
 
   const handleOk = () => {
     form.submit()
-    setIsModalVisible(false)
   }
 
   const handleCancel = () => {
@@ -20,6 +22,8 @@ function index(props: { isModalVisible: any; setIsModalVisible: any }) {
     console.log('Success:', values)
     console.log(moment(values.startTime).valueOf())
     console.log(moment(values.endTime).valueOf())
+
+    // setIsModalVisible(false)
   }
   return (
     <div>
@@ -39,12 +43,21 @@ function index(props: { isModalVisible: any; setIsModalVisible: any }) {
           onFinish={onFinish}
           autoComplete="off"
         >
-          <Form.Item label="计划开始时间" name="startTime">
+          <Form.Item label="外发物料" name="startTime1">
+            <Radio.Group onChange={onChange} value={value}>
+              <Radio value={1}>是</Radio>
+              <Radio value={2}>否</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item label="最早物料齐套时间" name="startTime2">
             <DatePicker />
           </Form.Item>
+          <Form.Item label="外发用时" name="startTime3">
+            <Input placeholder="请输入外发用时" suffix="天" />
+          </Form.Item>
 
-          <Form.Item label="计划结束时间" name="endTime">
-            <DatePicker />
+          <Form.Item label="回厂加工用时" name="endTime4">
+            <Input placeholder="请输入回厂加工用时" suffix="天" />
           </Form.Item>
         </Form>
       </Modal>
@@ -52,4 +65,4 @@ function index(props: { isModalVisible: any; setIsModalVisible: any }) {
   )
 }
 
-export default index
+export default Popup

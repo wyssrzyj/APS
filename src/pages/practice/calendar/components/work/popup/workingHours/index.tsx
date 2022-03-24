@@ -31,7 +31,7 @@ function WorkingHours(props: { onChange: any; type: any; edit: any }) {
     //传递给外部
     onChange && onChange([...data])
   }, [data])
-  const btn = (type: string, index: number) => {
+  const executionMethod = (type: string, index: number) => {
     if (type === 'push') {
       data.push({
         name: index + new Date().valueOf() * Math.random(),
@@ -73,20 +73,20 @@ function WorkingHours(props: { onChange: any; type: any; edit: any }) {
                 end(index, e)
               }}
             />
-            <div className={styles.btn}>
+            <div className={styles.executionMethod}>
               {index === 0 ? (
                 <Button
                   disabled={type === 3 ? true : false}
                   type="primary"
                   icon={<PlusOutlined />}
-                  onClick={() => btn('push', index)}
+                  onClick={() => executionMethod('push', index)}
                 />
               ) : (
                 <Button
                   disabled={type === 3 ? true : false}
                   type="primary"
                   icon={<MinusOutlined />}
-                  onClick={() => btn('mov', index)}
+                  onClick={() => executionMethod('mov', index)}
                 />
               )}
             </div>

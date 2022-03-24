@@ -20,7 +20,7 @@ import { isAdd } from '@/utils/tool'
 const { Option } = Select
 const { TextArea } = Input
 
-const UserModal = (props) => {
+const UserModal = (props: any) => {
   const { visible, handleOk, handleCancel, current = {} } = props
   const {
     email,
@@ -45,7 +45,7 @@ const UserModal = (props) => {
   const { departmentLists, operationUser } = userStore
 
   const [targetKeys, setTargetKeys] = useState([...initTargetKeys])
-  const [selectedKeys, setSelectedKeys] = useState([])
+  const [selectedKeys, setSelectedKeys] = useState<any>([])
   const [roleOptions, setRoleOptions] = useState<any>([])
   const [departmentOption, setDepartmentOption] = useState<any>([])
   const initialValues = {
@@ -61,28 +61,26 @@ const UserModal = (props) => {
       : undefined
   }
 
-  const onChange = (nextTargetKeys, direction, moveKeys) => {
+  const onChange = (nextTargetKeys: any, direction: any, moveKeys: any) => {
     console.log('targetKeys:', nextTargetKeys)
     console.log('direction:', direction)
     console.log('moveKeys:', moveKeys)
     setTargetKeys(nextTargetKeys)
   }
-  const onSelectChange = (sourceSelectedKeys, targetSelectedKeys) => {
-    console.log('sourceSelectedKeys:', sourceSelectedKeys)
-    console.log('targetSelectedKeys:', targetSelectedKeys)
+  const onSelectChange = (sourceSelectedKeys: any, targetSelectedKeys: any) => {
     setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys])
   }
   // 获取全部角色
   const roleClassification = () => {
-    roleListTree().then((response) => {
+    roleListTree().then((response: any) => {
       const { success, data } = response
       if (success) {
         const newData = data
-          .map((item) => item.roles)
-          .reduce((prev, next) => {
+          .map((item: any) => item.roles)
+          .reduce((prev: any, next: any) => {
             return [...prev, ...next]
           })
-          .map((o) => ({
+          .map((o: any) => ({
             key: o.id,
             title: o.name,
             description: o.remark
@@ -93,7 +91,7 @@ const UserModal = (props) => {
   }
   // 获取全部部门
   const getDepartmentTree = () => {
-    departmentLists().then((data) => {
+    departmentLists().then((data: any) => {
       const newArr = []
       for (let i = 0; i < data.length; i++) {
         const subArr = data[i].children
@@ -114,7 +112,7 @@ const UserModal = (props) => {
         ...values,
         masterDepartment: { id: values.masterDepartment },
         subsidiaryDepartment: values.subsidiaryDepartment
-          ? values.subsidiaryDepartment.map((item) => ({
+          ? values.subsidiaryDepartment.map((item: any) => ({
               id: item
             }))
           : undefined,
@@ -125,7 +123,7 @@ const UserModal = (props) => {
             })),
         userId: current.userId,
         status: status == 0 ? 1 : status
-      }).then((response) => {
+      }).then((response: any) => {
         const { success, msg } = response
         message[success ? 'success' : 'error'](msg)
         success && handleOk()
@@ -175,7 +173,7 @@ const UserModal = (props) => {
               rules={[{ required: true, message: '请选择主属部门' }]}
             >
               <Select placeholder="请选择主属部门">
-                {departmentOption.map((item) => (
+                {departmentOption.map((item: any) => (
                   <Option key={item.id} value={item.id}>
                     {item.deptName}
                   </Option>
@@ -186,7 +184,7 @@ const UserModal = (props) => {
           <Col span={12}>
             <Form.Item label="附属部门" name="subsidiaryDepartment">
               <Select mode="multiple" placeholder="请选择附属部门">
-                {departmentOption.map((item) => (
+                {departmentOption.map((item: any) => (
                   <Option key={item.id} value={item.id}>
                     {item.deptName}
                   </Option>
@@ -243,7 +241,7 @@ const UserModal = (props) => {
         selectedKeys={selectedKeys}
         onChange={onChange}
         onSelectChange={onSelectChange}
-        render={(item) => item.title}
+        render={(item: any) => item.title}
       />
     </Modal>
   )

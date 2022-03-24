@@ -3,7 +3,17 @@ import React, { useState } from 'react'
 
 import styles from './index.module.less'
 
-function Tables() {
+function Tables(props: any) {
+  const { getFormData, list, types } = props
+
+  const map = new Map()
+  map.set('1', '裁剪')
+  map.set('2', '缝制')
+  map.set('3', '后整')
+  map.set('4', '包装')
+  map.set('5', '外发')
+  map.set('6', '缝制线外组')
+
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(5)
   const [total] = useState<number>(0)
@@ -11,40 +21,30 @@ function Tables() {
     {
       title: '序号',
       align: 'center',
-      dataIndex: 'name',
-      render: (
-        _value: any,
-        _row: any,
-        index:
-          | boolean
-          | React.ReactChild
-          | React.ReactFragment
-          | React.ReactPortal
-          | null
-          | undefined
-      ) => {
-        return <div className={styles.flex}>{index}</div>
-      }
+      dataIndex: 'idx'
     },
     {
       title: '工序名称',
       align: 'center',
-      dataIndex: 'name'
+      dataIndex: 'productName'
     },
     {
       title: '工序代码',
       align: 'center',
-      dataIndex: 'age'
+      dataIndex: 'productCode'
     },
     {
       title: '所属工段',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'section',
+      render: (v: any) => {
+        return <div>{map.get(v)}</div>
+      }
     },
     {
       title: '工序耗时',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'secondPlan'
     },
     {
       title: '操作',
@@ -53,7 +53,12 @@ function Tables() {
       render: (_value: any, _row: any) => {
         return (
           <div className={styles.flex}>
-            <div className={styles.operation_item} onClick={() => editUser()}>
+            <div
+              className={
+                !types ? styles.operation_item : styles.operation_itemNo
+              }
+              onClick={() => (!types ? getFormData(_row) : null)}
+            >
               编辑
             </div>
           </div>
@@ -61,19 +66,6 @@ function Tables() {
       }
     }
   ]
-  const data = []
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      id: i,
-      name: `Edward King ${i}`,
-      age: 32,
-      address: `London, Park Lane no. ${i}`
-    })
-  }
-
-  const editUser = () => {
-    console.log('编辑')
-  }
   const onPaginationChange = (
     page: React.SetStateAction<number>,
     pageSize: React.SetStateAction<number>
@@ -85,8 +77,8 @@ function Tables() {
     <div className={styles.table}>
       <Table
         columns={columns}
-        dataSource={data}
-        rowKey={'id'}
+        dataSource={list || []}
+        rowKey={'idx'}
         pagination={{
           size: 'small',
           //分页

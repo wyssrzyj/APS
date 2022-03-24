@@ -13,7 +13,7 @@ const port = 8005
 
 const hosts = new Map()
 hosts.set('development', 'http://192.168.69.88:8000')
-hosts.set('test', 'http://8.136.225.110:8888/')
+hosts.set('test', 'http://101.37.116.101:8000')
 hosts.set('production', 'http://47.97.217.13:8888/')
 
 module.exports = {
@@ -24,7 +24,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: 'js/[name].[chunkhash:6].bundle.js',
-    publicPath: '/',
+    publicPath: './',
     assetModuleFilename: 'images/[hash:6][ext][query]'
   },
   plugins: [
@@ -35,7 +35,7 @@ module.exports = {
     // new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: '初始项目',
-      template: path.resolve(__dirname, '../index.html'),
+      template: path.resolve(__dirname, '../index-webpack.html'),
       filename: 'index.html'
       // favicon: path.resolve(__dirname, '../src/assets/favicon.ico'),
     }),

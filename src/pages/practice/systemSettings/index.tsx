@@ -52,6 +52,7 @@ function Vacations() {
   }, [])
   const api = async () => {
     const arr = await systemParameter()
+
     setlist(arr)
   }
 
@@ -110,7 +111,7 @@ function Vacations() {
     selectedRowKeys,
     onChange: onSelectChange
   }
-  const btn = () => {
+  const executionMethod = () => {
     setIsModalVisible(true)
     setType(true)
   }
@@ -200,7 +201,7 @@ function Vacations() {
             <Color onChange={undefined} list={list}></Color>
           </Form.Item>
         </Form>
-        <div className={styles.btn}>
+        <div className={styles.executionMethod}>
           <Button type="primary" htmlType="submit" onClick={preservation}>
             保存
           </Button>

@@ -6,7 +6,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 8004,
+    port: 8005,
     open: true,
     proxy: {
       '/aps': 'http://192.168.69.88:8000'

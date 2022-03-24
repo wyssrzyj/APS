@@ -21,7 +21,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
     if (type !== 1) {
       // endDate
       edit.date = moment(edit.timeList[0].endDate)
-      form.setFieldsValue(edit) //回显
+      form.setFieldsValue(edit) //回显.
     }
     if (type === 1) {
       form.resetFields()

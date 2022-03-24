@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { Form, Input, Modal } from 'antd'
+import { Form, Input, Modal, TreeSelect } from 'antd'
 import React, { useEffect } from 'react'
 
 import { getChild } from '@/components/getChild'
@@ -8,6 +8,8 @@ import WorkingHours from './workingHours/index'
 function index(props: { content: any }) {
   const { content } = props
   const { isModalVisible, setIsModalVisible, type } = content
+  const value = ['0-0-0']
+  const { SHOW_PARENT } = TreeSelect
 
   const [form] = Form.useForm()
   useEffect(() => {
@@ -107,6 +109,16 @@ function index(props: { content: any }) {
     form.resetFields()
     setIsModalVisible(false)
   }
+  const tProps = {
+    treeData,
+    value: value,
+    treeCheckable: true,
+    showCheckedStrategy: SHOW_PARENT,
+    placeholder: '请选择工作班组',
+    style: {
+      width: '100%'
+    }
+  }
   return (
     <div>
       <Modal
@@ -132,15 +144,23 @@ function index(props: { content: any }) {
             <Input maxLength={100} placeholder="请输入节假日" />
           </Form.Item>
           <Form.Item
-            label="工作时间"
-            name="workingHours"
-            rules={[{ required: true, message: '请选择工作时间!' }]}
+            label="工作班组"
+            name="teamIds"
+            rules={[{ required: true, message: '请选择工作班组!' }]}
           >
-            <WorkingHours />
+            <TreeSelect disabled={type === 3 ? true : false} {...tProps} />
           </Form.Item>
 
           <Form.Item label="备注" name="remarks">
             <Input maxLength={100} placeholder="请输入备注" />
+          </Form.Item>
+
+          <Form.Item
+            name="workingHours"
+            label="效率"
+            rules={[{ required: true, message: '请选择工作时间!' }]}
+          >
+            <WorkingHours />
           </Form.Item>
         </Form>
       </Modal>

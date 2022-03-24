@@ -223,7 +223,7 @@ const Index = () => {
     selectedRowKeys,
     onChange: onSelectChange
   }
-  const btn = () => {
+  const executionMethod = () => {
     setIsModalVisible(true)
     setType(1)
   }
@@ -310,7 +310,11 @@ const Index = () => {
         <div className={styles.content}>
           <Forms FormData={FormData} treeData={treeData}></Forms>
 
-          <Button className={styles.btn} type="primary" onClick={btn}>
+          <Button
+            className={styles.executionMethod}
+            type="primary"
+            onClick={executionMethod}
+          >
             新增
           </Button>
           <Button type="primary" danger onClick={start}>

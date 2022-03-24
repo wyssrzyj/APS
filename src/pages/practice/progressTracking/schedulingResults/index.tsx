@@ -1,10 +1,20 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
 
+import Custom from './custom/index'
+import Dhx from './dhx/index'
+import Dome from './dome/index'
 import Forms from './forms'
+import GattChart from './ganttChart/index'
 import styles from './index.module.less'
+import Load from './load/index'
+import Slide from './slide/index'
+import Tbale from './tbale'
+import VirtuaIList from './VirtuaIList'
+import VirtuaIListX from './VirtuaIListX'
 const SchedulingResults = () => {
+  const [sum, setSum] = useState(1)
   // 假数据
   const treeData = [
     {
@@ -74,60 +84,22 @@ const SchedulingResults = () => {
       key: '4'
     }
   ]
+  useEffect(() => {
+    console.log(sum)
+  }, [sum])
+  const executionMethod = () => {
+    setSum((f) => f + 1)
+  }
 
-  // const data = [
-  //   {
-  //     year: '1951 年',
-  //     sales: 38
-  //   },
-  //   {
-  //     year: '1952 年',
-  //     sales: 52
-  //   },
-  //   {
-  //     year: '1956 年',
-  //     sales: 61
-  //   },
-  //   {
-  //     year: '1957 年',
-  //     sales: 145
-  //   },
-  //   {
-  //     year: '1958 年',
-  //     sales: 48
-  //   },
-  //   {
-  //     year: '1959 年',
-  //     sales: 38
-  //   },
-  //   {
-  //     year: '1960 年',
-  //     sales: 38
-  //   },
-  //   {
-  //     year: '1962 年',
-  //     sales: 38
-  //   }
-  // ]
-  // const chart = new G2.Chart({
-  //   container: 'mountNode',
-  //   forceFit: true,
-  //   height: window.innerHeight
-  // })
-  // chart.source(data)
-  // chart.scale('sales', {
-  //   tickInterval: 20
-  // })
-  // chart.interval().position('year*sales')
-  // chart.render()
   return (
     <div className={styles.qualification}>
       <div>
-        <Title title={'生产单排程'} />
+        <Title title={'资源负荷图'} />
       </div>
+      {/* <button onClick={executionMethod}>单机</button> */}
       <Forms FormData={FormData} treeData={treeData}></Forms>
-      负荷图
-      {/* <div id="mountNode"></div> */}
+      <div id="c1"></div>
+      <Tbale />
     </div>
   )
 }

@@ -44,14 +44,26 @@ function index(props: { FormData: any }) {
           <Form.Item
             {...layout}
             name="keyword"
-            label="节假日名称"
+            label="生产单号"
             //第4步 给每个form.Item添加getValueFromEvent事件
             //  {/* 设置如何将 event 的值转换成字段值 */}
             getValueFromEvent={(event: InputEvent) =>
               getValueFromEvent(event, 'input')
             }
           >
-            <Input placeholder="请输入节假日名称" size="small" allowClear />
+            <Input placeholder="请输入生产单号" allowClear />
+          </Form.Item>
+          <Form.Item
+            {...layout}
+            name="keyword"
+            label="销售单号"
+            //第4步 给每个form.Item添加getValueFromEvent事件
+            //  {/* 设置如何将 event 的值转换成字段值 */}
+            getValueFromEvent={(event: InputEvent) =>
+              getValueFromEvent(event, 'input')
+            }
+          >
+            <Input placeholder="请输入销售单号" allowClear />
           </Form.Item>
         </Row>
       </Form>
