@@ -10,8 +10,6 @@ const VITE_ACCESS_KEY_SECRET =
     ? import.meta.env.VITE_ACCESS_KEY_SECRET
     : process.env.VITE_ACCESS_KEY_SECRET
 
-console.log(VITE_ACCESS_KEY_ID, 'VITE_ACCESS_KEY_ID')
-
 const client = new OSS({
   accessKeyId: VITE_ACCESS_KEY_ID,
   accessKeySecret: VITE_ACCESS_KEY_SECRET,
