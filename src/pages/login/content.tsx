@@ -187,7 +187,11 @@ const LoginContent = () => {
         </span>
       </div>
 
-      <Button type={'primary'} className={styles.btn} onClick={submit}>
+      <Button
+        type={'primary'}
+        className={styles.executionMethod}
+        onClick={submit}
+      >
         登录
       </Button>
     </div>

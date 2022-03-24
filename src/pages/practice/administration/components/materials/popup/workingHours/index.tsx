@@ -14,7 +14,7 @@ function WorkingHours(props: { onChange: any }) {
     data[index].holiday = moment(e).valueOf()
     onChange([...data])
   }
-  const btn = (type: string, index: number) => {
+  const executionMethod = (type: string, index: number) => {
     if (type === 'push') {
       data.push({
         name: index + new Date().valueOf() * Math.random(),
@@ -36,18 +36,18 @@ function WorkingHours(props: { onChange: any }) {
             }}
           />
 
-          <div className={styles.btn}>
+          <div className={styles.executionMethod}>
             {index === 0 ? (
               <Button
                 type="primary"
                 icon={<PlusOutlined />}
-                onClick={() => btn('push', index)}
+                onClick={() => executionMethod('push', index)}
               />
             ) : (
               <Button
                 type="primary"
                 icon={<MinusOutlined />}
-                onClick={() => btn('mov', index)}
+                onClick={() => executionMethod('mov', index)}
               />
             )}
           </div>

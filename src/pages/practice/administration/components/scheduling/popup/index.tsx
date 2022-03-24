@@ -190,11 +190,11 @@ function Popup(props: { content: any }) {
           <Row>
             <Col span={12}>
               <Form.Item
-                label="成产量"
+                label="生产量"
                 name="yield"
-                rules={[{ required: true, message: '请输入成产量' }]}
+                rules={[{ required: true, message: '请输入生产量' }]}
               >
-                <Input maxLength={100} placeholder="请输入成产量" />
+                <Input maxLength={100} placeholder="请输入生产量" />
               </Form.Item>
             </Col>
           </Row>

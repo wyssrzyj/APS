@@ -59,6 +59,20 @@ export const menus = [
     ]
   },
   {
+    label: '产能效率管理',
+    key: 'capacity',
+    icon: 'jack-channengxiaoshuai-01',
+    url: '/',
+    children: [
+      {
+        label: '产能效率模板',
+        key: 'rule',
+        icon: 'jack-guanlimoban1',
+        url: '/rule'
+      }
+    ]
+  },
+  {
     label: '业务单数据管理',
     key: 'production ',
     icon: 'jack-qiyeyewu',
@@ -78,6 +92,12 @@ export const menus = [
     icon: 'jack-shengchan',
     url: '/',
     children: [
+      {
+        label: '物料齐套检查',
+        key: 'materials',
+        icon: 'jack-wuliaoguanli',
+        url: '/materials'
+      },
       {
         label: '生产单排程',
         key: 'scheduling',

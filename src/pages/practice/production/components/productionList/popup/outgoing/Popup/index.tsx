@@ -1,4 +1,4 @@
-import { DatePicker, Form, Modal, Radio } from 'antd'
+import { DatePicker, Form, Input, Modal, Radio } from 'antd'
 import moment from 'moment'
 import React, { useState } from 'react'
 
@@ -13,7 +13,6 @@ const Popup = (props: { isModalVisible: any; setIsModalVisible: any }) => {
 
   const handleOk = () => {
     form.submit()
-    setIsModalVisible(false)
   }
 
   const handleCancel = () => {
@@ -23,6 +22,8 @@ const Popup = (props: { isModalVisible: any; setIsModalVisible: any }) => {
     console.log('Success:', values)
     console.log(moment(values.startTime).valueOf())
     console.log(moment(values.endTime).valueOf())
+
+    // setIsModalVisible(false)
   }
   return (
     <div>
@@ -52,11 +53,11 @@ const Popup = (props: { isModalVisible: any; setIsModalVisible: any }) => {
             <DatePicker />
           </Form.Item>
           <Form.Item label="外发用时" name="startTime3">
-            <DatePicker />
+            <Input placeholder="请输入外发用时" suffix="天" />
           </Form.Item>
 
           <Form.Item label="回厂加工用时" name="endTime4">
-            <DatePicker />
+            <Input placeholder="请输入回厂加工用时" suffix="天" />
           </Form.Item>
         </Form>
       </Modal>

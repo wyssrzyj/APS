@@ -18,8 +18,11 @@ const Inputs = (props: { onChange: any; list: any; item: any }) => {
   useEffect(() => {
     if (list) {
       useData({ delay: list[item.name], day: `${list[item.unit]}` })
-      useArr(`${list[item.unit]}`)
+      // useArr(`${list[item.unit]}`)
+      console.log('测试111', list)
+      console.log('测试', list[item.unit])
     }
+    console.log('测试222', list)
   }, [list])
   const { Option } = Select
 
@@ -28,7 +31,7 @@ const Inputs = (props: { onChange: any; list: any; item: any }) => {
     useData({ ...data })
   }
 
-  const btn = (e: any, index: any) => {
+  const executionMethod = (e: any, index: any) => {
     data.day = e
     useArr(e)
     useData({ ...data })
@@ -56,7 +59,7 @@ const Inputs = (props: { onChange: any; list: any; item: any }) => {
             value={arr}
             style={{ width: 60 }}
             onChange={(e: any) => {
-              btn(e, 0)
+              executionMethod(e, 0)
             }}
           >
             <Option value="1">天</Option>

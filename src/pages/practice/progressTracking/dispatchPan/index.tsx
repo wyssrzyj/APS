@@ -23,7 +23,7 @@ function DispatchPan() {
     setPageSize(pageSize)
   }
 
-  const btn = () => {
+  const executionMethod = () => {
     setIsModalVisible(true)
   }
   //删除
@@ -107,7 +107,7 @@ function DispatchPan() {
       render: (_value: any, _row: any) => {
         return (
           <div className={styles.flex}>
-            <div className={styles.operation_item} onClick={btn}>
+            <div className={styles.operation_item} onClick={executionMethod}>
               查看
             </div>
           </div>

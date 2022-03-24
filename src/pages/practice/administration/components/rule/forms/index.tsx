@@ -1,19 +1,22 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import { Form, Input, Row } from 'antd'
+import { Col, Form, Input, Row, TreeSelect } from 'antd'
 import { debounce } from 'lodash' //防抖
 import React from 'react'
 
+import { getChild } from '@/components/getChild/index'
 const layout = {
   labelCol: {
-    span: 7
+    span: 5
   },
   wrapperCol: {
-    span: 16
+    span: 24
   }
 }
 
-function index(props: { FormData: any }) {
-  const { FormData } = props
+function index(props: { FormData: any; treeData: any }) {
+  const { FormData, treeData } = props
+  const { SHOW_PARENT } = TreeSelect
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm() //第二步.
   const { validateFields } = form
 
@@ -32,27 +35,50 @@ function index(props: { FormData: any }) {
     if (type === 'input') {
       return event.target.value
     }
-    return event
+    if (type === 'treeSelect') {
+      return getChild(event, treeData)
+    }
   }
-
+  const tProps = {
+    treeData,
+    treeCheckable: true,
+    showCheckedStrategy: SHOW_PARENT,
+    placeholder: '请选择工作班组'
+  }
   return (
     <div>
       <Form
         form={form} //第一步
       >
         <Row>
-          <Form.Item
-            {...layout}
-            name="keyword"
-            label="节假日名称"
-            //第4步 给每个form.Item添加getValueFromEvent事件
-            //  {/* 设置如何将 event 的值转换成字段值 */}
-            getValueFromEvent={(event: InputEvent) =>
-              getValueFromEvent(event, 'input')
-            }
-          >
-            <Input placeholder="请输入节假日名称" size="small" allowClear />
-          </Form.Item>
+          <Col span={6}>
+            <Form.Item
+              {...layout}
+              name="workModeName"
+              label="工作模式"
+              //第4步 给每个form.Item添加getValueFromEvent事件
+              //  {/* 设置如何将 event 的值转换成字段值 */}
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'input')
+              }
+            >
+              <Input placeholder="请输入工作模式" allowClear />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item
+              {...layout}
+              name="teams"
+              label="工作班组"
+              //第4步 给每个form.Item添加getValueFromEvent事件
+              //  {/* 设置如何将 event 的值转换成字段值 */}
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'treeSelect')
+              }
+            >
+              <TreeSelect {...tProps} />
+            </Form.Item>
+          </Col>
         </Row>
       </Form>
     </div>

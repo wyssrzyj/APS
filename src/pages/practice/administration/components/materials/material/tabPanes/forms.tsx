@@ -1,14 +1,26 @@
 import { Button, Col, Form, Image, Input, Row, TreeSelect } from 'antd'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import styles from './index.module.less'
 
-function index() {
+function TabPanes(props) {
+  const { list } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
-
   const { SHOW_PARENT } = TreeSelect
   const { TextArea } = Input
+  useEffect(() => {
+    // const arr = {
+    //   serial: '1',
+    //   process: '2',
+    //   processTime: '3',
+    //   remarks: '4',
+    //   front: '5',
+    //   totalProduction: '6'
+    // }
+    form.setFieldsValue(list)
+  }, [list])
+
   const value = ['0-0-0']
   const treeData = [
     {
@@ -86,7 +98,7 @@ function index() {
       span: 24
     }
   }
-  const btn = () => {
+  const executionMethod = () => {
     form.submit()
   }
   const onFinish = (values: any) => {
@@ -96,7 +108,7 @@ function index() {
   const tProps = {
     treeData,
     value: value,
-    treeCheckable: true,
+
     showCheckedStrategy: SHOW_PARENT,
     placeholder: '请选择工作班组',
     style: {
@@ -115,28 +127,40 @@ function index() {
       >
         <Row>
           <Col span={12}>
-            <Form.Item label="生产单号" name="Serial">
-              <Input maxLength={100} placeholder="请输入生产单号" />
+            <Form.Item label="生产单号" name="serial">
+              <Input
+                maxLength={100}
+                placeholder="请输入生产单号"
+                disabled={true}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label="销售单号" name="process">
-              <Input maxLength={100} placeholder="请输入销售单号" />
+              <Input
+                maxLength={100}
+                placeholder="请输入销售单号"
+                disabled={true}
+              />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={12}>
             <Form.Item label="产品名称" name="processTime">
-              <Input maxLength={100} placeholder="请输入产品名称" suffix="秒" />
+              <Input
+                maxLength={100}
+                placeholder="请输入产品名称"
+                disabled={true}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="生产单总量" name="processTime">
+            <Form.Item label="生产单总量" name="totalProduction">
               <Input
                 maxLength={100}
                 placeholder="请输入生产单总量"
-                suffix="秒"
+                disabled={true}
               />
             </Form.Item>
           </Col>
@@ -144,12 +168,20 @@ function index() {
         <Row>
           <Col span={12}>
             <Form.Item label="客户款号" name="remarks">
-              <Input maxLength={100} placeholder="请输入客户款号" />
+              <Input
+                maxLength={100}
+                placeholder="请输入客户款号"
+                disabled={true}
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item label="产品款号" name="front">
-              <Input maxLength={100} placeholder="请输入产品款号" suffix="秒" />
+              <Input
+                maxLength={100}
+                placeholder="请输入产品款号"
+                disabled={true}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -158,4 +190,4 @@ function index() {
   )
 }
 
-export default index
+export default TabPanes

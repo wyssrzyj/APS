@@ -12,14 +12,14 @@ const Home = () => {
   //设置可读可写
   const [value, setValue] = useRecoilState(commonState.textState)
   const [name, setName] = useRecoilState(commonState.lyj)
-  const btn = () => {
+  const executionMethod = () => {
     setName('全局的id')
   }
   return (
     // 多个样式处理方法classNames 可使用三元
     <div>
       <input value={value} onChange={(e) => setValue(e.target.value)} />
-      <button onClick={btn}>存全局的id</button>
+      <button onClick={executionMethod}>存全局的id</button>
       <div>lyj：{name}</div>
       {/* <Dome /> */}
     </div>

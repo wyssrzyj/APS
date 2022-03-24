@@ -19,7 +19,7 @@ function WorkingHours(props: { onChange: any; type: any; edit: any }) {
   useEffect(() => {
     onChange([...data])
   }, [data])
-  const btn = (type: string, index: number) => {
+  const executionMethod = (type: string, index: number) => {
     if (type === 'push') {
       data.push(moment(new Date()).format('YYYY-MM-DD'))
       setData([...data])
@@ -40,20 +40,20 @@ function WorkingHours(props: { onChange: any; type: any; edit: any }) {
             }}
           />
 
-          <div className={styles.btn}>
+          <div className={styles.executionMethod}>
             {index === 0 ? (
               <Button
                 disabled={type === 3 ? true : false}
                 type="primary"
                 icon={<PlusOutlined />}
-                onClick={() => btn('push', index)}
+                onClick={() => executionMethod('push', index)}
               />
             ) : (
               <Button
                 disabled={type === 3 ? true : false}
                 type="primary"
                 icon={<MinusOutlined />}
-                onClick={() => btn('mov', index)}
+                onClick={() => executionMethod('mov', index)}
               />
             )}
           </div>

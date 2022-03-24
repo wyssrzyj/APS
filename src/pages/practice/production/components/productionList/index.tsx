@@ -1,78 +1,138 @@
 import { Table } from 'antd'
-import React, { useState } from 'react'
+import moment from 'moment'
+import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
+import { practice } from '@/recoil/apis'
 
+import Dome from './dome'
 import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
 import Popup from './popup'
+
 function Production() {
+  const { productionList } = practice
+  const map = new Map()
+  map.set(1, '待计划')
+  map.set(2, '待生产')
+  map.set(3, '成产中')
+  map.set(4, '成产完成')
+
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
-  const [type, setType] = useState(false) //编辑或者新增
+  const [types, setType] = useState(false) //编辑或者查看
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
+  const [loading, setLoading] = useState(true) //删除弹窗
+  const defaultPageSize = 10
+  const [params, setParams] = useState<any>({
+    pageNum: 1,
+    pageSize: defaultPageSize
+  })
+  const [getDetailsId, setGetDetailsId] = useState() //工艺需要的id
+  const [externalProduceOrderId, setExternalProduceOrderId] = useState() //外发需要的id
+
+  const [list, setList] = useState([])
+
+  useEffect(() => {
+    api(params)
+  }, [params])
+
+  const api = async (item: any) => {
+    const arr: any = await productionList(item)
+    console.log(arr)
+    if (arr.code === 200) {
+      setLoading(false)
+      arr.data.records.map((item: any) => {
+        item.id = `${item.productId + Math.random()}` //后端没有成成id 这里自己做处理 防止key值重复
+      })
+      setList(arr.data.records)
+    }
+  }
 
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
       title: '生产单号',
       align: 'center',
-      dataIndex: 'name'
+      key: 'productOrderNum',
+      dataIndex: 'productOrderNum'
     },
     {
       title: '销售单号',
+      key: 'orderNum',
       align: 'center',
-      dataIndex: 'age'
+      dataIndex: 'orderNum'
     },
     {
       title: '接单工厂',
+      key: 'factoryName',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'factoryName'
     },
     {
       title: '产品名称',
+      key: 'productName',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'productName'
     },
     {
       title: '产品款号',
+      key: 'productNum',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'productNum'
     },
     {
       title: '客户款号',
+      key: 'productClientNum',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'productClientNum'
     },
     {
       title: '生产单总量',
+      key: 'orderSum',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'orderSum'
     },
     {
       title: '计划完成日期',
+      key: 'planEndDate',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'planEndDate',
+      render: (v) => {
+        return <div>{moment(v).format('YYYY-MM-DD')}</div>
+      }
     },
     {
       title: '外发情况',
+      key: 'outsourceType',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'outsourceType',
+      render: (v: any) => {
+        return <div>{v === 1 ? '工序外发' : v === 2 ? '整单外发' : null}</div>
+      }
     },
     ,
     {
       title: '延期情况',
+      key: 'delayType',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'delayType',
+      render: (v: any) => {
+        return <div>{v === 1 ? '正常' : v === 2 ? '已延期' : null}</div>
+      }
     },
     ,
     {
       title: '生产单状态',
+      key: 'status',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'status',
+      render: (v: any) => {
+        return <div>{map.get(v)}</div>
+      }
     },
     ,
     {
@@ -84,11 +144,14 @@ function Production() {
           <div className={styles.flex}>
             <div
               className={styles.operation_item}
-              onClick={() => editUser(false)}
+              onClick={() => editUser(false, _row)}
             >
               查看详情
             </div>
-            <div className={styles.operation} onClick={() => editUser(true)}>
+            <div
+              className={styles.operation}
+              onClick={() => editUser(true, _row)}
+            >
               <div> 工艺</div>
               <div> 外发</div>
             </div>
@@ -97,15 +160,7 @@ function Production() {
       }
     }
   ]
-  const data = []
-  for (let i = 0; i < 5; i++) {
-    data.push({
-      id: i,
-      name: `Edward King ${i}`,
-      age: 32,
-      address: `London, Park Lane no. ${i}`
-    })
-  }
+
   //头部form的数据
   const FormData = (e: any) => {
     console.log(e)
@@ -117,31 +172,43 @@ function Production() {
     setPageNum(page)
     setPageSize(pageSize)
   }
-  const editUser = (type: boolean) => {
+  const editUser = (type: boolean, row: any) => {
+    setGetDetailsId(row.productId)
+    setExternalProduceOrderId(row.externalProduceOrderId)
     if (type === true) {
       setType(false)
       setIsModalVisible(true)
     } else {
+      setType(true)
       console.log('查看')
+      setIsModalVisible(true)
     }
   }
 
   const movApi = () => {
     console.log('删除逻辑')
   }
-  const content = { isModalVisible, setIsModalVisible, type }
+  const content = {
+    isModalVisible,
+    setIsModalVisible,
+    types,
+    getDetailsId,
+    externalProduceOrderId
+  }
   return (
     <div className={styles.qualification}>
       <div>
         <Title title={'生产单列表'} />
       </div>
+      <div>{/* <Dome /> */}</div>
       <div>
         <div className={styles.content}>
           <Forms FormData={FormData}></Forms>
           <Table
             className={styles.table}
             columns={columns}
-            dataSource={data}
+            dataSource={list}
+            loading={loading}
             rowKey={'id'}
             pagination={{
               //分页

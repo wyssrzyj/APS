@@ -29,6 +29,20 @@ export const getArea = async () => {
     console.log(e)
   }
 }
+// 工序外发 - 显示
+export const processOutsourcing = async () => {
+  try {
+    const res: ResponseProps =
+      (await axios.get(`/aps/outsource/out-process-get`)) || {}
+
+    if (res.code === 200) {
+      res.data = res.data || []
+      return dealData(res.data)
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
 
 export const delArea = async (id: any) => {
   try {
@@ -285,12 +299,14 @@ export const holidayListMov = async (params: any) => {
 // 系统参数 - 显示
 export const systemParameter = async () => {
   try {
-    const res: ResponseProps = (await axios.get(`/aps/system_config/get`)) || {}
+    const res: ResponseProps = await axios.get(`/aps/system_config/get`, {})
 
     if (res.code !== 200) {
       message.error(res.msg)
     }
     if (res) {
+      console.log(res)
+
       return res.data || []
     }
   } catch (e) {
@@ -304,6 +320,41 @@ export const systemParameters = async (params: any) => {
       `/aps/system_config/save-update`,
       params
     )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+// 生产单-列表
+export const productionList = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/product-order/list`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+// 工序-列表
+export const workingProcedure = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(`/aps/process/list`, params)
     if (res.code !== 200) {
       message.error(res.msg)
     }

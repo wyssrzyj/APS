@@ -87,7 +87,7 @@ const SchedulingResults = () => {
   useEffect(() => {
     console.log(sum)
   }, [sum])
-  const btn = () => {
+  const executionMethod = () => {
     setSum((f) => f + 1)
   }
 
@@ -96,7 +96,7 @@ const SchedulingResults = () => {
       <div>
         <Title title={'资源负荷图'} />
       </div>
-      {/* <button onClick={btn}>单机</button> */}
+      {/* <button onClick={executionMethod}>单机</button> */}
       <Forms FormData={FormData} treeData={treeData}></Forms>
       <div id="c1"></div>
       <Tbale />

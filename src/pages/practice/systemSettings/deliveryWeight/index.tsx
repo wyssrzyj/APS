@@ -33,7 +33,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
     data[index].delay = e
     useData([...data])
   }
-  const btn = (e: any, index: any) => {
+  const executionMethod = (e: any, index: any) => {
     if (index === 0) {
       useArr(String(list.unExpireTimeUnit))
     } else {
@@ -68,7 +68,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
             value={arr}
             style={{ width: 60 }}
             onSelect={(e: any) => {
-              btn(e, 0)
+              executionMethod(e, 0)
             }}
           >
             <Option value="1">天</Option>
@@ -101,7 +101,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
             value={delayArr}
             style={{ width: 60 }}
             onSelect={(e: any) => {
-              btn(e, 1)
+              executionMethod(e, 1)
             }}
           >
             <Option value="1">天</Option>

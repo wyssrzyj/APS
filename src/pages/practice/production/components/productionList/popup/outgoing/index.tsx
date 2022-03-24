@@ -2,10 +2,15 @@ import { Button, Checkbox, Form, Input, InputNumber, Table } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import React, { useEffect, useState } from 'react'
 
+import { practice } from '@/recoil/apis'
+
 // import Excl from '@/components/excel/Import/index'
 import styles from './index.module.less'
 import Popup from './Popup/index'
-const Outgoing = () => {
+
+const Outgoing = (props: any) => {
+  const { types, externalProduceOrderId } = props
+  const { processOutsourcing } = practice
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   interface Item {
@@ -15,27 +20,38 @@ const Outgoing = () => {
     address: string
   }
 
-  const originData = []
-  for (let i = 0; i < 20; i++) {
-    originData.push({
-      key: i.toString(),
-      name: `Edrward ${i}`,
-      age: 32,
-      need: false, //判断当前是否选中，
-      //   needDisabled: false, //判断当前是否失效，
-      outgoing: '88480',
-      address: `London Park no. ${i}`
-    })
-  }
+  // const originData = []
+  // for (let i = 0; i < 20; i++) {
+  //   originData.push({
+  //     key: i.toString(),
+  //     name: `Edrward ${i}`,
+  //     age: 32,
+  //     need: false, //判断当前是否选中，
+  //     //   needDisabled: false, //判断当前是否失效，
+  //     outgoing: '88480',
+  //     address: `London Park no. ${i}`
+  //   })
+  // }
   const [form] = Form.useForm()
-  const [data, setData] = useState(originData)
+  const [data, setData] = useState<any>([])
   const [editingKey, setEditingKey] = useState('')
+
+  useEffect(() => {
+    getList()
+  }, [])
 
   const isEditing = (record: Item) => record.key === editingKey
 
   useEffect(() => {
     console.log('测试', data)
   }, [data])
+
+  const getList = async () => {
+    const res = await processOutsourcing()
+    console.log('初始哈', res)
+    // setData()
+  }
+
   const edit = (record: Partial<Item> & { key: React.Key }) => {
     form.setFieldsValue({ name: '', age: '', address: '', ...record })
     setEditingKey(record.key)
@@ -73,7 +89,7 @@ const Outgoing = () => {
     {
       title: '序号',
       align: 'center',
-      dataIndex: 'name',
+      dataIndex: 'idx',
       render: (
         _value: any,
         _row: any,
@@ -91,17 +107,17 @@ const Outgoing = () => {
     {
       title: '工序名称',
       align: 'center',
-      dataIndex: 'name'
+      dataIndex: 'productName'
     },
     {
       title: '所属工段',
       align: 'center',
-      dataIndex: 'age'
+      dataIndex: 'section'
     },
     {
       title: '工序耗时',
       align: 'center',
-      dataIndex: 'section '
+      dataIndex: 'secondPlan '
     },
     {
       title: '需要外发',
@@ -113,7 +129,7 @@ const Outgoing = () => {
             <Checkbox
               //   disabled={record.needDisabled}
               checked={type}
-              onChange={(e) => btn(e, record, index)}
+              onChange={(e) => executionMethod(e, record, index)}
             />
           </div>
         )
@@ -122,7 +138,7 @@ const Outgoing = () => {
     {
       title: '外发时间',
       align: 'center',
-      dataIndex: 'outgoing',
+      dataIndex: 'outTime',
       editable: true,
       width: 200,
       render: (type: any | null | undefined, record: { need: any }) => {
@@ -139,7 +155,7 @@ const Outgoing = () => {
     }
   ]
   //核心
-  const btn = (e: CheckboxChangeEvent, record: any, index: any) => {
+  const executionMethod = (e: CheckboxChangeEvent, record: any, index: any) => {
     //展示状态
     const sum = data
     sum[index].need = e.target.checked
@@ -239,7 +255,7 @@ const Outgoing = () => {
       </Form>
       {/* <Excl /> */}
       <div>
-        <Button onClick={showModal} type="primary">
+        <Button onClick={showModal} type="primary" disabled={types}>
           整单外发
         </Button>
       </div>

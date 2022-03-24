@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Button, Modal, Tabs } from 'antd'
-import React, { useEffect } from 'react'
+import { Button, message, Modal, Tabs } from 'antd'
+import { isEmpty } from 'lodash'
+import React, { useEffect, useState } from 'react'
 
-// import styles from './tabPanes/'
+import styles from './index.module.less'
 import TabPanes from './tabPanes/index'
 
 function Material(props: {
@@ -11,6 +12,7 @@ function Material(props: {
   materialList: any
 }) {
   const { materialModal, setMaterialModal, materialList } = props
+  const [list, setList] = useState<any>() //处理后的数据
 
   useEffect(() => {
     console.log(materialList)
@@ -26,33 +28,50 @@ function Material(props: {
   const handleOk = () => {
     setMaterialModal(false)
   }
+
+  const dataReset = (e) => {
+    console.log('暴露的值', e)
+
+    setList(e)
+  }
+  const confirm = () => {
+    if (!isEmpty(list)) {
+      const hangInTheAir = list.filter((item) => item.satisfy !== true) //长度为空才能关闭
+      const sum: any = []
+      hangInTheAir.map((item) => {
+        sum.push(item.name)
+      })
+      message.warning(sum.join('、'))
+    }
+  }
+
   const callback = (key: any) => {}
   return (
     <div>
       <Modal
-        width={1200}
+        width={1300}
         visible={materialModal}
         centered={true}
         footer={null}
         onCancel={onCancel}
       >
         <Tabs onChange={callback} type="card">
-          {materialList.map(
-            (item: {
-              name: any | null | undefined
-              id: React.Key | null | undefined
-            }) => (
+          {materialList &&
+            materialList.map((item, index) => (
               <TabPane tab={item.name} key={item.id}>
-                <TabPanes />
+                <TabPanes
+                  index={index}
+                  materialList={materialList}
+                  dataReset={dataReset}
+                />
               </TabPane>
-            )
-          )}
+            ))}
         </Tabs>
         ,
-        <div>
-          <Button type="primary">齐套检查报告 </Button>
-          <Button type="primary">缺料报告 </Button>
-          <Button type="primary">确认</Button>
+        <div className={styles.bottom}>
+          <Button type="primary" onClick={confirm}>
+            确认
+          </Button>
           <Button type="primary" ghost onClick={onCancel}>
             取消
           </Button>
