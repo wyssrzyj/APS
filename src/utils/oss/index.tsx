@@ -1,12 +1,12 @@
 import * as OSS from 'ali-oss'
 
 const VITE_ACCESS_KEY_ID =
-  import.meta.env && import.meta.env.VITE_ACCESS_KEY_ID
+  import.meta && import.meta.env && import.meta.env.VITE_ACCESS_KEY_ID
     ? import.meta.env.VITE_ACCESS_KEY_ID
     : process.env.VITE_ACCESS_KEY_ID
 
 const VITE_ACCESS_KEY_SECRET =
-  import.meta.env && import.meta.env.VITE_ACCESS_KEY_SECRET
+  import.meta && import.meta.env && import.meta.env.VITE_ACCESS_KEY_SECRET
     ? import.meta.env.VITE_ACCESS_KEY_SECRET
     : process.env.VITE_ACCESS_KEY_SECRET
 

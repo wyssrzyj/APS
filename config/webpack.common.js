@@ -24,7 +24,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: 'js/[name].[chunkhash:6].bundle.js',
-    publicPath: '/',
+    publicPath: './',
     assetModuleFilename: 'images/[hash:6][ext][query]'
   },
   plugins: [
@@ -35,7 +35,7 @@ module.exports = {
     // new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: '初始项目',
-      template: path.resolve(__dirname, '../index.html'),
+      template: path.resolve(__dirname, '../index-webpack.html'),
       filename: 'index.html'
       // favicon: path.resolve(__dirname, '../src/assets/favicon.ico'),
     }),
