@@ -58,6 +58,7 @@
     "@types/react-dom": "^17.0.10",
     "@types/recoil": "^0.0.9",
     "@types/uuid": "^8.3.4",
+    "@types/xlsx": "^0.0.36",
     "@typescript-eslint/eslint-plugin": "^5.11.0",
     "@typescript-eslint/parser": "^5.11.0",
     "@vitejs/plugin-react": "^1.0.7",
