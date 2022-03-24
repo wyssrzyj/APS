@@ -20,18 +20,19 @@ const Outgoing = (props: any) => {
     address: string
   }
 
-  // const originData = []
-  // for (let i = 0; i < 20; i++) {
-  //   originData.push({
-  //     key: i.toString(),
-  //     name: `Edrward ${i}`,
-  //     age: 32,
-  //     need: false, //判断当前是否选中，
-  //     //   needDisabled: false, //判断当前是否失效，
-  //     outgoing: '88480',
-  //     address: `London Park no. ${i}`
-  //   })
-  // }
+  const originData = []
+  for (let i = 0; i < 20; i++) {
+    originData.push({
+      key: i.toString(),
+      name: `Edrward ${i}`,
+      age: 32,
+      need: false, //判断当前是否选中，
+      //   needDisabled: false, //判断当前是否失效，
+      outgoing: '88480',
+      address: `London Park no. ${i}`
+    })
+  }
+
   const [form] = Form.useForm()
   const [data, setData] = useState<any>([])
   const [editingKey, setEditingKey] = useState('')
@@ -44,10 +45,19 @@ const Outgoing = (props: any) => {
 
   useEffect(() => {
     console.log('测试', data)
+    //改个域名 重新构建
   }, [data])
 
   const getList = async () => {
     const res = await processOutsourcing()
+    // need: false, //判断当前是否选中，
+
+    //获取数据后 添加一个字段用于单选框的选中  当所属工段为外发的时候 必定打钩且不能关闭
+    console.log()
+    // originData.map(item=>{
+    //   item.need=
+    // })
+
     console.log('初始哈', res)
     // setData()
   }

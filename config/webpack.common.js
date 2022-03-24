@@ -13,7 +13,7 @@ const port = 8005
 
 const hosts = new Map()
 hosts.set('development', 'http://192.168.69.88:8000')
-hosts.set('test', 'http://8.136.225.110:8888/')
+hosts.set('test', 'http://101.37.116.101:8000')
 hosts.set('production', 'http://47.97.217.13:8888/')
 
 module.exports = {

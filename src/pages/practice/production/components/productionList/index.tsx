@@ -101,7 +101,7 @@ function Production() {
       key: 'planEndDate',
       align: 'center',
       dataIndex: 'planEndDate',
-      render: (v) => {
+      render: (v: any) => {
         return <div>{moment(v).format('YYYY-MM-DD')}</div>
       }
     },
