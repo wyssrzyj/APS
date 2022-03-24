@@ -49,7 +49,7 @@ const Outgoing = (props: any) => {
 
   const getList = async () => {
     const res = await processOutsourcing(externalProduceOrderId)
-    // need: false, //判断当前是否选中，.
+    // need: false, //判断当前是否选中，
 
     //获取数据后 添加一个字段用于单选框的选中  当所属工段为外发的时候 必定打钩且不能关闭
     // originData.map(item=>{
