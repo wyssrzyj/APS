@@ -1,4 +1,5 @@
-import { Form, Modal, Tabs } from 'antd'
+import { Form, message, Modal, Tabs } from 'antd'
+import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { practice } from '@/recoil/apis'
@@ -18,12 +19,14 @@ function Popup(props: { content: any }) {
     externalProduceOrderId
   } = content
 
-  const { workingProcedure } = practice
+  const { workingProcedure, popupPreservation } = practice
 
   const { TabPane } = Tabs
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
-  const [list, setList] = useState<any>() //总数据
+
+  const [usedList, setUsedList] = useState<any>([]) //老数据
+  const [list, setList] = useState<any>([]) //新数据
   const [data, setData] = useState<any>() //form的单个数据
   const [caseIds, setCaseIds] = useState<any>([]) //存放id
   const defaultPageSize = 10
@@ -32,9 +35,10 @@ function Popup(props: { content: any }) {
     pageSize: defaultPageSize,
     productId: getDetailsId
   })
-  useEffect(() => {
-    console.log('测试存放id', caseIds)
-  }, [caseIds])
+
+  const [localData, setLocalData] = useState<any>([]) //工艺数据
+  const [outgoing, setOutgoing] = useState<any>([]) //外发数据
+
   useEffect(() => {
     if (getDetailsId !== undefined) {
       setParams({ ...params, productId: getDetailsId })
@@ -49,70 +53,98 @@ function Popup(props: { content: any }) {
 
   const getDetails = async (params: any) => {
     const res: any = await workingProcedure(params)
-    setList(res.records)
-    getFormData(res.records[0]) //初始化获取第一条数据
+    setUsedList(res.records)
   }
 
+  //判断本地是否有值 有的就重新处理
   useEffect(() => {
-    form.resetFields()
-  }, [])
-
-  const getFormData = (value: any) => {
-    const first = caseIds.indexOf(value.idx)
-    //防止添加重复
-    if (first === -1) {
-      caseIds.push(value.idx)
+    if (!isEmpty(localData)) {
+      localData.map((item: any) => {
+        oldAndNewFilter(item, usedList)
+      })
+    } else {
+      setList(usedList)
+      getFormData(usedList[0])
     }
+  }, [usedList, localData])
+
+  //  **判断接口数据中  是否有本地数据  有则替换**
+  const oldAndNewFilter = (v: any, total: any) => {
+    const saveIndex = total.findIndex((item: any) => item.idx === v.idx)
+    if (saveIndex !== -1) {
+      total.splice(saveIndex, 1, v)
+      setList([...total])
+    }
+  }
+
+  //把数据传递给底部from
+  const getFormData = (value: any) => {
     setCaseIds([...caseIds])
+
     setData(value)
   }
-  //过滤数据
-  const filterData = (id: any, data: any) => {
-    const treated = data.filter((item: any) => item.idx === id)
-    return treated
+  //**底部form返回的数据
+  const FormData = (e: any) => {
+    localDataHandle(e)
   }
-  // 处理数据
-  const handle = (ids: any, data: any) => {
-    const arr = ids.map((item: any) => {
-      return filterData(item, data)
-    })
-    console.log('后台要的数据', arr.flat(Infinity))
+  // *** 判断本地数组是否有 有添加反之且替换**
+  const localDataHandle = (data: any) => {
+    // 单条数据
+    const saveIndex = localData.findIndex((item: any) => item.idx === data.idx) //找下表
+    if (saveIndex === -1) {
+      setLocalData([...localData, data])
+    } else {
+      localData.splice(saveIndex, 1, data) //处理后的数据
+      setLocalData([...localData])
+    }
   }
 
-  const handleOk = () => {
-    //工艺路线的保存逻辑处理
-    handle(caseIds, list)
-    // setIsModalVisible(false)
+  const handleOk = async () => {
+    if (!types) {
+      const arr = await popupPreservation({
+        productId: getDetailsId,
+        externalProduceOrderId: externalProduceOrderId,
+        outsourceProcessDTOList: outgoing,
+        processDTOList: localData
+      })
+      if (arr) {
+        message.success('保存成功')
+        handleCancel()
+      }
+    } else {
+      handleCancel()
+    }
   }
 
   const handleCancel = () => {
     setIsModalVisible(false)
   }
+  const preservation = (e: any) => {
+    setOutgoing(e)
+  }
 
-  //**底部form返回的数据
-  const FormData = (e: any) => {
-    console.log('当前数据', e.idx)
-
-    const subscript = list.findIndex((item: any) => item.idx === e.idx)
-    list.splice(subscript, 1, e) //处理后的数据
-    setList([...list])
+  const paging = (e: any, v: any) => {
+    setParams({ pageNum: e, pageSize: v, productId: getDetailsId })
   }
 
   return (
     <div>
       <Modal
         width={1000}
-        // title={type ? '新增加班' : '编辑加班'}
         visible={isModalVisible}
         onOk={handleOk}
-        okText="保存"
+        okText={types ? '确认' : '保存'}
         onCancel={handleCancel}
-        // footer={[<Button onClick={equipmentHandleCancel}>取消</Button>]}
         centered={true}
       >
         <Tabs type="card">
           <TabPane tab="工艺路线" key="1">
-            <Tables list={list} getFormData={getFormData} types={types} />
+            <Tables
+              list={list}
+              getFormData={getFormData}
+              types={types}
+              paging={paging}
+            />
             <div className={styles.forms}>
               <Forms
                 FormData={FormData}
@@ -125,6 +157,7 @@ function Popup(props: { content: any }) {
           <TabPane tab="外发管理" key="2">
             <Outgoing
               types={types}
+              preservation={preservation}
               externalProduceOrderId={externalProduceOrderId}
             />
           </TabPane>

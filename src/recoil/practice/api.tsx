@@ -31,15 +31,25 @@ export const getArea = async () => {
 }
 // 工序外发 - 显示
 export const processOutsourcing = async (params: any) => {
-  console.log('id', params)
-
   try {
     const res: ResponseProps =
       (await axios.get(`/aps/outsource/out-process-get`, params)) || {}
 
     if (res.code === 200) {
-      console.log(res)
+      return res.data
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
 
+// 整单外发-显示
+export const wholeOrder = async (params: any) => {
+  try {
+    const res: ResponseProps =
+      (await axios.get(`/aps/outsource/get`, params)) || {}
+
+    if (res.code === 200) {
       return res.data
     }
   } catch (e) {
@@ -69,6 +79,42 @@ export const workingModes = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
       `/aps/work-calendar/work-mode-list`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//工序和外发-保存
+export const popupPreservation = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/outsource/out-and-process-save`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//整单外发-保存或者更新
+export const outboundSave = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/outsource/save-update`,
       params
     )
     if (res.code !== 200) {

@@ -2,9 +2,8 @@ import { Table } from 'antd'
 import React, { useState } from 'react'
 
 import styles from './index.module.less'
-
 function Tables(props: any) {
-  const { getFormData, list, types } = props
+  const { getFormData, list, paging, types } = props
 
   const map = new Map()
   map.set('1', '裁剪')
@@ -72,6 +71,7 @@ function Tables(props: any) {
   ) => {
     setPageNum(page)
     setPageSize(pageSize)
+    paging && paging(page, pageSize)
   }
   return (
     <div className={styles.table}>
@@ -80,14 +80,13 @@ function Tables(props: any) {
         dataSource={list || []}
         rowKey={'idx'}
         pagination={{
+          disabled: types,
           size: 'small',
           //分页
           showSizeChanger: true,
-          // showQuickJumper: true, //是否快速查找
           pageSize, //每页条数
           current: pageNum, //	当前页数
           total, //数据总数
-          // position: ['bottomCenter'], //居中
           pageSizeOptions: ['5', '10', '20', '50'],
           onChange: onPaginationChange //获取当前页码是一个function
         }}

@@ -1,18 +1,21 @@
-import { Button, Col, Form, Image, Input, message, Row, TreeSelect } from 'antd'
+import { Col, Form, Input, InputNumber, message, Row, TreeSelect } from 'antd'
 import { debounce } from 'lodash' //防抖
+import { isEmpty } from 'lodash'
 import React, { useEffect } from 'react'
 
 import { getChild } from '@/components/getChild'
 
 import styles from './index.module.less'
 
-function Forms(props: any) {
+function Forms(props: { FormData: any; data: any; types: any; list: any }) {
   const { FormData, data, types, list } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const { validateFields } = form
   useEffect(() => {
-    form.setFieldsValue(data)
+    if (!isEmpty(data)) {
+      form.setFieldsValue(data)
+    }
   }, [types, data])
 
   const { SHOW_PARENT } = TreeSelect
@@ -94,21 +97,18 @@ function Forms(props: any) {
       span: 15
     }
   }
-  const executionMethod = () => {
-    form.submit()
-  }
+
   const onFinish = (values: any) => {
-    console.log('Success:', values)
     if (values.workTeam) {
       values.workTeam = getChild(values.workTeam, treeData) //下拉多选的处理
     }
-    // form.resetFields() //清除form中的数据
     message.success('修改成功')
   }
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
-    FormData && FormData(values)
+    FormData &&
+      FormData({ ...values, externalProcessId: data.externalProcessId })
   }, 500)
 
   const getValueFromEvent = (event: any, type = 'text') => {
@@ -118,9 +118,8 @@ function Forms(props: any) {
     })
     // ****根据不同的返回不同的数据
     if (type === 'input') {
-      return event.target.value
+      return event
     }
-
     return event
   }
 
@@ -160,11 +159,7 @@ function Forms(props: any) {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item
-              label="工序代码"
-              name="productCode"
-              // rules={[{ required: true, message: '请选择工序代码!' }]}
-            >
+            <Form.Item label="工序代码" name="productCode">
               <Input
                 maxLength={100}
                 placeholder="请选择工序代码"
@@ -176,22 +171,12 @@ function Forms(props: any) {
         <Row>
           <Col span={8}>
             <Form.Item label="所属工段" name="section">
-              {/* <Input
-                maxLength={100}
-                placeholder="请输入所属工段"
-                disabled={true}
-              /> */}
               <TreeSelect {...tProps} disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="工序耗时" name="secondPlan">
-              <Input
-                maxLength={100}
-                placeholder="请输入工序耗时"
-                suffix="秒"
-                disabled={true}
-              />
+              <InputNumber addonAfter="S" disabled={true} defaultValue={100} />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -202,11 +187,10 @@ function Forms(props: any) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input
-                maxLength={100}
-                placeholder="请输入固定用时"
-                suffix="天"
+              <InputNumber
+                addonAfter="天"
                 disabled={types}
+                defaultValue={100}
               />
             </Form.Item>
           </Col>
@@ -220,12 +204,7 @@ function Forms(props: any) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input
-                maxLength={100}
-                placeholder="请输入时间"
-                suffix="秒"
-                disabled={types}
-              />
+              <InputNumber addonAfter="S" disabled={types} defaultValue={100} />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -236,12 +215,7 @@ function Forms(props: any) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input
-                maxLength={100}
-                placeholder="请输入时间"
-                suffix="秒"
-                disabled={types}
-              />
+              <InputNumber addonAfter="S" disabled={types} defaultValue={100} />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -252,11 +226,7 @@ function Forms(props: any) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input
-                maxLength={100}
-                placeholder="请输入前工序完成量"
-                disabled={types}
-              />
+              <InputNumber addonAfter="" disabled={types} defaultValue={100} />
             </Form.Item>
           </Col>
         </Row>
@@ -269,11 +239,10 @@ function Forms(props: any) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input
-                maxLength={100}
-                placeholder="请输入时间"
-                suffix="天"
+              <InputNumber
+                addonAfter="天"
                 disabled={types}
+                defaultValue={100}
               />
             </Form.Item>
           </Col>
@@ -283,14 +252,6 @@ function Forms(props: any) {
             </Form.Item>
           </Col>
         </Row>
-        <Button
-          className={styles.executionMethod}
-          type="primary"
-          disabled={types}
-          onClick={executionMethod}
-        >
-          确认
-        </Button>
       </Form>
     </div>
   )

@@ -1,15 +1,30 @@
-import { DatePicker, Form, Input, Modal, Radio } from 'antd'
+import { DatePicker, Form, Input, message, Modal, Radio } from 'antd'
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-const Popup = (props: { isModalVisible: any; setIsModalVisible: any }) => {
-  const { isModalVisible, setIsModalVisible } = props
-  const [value, setValue] = useState(1)
+import { practice } from '@/recoil/apis'
+const Popup = (props: any) => {
+  const {
+    isModalVisible,
+    setIsModalVisible,
+    externalProduceOrderId,
+    outgoing,
+    editHandle
+  } = props
+  const { outboundSave } = practice
+  const [value, setValue] = useState<any>(1)
   const onChange = (e: any) => {
     setValue(e.target.value)
   }
+
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
+  useEffect(() => {
+    if (outgoing !== undefined) {
+      outgoing.allPresentTime = moment(outgoing.allPresentTime)
+      form.setFieldsValue(outgoing)
+    }
+  }, [outgoing])
 
   const handleOk = () => {
     form.submit()
@@ -18,12 +33,13 @@ const Popup = (props: { isModalVisible: any; setIsModalVisible: any }) => {
   const handleCancel = () => {
     setIsModalVisible(false)
   }
-  const onFinish = (values: any) => {
-    console.log('Success:', values)
-    console.log(moment(values.startTime).valueOf())
-    console.log(moment(values.endTime).valueOf())
 
-    // setIsModalVisible(false)
+  const onFinish = async (values: any) => {
+    values.externalProduceOrderId = externalProduceOrderId
+    values.allPresentTime = `${moment(values.allPresentTime).valueOf()}`
+    await outboundSave(values)
+    editHandle && editHandle()
+    setIsModalVisible(false)
   }
   return (
     <div>
@@ -43,20 +59,20 @@ const Popup = (props: { isModalVisible: any; setIsModalVisible: any }) => {
           onFinish={onFinish}
           autoComplete="off"
         >
-          <Form.Item label="外发物料" name="startTime1">
+          <Form.Item label="外发物料" name="outProductFlag">
             <Radio.Group onChange={onChange} value={value}>
               <Radio value={1}>是</Radio>
-              <Radio value={2}>否</Radio>
+              <Radio value={0}>否</Radio>
             </Radio.Group>
           </Form.Item>
-          <Form.Item label="最早物料齐套时间" name="startTime2">
+          <Form.Item label="最早物料齐套时间" name="allPresentTime">
             <DatePicker />
           </Form.Item>
-          <Form.Item label="外发用时" name="startTime3">
+          <Form.Item label="外发用时" name="outTime">
             <Input placeholder="请输入外发用时" suffix="天" />
           </Form.Item>
 
-          <Form.Item label="回厂加工用时" name="endTime4">
+          <Form.Item label="回厂加工用时" name="inTime">
             <Input placeholder="请输入回厂加工用时" suffix="天" />
           </Form.Item>
         </Form>
