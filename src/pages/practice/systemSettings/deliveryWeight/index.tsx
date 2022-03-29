@@ -19,8 +19,6 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
   const { Option } = Select
 
   useEffect(() => {
-    console.log('测试', list)
-
     if (list.unExpireTimeUnit !== undefined) {
       useArr(String(list.unExpireTimeUnit))
       data[0].day = String(list.unExpireTimeUnit)
@@ -59,7 +57,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
   return (
     <div>
       <Row className={styles.NoExtended}>
-        <Col span={5}>
+        <Col span={6}>
           未延期:　
           <InputNumber
             value={data[0].delay}
@@ -92,7 +90,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
         </Col>
       </Row>
       <Row className={styles.NoExtended}>
-        <Col span={5}>
+        <Col span={6}>
           已延期:　
           <InputNumber
             value={data[1].delay}
