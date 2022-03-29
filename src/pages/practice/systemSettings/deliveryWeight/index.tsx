@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { Col, InputNumber, Row, Select } from 'antd'
-import _, { isEmpty, isNil } from 'lodash'
+import { isNil } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
