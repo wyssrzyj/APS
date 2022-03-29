@@ -14,7 +14,7 @@ const port = 8005
 const hosts = new Map()
 hosts.set('development', 'http://101.37.116.101:8000')
 hosts.set('test', 'http://101.37.116.101:8000')
-hosts.set('production', 'http://47.97.217.13:8888/')
+hosts.set('production', 'http://101.37.116.101:8000/')
 
 module.exports = {
   entry: ['@babel/polyfill', path.resolve(__dirname, '../src/main.tsx')],
