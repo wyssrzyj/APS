@@ -354,8 +354,6 @@ export const systemParameter = async () => {
       message.error(res.msg)
     }
     if (res) {
-      console.log(res)
-
       return res.data || []
     }
   } catch (e) {

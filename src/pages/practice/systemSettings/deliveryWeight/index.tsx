@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { Col, InputNumber, Row, Select } from 'antd'
-import { isEmpty, isNil } from 'lodash'
+import _, { isEmpty, isNil } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
@@ -19,10 +19,15 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
   const { Option } = Select
 
   useEffect(() => {
-    useArr(String(list.unExpireTimeUnit))
+    console.log('测试', list)
+
+    if (list.unExpireTimeUnit !== undefined) {
+      useArr(String(list.unExpireTimeUnit))
+      data[0].day = String(list.unExpireTimeUnit)
+    }
     useDelayArr(String(list.expireTimeUnit))
     data[0].delay = list.unExpireTime
-    data[0].day = String(list.unExpireTimeUnit)
+
     data[0].weight = list.unExpireWeight
     data[1].delay = list.expireTime
     data[1].day = String(list.expireTimeUnit)
