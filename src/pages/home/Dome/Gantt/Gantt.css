@@ -1,0 +1,156 @@
+.gantt-container {
+  height: calc(100vh - 50px - 200px);
+}
+.weekend {
+  background: red;
+}
+
+.gantt_selected .weekend {
+  background: pink;
+}
+
+.gantt_task_link:hover .gantt_line_wrapper div {
+  box-shadow: 0 0 5px 0 yellowgreen;
+  background: yellowgreen;
+}
+
+.gantt_task_link:hover .gantt_link_arrow_left,
+.gantt_task_link:hover .gantt_link_arrow_right {
+  border-left-color: yellowgreen !important;
+  border-right-color: yellowgreen !important;
+}
+
+.left-container {
+  height: 800px;
+}
+/* 左侧菜单字 */
+.gantt_grid_head_cell {
+  font-size: 14px;
+  font-weight: bold;
+}
+.gantt_grid_scale .gantt_grid_head_cell {
+  color: rgb(28, 160, 127);
+}
+/* 右侧条 */
+.gantt_task_line {
+  border-radius: 55px;
+}
+.gantt_task_line {
+  background-color: rgb(150, 153, 156);
+  /* background-color:rgba(150, 153, 156, 0.61); */
+  border: auto;
+  /* border: 1px solid rgb(150, 153, 156) */
+}
+.gantt_task_progress {
+  /* background-color:rgb(243, 224, 78); */
+  background-color: #1890ff;
+  /* background-color:#42b983 */
+}
+/* 选中 */
+.gantt_task_row.gantt_selected {
+  background: #f8ec3c31;
+}
+.gantt_grid_data .gantt_row.gantt_selected {
+  background: #f8ec3c31;
+}
+.gantt_grid_data .gantt_row.odd.gantt_selected {
+  background: #f8ec3c31;
+}
+/* 表格线 */
+.gantt_task_cell {
+  border-right: 0;
+}
+/* 左侧图标 打开 */
+/* 主干 */
+.gantt_tree_icon.gantt_folder_open {
+  background-image: url('https://i.52112.com/icon/jpg/256/20200821/88749/3687127.jpg');
+  width: 12px;
+  height: 100%;
+  background-size: contain;
+  background-position: 50%;
+  margin-right: 0.3rem;
+}
+/* 分支 */
+.gantt_tree_icon.gantt_file {
+  background-image: url('https://i.52112.com/icon/jpg/256/20200729/85619/3735480.jpg');
+  width: 12px;
+  height: 100%;
+  background-size: contain;
+  background-position: 50%;
+  margin-right: 0.3rem;
+}
+/* 加号 */
+.gantt_tree_icon.gantt_open {
+  background-image: url('https://i.52112.com/icon/jpg/256/20161117/3733/197524.jpg');
+  width: 12px;
+  height: 100%;
+  background-size: contain;
+  background-position: 50%;
+  margin-right: 0.3rem;
+}
+/* 左侧图标 关闭 */
+/* 主干 */
+.gantt_tree_icon.gantt_folder_closed {
+  background-image: url('https://i.52112.com/icon/jpg/256/20200821/88749/3687127.jpg');
+  width: 12px;
+  height: 100%;
+  background-size: contain;
+  background-position: 50%;
+  margin-right: 0.3rem;
+}
+/* 减号 */
+.gantt_tree_icon.gantt_close {
+  background-image: url('https://i.52112.com/icon/jpg/256/20190807/52484/2373424.jpg');
+  width: 12px;
+  height: 100%;
+  background-size: contain;
+  background-position: 50%;
+  margin-right: 0.3rem;
+}
+/* 左侧背景 */
+.gantt_grid_scale {
+  background-color: #11a98318;
+}
+.gantt_grid_data {
+  /* background-color:#11a98318 */
+  background-color: #11a98318;
+}
+/* 右侧横条弹框 */
+.gantt_btn_set.gantt_save_btn_set {
+  background-color: #1890ff;
+}
+.gantt_btn_set.gantt_delete_btn_set {
+  background-color: rgb(243, 224, 78);
+}
+.gantt_btn_set.gantt_cancel_btn_set {
+  background-color: rgba(150, 153, 156, 0.27);
+}
+
+.gantt_task_link.link-type-0 .gantt_line_wrapper:nth-of-type(2)::before {
+  content: 'fs';
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  font-size: 16px;
+}
+.gantt_task_link.link-type-1 .gantt_line_wrapper:nth-of-type(2)::before {
+  content: 'ss';
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  font-size: 16px;
+}
+.gantt_task_link.link-type-2 .gantt_line_wrapper:nth-of-type(2)::before {
+  content: 'ff';
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  font-size: 16px;
+}
+.gantt_task_link.link-type-3 .gantt_line_wrapper:nth-of-type(2)::before {
+  content: 'sf';
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  font-size: 16px;
+}

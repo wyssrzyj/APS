@@ -1,5 +1,5 @@
 import { Col, DatePicker, Form, Input, Row, Select } from 'antd'
-import { debounce } from 'lodash' //防抖
+import { debounce } from 'lodash'
 import moment from 'moment'
 import React from 'react'
 const { RangePicker } = DatePicker
@@ -14,9 +14,8 @@ const layout = {
   }
 }
 
-function index(props: { FormData: any }) {
+const HeaderForm = (props: { FormData: any }) => {
   const { FormData } = props
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm() //第二步.
   const { validateFields } = form
 
@@ -25,13 +24,10 @@ function index(props: { FormData: any }) {
     FormData && FormData(values)
   }, 500)
 
-  //第5步 这个方法 会根据type的值来 return 返回不同的值
   const getValueFromEvent = (event: any, type = 'text') => {
-    // 可根据需要 通过 setFieldsValue 设置联动效果
     setTimeout(async () => {
       await handleSubmit()
     })
-    // ****根据不同的返回不同的数据
     if (type === 'input') {
       return event.target.value
     }
@@ -54,17 +50,13 @@ function index(props: { FormData: any }) {
   ]
   return (
     <div>
-      <Form
-        form={form} //第一步
-      >
+      <Form form={form}>
         <Row>
           <Col span={8}>
             <Form.Item
               {...layout}
               name="production"
               label="工厂名称"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -87,8 +79,6 @@ function index(props: { FormData: any }) {
               {...layout}
               name="sales"
               label="工序名称"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -101,8 +91,6 @@ function index(props: { FormData: any }) {
               {...layout}
               name="productName"
               label="生产单号"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -117,8 +105,6 @@ function index(props: { FormData: any }) {
               {...layout}
               name="number"
               label="所属工段"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -141,8 +127,6 @@ function index(props: { FormData: any }) {
               {...layout}
               name="completionTime1"
               label="计划开始日期"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'picker')
               }
@@ -155,8 +139,6 @@ function index(props: { FormData: any }) {
               {...layout}
               name="completionTime"
               label="计划结束日期"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'picker')
               }
@@ -170,4 +152,4 @@ function index(props: { FormData: any }) {
   )
 }
 
-export default index
+export default HeaderForm

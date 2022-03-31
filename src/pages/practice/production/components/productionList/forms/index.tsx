@@ -12,10 +12,10 @@ const layout = {
   }
 }
 
-function index(props: { FormData: any }) {
+const HeaderForm = (props: { FormData: any }) => {
   const { FormData } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [form] = Form.useForm() //第二步.
+  const [form] = Form.useForm()
   const { validateFields } = form
 
   const handleSubmit = debounce(async () => {
@@ -23,13 +23,10 @@ function index(props: { FormData: any }) {
     FormData && FormData(values)
   }, 500)
 
-  //第5步 这个方法 会根据type的值来 return 返回不同的值
   const getValueFromEvent = (event: any, type = 'text') => {
-    // 可根据需要 通过 setFieldsValue 设置联动效果
     setTimeout(async () => {
       await handleSubmit()
     })
-    // ****根据不同的返回不同的数据
     if (type === 'input') {
       return event.target.value
     }
@@ -43,17 +40,13 @@ function index(props: { FormData: any }) {
 
   return (
     <div>
-      <Form
-        form={form} //第一步
-      >
+      <Form form={form}>
         <Row>
           <Col span={8}>
             <Form.Item
               {...layout}
               name="production"
               label="生产单号"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -66,8 +59,6 @@ function index(props: { FormData: any }) {
               {...layout}
               name="sales"
               label="销售单号"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -80,8 +71,6 @@ function index(props: { FormData: any }) {
               {...layout}
               name="productName"
               label="产品名称"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -96,8 +85,6 @@ function index(props: { FormData: any }) {
               {...layout}
               name="number"
               label="产品款号"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -110,8 +97,6 @@ function index(props: { FormData: any }) {
               {...layout}
               name="customer"
               label="客户款号"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -124,8 +109,6 @@ function index(props: { FormData: any }) {
               {...layout}
               name="completionTime"
               label="计划完成日期"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'picker')
               }

@@ -192,7 +192,7 @@ const Register = () => {
       <Form
         form={form}
         scrollToFirstError={true}
-        className={styles.form}
+        className={styles.formContainer}
         onValuesChange={onValuesChange}
       >
         <Form.Item

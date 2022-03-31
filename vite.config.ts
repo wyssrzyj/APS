@@ -9,7 +9,7 @@ export default defineConfig({
     port: 8005,
     open: true,
     proxy: {
-      '/aps': 'http://192.168.69.88:8000'
+      '/aps': 'http://101.37.116.101:8000'
     }
   },
   css: {
