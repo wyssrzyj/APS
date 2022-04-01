@@ -3,13 +3,16 @@ import React, { useState } from 'react'
 
 import { Title } from '@/components'
 
+import Dome from './Dome/index'
 import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
 import Popup from './popup'
 import ProductionOrder from './productionOrder/index'
 import RuleScheduling from './ruleScheduling/index'
+import ToPlan from './toPlan'
 import Verification from './verification/index'
+
 function Index() {
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
@@ -83,14 +86,19 @@ function Index() {
       <div>
         <div className={styles.content}>
           <Forms FormData={FormData}></Forms>
-          <div className={styles.inspection}>
-            <ProductionOrder list={list} />
+          <div className={styles.team}>
+            <div className={styles.leftContent}>
+              <ToPlan />
+            </div>
+            {/* 甘特图 */}
+            <div className={styles.rightContent}>
+              <Dome />
+            </div>
           </div>
-          {/* 甘特图 */}
+
           <Button type="primary" onClick={executionMethod}>
             编辑
           </Button>
-          <div>甘特图</div>
 
           <Button type="primary" danger onClick={start}>
             删除

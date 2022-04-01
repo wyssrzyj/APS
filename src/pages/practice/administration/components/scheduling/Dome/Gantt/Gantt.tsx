@@ -1,12 +1,10 @@
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 
 import { gantt } from 'dhtmlx-gantt'
-import moment from 'moment'
-import React, { Component, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 function Gantt(props: any) {
   const { zoom, tasks, onDataUpdated, updateList } = props
-  const [list, setList] = useState([])
 
   const chartDom = document.getElementById('main') //获取id
 
@@ -17,8 +15,17 @@ function Gantt(props: any) {
     gantt.config.order_branch = true // 左侧可以拖动
     gantt.config.sort = true //左侧点击表头排序
     // gantt.config.drag_move = true //是否可以移动
-    // gantt.config.drag_progress = false //拖放进度
-    gantt.config.drag_resize = true //控制大小
+    gantt.config.drag_progress = false //拖放进度
+    gantt.config.drag_resize = false //控制大小
+    gantt.config.show_links = false //控制两端的线是否可以拖动
+    //表头
+    gantt.config.columns = [
+      { name: 'text', label: '名称', tree: true, width: '180' },
+      { name: 'start_date', label: '时间', align: 'center' }
+      // { name: 'duration', label: 'Duration', align: 'center' }
+      // { name: 'add', label: '' },
+    ]
+
     gantt.ext.zoom.init({
       levels: [
         {
@@ -56,10 +63,7 @@ function Gantt(props: any) {
       'onBeforeTaskDrag',
       function (id: any, mode: any, e: any) {
         const task = gantt.getTask(id)
-        // console.log('onBeforeTaskDrag', id, mode, e, task)
-        // console.log('task', task)
-
-        if (task.id === 1) {
+        if (task.type === true) {
           return false
         } else {
           return true
@@ -122,14 +126,14 @@ function Gantt(props: any) {
         }
       },
       link: {
-        create: function (data) {
+        create: function (data: any) {
           //线的操作
           console.log('link.create----------------------', data)
         },
-        update: function (data, id) {
+        update: function (_data: any) {
           console.log('link.update----------------------')
         },
-        delete: function (id) {
+        delete: function () {
           console.log('link.delete----------------------')
         }
       }
@@ -151,7 +155,6 @@ function Gantt(props: any) {
   useEffect(() => {
     if (tasks) {
       componentDidMount(tasks)
-      setList(tasks)
     }
   }, [tasks])
 
@@ -159,19 +162,6 @@ function Gantt(props: any) {
     gantt.createDataProcessor((type: any, action: any, item: any, id: any) => {
       return new Promise<void>((resolve, reject) => {
         if (onDataUpdated) {
-          // console.log(item)
-
-          // console.log(
-          //   '开始',
-          //   moment(gantt.getTask('1|0').start_date).format(
-          //     'YYYY-MM-DD HH:mm:ss'
-          //   )
-          // )
-          // console.log(
-          //   '结束',
-          //   moment(gantt.getTask('1|0').end_date).format('YYYY-MM-DD HH:mm:ss')
-          // )
-
           onDataUpdated(type, action, item, id)
         }
         return resolve()

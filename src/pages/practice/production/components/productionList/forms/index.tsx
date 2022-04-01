@@ -122,4 +122,4 @@ const HeaderForm = (props: { FormData: any }) => {
   )
 }
 
-export default index
+export default HeaderForm

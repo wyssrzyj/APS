@@ -26,7 +26,6 @@ const Home = () => {
       <input value={value} onChange={(e) => setValue(e.target.value)} />
       <button onClick={executionMethod}>存全局的id</button>
       <div>lyj：{name}</div>
-      <Dome />
     </div>
   )
 }
