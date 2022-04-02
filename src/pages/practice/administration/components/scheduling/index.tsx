@@ -1,5 +1,5 @@
-import { Button, message } from 'antd'
-import React, { useState } from 'react'
+import { Button, message, Tree } from 'antd'
+import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
 
@@ -24,7 +24,7 @@ function Index() {
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
   const [scheduling, setScheduling] = useState(false) //规则排程弹窗
   const [schedule, setSchedule] = useState(false) //校验排程弹窗
-
+  const [remind, setRemind] = useState() //甘特图高亮
   const data = []
   for (let i = 0; i < 5; i++) {
     data.push({
@@ -71,13 +71,21 @@ function Index() {
   const scheduleBtn = () => {
     setSchedule(true)
   }
-  const content = { isModalVisible, setIsModalVisible }
-  const list = [
-    { name: '111111', id: 1 },
-    { name: '22222', id: 2 },
-    { name: '33333', id: 3 }
-  ]
 
+  const onSelect = (selectedKeys: React.Key[], info: any) => {
+    console.log('selected', selectedKeys, info)
+  }
+
+  const onCheck = (checkedKeys: React.Key[], info: any) => {
+    console.log('onCheck', checkedKeys, info)
+  }
+
+  //甘特图左键
+  const setHighlighted = (e: React.SetStateAction<undefined>) => {
+    setRemind(e)
+  }
+
+  const content = { isModalVisible, setIsModalVisible }
   return (
     <div className={styles.qualification}>
       <div>
@@ -88,11 +96,11 @@ function Index() {
           <Forms FormData={FormData}></Forms>
           <div className={styles.team}>
             <div className={styles.leftContent}>
-              <ToPlan />
+              <ToPlan remind={remind} />
             </div>
             {/* 甘特图 */}
             <div className={styles.rightContent}>
-              <Dome />
+              <Dome setHighlighted={setHighlighted} />
             </div>
           </div>
 
@@ -121,6 +129,8 @@ function Index() {
         setMovIsModalVisible={setMovIsModalVisible}
         movApi={movApi}
       />
+
+      <div>测试</div>
     </div>
   )
 }

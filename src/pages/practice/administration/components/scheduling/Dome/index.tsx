@@ -1,8 +1,10 @@
-import { Button, Dropdown, Menu, Select } from 'antd'
+import { Button, Dropdown, Menu, Select, Tag } from 'antd'
 import React, { useEffect, useState } from 'react'
 
 import Gantt from './Gantt/index'
-function DHX() {
+import styles from './index.module.less'
+const Dhx = (props: { setHighlighted: any }) => {
+  const { setHighlighted } = props
   const { Option } = Select
   /**
    * Year 年
@@ -34,7 +36,7 @@ function DHX() {
       data: [
         //给父节点设置一个单独的状态 用于判断不可移动
         {
-          id: 1,
+          id: '1',
           type: true,
           text: '裁剪车间—裁剪班组', //名称
           // start_date: '2020-04-07', //日期
@@ -43,55 +45,94 @@ function DHX() {
           color: 'red' //控制颜色
         },
         {
-          id: '1|0',
+          id: '1008611',
           text: '-生产单号1',
           // start_date: '2020-04-07',
           // duration: 2,
           progress: 0.6,
-          parent: 1,
+          parent: '1',
           color: '', //控制颜色
-          render: 'split', //添加同一行
-          parentID: 1
+          render: 'split' //添加同一行
         },
         {
-          id: '1|1',
-          text: '卢英杰的子1',
-          start_date: '2020-04-6 ', //开始时间
+          id: '11',
+          text: '裁剪工段1',
+          start_date: '2020-04-6  ', //开始时间
           end_date: '2020-04-7 ', //结束时间
           duration: 1,
           progress: 0.6,
-          parent: '1|0',
-          color: 'red', //控制颜色
-          parentID: 1
+          parent: '1008611',
+          color: 'red' //控制颜色
         },
         {
-          id: '1|2',
-          text: '卢英杰的子2',
+          id: '12',
+          text: '裁剪工段2',
           start_date: '2020-04-10',
           duration: 2,
           progress: 0.6,
-          parent: '1|0',
-          parentID: 1
+          parent: '11'
         },
         {
-          id: '1|3',
-          text: '卢英杰号的子3',
+          id: '13',
+          text: '裁剪工段3',
           start_date: '2020-04-12',
           duration: 2,
           progress: 0.6,
-          parent: '1|0',
-          parentID: 1
+          parent: '11'
+        },
+
+        //分割
+        {
+          id: '2',
+          text: '生产单2号-车缝工段',
+          // start_date: '2020-04-07',
+          // duration: 2,
+          progress: 0.6,
+          parent: '1',
+          color: '', //控制颜色
+          render: 'split' //添加同一行
         },
         {
-          id: '1|4',
-          text: '路飞二号的子4',
-          start_date: '2020-04-15',
+          id: '21',
+          text: '裁剪工段1',
+          start_date: '2020-04-6  ', //开始时间
+          end_date: '2020-04-7  ', //结束时间
+          duration: 1,
+          progress: 0.6,
+          parent: '2',
+          color: 'red' //控制颜色
+        },
+        {
+          id: '22',
+          text: '裁剪工段2',
+          start_date: '2020-04-10',
           duration: 2,
           progress: 0.6,
-          parent: '1|0',
-          parentID: 1
+          parent: '2'
+        },
+        {
+          id: '23',
+          text: '裁剪工段3',
+          start_date: '2020-04-12',
+          duration: 2,
+          progress: 0.6,
+          parent: '2'
+        },
+        {
+          id: '150549202581',
+          text: '已计划有值测试',
+          start_date: '2020-04-6',
+          duration: 2,
+          progress: 0.6
+        },
+        {
+          id: '150549202580',
+          text: '已计划没值测试',
+          start_date: '2020-04-6',
+          duration: 2,
+          color: 'pink',
+          progress: 0.6
         }
-        //分割
       ],
       /**
        * id 唯一
@@ -100,14 +141,13 @@ function DHX() {
        */
 
       links: [
-        { id: 1, source: 1, target: 2, type: 0 },
-        { id: 3, source: 2, target: 3, type: 0 },
+        { id: 1, source: 111, target: 112, type: 0 },
+        { id: 2, source: 111, target: 4, type: 0 },
         {
-          source: '1|1',
-          target: '1|2',
+          source: 112,
+          target: 113,
           type: '0',
-          id: 1648692673517,
-          nativeeditor_status: 'inserted'
+          id: 1648692673517
         }
       ]
     }
@@ -116,7 +156,7 @@ function DHX() {
 
   //划过事件
   const logDataUpdate = (type: any, action: any, item: any, id: any) => {
-    console.log(item)
+    // console.log(item)
   }
   const choose = (type: any) => {
     setCurrentZoom(type)
@@ -141,8 +181,22 @@ function DHX() {
       ))}
     </Menu>
   )
+  const rightClick = (
+    <Menu>
+      <Menu.Item key="1">
+        <Tag color="green">新增加班</Tag>
+      </Menu.Item>
+    </Menu>
+  )
   function handleChange(value: any) {
     console.log(`判断是班组还是生产 ${value}`)
+  }
+  const rightData = (e: any) => {
+    console.log('右键', e)
+    // setHighlighted && setHighlighted(e)
+  }
+  const leftData = (e: any) => {
+    setHighlighted && setHighlighted(e)
   }
   return (
     <div>
@@ -160,17 +214,28 @@ function DHX() {
             <Option value="2">生产甘特图</Option>
           </Select>
         </div>
-        <div className="gantt-container">
-          <Gantt
-            tasks={data}
-            zoom={currentZoom}
-            onDataUpdated={logDataUpdate}
-            updateList={updateList}
-          />
+        <div className={styles.ganttContent}>
+          <div>
+            <Dropdown overlay={rightClick} trigger={['contextMenu']}>
+              <div className="site-dropdown-context-menu">
+                <div className="gantt-container">
+                  <Gantt
+                    leftData={leftData}
+                    rightData={rightData}
+                    tasks={data}
+                    zoom={currentZoom}
+                    onDataUpdated={logDataUpdate}
+                    updateList={updateList}
+                  />
+                </div>
+              </div>
+            </Dropdown>
+            ,
+          </div>
         </div>
       </div>
     </div>
   )
 }
 
-export default DHX
+export default Dhx

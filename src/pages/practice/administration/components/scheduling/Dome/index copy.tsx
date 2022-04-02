@@ -34,109 +34,87 @@ function DHX() {
   const api = () => {
     const list: any = {
       /**
+       * 图-格式
+       * type //判断是否可以移动
+       * text 名称
+       * duration 天数
+       * progress 控制完成百分比 范围0-1
+       *  color控制颜色
+       * start_date 开始时间
+       * end_date 结束时间
+       *
+       *  render: 'split' 添加同一行 儿子用
+       *
+       * parent ***谁是自己的父亲*** 儿子和父亲用
+       */
+
+      /**线
+       *
        * links
        *source
        * target
        * type 1头0尾巴
-       *   parent: 1 属于谁
+       * parent: 1 属于谁
        */
 
       data: [
-        //给父节点设置一个单独的状态 用于判断不可移动
         {
+          //父亲
           id: 1,
-          type: true,
+          type: true, //判断是否可以移动
           text: '裁剪车间—裁剪班组', //名称
-          // start_date: '2020-04-07', //日期
           // duration: 6, //天数
           // progress: 1, //控制完成百分比 范围0-1
           color: 'red' //控制颜色
         },
         {
-          id: '1|0',
-          text: '-生产单号1',
+          //儿子
+          id: 11,
+          text: '-生产单号10086',
           // start_date: '2020-04-07',
           // duration: 2,
           progress: 0.6,
           parent: 1,
           color: '', //控制颜色
-          render: 'split', //添加同一行
-          parentID: 1
+          render: 'split' //添加同一行
         },
         {
-          id: '1|1',
+          //孙子
+          id: 111,
           text: '卢英杰的子1',
           start_date: '2020-04-6 ', //开始时间
           end_date: '2020-04-7 ', //结束时间
           duration: 1,
           progress: 0.6,
-          parent: '1|0',
-          color: 'red', //控制颜色
-          parentID: 1
+          parent: 11,
+          color: 'red' //控制颜色
         },
         {
-          id: '1|2',
+          id: 112,
           text: '卢英杰的子2',
           start_date: '2020-04-10',
           duration: 2,
           progress: 0.6,
-          parent: '1|0',
-          parentID: 1
+          parent: 11
         },
         {
-          id: '1|3',
+          id: 113,
           text: '卢英杰号的子3',
           start_date: '2020-04-12',
           duration: 2,
           progress: 0.6,
-          parent: '1|0',
-          parentID: 1
-        },
-        {
-          id: '1|4',
-          text: '路飞二号的子4',
-          start_date: '2020-04-15',
-          duration: 2,
-          progress: 0.6,
-          parent: '1|0',
-          parentID: 1
+          parent: 11
         }
-        //分割
-        // {
-        //   id: 3,
-        //   text: '-生产单号2',
-        //   start_date: '2020-04-10',
-        //   duration: 3,
-        //   progress: 0.6,
-        //   parent: 1,
-        //   parentID: 1
-        // },
-        // {
-        //   id: 4,
-        //   text: '路飞四号',
-        //   start_date: '2020-04-12',
-        //   duration: 3,
-        //   parent: 1,
-        //   parentID: 1,
-        //   progress: 0.6
-        // }
       ],
       /**
-       * id 唯一
+       * id 线的id唯一
        * { id: 1, source: 2, target: 13, type: 0 },
-       * 2的尾部连接13
+       *  2的尾部连接13
        */
 
       links: [
         { id: 1, source: 1, target: 2, type: 0 },
-        { id: 3, source: 2, target: 3, type: 0 },
-        {
-          source: '1|1',
-          target: '1|2',
-          type: '0',
-          id: 1648692673517,
-          nativeeditor_status: 'inserted'
-        }
+        { id: 3, source: 2, target: 3, type: 0 }
       ]
     }
 
@@ -220,7 +198,7 @@ function DHX() {
 
   //划过事件
   const logDataUpdate = (type: any, action: any, item: any, id: any) => {
-    console.log(item)
+    // console.log(item)
   }
   const choose = (type: any) => {
     setCurrentZoom(type)
