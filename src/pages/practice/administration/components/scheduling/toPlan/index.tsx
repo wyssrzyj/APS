@@ -5,14 +5,64 @@ import React, { useEffect, useState } from 'react'
 import BreakUp from './breakUp/index'
 import styles from './index.module.less'
 const { TabPane } = Tabs
-function ToPlan() {
-  const [treeData, setTreeData] = useState() //处理后的总数据 -树
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  // const [visible, setVisible] = useState(false)//处理麻烦 先把流程走通
+function ToPlan(props: { remind: any }) {
+  const { remind } = props
+  const [list, setList] = useState<any>([]) //总
 
+  const [treeData, setTreeData] = useState([]) //处理后的总数据 -树
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [current, setCurrent] = useState('0')
+  const [keys, setKeys] = useState<any>()
+
+  const [equal, setEqual] = useState<any>('1')
   const callback = (key: any) => {
-    console.log(key)
+    console.log('callback', key)
+    setCurrent(key)
+    // setType(false)
   }
+
+  const getCurrentTabs = (data: any[], i: any) => {
+    // 待计划
+    const stayData = data[0]
+    const waitDor: any[] = []
+    stayData.map((item: { children: any }) => {
+      if (!isEmpty(item.children)) {
+        waitDor.push(item.children)
+      }
+    })
+    const waitDorList = stayData.concat(waitDor.flat(Infinity))
+    const waitIndex = waitDorList.findIndex(
+      (item: { id: any }) => item.id === i
+    )
+    if (waitIndex !== -1) {
+      setCurrent('0')
+    }
+    // 已计划
+    const complete = data[1]
+    const completeChildren: any[] = []
+    complete.map((item: { children: any }) => {
+      if (!isEmpty(item.children)) {
+        completeChildren.push(item.children)
+      }
+    })
+    const completeList = complete.concat(completeChildren.flat(Infinity))
+    const completeIndex = completeList.findIndex(
+      (item: { id: any }) => item.id === i
+    )
+    if (completeIndex !== -1) {
+      setCurrent('1')
+    }
+  }
+  useEffect(() => {
+    if (!isEmpty(list)) {
+      //这次和上次不一样才执行
+      if (equal !== remind) {
+        getCurrentTabs(list, remind)
+      }
+    }
+    setEqual(remind)
+    setKeys([remind])
+  }, [list, remind])
 
   //编辑工作
   const theEditor = (id: any) => {
@@ -102,7 +152,7 @@ function ToPlan() {
           // onVisibleChange={(e) => handleVisibleChange(e, sewingData, old)}
           // content={<a onClick={hide}>Close</a>}
           content={() => content(sewingData.id, type)}
-          trigger="click"
+          trigger="hover"
         >
           {sewingData.title}
         </Popover>
@@ -110,48 +160,86 @@ function ToPlan() {
     )
   }
   useEffect(() => {
-    const sum = [
+    const waitPlanned = [
       {
-        title: '生产单1号',
-        id: 1,
+        title: '生产单待计划',
+        id: '1',
         children: [
           {
             title: '裁剪工段',
-            id: 11
+            id: '11'
           },
           {
             title: '车缝工段',
-            key: 12
+            id: '12'
           }
         ]
       },
       {
         title: '车缝工段',
-        id: 2,
+        id: '2',
         children: [
           {
             title: '裁剪工段2',
-            id: 21
+            id: '21'
           },
           {
             title: '车缝工段2',
-            key: 22
+            id: '22'
           }
         ]
       }
     ]
+    const planned = [
+      {
+        title: '生产单已计划',
+        id: '2',
+        children: [
+          {
+            title: '裁剪工段已计划',
+            id: '21'
+          },
+          {
+            title: '车缝工段已计划',
+            id: '22'
+          }
+        ]
+      },
+      {
+        title: '车缝工段',
+        id: ' 3',
+        children: [
+          {
+            title: '裁剪工段2',
+            id: '31'
+          },
+          {
+            title: '车缝工段2',
+            id: '8848'
+          }
+        ]
+      }
+    ]
+    const sum = [waitPlanned, planned]
+    setList(sum)
 
-    getData(sum)
-  }, [])
+    getData(sum[Number(current)])
+  }, [current])
+
   const getData = (data: any) => {
     //处理数据
     if (!isEmpty(data)) {
       data.map((item: any) => {
         item.key = item.id
-
         item.type = item.title === '车缝工段' ? 1 : 0 //用于判断
         item.popover = false
         item.title = item.type === 1 ? sewing(item, 1) : sewing(item, 2)
+        //子项添加key
+        if (!isEmpty(item.children)) {
+          item.children.map((singled: any) => {
+            singled.key = singled.id
+          })
+        }
         //子项处理
         if (item.type === 1) {
           if (!isEmpty(item.children)) {
@@ -162,39 +250,44 @@ function ToPlan() {
           }
         }
       })
-
-      console.log('处理后的', data)
       setTreeData(data)
     }
   }
-
   const onSelect = (selectedKeys: React.Key[], info: any) => {
-    // console.log('selected', selectedKeys, info)
+    console.log('selected', selectedKeys)
+    setKeys(selectedKeys)
   }
 
   const onCheck = (checkedKeys: any, info: any) => {
     console.log('onCheck', checkedKeys, info)
   }
-
   return (
     <div>
       {!isModalVisible ? (
-        <Tabs onChange={callback} type="card">
-          <TabPane tab="待计划" key="1">
-            <Tree
-              // checkable
-              onSelect={onSelect}
-              onCheck={onCheck}
-              treeData={treeData}
-            />
+        <Tabs onChange={callback} activeKey={current} type="card">
+          <TabPane tab="待计划" key="0">
+            {treeData.length > 0 ? (
+              <Tree
+                selectedKeys={keys}
+                defaultExpandAll
+                // checkable
+                onSelect={onSelect}
+                onCheck={onCheck}
+                treeData={treeData}
+              />
+            ) : null}
           </TabPane>
-          <TabPane tab="已计划" key="2">
-            <Tree
-              // checkable
-              onSelect={onSelect}
-              onCheck={onCheck}
-              treeData={treeData}
-            />
+          <TabPane tab="已计划" key="1">
+            {treeData.length > 0 ? (
+              <Tree
+                selectedKeys={keys}
+                defaultExpandAll
+                // checkable
+                onSelect={onSelect}
+                onCheck={onCheck}
+                treeData={treeData}
+              />
+            ) : null}
           </TabPane>
         </Tabs>
       ) : null}

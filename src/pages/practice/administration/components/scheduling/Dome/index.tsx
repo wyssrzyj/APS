@@ -119,15 +119,15 @@ const Dhx = (props: { setHighlighted: any }) => {
           parent: '2'
         },
         {
-          id: '150549202581',
-          text: '已计划有值测试',
+          id: '12',
+          text: '待计划',
           start_date: '2020-04-6',
           duration: 2,
           progress: 0.6
         },
         {
-          id: '150549202580',
-          text: '已计划没值测试',
+          id: '8848',
+          text: '已计划',
           start_date: '2020-04-6',
           duration: 2,
           color: 'pink',
