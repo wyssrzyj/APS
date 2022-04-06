@@ -5,21 +5,23 @@ import Forms from './forms'
 import FormTable from './formTable/index'
 
 function TabPanes(props: any) {
-  const { materialList, index, dataReset } = props
+  const { materialList, index, dataReset, analogData, sizeList } = props
   const dataProcessing = (e: any) => {
     dataReset && dataReset(e)
   }
 
   return (
     <div>
-      <Forms list={materialList[index].form} />
-      {/* <Tables materialList={materialList} index={index} list={data.titls} /> */}
-      <FormTable
-        tableData={materialList[index].tableData}
-        materialList={materialList}
-        index={index}
-        dataProcessing={dataProcessing}
-      />
+      <Forms list={materialList[index]} />
+      {analogData && analogData.length > 0 ? (
+        <FormTable
+          tableData={analogData}
+          materialList={materialList}
+          index={index}
+          sizeList={sizeList}
+          dataProcessing={dataProcessing}
+        />
+      ) : null}
     </div>
   )
 }

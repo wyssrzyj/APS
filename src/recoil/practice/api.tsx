@@ -360,6 +360,43 @@ export const systemParameter = async () => {
     console.log(e)
   }
 }
+
+// 系统参数 - 显示
+export const materialData = async (props: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/check-product/get-history`,
+      props
+    )
+
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 获取尺寸
+export const getTheSize = async (props: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/check-product/get-size`,
+      props
+    )
+
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
 // 系统参数-保存
 export const systemParameters = async (params: any) => {
   try {

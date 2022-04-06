@@ -1,6 +1,7 @@
 import { Button, Dropdown, Menu, message, Space, Table } from 'antd'
+import { isEmpty } from 'lodash'
 import { any } from 'prop-types'
-import { SetStateAction, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 
 import { Title } from '@/components'
 import { practice } from '@/recoil/apis'
@@ -21,8 +22,9 @@ function Materials() {
   const [movIsModalVisible, setMovIsModalVisible] = useState<boolean>(false) //删除弹窗
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
   const [materialList, setMaterialList] = useState<any>() //物料齐套数据
+  const [list, setList] = useState<any>() //物料齐套数据
 
-  // const { systemParameters } = practice
+  const { materialData } = practice
 
   const columns: any = [
     {
@@ -76,15 +78,40 @@ function Materials() {
       dataIndex: 'address'
     }
   ]
-  const data = []
-  for (let i = 0; i < 5; i++) {
-    data.push({
-      id: i,
-      name: `Edward King ${i}`,
-      age: 32,
-      address: `London, Park Lane no. ${i}`
-    })
+  //获取列表数据
+  useEffect(() => {
+    formApi()
+  }, [])
+  const formApi = () => {
+    const data = [
+      {
+        id: 5,
+
+        name: `商品 1号`,
+        age: 32,
+        serial: '1',
+        process: '8848',
+        processTime: '3',
+        remarks: '4',
+        front: '5',
+        totalProduction: '6'
+      },
+      {
+        id: 6,
+        name: `商品 2号`,
+        age: 32,
+        serial: '222222',
+        process: '8848',
+        processTime: '3',
+        remarks: '4',
+        front: '5',
+        totalProduction: '6'
+      }
+    ]
+
+    setList(data)
   }
+
   //头部form的数据
   const FormData = (e: any) => {
     console.log(e)
@@ -130,6 +157,8 @@ function Materials() {
     console.log('选中的删除id', selectedRowKeys)
   }
   const onSelectChange = (selectedRowKeys: SetStateAction<never[]>) => {
+    //后面有数据的时候 根据id获取所有数据中对应的 然后给from
+
     setSelectedRowKeys(selectedRowKeys)
   }
   const rowSelection: any = {
@@ -163,177 +192,26 @@ function Materials() {
       </Menu.Item>
     </Menu>
   )
-
-  const materials = () => {
+  // 获取选中的from数据
+  const selectedForm = (v: never, data: any[]) => {
+    if (!isEmpty(data)) {
+      const processData = data.filter((item: { id: any }) => item.id === v)
+      return processData
+    }
+  }
+  const materials = async () => {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
       console.log('选中的删除id-物料齐套检查', selectedRowKeys)
-      // 假数据测试流程
-      // form
-      const forms = {
-        serial: '1',
-        process: '28848',
-        processTime: '3',
-        remarks: '4',
-        front: '5',
-        totalProduction: '6'
-      }
-      // table 数据
-      const analogData = [
-        {
-          id: '197',
-          material: '001',
-          materialName: '牛仔服',
-          size: '',
-          color: '',
-          issuedQuantity: 30,
-          S: 100,
-          M: 100,
-          L: 100,
-          blue: 200,
-          address: 100,
-          company: '米',
-          stock: 10,
-          onTheWay: 20,
-          children: [
-            {
-              fatherID: '197', //父id
-              id: '22',
-              S: 30,
-              M: 30,
-              L: 30,
-              material: '001',
-              materialName: '牛仔服',
-              issuedQuantity: 10,
-              size: 'C001',
-              color: '红色',
-              blue: 50,
-              company: '米',
-              stock: 5,
-              onTheWay: 10,
-              address: 50
-            },
-            {
-              fatherID: '197', //父id
-              id: '33',
-              material: '001',
-              materialName: '牛仔服',
-              issuedQuantity: 10,
+      //获取选中的数据
+      const dataList: (any[] | undefined)[] = []
+      selectedRowKeys.map((item) => {
+        const sum = selectedForm(item, list)
+        dataList.push(sum)
+      })
 
-              size: 'C002',
-              color: '蓝色',
-              S: 30,
-              M: 30,
-              L: 30,
-              blue: 30,
-              company: '米',
-              stock: 3,
-              onTheWay: 5,
-
-              address: 30
-            },
-            {
-              fatherID: '197', //父id
-              id: '44',
-              S: 40,
-              M: 40,
-              L: 40,
-              material: '001',
-              materialName: '牛仔服',
-              issuedQuantity: 10,
-
-              size: 'C003',
-              color: '绿色',
-              blue: 20,
-              company: '米',
-              stock: 2,
-              onTheWay: 5,
-              address: 20
-            }
-          ]
-        },
-        {
-          id: '272',
-          material: '001',
-          materialName: '牛仔服',
-          issuedQuantity: 30,
-
-          size: '',
-          color: '',
-          S: 100,
-          M: 100,
-          L: 100,
-          blue: 200,
-          address: 100,
-          company: '米',
-          stock: 10,
-          onTheWay: 20,
-          children: [
-            {
-              fatherID: '272', //父id
-              id: '222',
-              S: 30,
-              M: 30,
-              L: 30,
-              material: '001',
-              materialName: '牛仔服',
-              issuedQuantity: 10,
-
-              size: 'C001',
-              color: '红色',
-              blue: 50,
-              company: '米',
-              stock: 5,
-              onTheWay: 10,
-              address: 50
-            },
-            {
-              fatherID: '272', //父id
-              id: '333',
-              material: '001',
-              materialName: '牛仔服',
-              issuedQuantity: 10,
-
-              size: 'C002',
-              color: '蓝色',
-              S: 30,
-              M: 30,
-              L: 30,
-              blue: 30,
-              company: '米',
-              stock: 3,
-              onTheWay: 5,
-
-              address: 30
-            },
-            {
-              fatherID: '272', //父id
-              id: '444',
-              S: 40,
-              M: 40,
-              L: 40,
-              material: '001',
-              materialName: '牛仔服',
-              issuedQuantity: 10,
-
-              size: 'C003',
-              color: '绿色',
-              blue: 20,
-              company: '米',
-              stock: 2,
-              onTheWay: 5,
-              address: 20
-            }
-          ]
-        }
-      ]
-      const res = [
-        { name: '账号1', id: 1, form: forms, tableData: analogData },
-        { name: '账号2', id: 2, form: forms, tableData: analogData }
-      ]
-      setMaterialList(res)
-
+      setMaterialList(dataList.flat(Infinity))
       setMaterialModal(true)
     }
   }
@@ -364,7 +242,7 @@ function Materials() {
             className={styles.table}
             rowSelection={rowSelection}
             columns={columns}
-            dataSource={data}
+            dataSource={list}
             rowKey={'id'}
             pagination={{
               //分页
