@@ -46,7 +46,7 @@ const Dhx = (props: { setHighlighted: any }) => {
         },
         {
           id: '1008611',
-          text: '-生产单号1',
+          text: '车缝班组',
           // start_date: '2020-04-07',
           // duration: 2,
           progress: 0.6,
@@ -56,7 +56,7 @@ const Dhx = (props: { setHighlighted: any }) => {
         },
         {
           id: '11',
-          text: '裁剪工段1',
+          text: '单1',
           start_date: '2020-04-6  ', //开始时间
           end_date: '2020-04-7 ', //结束时间
           duration: 1,
@@ -66,7 +66,7 @@ const Dhx = (props: { setHighlighted: any }) => {
         },
         {
           id: '12',
-          text: '裁剪工段2',
+          text: '单2',
           start_date: '2020-04-10',
           duration: 2,
           progress: 0.6,

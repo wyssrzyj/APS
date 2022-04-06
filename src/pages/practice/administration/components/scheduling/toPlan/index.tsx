@@ -9,7 +9,8 @@ function ToPlan(props: { remind: any }) {
   const { remind } = props
   const [list, setList] = useState<any>([]) //总
 
-  const [treeData, setTreeData] = useState([]) //处理后的总数据 -树
+  const [treeData, setTreeData] = useState([]) //处理后的待计划
+  const [WaitingTreeData, setWaitingTreeData] = useState([]) //处理后的已计划
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [current, setCurrent] = useState('0')
   const [keys, setKeys] = useState<any>()
@@ -223,10 +224,10 @@ function ToPlan(props: { remind: any }) {
     const sum = [waitPlanned, planned]
     setList(sum)
 
-    getData(sum[Number(current)])
+    getData(sum[Number(current)], current)
   }, [current])
 
-  const getData = (data: any) => {
+  const getData = (data: any, type: string) => {
     //处理数据
     if (!isEmpty(data)) {
       data.map((item: any) => {
@@ -250,7 +251,11 @@ function ToPlan(props: { remind: any }) {
           }
         }
       })
-      setTreeData(data)
+      if (type === '0') {
+        setTreeData(data)
+      } else {
+        setWaitingTreeData(data)
+      }
     }
   }
   const onSelect = (selectedKeys: React.Key[], info: any) => {
@@ -266,10 +271,11 @@ function ToPlan(props: { remind: any }) {
       {!isModalVisible ? (
         <Tabs onChange={callback} activeKey={current} type="card">
           <TabPane tab="待计划" key="0">
-            {treeData.length > 0 ? (
+            {treeData !== undefined && treeData.length > 0 ? (
               <Tree
+                // defaultExpandedKeys={["8848"]}
                 selectedKeys={keys}
-                defaultExpandAll
+                defaultExpandAll={true}
                 // checkable
                 onSelect={onSelect}
                 onCheck={onCheck}
@@ -278,20 +284,19 @@ function ToPlan(props: { remind: any }) {
             ) : null}
           </TabPane>
           <TabPane tab="已计划" key="1">
-            {treeData.length > 0 ? (
+            {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
               <Tree
                 selectedKeys={keys}
-                defaultExpandAll
+                defaultExpandAll={true}
                 // checkable
                 onSelect={onSelect}
                 onCheck={onCheck}
-                treeData={treeData}
+                treeData={WaitingTreeData}
               />
             ) : null}
           </TabPane>
         </Tabs>
       ) : null}
-
       {/* 拆分 */}
       <BreakUp
         setIsModalVisible={setIsModalVisible}
