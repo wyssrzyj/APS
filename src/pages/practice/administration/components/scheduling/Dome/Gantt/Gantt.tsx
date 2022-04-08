@@ -1,13 +1,15 @@
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 
 import { gantt } from 'dhtmlx-gantt'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 function Gantt(props: any) {
-  const { zoom, tasks, onDataUpdated, updateList, rightData, leftData } = props
+  const { zoom, tasks, onDataUpdated, updateList, rightData, leftData, drag } =
+    props
 
   const chartDom = document.getElementById('main') //获取id
-
+  const [sum, setSum] = useState(false)
   // 参数设置
   const initZoom = () => {
     gantt.i18n.setLocale('cn') //设置中文
@@ -20,9 +22,23 @@ function Gantt(props: any) {
     gantt.config.drag_resize = false //控制大小
     // gantt.config.show_links = false //控制两端的线是否可以拖动
     gantt.config.details_on_dblclick = false //双击出弹窗
-    // 周六周末不可拖动
+
+    // 指定日期不可拖动
     // gantt.config.work_time = true
-    // gantt.config.correct_work_time = true
+    // gantt.config.correct_work_time = true//周六周末
+    // gantt.setWorkTime({ day: 1, hours: false })//周6周末周1都不可拖动
+    gantt.setWorkTime({
+      customWeeks: {
+        winter: {
+          from: new Date(2021, 7, 1), // December 1st, 2018
+          to: new Date(2021, 8, 1), // March 1st 00:00, 2019
+          hours: ['9:00-13:00', '14:00-16:00'],
+          days: [1, 1, 1, 1, 0, 0, 0]
+        }
+      }
+    })
+    // 0-6
+    //
     //表头
     gantt.config.columns = [
       { name: 'text', label: '名称', tree: true, width: '180' },
@@ -31,14 +47,49 @@ function Gantt(props: any) {
       // { name: 'add', label: '' },
     ]
 
+    //设置高亮时间
+    // 头部
+    gantt.templates.scale_cell_class = function (date: moment.MomentInput) {
+      if (
+        moment(date).format('YYYY-MM-DD') == '2021-07-24' ||
+        moment(date).format('YYYY-MM-DD') == '2021-07-25'
+      ) {
+        return 'weekend'
+      }
+    }
+    // 主体
+    gantt.templates.timeline_cell_class = function (
+      task: any,
+      date: moment.MomentInput
+    ) {
+      if (
+        moment(date).format('YYYY-MM-DD') == '2021-07-24' ||
+        moment(date).format('YYYY-MM-DD') == '2021-07-25'
+      ) {
+        return 'weekend'
+      }
+    }
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
+      console.log('选中')
+
       leftData && leftData(id)
     })
     //单击右键
     gantt.attachEvent('onContextMenu', function (id: any) {
       rightData && rightData(id)
     })
+    //拖拽是
+    gantt.attachEvent('onTaskDrag', function (id: any, v: any, item: any) {
+      drag(item)
+    })
+    // gantt.attachEvent('onAfterTaskUpdate', function (id: any) {
+    //   console.log('任务更新后------------')
+    // })
+
+    // 测试----------
+
+    // 测试-----结束-----
 
     // //触发灯箱
     // gantt.attachEvent('onLightbox', function (id) {
@@ -84,7 +135,7 @@ function Gantt(props: any) {
       'onBeforeTaskDrag',
       function (id: any, mode: any, e: any) {
         const task = gantt.getTask(id)
-        if (task.type === true) {
+        if (task.type === '1') {
           return false
         } else {
           return true
@@ -156,36 +207,36 @@ function Gantt(props: any) {
 
     // gantt.getTask(11)
 
-    //更新的值 **误删**
-    // const dp = gantt.createDataProcessor({
-    //   task: {
-    //     create: function (data: any) {
-    //       console.log('新增任务----------------------', data)
-    //     },
-    //     click: function (data: any) {
-    //       console.log('点击----------------------', data)
-    //     },
-    //     update: function (data: any, id: any) {
-    //       // console.log('更新任务----------------------', data)
-    //       // updateList && updateList(data)
-    //     },
-    //     delete: function (id: any) {
-    //       console.log('删除任务----------------------', id)
-    //     }
-    //   },
-    //   link: {
-    //     create: function (data: any) {
-    //       //线的操作
-    //       console.log('link.create----------------------', data)
-    //     },
-    //     update: function (_data: any) {
-    //       console.log('link.update----------------------')
-    //     },
-    //     delete: function () {
-    //       console.log('link.delete----------------------')
-    //     }
-    //   }
-    // })
+    // 更新的值 **误删**
+    const dp = gantt.createDataProcessor({
+      task: {
+        // create: function (data: any) {
+        //   console.log('新增任务----------------------', data)
+        // },
+        // click: function (data: any) {
+        //   console.log('点击----------------------', data)
+        // },
+        update: function (data: any, id: any) {
+          // console.log('更新任务----------------------', data)
+          updateList && updateList(data)
+        }
+        // delete: function (id: any) {
+        //   console.log('删除任务----------------------', id)
+        // }
+      },
+      link: {
+        // create: function (data: any) {
+        //   //线的操作
+        //   console.log('link.create----------------------', data)
+        // },
+        // update: function (_data: any) {
+        //   console.log('link.update----------------------')
+        // },
+        // delete: function () {
+        //   console.log('link.delete----------------------')
+        // }
+      }
+    })
   }
 
   const setZoom = (value: any) => {

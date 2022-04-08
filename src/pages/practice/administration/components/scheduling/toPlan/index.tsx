@@ -273,7 +273,6 @@ function ToPlan(props: { remind: any }) {
           <TabPane tab="待计划" key="0">
             {treeData !== undefined && treeData.length > 0 ? (
               <Tree
-                // defaultExpandedKeys={["8848"]}
                 selectedKeys={keys}
                 defaultExpandAll={true}
                 // checkable

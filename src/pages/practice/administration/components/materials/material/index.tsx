@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Button, message, Modal, Tabs } from 'antd'
-import { isEmpty } from 'lodash'
+import Item from 'antd/lib/list/Item'
+import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { practice } from '@/recoil/apis'
@@ -20,6 +21,7 @@ function Material(props: {
   const [type, setType] = useState<any>() //top值
   const [tableList, setTableList] = useState<any>() //table的数据
   const [sizeList, setSizeList] = useState<any>() //table的尺码
+  // const [params, setParams] = useState<any>({}) //table所有数据
 
   useEffect(() => {
     if (materialList && !isEmpty(materialList)) {
@@ -32,34 +34,58 @@ function Material(props: {
     }
   }, [type])
 
-  //  table尺寸数据处理
-  // const Table size processing=()=>{
-  //   console.log(123);
-
-  // }
-
   //获取table数据
   const tableData = async (id: any) => {
     //尺寸
     const resSize = await getTheSize({ externalProduceOrderId: 1 })
-    const goodsSize: { title: any; dataIndex: any; key: any; width: number }[] =
-      []
+    const goodsSize: {
+      title: any
+      dataIndex: any
+      key: any
+      align: string
+      width: number
+    }[] = []
     resSize.map((item: any) => {
       goodsSize.push({
-        title: item,
-        dataIndex: item,
-        key: item,
+        title: item.toUpperCase(),
+        dataIndex: item.toUpperCase(),
+        key: item.toUpperCase(),
+        align: 'center',
         width: 50
       })
     })
-    const resData = await materialData({ externalProduceOrderId: 1 })
-    //处理数据
-    console.log(resData.tableContent)
-    resData.tableContent.map((item) => {
-      if (!isEmpty(item.children)) {
-        console.log('子项', item.children)
-      }
+    const resData = await materialData({
+      externalProduceOrderId: '1504272269944320002'
     })
+    //处理数据---------------
+
+    // ***js数组对象转键值对
+    const conversion = (data: any[]) => {
+      const obj: any = {}
+      data.map((e: { sizeCode: string | number; quantity: any }) => {
+        obj[e.sizeCode] = e.quantity
+      })
+      return obj
+    }
+
+    if (!isEmpty(resData.tableContent)) {
+      const tableData = resData.tableContent
+      // 父
+      tableData.map(
+        (item: { produceCheckSizeVOList: any[]; children: any[] }) => {
+          item = Object.assign(item, conversion(item.produceCheckSizeVOList))
+          //子
+          if (!isEmpty(item.children)) {
+            item.children.map((v: { produceCheckSizeVOList: any[] }) => {
+              v = Object.assign(v, conversion(v.produceCheckSizeVOList))
+            })
+          }
+        }
+      )
+      setTableList(tableData)
+    }
+
+    //处理数据结束---------------
 
     // let res =await ()
     const analogData = [
@@ -74,10 +100,10 @@ function Material(props: {
         M: 100,
         L: 100,
         blue: 200,
-        address: 100,
-        company: '米',
-        stock: 10,
-        onTheWay: 20,
+        requireQuantity: 100,
+        unit: '米',
+        availableStockQtyTotal: 10,
+        inTransitStockQtyTotal: 20,
         children: [
           {
             fatherID: '197', //父id
@@ -91,10 +117,10 @@ function Material(props: {
             size: 'C001',
             color: '红色',
             blue: 50,
-            company: '米',
-            stock: 5,
-            onTheWay: 10,
-            address: 50
+            unit: '米',
+            availableStockQtyTotal: 5,
+            inTransitStockQtyTotal: 10,
+            requireQuantity: 50
           },
           {
             fatherID: '197', //父id
@@ -109,11 +135,11 @@ function Material(props: {
             M: 30,
             L: 30,
             blue: 30,
-            company: '米',
-            stock: 3,
-            onTheWay: 5,
+            unit: '米',
+            availableStockQtyTotal: 3,
+            inTransitStockQtyTotal: 5,
 
-            address: 30
+            requireQuantity: 30
           },
           {
             fatherID: '197', //父id
@@ -128,10 +154,10 @@ function Material(props: {
             size: 'C003',
             color: '绿色',
             blue: 20,
-            company: '米',
-            stock: 2,
-            onTheWay: 5,
-            address: 20
+            unit: '米',
+            availableStockQtyTotal: 2,
+            inTransitStockQtyTotal: 5,
+            requireQuantity: 20
           }
         ]
       },
@@ -147,10 +173,10 @@ function Material(props: {
         M: 100,
         L: 100,
         blue: 200,
-        address: 100,
-        company: '米',
-        stock: 10,
-        onTheWay: 20,
+        requireQuantity: 100,
+        unit: '米',
+        availableStockQtyTotal: 10,
+        inTransitStockQtyTotal: 20,
         children: [
           {
             fatherID: '272', //父id
@@ -165,10 +191,10 @@ function Material(props: {
             size: 'C001',
             color: '红色',
             blue: 50,
-            company: '米',
-            stock: 5,
-            onTheWay: 10,
-            address: 50
+            unit: '米',
+            availableStockQtyTotal: 5,
+            inTransitStockQtyTotal: 10,
+            requireQuantity: 50
           },
           {
             fatherID: '272', //父id
@@ -183,11 +209,11 @@ function Material(props: {
             M: 30,
             L: 30,
             blue: 30,
-            company: '米',
-            stock: 3,
-            onTheWay: 5,
+            unit: '米',
+            availableStockQtyTotal: 3,
+            inTransitStockQtyTotal: 5,
 
-            address: 30
+            requireQuantity: 30
           },
           {
             fatherID: '272', //父id
@@ -202,16 +228,16 @@ function Material(props: {
             size: 'C003',
             color: '绿色',
             blue: 20,
-            company: '米',
-            stock: 2,
-            onTheWay: 5,
-            address: 20
+            unit: '米',
+            availableStockQtyTotal: 2,
+            inTransitStockQtyTotal: 5,
+            requireQuantity: 20
           }
         ]
       }
     ]
     setSizeList(goodsSize)
-    setTableList(analogData)
+    // setTableList(analogData)
   }
 
   const { TabPane } = Tabs
@@ -227,7 +253,7 @@ function Material(props: {
   }
 
   const dataReset = (e: any) => {
-    console.log('修改后的值', e)
+    console.log('保存的时候判读是否全部打钩', e)
 
     setList(e)
   }

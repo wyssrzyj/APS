@@ -181,7 +181,7 @@ const Dhx = (props: { setHighlighted: any }) => {
           const sum = cloneDeep(chart) //拷贝总数据
 
           if (!isEmpty(availableDate)) {
-            // console.log('替换的值是~~~~~~~', availableDate.start_date)
+            console.log('替换的值是~~~~~~~', availableDate.start_date)
 
             const subscript = sum.findIndex(
               (item: any) => item.id === availableDate.id
@@ -190,14 +190,12 @@ const Dhx = (props: { setHighlighted: any }) => {
             setChart(sum)
           } else {
             // 直接拖拽到不可用日期的判断
-            console.log('替换的值', InitialDrag[0])
             InitialDrag[0].start_date = moment(
               InitialDrag[0].start_date
             ).format('YYYY-MM-DD')
             InitialDrag[0].end_date = moment(InitialDrag[0].end_date).format(
               'YYYY-MM-DD'
             )
-
             const subscript = sum.findIndex(
               (item: any) => item.id === InitialDrag[0].id
             )
@@ -214,8 +212,8 @@ const Dhx = (props: { setHighlighted: any }) => {
     }
   }, [updateData])
   useEffect(() => {
-    console.log('保存可用-~~~~~~~~~~~~~~~~~', InitialDrag)
-  }, [InitialDrag])
+    console.log('保存可用-~~~~~~~~~~~~~~~~~', availableDate)
+  }, [availableDate])
   //划过事件
   const logDataUpdate = (type: any, action: any, item: any, id: any) => {
     // console.log(item)
@@ -230,8 +228,6 @@ const Dhx = (props: { setHighlighted: any }) => {
   }
   //初始拖拽
   const drag = (e: any) => {
-    console.log(e)
-
     if (InitialDrag.length < 1) {
       InitialDrag.push(e)
     }

@@ -11,39 +11,50 @@ const FormTable = (props: any) => {
   const { tableData, materialList, index, dataProcessing, sizeList } = props
 
   const [expandedRowKeys, setExpandedRowKeys] = useState<any>([])
-  const [data, setData] = useState<any>(tableData)
+  const [data, setData] = useState<any>(tableData) //添加字段后的数据
   const [list, setList] = useState<any>([])
+  // useEffect(() => {
+  //   console.log('总数据发生改变准备return', data)
+  // }, [data])
 
   useEffect(() => {
-    // 调取接口口添加 key和 writeOff -半成品冲销数量的字段
+    // 调取接口口添加 key和 counteractNum -半成品冲销数量的字段
     !isEmpty(tableData) &&
       tableData.map((item: any) => {
-        // item.id = item.materialCode //id是 materialCode
+        item.issuedQuantity = 0 //测试~~~已出库数量暂无 设置0
+        item.id = item.materialCode //id是 materialCode
         item.key = item.id //添加 key
-        item.writeOff = 0 //添加初始 冲销数量
+        item.counteractNum = 0 //添加初始 冲销数量
         if (!isEmpty(item.children)) {
           item.children.map((v: any) => {
-            v.writeOff = 0
-            // v.id = v.materialCode
+            v.issuedQuantity = 0 //测试~~~已出库数量暂无 设置0
+            v.counteractNum = 0
+            v.id = v.materialCode + v.materialColCode
             v.key = v.id
 
             //物料缺少数量 计算
-            v.missingQuantity =
-              v.address - v.stock - v.onTheWay - v.writeOff - v.issuedQuantity >
+            v.shortOfProductNum =
+              v.requireQuantity -
+                v.availableStockQtyTotal -
+                v.inTransitStockQtyTotal -
+                v.counteractNum -
+                v.issuedQuantity >
               0
-                ? v.address -
-                  v.stock -
-                  v.onTheWay -
-                  v.writeOff -
+                ? v.requireQuantity -
+                  v.availableStockQtyTotal -
+                  v.inTransitStockQtyTotal -
+                  v.counteractNum -
                   v.issuedQuantity
                 : 0
 
-            v.adequate = v.missingQuantity > 0 ? false : true
+            v.enoughFlag = v.shortOfProductNum > 0 ? false : true
           })
         }
-        item.missingQuantity = total(item.children, 'missingQuantity') //物料缺少数量-头
-        item.adequate = item.missingQuantity > 0 ? false : true //物料缺少数量-头
+        item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
+        item.enoughFlag = item.shortOfProductNum > 0 ? false : true //物料缺少数量-头
       })
+    console.log('查看是否拼接', tableData)
+
     setData([...tableData])
   }, [])
   useEffect(() => {
@@ -67,15 +78,18 @@ const FormTable = (props: any) => {
       },
       {
         title: '物料颜色代码',
-        dataIndex: 'size',
+        dataIndex: 'materialColCode',
+        width: 100,
         align: 'center',
-        key: 'size'
+        key: 'materialColCode'
       },
       {
         title: '颜色',
-        dataIndex: 'color',
+        dataIndex: 'materialColName',
+        // dataIndex: 'materialColName',
+        width: 100,
         align: 'center',
-        key: 'color'
+        key: 'materialColName'
       },
       // {
       //   title: 'S',
@@ -97,46 +111,50 @@ const FormTable = (props: any) => {
       // },
       {
         title: '物料需求数量',
-        dataIndex: 'address',
+        width: 100,
+        dataIndex: 'requireQuantity',
         align: 'center',
-        key: 'address'
+        key: 'requireQuantity'
       },
       {
         title: '单位',
-        dataIndex: 'company',
+        width: 100,
+        dataIndex: 'unit',
         align: 'center',
-        key: 'company'
+        key: 'unit'
       },
       {
         title: '物料库存数量',
-        dataIndex: 'stock',
+        width: 100,
+        dataIndex: 'availableStockQtyTotal',
         align: 'center',
-        key: 'stock'
+        key: 'availableStockQtyTotal'
       },
       {
         title: '物料在途数量',
-        dataIndex: 'onTheWay',
+        width: 100,
+        dataIndex: 'inTransitStockQtyTotal',
         align: 'center',
-        key: 'onTheWay'
+        key: 'inTransitStockQtyTotal'
       },
       {
-        title: '已出库数量',
+        title: '已出库数量', //暂无字段 后面补齐
+        width: 100,
         dataIndex: 'issuedQuantity',
         align: 'center',
         key: 'issuedQuantity'
       },
       {
         title: '半成品冲销数量',
-        dataIndex: 'writeOff',
+        dataIndex: 'counteractNum',
         align: 'center',
         fixed: 'right',
         width: 150,
-
-        key: 'writeOff',
+        key: 'counteractNum',
         render: (_item: any, v: any) =>
           isEmpty(v.children) ? (
             <InputNumber
-              // key={v.company}
+              // key={v.unit}
               min={0}
               defaultValue={_item}
               onChange={(e) => {
@@ -149,16 +167,17 @@ const FormTable = (props: any) => {
       },
       {
         title: '物料缺少数量',
-        dataIndex: 'missingQuantity',
+        dataIndex: 'shortOfProductNum',
         align: 'center',
         fixed: 'right',
-        key: 'missingQuantity'
+        width: 150,
+        key: 'shortOfProductNum'
       },
       {
         title: '是否充足',
-        dataIndex: 'adequate',
+        dataIndex: 'enoughFlag',
         align: 'center',
-        key: 'adequate',
+        key: 'enoughFlag',
         fixed: 'right',
         render: (_item: any) => (
           <Space size="middle">
@@ -172,15 +191,15 @@ const FormTable = (props: any) => {
       },
       {
         title: '齐套日期',
-        dataIndex: 'completion',
+        dataIndex: 'prepareTime',
         fixed: 'right',
         align: 'center',
         width: 150,
-        key: 'completion',
+        key: 'prepareTime',
         render: (_item: any, v: any) => (
           <Space size="middle">
             {isEmpty(v.children) ? (
-              !v.adequate ? (
+              !v.enoughFlag ? (
                 <DatePicker
                   allowClear={false}
                   defaultValue={_item ? moment(_item) : undefined}
@@ -200,10 +219,15 @@ const FormTable = (props: any) => {
       item.align = 'center'
     })
     const index = columns.findIndex(
-      (item: { dataIndex: string }) => item.dataIndex === 'color'
+      (item: { dataIndex: string }) => item.dataIndex === 'materialColName'
     )
-    columns.splice(index + 1, 0, sizeList)
-    setList(columns.flat(Infinity))
+
+    if (sizeList !== undefined) {
+      console.log('测试sizeList', sizeList)
+
+      columns.splice(index + 1, 0, sizeList)
+      setList(columns.flat(Infinity))
+    }
   }, [sizeList])
 
   //计算总值
@@ -218,12 +242,11 @@ const FormTable = (props: any) => {
   }
 
   const onChange = (e: any, currentValue: any) => {
-    console.log(456)
-    console.log(data)
     processingData(data, moment(e).valueOf(), currentValue, 'time')
   }
 
   let timeout: NodeJS.Timeout
+
   const quantity = (e: any, currentValue: any) => {
     clearTimeout(timeout)
     timeout = setTimeout(() => {
@@ -239,42 +262,46 @@ const FormTable = (props: any) => {
   ) => {
     if (!isEmpty(current)) {
       current.map((item: any) => {
-        if (item.key === currentValue.fatherID) {
+        if (item.key === currentValue.materialCode) {
+          console.log('走进来了')
+
           if (!isEmpty(item.children)) {
             item.children.map((v: any) => {
               // 先赋值
               if (v.id === currentValue.id) {
                 if (type === 'number') {
-                  v.writeOff = Number(e)
+                  v.counteractNum = Number(e)
                   //物料缺少数量-子
-                  v.missingQuantity =
-                    v.address -
-                      v.stock -
-                      v.onTheWay -
-                      v.writeOff -
+                  v.shortOfProductNum =
+                    v.requireQuantity -
+                      v.availableStockQtyTotal -
+                      v.inTransitStockQtyTotal -
+                      v.counteractNum -
                       v.issuedQuantity >
                     0
-                      ? v.address -
-                        v.stock -
-                        v.onTheWay -
-                        v.writeOff -
+                      ? v.requireQuantity -
+                        v.availableStockQtyTotal -
+                        v.inTransitStockQtyTotal -
+                        v.counteractNum -
                         v.issuedQuantity
                       : 0
 
-                  v.adequate = v.missingQuantity > 0 ? false : true
+                  v.enoughFlag = v.shortOfProductNum > 0 ? false : true
                 }
                 if (type === 'time') {
-                  v.completion = e
+                  v.prepareTime = e
                 }
               }
               // 在累加
-              item.writeOff = total(item.children, 'writeOff') //顶部数据
-              item.missingQuantity = total(item.children, 'missingQuantity') //物料缺少数量-头
-              item.adequate = item.missingQuantity > 0 ? false : true //物料缺少数量-头
+              item.counteractNum = total(item.children, 'counteractNum') //顶部数据
+              item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
+              item.enoughFlag = item.shortOfProductNum > 0 ? false : true //物料缺少数量-头
             })
           }
         }
       })
+      console.log('处理后的值', current)
+
       setData([...current])
       //
     }
@@ -282,10 +309,12 @@ const FormTable = (props: any) => {
   useEffect(() => {
     //判断子项是否全部满足
     function checkAdult(data: any) {
-      return data.adequate === true
+      return data.enoughFlag === true
     }
     // 给当前页的数据添加 一个状态 用于判断当前页是否全部打钩
     materialList[index].satisfy = data.every(checkAdult)
+    console.log('/暴露出去', materialList)
+
     dataProcessing(materialList) //暴露出去
   }, [data])
   const onExpandedRowsChange = (e: any) => {
