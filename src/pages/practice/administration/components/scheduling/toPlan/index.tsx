@@ -7,6 +7,8 @@ import styles from './index.module.less'
 const { TabPane } = Tabs
 function ToPlan(props: { remind: any }) {
   const { remind } = props
+  console.log('remind', remind)
+
   const [list, setList] = useState<any>([]) //总
 
   const [treeData, setTreeData] = useState([]) //处理后的待计划

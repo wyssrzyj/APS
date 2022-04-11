@@ -1,16 +1,61 @@
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 
 import { gantt } from 'dhtmlx-gantt'
+import { isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-
-function Gantt(props: any) {
-  const { zoom, tasks, onDataUpdated, updateList, rightData, leftData, drag } =
-    props
+const Gantt = (props: any) => {
+  const {
+    zoom,
+    tasks,
+    onDataUpdated,
+    updateList,
+    rightData,
+    leftData,
+    drag,
+    restDate
+  } = props
 
   const chartDom = document.getElementById('main') //获取id
-  const [sum, setSum] = useState(false)
-  // 参数设置
+  const [rest, setRest] = useState<any>([]) //单个班组的休息日期
+  const dataDome = ['2020-04-07', '2020-04-08']
+
+  useEffect(() => {
+    if (!isEmpty(restDate)) {
+      setRest(restDate)
+    }
+  }, [restDate])
+
+  useEffect(() => {
+    setZoom(zoom)
+    for (let i = 0; i < 2; i++) {
+      console.log('初始值', i)
+    }
+  }, [zoom])
+
+  useEffect(() => {
+    if (tasks) {
+      componentDidMount(tasks)
+    }
+  }, [tasks])
+  // 静态方法
+  const setZoom = (value: any) => {
+    if (!gantt.$initialized) {
+      initZoom()
+    }
+    //缩放-不可修该 勿动
+    gantt.ext.zoom.setLevel(value)
+  }
+  // **需用和动态数据交互的方法
+  useEffect(() => {
+    if (!gantt.$initialized) {
+      color()
+    }
+    //缩放-不可修该 勿动
+    gantt.ext.zoom.setLevel(zoom)
+  }, [rest, zoom])
+
+  // 主要参数设置
   const initZoom = () => {
     gantt.i18n.setLocale('cn') //设置中文
     // gantt.config.readonly = true//只读
@@ -24,21 +69,7 @@ function Gantt(props: any) {
     gantt.config.details_on_dblclick = false //双击出弹窗
 
     // 指定日期不可拖动
-    // gantt.config.work_time = true
-    // gantt.config.correct_work_time = true//周六周末
-    // gantt.setWorkTime({ day: 1, hours: false })//周6周末周1都不可拖动
-    gantt.setWorkTime({
-      customWeeks: {
-        winter: {
-          from: new Date(2021, 7, 1), // December 1st, 2018
-          to: new Date(2021, 8, 1), // March 1st 00:00, 2019
-          hours: ['9:00-13:00', '14:00-16:00'],
-          days: [1, 1, 1, 1, 0, 0, 0]
-        }
-      }
-    })
-    // 0-6
-    //
+
     //表头
     gantt.config.columns = [
       { name: 'text', label: '名称', tree: true, width: '180' },
@@ -46,88 +77,35 @@ function Gantt(props: any) {
       // { name: 'duration', label: 'Duration', align: 'center' }
       // { name: 'add', label: '' },
     ]
+    // 左侧打开
+    gantt.attachEvent(
+      'onTaskOpened',
+      function (id: any, v: any, item: any, S, D) {
+        console.log('左侧打开', id)
 
-    //设置高亮时间
-    // 头部
-    gantt.templates.scale_cell_class = function (date: moment.MomentInput) {
-      if (
-        moment(date).format('YYYY-MM-DD') == '2021-07-24' ||
-        moment(date).format('YYYY-MM-DD') == '2021-07-25'
-      ) {
-        return 'weekend'
+        // leftData && leftData(id)
       }
-    }
-    // 主体
-    gantt.templates.timeline_cell_class = function (
-      task: any,
-      date: moment.MomentInput
-    ) {
-      if (
-        moment(date).format('YYYY-MM-DD') == '2021-07-24' ||
-        moment(date).format('YYYY-MM-DD') == '2021-07-25'
-      ) {
-        return 'weekend'
-      }
-    }
+    )
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
+      //折叠所有任务：
+      // gantt.eachTask(function (task) {
+      //   task.$open = true
+      // })
+      // gantt.render()
       console.log('选中')
-
       leftData && leftData(id)
     })
     //单击右键
     gantt.attachEvent('onContextMenu', function (id: any) {
       rightData && rightData(id)
     })
-    //拖拽是
+    //拖拽时
     gantt.attachEvent('onTaskDrag', function (id: any, v: any, item: any) {
       drag(item)
     })
-    // gantt.attachEvent('onAfterTaskUpdate', function (id: any) {
-    //   console.log('任务更新后------------')
-    // })
-
-    // 测试----------
-
-    // 测试-----结束-----
-
-    // //触发灯箱
-    // gantt.attachEvent('onLightbox', function (id) {
-    //   console.log('触发灯箱', id)
-    // })
-    // //灯箱取消
-    // gantt.attachEvent('onBeforeDataRender', function (id) {
-    //   console.log('灯箱取消', id)
-    // })
-
-    // 时间处理
-    gantt.ext.zoom.init({
-      levels: [
-        {
-          name: 'Hours',
-          scale_height: 60,
-          min_column_width: 30,
-          scales: [
-            { unit: 'day', step: 1, format: '%d %M  ' },
-            { unit: 'hour', step: 1, format: '%H' }
-          ]
-        },
-        {
-          name: 'Days',
-          scale_height: 60,
-          min_column_width: 70,
-          scales: [{ unit: 'day', step: 1, format: ' %M%d' }]
-        },
-        {
-          name: 'Months',
-          scale_height: 60,
-          min_column_width: 70,
-          scales: [
-            { unit: 'month', step: 1, format: '%F' },
-            { unit: 'week', step: 1, format: '#%W' }
-          ]
-        }
-      ]
+    gantt.attachEvent('onEmptyClick', function (e: any) {
+      console.log('我点击了空白')
     })
 
     // 可以通过此控制 是否可以拖动
@@ -142,8 +120,7 @@ function Gantt(props: any) {
         }
       }
     )
-
-    //缩放----
+    //  日期控制
     const zoomConfig = {
       levels: [
         {
@@ -176,36 +153,6 @@ function Gantt(props: any) {
       ]
     }
     gantt.ext.zoom.init(zoomConfig)
-    //缩放----结束
-    //测试---------------------
-    // gantt.config.fit_tasks = false
-
-    // 测试----------------------------------
-    gantt.attachEvent('onEmptyClick', function (e: any) {
-      console.log('我点击了空白')
-    })
-
-    // gantt.event('divId', 'click', function (event) {
-    //   console.log(event)
-    // })
-
-    // gantt.attachEvent('onAjaxError', function (request) {
-    //   console.log(request)
-    //   // do something
-    //   return true
-    // })
-
-    // gantt.addTask(
-    //   {
-    //     id: 7,
-    //     text: 'Task #5',
-    //     start_date: '02-09-2013',
-    //     duration: 28
-    //   },
-    //   'pr_2'
-    // )
-
-    // gantt.getTask(11)
 
     // 更新的值 **误删**
     const dp = gantt.createDataProcessor({
@@ -225,35 +172,95 @@ function Gantt(props: any) {
         // }
       },
       link: {
-        // create: function (data: any) {
-        //   //线的操作
-        //   console.log('link.create----------------------', data)
-        // },
-        // update: function (_data: any) {
-        //   console.log('link.update----------------------')
-        // },
-        // delete: function () {
-        //   console.log('link.delete----------------------')
-        // }
+        create: function (data: any) {
+          //线的操作
+          // console.log('link.create----------------------', data)
+        },
+        update: function (_data: any) {
+          // console.log('link.update----------------------')
+        },
+        delete: function () {
+          // console.log('link.delete----------------------')
+        }
       }
     })
   }
 
-  const setZoom = (value: any) => {
-    if (!gantt.$initialized) {
-      initZoom()
+  //  颜色 top名字的设置
+  const color = () => {
+    // 控制颜色
+    if (!isEmpty(rest)) {
+      // 控制颜色 头
+      gantt.templates.scale_cell_class = function (date: moment.MomentInput) {
+        const time = moment(date).format('YYYY-MM-DD')
+        if (rest.includes(time)) {
+          undefined
+          return 'weekend'
+        }
+      }
+
+      // 控制颜色 主体
+      // gantt.templates.task_cell_class = function (
+      gantt.templates.timeline_cell_class = function (
+        item: any,
+        date: moment.MomentInput
+      ) {
+        const time = moment(date).format('YYYY-MM-DD')
+        if (rest.includes(time)) {
+          undefined
+          return 'weekend'
+        }
+      }
+
+      //  日期控制
+      const zoomConfig = {
+        levels: [
+          {
+            name: 'Hours', //时
+            scale_height: 60,
+            min_column_width: 30,
+            scales: [
+              { unit: 'day', step: 1, format: '%M %d ' },
+              { unit: 'hour', step: 1, format: '%H' }
+            ]
+          },
+          {
+            name: 'Days', //日
+            scale_height: 27,
+            min_column_width: 100,
+            // scales: [{ unit: 'day', step: 1, format: ' %M %d' }]
+            scales: [
+              {
+                unit: 'day',
+                step: 1,
+                format: function (date: moment.MomentInput) {
+                  const time = moment(date).format('YYYY-MM-DD')
+                  if (rest.includes(time)) {
+                    return '该日期xxx不可用'
+                  } else {
+                    return moment(date).format('MM月DD')
+                  }
+                }
+              }
+            ]
+          },
+          {
+            name: 'Quarter', //月
+            height: 100,
+            min_column_width: 90,
+            scales: [{ unit: 'month', step: 1, format: '%M' }]
+          },
+          {
+            name: 'Year', //年
+            scale_height: 50,
+            min_column_width: 30,
+            scales: [{ unit: 'year', step: 1, format: '%Y' }]
+          }
+        ]
+      }
+      gantt.ext.zoom.init(zoomConfig)
     }
-    //缩放
-    gantt.ext.zoom.setLevel(value)
   }
-  useEffect(() => {
-    setZoom(zoom)
-  }, [zoom])
-  useEffect(() => {
-    if (tasks) {
-      componentDidMount(tasks)
-    }
-  }, [tasks])
 
   const initGanttDataProcessor = () => {
     gantt.createDataProcessor((type: any, action: any, item: any, id: any) => {

@@ -1,12 +1,13 @@
 .gantt-container {
   height: calc(100vh - 50px - 200px);
 }
+/* 控制颜色 */
 .weekend {
-  background: red;
+  background: #0c0e0c !important;
 }
 
 .gantt_selected .weekend {
-  background: pink;
+  background: rgb(192, 239, 255);
 }
 
 .gantt_task_link:hover .gantt_line_wrapper div {
