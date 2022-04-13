@@ -180,7 +180,7 @@ const Dhx = (props: { setHighlighted: any }) => {
             (item: { id: any }) => item.id === teamId
           )
           if (unavailable !== undefined && !isEmpty(unavailable)) {
-            console.log('不可用时间测试', unavailable[0].time)
+            console.log('不可用时间测试...', unavailable[0].time)
 
             setRestDate(unavailable[0].time)
           }
