@@ -1,9 +1,18 @@
-import { Col, DatePicker, Form, Input, Modal, Row, Select } from 'antd'
+import {
+  Checkbox,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Select
+} from 'antd'
 import moment from 'moment'
 import React, { useEffect } from 'react'
 function Popup(props: { content: any }) {
   const { content } = props
-  const { isModalVisible, setIsModalVisible } = content
+  const { editWindow, setEditWindow } = content
   const { Option } = Select
 
   const [form] = Form.useForm()
@@ -25,7 +34,7 @@ function Popup(props: { content: any }) {
   }
 
   const handleCancel = () => {
-    setIsModalVisible(false)
+    setEditWindow(false)
   }
 
   const onFinish = (values: any) => {
@@ -33,7 +42,7 @@ function Popup(props: { content: any }) {
     values.endTime = moment(values.startTime).valueOf()
     console.log('Success:', values)
     form.resetFields()
-    setIsModalVisible(false)
+    setEditWindow(false)
   }
   //所属工段
   const section = [
@@ -64,7 +73,7 @@ function Popup(props: { content: any }) {
       <Modal
         width={800}
         title={'编辑'}
-        visible={isModalVisible}
+        visible={editWindow}
         onOk={handleOk}
         onCancel={handleCancel}
         centered={true}
@@ -79,42 +88,72 @@ function Popup(props: { content: any }) {
           <Row>
             <Col span={12}>
               <Form.Item label="生产单号" name="productionOrder">
-                <Input maxLength={100} placeholder="请输入生产单号" />
+                <Input
+                  maxLength={100}
+                  placeholder="请输入生产单号"
+                  disabled={true}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="销售单号" name="sale">
-                <Input maxLength={100} placeholder="请输入销售单号" />
+              <Form.Item label="产品款号" name="sale">
+                <Input
+                  maxLength={100}
+                  placeholder="请输入销售单号"
+                  disabled={true}
+                />
               </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col span={12}>
               <Form.Item label="产品名称" name="holiday">
-                <Input maxLength={100} placeholder="请输入产品名称" />
+                <Input
+                  maxLength={100}
+                  placeholder="请输入产品名称"
+                  disabled={true}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label="生产单总量" name="productionOrderYear">
-                <Input maxLength={100} placeholder="请输入生产单" />
+                <Input
+                  maxLength={100}
+                  placeholder="请输入生产单"
+                  disabled={true}
+                />
               </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label="工序名称" name="processName">
-                <Input maxLength={100} placeholder="请输入工序名称" />
+              <Form.Item label="所属工段" name="processName">
+                <Select defaultValue="请选择所属工段" disabled={true}>
+                  {section.map((item) => (
+                    // eslint-disable-next-line react/jsx-key
+                    <Option value={item.id}>{item.name}</Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="工序编号" name="operationNumber">
-                <Input maxLength={100} placeholder="请输入工序编号" />
+              <Form.Item label="工厂名称" name="operationNumber">
+                <Select defaultValue="请选择所属工段" disabled={true}>
+                  {section.map((item) => (
+                    // eslint-disable-next-line react/jsx-key
+                    <Option value={item.id}>{item.name}</Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label="所属工段" name="section">
+              <Form.Item
+                label="车间名称"
+                name="section"
+                rules={[{ required: true, message: '请输入工作班组' }]}
+              >
                 <Select defaultValue="请选择所属工段">
                   {section.map((item) => (
                     // eslint-disable-next-line react/jsx-key
@@ -124,7 +163,11 @@ function Popup(props: { content: any }) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="工厂名称" name="factory">
+              <Form.Item
+                label="工作班组"
+                name="factory"
+                rules={[{ required: true, message: '请输入工作班组' }]}
+              >
                 <Select defaultValue="请选择工厂名称">
                   {factory.map((item) => (
                     // eslint-disable-next-line react/jsx-key
@@ -138,12 +181,8 @@ function Popup(props: { content: any }) {
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item
-                label="车间名称"
-                name="workshopName"
-                rules={[{ required: true, message: '请选择车间名称' }]}
-              >
-                <Select defaultValue="请选择车间名称">
+              <Form.Item label="生产量" name="workshopName">
+                <Select defaultValue="请选择车间名称" disabled={true}>
                   {workshop.map((item) => (
                     // eslint-disable-next-line react/jsx-key
                     <Option value={item.id}>{item.name}</Option>
@@ -152,11 +191,7 @@ function Popup(props: { content: any }) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                label="工作班组"
-                name="workTeam"
-                rules={[{ required: true, message: '请输入工作班组' }]}
-              >
+              <Form.Item label="完成量" name="workTeam">
                 <Input maxLength={100} placeholder="请输入工作班组" />
               </Form.Item>
             </Col>
@@ -189,12 +224,13 @@ function Popup(props: { content: any }) {
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item
-                label="生产量"
-                name="yield"
-                rules={[{ required: true, message: '请输入生产量' }]}
-              >
+              <Form.Item label="剩余量" name="yield">
                 <Input maxLength={100} placeholder="请输入生产量" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="锁定任务" name="yield">
+                <Checkbox></Checkbox>
               </Form.Item>
             </Col>
           </Row>

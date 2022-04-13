@@ -2,15 +2,19 @@ import { Popover, Tabs, Tag, Tree } from 'antd'
 import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
+import { practice } from '@/recoil/apis'
+
 import BreakUp from './breakUp/index'
 import styles from './index.module.less'
+import Popup from './popup'
+
 const { TabPane } = Tabs
 function ToPlan(props: { remind: any }) {
   const { remind } = props
-  console.log('remind', remind)
+  const { listProductionOrders } = practice
 
   const [list, setList] = useState<any>([]) //总
-
+  const [editWindow, setEditWindow] = useState(false) //编辑窗
   const [treeData, setTreeData] = useState([]) //处理后的待计划
   const [WaitingTreeData, setWaitingTreeData] = useState([]) //处理后的已计划
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -18,6 +22,14 @@ function ToPlan(props: { remind: any }) {
   const [keys, setKeys] = useState<any>()
 
   const [equal, setEqual] = useState<any>('1')
+
+  const map = new Map()
+  map.set('1', '裁剪')
+  map.set('2', '缝制')
+  map.set('3', '后整')
+  map.set('4', '包装')
+  map.set('5', '外发')
+  map.set('6', '缝制线外组')
   const callback = (key: any) => {
     console.log('callback', key)
     setCurrent(key)
@@ -90,7 +102,9 @@ function ToPlan(props: { remind: any }) {
               workSplit(id)
             }}
           >
-            <Tag color="gold"> 任务拆分</Tag>
+            <Tag className={styles.tag} color="gold">
+              任务拆分
+            </Tag>
           </div>
         ) : null}
         {type === 2 ? (
@@ -100,7 +114,16 @@ function ToPlan(props: { remind: any }) {
               theEditor(id)
             }}
           >
-            <Tag color="magenta"> 编辑工作</Tag>
+            <Tag
+              className={styles.tag}
+              color="magenta"
+              onClick={() => {
+                setEditWindow(true)
+              }}
+            >
+              {' '}
+              编辑工作
+            </Tag>
           </div>
         ) : null}
 
@@ -112,7 +135,10 @@ function ToPlan(props: { remind: any }) {
                 theEditor(id)
               }}
             >
-              <Tag color="purple"> 锁定工作</Tag>
+              <Tag className={styles.tag} color="purple">
+                {' '}
+                锁定工作
+              </Tag>
             </div>
             <div
               className={styles.card}
@@ -120,7 +146,10 @@ function ToPlan(props: { remind: any }) {
                 theEditor(id)
               }}
             >
-              <Tag color="volcano"> 解锁工作</Tag>
+              <Tag className={styles.tag} color="volcano">
+                {' '}
+                解锁工作
+              </Tag>
             </div>
             <div
               className={styles.card}
@@ -128,7 +157,10 @@ function ToPlan(props: { remind: any }) {
                 theEditor(id)
               }}
             >
-              <Tag color="blue"> 解除分派</Tag>
+              <Tag className={styles.tag} color="blue">
+                {' '}
+                解除分派
+              </Tag>
             </div>
           </>
         ) : null}
@@ -140,7 +172,9 @@ function ToPlan(props: { remind: any }) {
               efficiency(id)
             }}
           >
-            <Tag color="geekblue">效率模板</Tag>
+            <Tag className={styles.tag} color="geekblue">
+              效率模板
+            </Tag>
           </div>
         ) : null}
       </div>
@@ -163,96 +197,148 @@ function ToPlan(props: { remind: any }) {
     )
   }
   useEffect(() => {
-    const waitPlanned = [
+    // const waitPlanned = [
+    //   {
+    //     title: '生产单（100）件',
+    //     id: '112',
+    //     children: [
+    //       {
+    //         title: '生产单待计划',
+    //         id: '1',
+    //         children: [
+    //           {
+    //             title: '裁剪工段',
+    //             id: '11'
+    //           },
+    //           {
+    //             title: '车缝工段',
+    //             id: '12'
+    //           }
+    //         ]
+    //       },
+    //       {
+    //         title: '车缝工段',
+    //         id: '2',
+    //         children: [
+    //           {
+    //             title: '裁剪工段2',
+    //             id: '21'
+    //           },
+    //           {
+    //             title: '车缝工段2',
+    //             id: '22'
+    //           }
+    //         ]
+    //       }
+    //     ]
+    //   }
+    // ]
+
+    dataAcquisition()
+  }, [current])
+  const dataAcquisition = async () => {
+    //已计划假数据
+    const planned = [
       {
-        title: '生产单待计划',
-        id: '1',
+        title: '生产单（200）件',
+        id: '116',
         children: [
           {
-            title: '裁剪工段',
-            id: '11'
+            title: '生产单已计划',
+            id: '2',
+            children: [
+              {
+                title: '裁剪工段已计划',
+                id: '21'
+              },
+              {
+                title: '车缝工段已计划',
+                id: '22'
+              }
+            ]
           },
           {
             title: '车缝工段',
-            id: '12'
-          }
-        ]
-      },
-      {
-        title: '车缝工段',
-        id: '2',
-        children: [
-          {
-            title: '裁剪工段2',
-            id: '21'
-          },
-          {
-            title: '车缝工段2',
-            id: '22'
+            id: ' 3',
+            children: [
+              {
+                title: '裁剪工段2',
+                id: '31'
+              },
+              {
+                title: '车缝工段2',
+                id: '8848'
+              }
+            ]
           }
         ]
       }
     ]
-    const planned = [
-      {
-        title: '生产单已计划',
-        id: '2',
-        children: [
-          {
-            title: '裁剪工段已计划',
-            id: '21'
-          },
-          {
-            title: '车缝工段已计划',
-            id: '22'
-          }
-        ]
-      },
-      {
-        title: '车缝工段',
-        id: ' 3',
-        children: [
-          {
-            title: '裁剪工段2',
-            id: '31'
-          },
-          {
-            title: '车缝工段2',
-            id: '8848'
-          }
-        ]
-      }
-    ]
-    const sum = [waitPlanned, planned]
+    // 待计划数据
+    const res = await listProductionOrders({
+      factoryId: '1481903393613139970',
+      isPlanned: 1
+    })
+    //添加字段
+    !isEmpty(res) &&
+      res.map(
+        (item: {
+          title: string
+          externalProduceOrderNum: any
+          productionAmount: any
+          children: any
+          detailList: any
+        }) => {
+          item.title = `${item.externalProduceOrderNum}(${item.productionAmount})件`
+          item.children = item.detailList
+          !isEmpty(item.children) &&
+            item.children.map((v: any) => {
+              v.title = map.get(v.section)
+              //待会进行修改
+              v.children = v.section === '2' ? [{ title: '班组1-测试' }] : null
+            })
+        }
+      )
+    console.log('待计划', res)
+    const sum = [res, planned]
     setList(sum)
 
     getData(sum[Number(current)], current)
-  }, [current])
+  }
 
   const getData = (data: any, type: string) => {
+    console.log('处理数据', data)
+    console.log('type', type)
+
     //处理数据
     if (!isEmpty(data)) {
-      data.map((item: any) => {
-        item.key = item.id
-        item.type = item.title === '车缝工段' ? 1 : 0 //用于判断
-        item.popover = false
-        item.title = item.type === 1 ? sewing(item, 1) : sewing(item, 2)
-        //子项添加key
-        if (!isEmpty(item.children)) {
-          item.children.map((singled: any) => {
-            singled.key = singled.id
+      data.map((i: { children: any[] }) => {
+        !isEmpty(i.children) &&
+          i.children.map((item: any) => {
+            // data.map((item: any) => {
+            item.key = item.id
+            item.type = item.title === '缝制' ? 1 : 0 //用于判断
+            item.popover = false
+            item.title = item.type === 1 ? sewing(item, 1) : sewing(item, 2)
+            //子项添加key
+            if (!isEmpty(item.children)) {
+              item.children.map((singled: any) => {
+                singled.key = singled.id
+              })
+            }
+            //子项处理
+            if (item.type === 1) {
+              if (!isEmpty(item.children)) {
+                item.children.map((singled: any) => {
+                  item.popover = false
+                  singled.title = sewing(singled, 3)
+                })
+              }
+            }
+            // })
           })
-        }
-        //子项处理
-        if (item.type === 1) {
-          if (!isEmpty(item.children)) {
-            item.children.map((singled: any) => {
-              item.popover = false
-              singled.title = sewing(singled, 3)
-            })
-          }
-        }
       })
+
       if (type === '0') {
         setTreeData(data)
       } else {
@@ -268,6 +354,8 @@ function ToPlan(props: { remind: any }) {
   const onCheck = (checkedKeys: any, info: any) => {
     console.log('onCheck', checkedKeys, info)
   }
+
+  const contents = { editWindow, setEditWindow }
   return (
     <div>
       {!isModalVisible ? (
@@ -275,6 +363,7 @@ function ToPlan(props: { remind: any }) {
           <TabPane tab="待计划" key="0">
             {treeData !== undefined && treeData.length > 0 ? (
               <Tree
+                height={200}
                 selectedKeys={keys}
                 defaultExpandAll={true}
                 // checkable
@@ -287,6 +376,7 @@ function ToPlan(props: { remind: any }) {
           <TabPane tab="已计划" key="1">
             {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
               <Tree
+                height={200}
                 selectedKeys={keys}
                 defaultExpandAll={true}
                 // checkable
@@ -303,6 +393,8 @@ function ToPlan(props: { remind: any }) {
         setIsModalVisible={setIsModalVisible}
         isModalVisible={isModalVisible}
       />
+      {/* 编辑工作 */}
+      <Popup content={contents} />
     </div>
   )
 }

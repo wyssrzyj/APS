@@ -7,7 +7,6 @@ import Dome from './Dome/index'
 import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
-import Popup from './popup'
 import ProductionOrder from './productionOrder/index'
 import RuleScheduling from './ruleScheduling/index'
 import ToPlan from './toPlan'
@@ -18,7 +17,6 @@ function Index() {
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
-  const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
 
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
@@ -39,13 +37,6 @@ function Index() {
     console.log(e)
   }
 
-  const editUser = (type: boolean) => {
-    if (type === true) {
-      setIsModalVisible(true)
-    } else {
-      console.log('查看')
-    }
-  }
   //删除
   const start = () => {
     if (selectedRowKeys[0] === undefined) {
@@ -62,9 +53,6 @@ function Index() {
     setMaterialModal(true)
   }
 
-  const executionMethod = () => {
-    setIsModalVisible(true)
-  }
   const schedulingBtn = () => {
     setScheduling(true)
   }
@@ -85,7 +73,6 @@ function Index() {
     setRemind(e)
   }
 
-  const content = { isModalVisible, setIsModalVisible }
   return (
     <div className={styles.qualification}>
       <div>
@@ -104,14 +91,9 @@ function Index() {
             </div>
           </div>
 
-          <Button type="primary" onClick={executionMethod}>
-            编辑
-          </Button>
-
           <Button type="primary" danger onClick={start}>
             删除
           </Button>
-          <Popup content={content} />
         </div>
       </div>
       <Button type="primary" onClick={schedulingBtn}>

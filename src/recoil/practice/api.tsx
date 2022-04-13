@@ -450,3 +450,112 @@ export const workingProcedure = async (params: any) => {
     console.log(e)
   }
 }
+
+// getTeamView
+export const figureData = async (params: any) => {
+  console.log('接口----------------------', params)
+
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/produce-assignment/get-team-view`,
+      params
+    )
+
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+// getTeamView
+export const getLine = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/produce-assignment-detail/get-line`,
+      params
+    )
+
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+//待计划、已计划、全部生产单列表
+export const listProductionOrders = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment/list`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//工厂列表
+export const factoryList = async () => {
+  try {
+    const res: ResponseProps = await axios.post(`/aps/mes/get-factory-list`)
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//移动后计算结束时间
+export const calculateEndTimeAfterMove = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment/update-detail-time`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//获取甘特图不可工作日期
+export const workingDate = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/produce-assignment/get-non-work-time`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}

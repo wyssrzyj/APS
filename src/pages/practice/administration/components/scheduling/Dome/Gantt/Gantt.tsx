@@ -5,18 +5,10 @@ import { isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 const Gantt = (props: any) => {
-  const {
-    zoom,
-    tasks,
-    onDataUpdated,
-    updateList,
-    rightData,
-    leftData,
-    drag,
-    restDate
-  } = props
+  const { zoom, tasks, updateList, rightData, leftData, restDate } = props
 
   const chartDom = document.getElementById('main') //获取id
+
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   const dataDome = ['2020-04-07', '2020-04-08']
 
@@ -35,6 +27,8 @@ const Gantt = (props: any) => {
 
   useEffect(() => {
     if (tasks) {
+      console.log('甘特数据', tasks)
+
       componentDidMount(tasks)
     }
   }, [tasks])
@@ -51,6 +45,7 @@ const Gantt = (props: any) => {
     if (!gantt.$initialized) {
       color()
     }
+
     //缩放-不可修该 勿动
     gantt.ext.zoom.setLevel(zoom)
   }, [rest, zoom])
@@ -62,7 +57,7 @@ const Gantt = (props: any) => {
     gantt.config.autoscroll = true //如果线超出屏幕可以x滚动
     gantt.config.order_branch = false // 左侧可以拖动
     gantt.config.sort = true //左侧点击表头排序
-    // gantt.config.drag_move = true //是否可以移动
+    gantt.config.drag_move = true //是否可以移动
     gantt.config.drag_progress = false //拖放进度
     gantt.config.drag_resize = false //控制大小
     // gantt.config.show_links = false //控制两端的线是否可以拖动
@@ -77,15 +72,6 @@ const Gantt = (props: any) => {
       // { name: 'duration', label: 'Duration', align: 'center' }
       // { name: 'add', label: '' },
     ]
-    // 左侧打开
-    gantt.attachEvent(
-      'onTaskOpened',
-      function (id: any, v: any, item: any, S, D) {
-        console.log('左侧打开', id)
-
-        // leftData && leftData(id)
-      }
-    )
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
       //折叠所有任务：
@@ -100,10 +86,10 @@ const Gantt = (props: any) => {
     gantt.attachEvent('onContextMenu', function (id: any) {
       rightData && rightData(id)
     })
-    //拖拽时
-    gantt.attachEvent('onTaskDrag', function (id: any, v: any, item: any) {
-      drag(item)
-    })
+    // //拖拽时
+    // gantt.attachEvent('onTaskDrag', function (id: any, v: any, item: any) {
+    //   drag(item)
+    // })
     gantt.attachEvent('onEmptyClick', function (e: any) {
       console.log('我点击了空白')
     })
@@ -236,7 +222,7 @@ const Gantt = (props: any) => {
                 format: function (date: moment.MomentInput) {
                   const time = moment(date).format('YYYY-MM-DD')
                   if (rest.includes(time)) {
-                    return '该日期xxx不可用'
+                    return '该日期不可用'
                   } else {
                     return moment(date).format('MM月DD')
                   }
@@ -265,9 +251,9 @@ const Gantt = (props: any) => {
   const initGanttDataProcessor = () => {
     gantt.createDataProcessor((type: any, action: any, item: any, id: any) => {
       return new Promise<void>((resolve, reject) => {
-        if (onDataUpdated) {
-          onDataUpdated(type, action, item, id)
-        }
+        // if (onDataUpdated) {
+        //   onDataUpdated(type, action, item, id)
+        // }
         return resolve()
       })
     })
@@ -276,6 +262,7 @@ const Gantt = (props: any) => {
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
     initGanttDataProcessor()
+
     gantt.parse(list) //渲染数据
   }
   return <div id="main" style={{ width: '100%', height: '100%' }}></div>
