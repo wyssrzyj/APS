@@ -27,9 +27,7 @@ const Gantt = (props: any) => {
 
   useEffect(() => {
     if (tasks) {
-      console.log('甘特数据', tasks)
-
-      componentDidMount(tasks)
+      ganttShow(tasks)
     }
   }, [tasks])
   // 静态方法
@@ -160,7 +158,7 @@ const Gantt = (props: any) => {
       link: {
         create: function (data: any) {
           //线的操作
-          // console.log('link.create----------------------', data)
+          console.log('link.create----------------------', data)
         },
         update: function (_data: any) {
           // console.log('link.update----------------------')
@@ -258,10 +256,11 @@ const Gantt = (props: any) => {
       })
     })
   }
-  const componentDidMount = (list: any) => {
+  const ganttShow = (list: any) => {
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
     initGanttDataProcessor()
+    console.log('g++++++++++', list)
 
     gantt.parse(list) //渲染数据
   }

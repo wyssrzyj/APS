@@ -9,9 +9,9 @@ import styles from './index.module.less'
 import Popup from './popup'
 
 const { TabPane } = Tabs
-function ToPlan(props: { remind: any }) {
-  const { remind } = props
-  const { listProductionOrders } = practice
+function ToPlan(props: { remind: any; formData: any }) {
+  const { remind, formData } = props
+  const { listProductionOrders, unlockWork, releaseFromAssignment } = practice
 
   const [list, setList] = useState<any>([]) //总
   const [editWindow, setEditWindow] = useState(false) //编辑窗
@@ -22,18 +22,117 @@ function ToPlan(props: { remind: any }) {
   const [keys, setKeys] = useState<any>()
 
   const [equal, setEqual] = useState<any>('1')
+  const [currentItem, setCurrentItem] = useState<any>() //点击的值
 
   const map = new Map()
-  map.set('1', '裁剪')
-  map.set('2', '缝制')
-  map.set('3', '后整')
-  map.set('4', '包装')
-  map.set('5', '外发')
+  map.set('1', '裁剪工段')
+  map.set('2', '缝制工段')
+  map.set('3', '后整工段')
+  map.set('4', '包装工段')
+  map.set('5', '外发工段')
   map.set('6', '缝制线外组')
   const callback = (key: any) => {
-    console.log('callback', key)
     setCurrent(key)
-    // setType(false)
+  }
+
+  useEffect(() => {
+    if (formData !== undefined) {
+      dataAcquisition(formData)
+      console.log('树的formData', formData)
+    }
+  }, [formData])
+  //字段更改
+  const fieldChanges = (
+    data: {
+      title: string
+      externalProduceOrderNum: any
+      productionAmount: any
+      children: any
+      assignmentVOList: any
+    }[]
+  ) => {
+    !isEmpty(data) &&
+      data.map(
+        (item: {
+          title: string
+          externalProduceOrderNum: any
+          productionAmount: any
+          children: any
+          assignmentVOList: any
+        }) => {
+          item.title = `${item.externalProduceOrderNum}(${item.productionAmount})件`
+          item.children = item.assignmentVOList
+          !isEmpty(item.children) &&
+            item.children.map((v: any) => {
+              v.title = map.get(v.section)
+              //待会进行修改
+              v.children = v.section === '2' ? v.detailList : null
+              !isEmpty(v.children) &&
+                v.children.map((s: any) => {
+                  s.title = s.teamName
+                  //待会进行修改
+                })
+            })
+        }
+      )
+    return data
+  }
+  const dataAcquisition = async (id: any) => {
+    //已计划假数据
+    // 0未计划  1已计划
+    const notPlan = await listProductionOrders({
+      factoryId: id,
+      isPlanned: 0
+    })
+    const planned = await listProductionOrders({
+      factoryId: id,
+      isPlanned: 1
+    })
+    //添加字段
+    const sum = [fieldChanges(notPlan), fieldChanges(planned)]
+    setList(sum)
+    getData(sum[Number(current)], current) //初始展示
+  }
+  //Tabs 状态切换
+  useEffect(() => {
+    getData(list[Number(current)], current)
+  }, [current])
+  const getData = (data: any, type: string) => {
+    //处理数据
+    if (!isEmpty(data)) {
+      data.map((i: { children: any[] }) => {
+        !isEmpty(i.children) &&
+          i.children.map((item: any) => {
+            // data.map((item: any) => {
+            item.key = item.id
+            item.type = item.title === '缝制工段' ? 1 : 0 //用于判断
+            item.popover = false
+            item.title = item.type === 1 ? sewing(item, 1) : sewing(item, 2)
+            //子项添加key
+            if (!isEmpty(item.children)) {
+              item.children.map((singled: any) => {
+                singled.key = singled.id
+              })
+            }
+            //子项处理
+            if (item.type === 1) {
+              if (!isEmpty(item.children)) {
+                item.children.map((singled: any) => {
+                  item.popover = false
+                  singled.title = sewing(singled, 3)
+                })
+              }
+            }
+            // })
+          })
+      })
+
+      if (type === '0') {
+        setTreeData(data)
+      } else {
+        setWaitingTreeData(data)
+      }
+    }
   }
 
   const getCurrentTabs = (data: any[], i: any) => {
@@ -81,7 +180,19 @@ function ToPlan(props: { remind: any }) {
 
   //编辑工作
   const theEditor = (id: any) => {
-    console.log(id)
+    console.log('当前id值', id)
+  }
+  //锁定 解锁
+  const lockWork = async (type: number, id: any) => {
+    const arr = await unlockWork({
+      isLocked: type,
+      id: id
+    })
+    console.log(arr)
+  }
+  const removeDispatch = async (id: any) => {
+    const res = await releaseFromAssignment({ id: id })
+    console.log('接触分派', res)
   }
   //工作拆分
   const workSplit = (id: any) => {
@@ -127,27 +238,31 @@ function ToPlan(props: { remind: any }) {
           </div>
         ) : null}
 
-        {type !== 3 ? (
+        {type !== 3 && type !== 1 ? (
           <>
-            <div
-              className={styles.card}
-              onClick={() => {
-                theEditor(id)
-              }}
-            >
-              <Tag className={styles.tag} color="purple">
-                {' '}
+            <div className={styles.card}>
+              <Tag
+                className={styles.tag}
+                color="purple"
+                onClick={() => {
+                  theEditor(id)
+                  console.log('锁定工作')
+                  lockWork(1, id)
+                }}
+              >
                 锁定工作
               </Tag>
             </div>
-            <div
-              className={styles.card}
-              onClick={() => {
-                theEditor(id)
-              }}
-            >
-              <Tag className={styles.tag} color="volcano">
-                {' '}
+            <div className={styles.card}>
+              <Tag
+                className={styles.tag}
+                color="volcano"
+                onClick={() => {
+                  theEditor(id)
+                  console.log('解锁工作')
+                  lockWork(0, id)
+                }}
+              >
                 解锁工作
               </Tag>
             </div>
@@ -155,6 +270,7 @@ function ToPlan(props: { remind: any }) {
               className={styles.card}
               onClick={() => {
                 theEditor(id)
+                removeDispatch(id)
               }}
             >
               <Tag className={styles.tag} color="blue">
@@ -181,14 +297,23 @@ function ToPlan(props: { remind: any }) {
     )
   }
   const sewing = (sewingData: any, type: any) => {
+    //1是缝制
+    //2的时候
     return (
       <div style={{ height: '20px' }}>
         <Popover
           placement="right"
-          // visible={sewingData.popover}
-          // onVisibleChange={(e) => handleVisibleChange(e, sewingData, old)}
-          // content={<a onClick={hide}>Close</a>}
-          content={() => content(sewingData.id, type)}
+          content={() => {
+            if (type === 2) {
+              console.log('子id', sewingData.detailList)
+              if (sewingData.detailList !== null) {
+                content(sewingData.detailList[0].id, type)
+              }
+            } else {
+              console.log('非4个', type)
+              content(sewingData.id, type)
+            }
+          }}
           trigger="hover"
         >
           {sewingData.title}
@@ -196,158 +321,11 @@ function ToPlan(props: { remind: any }) {
       </div>
     )
   }
-  useEffect(() => {
-    // const waitPlanned = [
-    //   {
-    //     title: '生产单（100）件',
-    //     id: '112',
-    //     children: [
-    //       {
-    //         title: '生产单待计划',
-    //         id: '1',
-    //         children: [
-    //           {
-    //             title: '裁剪工段',
-    //             id: '11'
-    //           },
-    //           {
-    //             title: '车缝工段',
-    //             id: '12'
-    //           }
-    //         ]
-    //       },
-    //       {
-    //         title: '车缝工段',
-    //         id: '2',
-    //         children: [
-    //           {
-    //             title: '裁剪工段2',
-    //             id: '21'
-    //           },
-    //           {
-    //             title: '车缝工段2',
-    //             id: '22'
-    //           }
-    //         ]
-    //       }
-    //     ]
-    //   }
-    // ]
 
-    dataAcquisition()
-  }, [current])
-  const dataAcquisition = async () => {
-    //已计划假数据
-    const planned = [
-      {
-        title: '生产单（200）件',
-        id: '116',
-        children: [
-          {
-            title: '生产单已计划',
-            id: '2',
-            children: [
-              {
-                title: '裁剪工段已计划',
-                id: '21'
-              },
-              {
-                title: '车缝工段已计划',
-                id: '22'
-              }
-            ]
-          },
-          {
-            title: '车缝工段',
-            id: ' 3',
-            children: [
-              {
-                title: '裁剪工段2',
-                id: '31'
-              },
-              {
-                title: '车缝工段2',
-                id: '8848'
-              }
-            ]
-          }
-        ]
-      }
-    ]
-    // 待计划数据
-    const res = await listProductionOrders({
-      factoryId: '1481903393613139970',
-      isPlanned: 1
-    })
-    //添加字段
-    !isEmpty(res) &&
-      res.map(
-        (item: {
-          title: string
-          externalProduceOrderNum: any
-          productionAmount: any
-          children: any
-          detailList: any
-        }) => {
-          item.title = `${item.externalProduceOrderNum}(${item.productionAmount})件`
-          item.children = item.detailList
-          !isEmpty(item.children) &&
-            item.children.map((v: any) => {
-              v.title = map.get(v.section)
-              //待会进行修改
-              v.children = v.section === '2' ? [{ title: '班组1-测试' }] : null
-            })
-        }
-      )
-    console.log('待计划', res)
-    const sum = [res, planned]
-    setList(sum)
-
-    getData(sum[Number(current)], current)
-  }
-
-  const getData = (data: any, type: string) => {
-    console.log('处理数据', data)
-    console.log('type', type)
-
-    //处理数据
-    if (!isEmpty(data)) {
-      data.map((i: { children: any[] }) => {
-        !isEmpty(i.children) &&
-          i.children.map((item: any) => {
-            // data.map((item: any) => {
-            item.key = item.id
-            item.type = item.title === '缝制' ? 1 : 0 //用于判断
-            item.popover = false
-            item.title = item.type === 1 ? sewing(item, 1) : sewing(item, 2)
-            //子项添加key
-            if (!isEmpty(item.children)) {
-              item.children.map((singled: any) => {
-                singled.key = singled.id
-              })
-            }
-            //子项处理
-            if (item.type === 1) {
-              if (!isEmpty(item.children)) {
-                item.children.map((singled: any) => {
-                  item.popover = false
-                  singled.title = sewing(singled, 3)
-                })
-              }
-            }
-            // })
-          })
-      })
-
-      if (type === '0') {
-        setTreeData(data)
-      } else {
-        setWaitingTreeData(data)
-      }
-    }
-  }
   const onSelect = (selectedKeys: React.Key[], info: any) => {
     console.log('selected', selectedKeys)
+    console.log('当前项', info.node.id)
+    setCurrentItem(info.node)
     setKeys(selectedKeys)
   }
 
@@ -356,6 +334,7 @@ function ToPlan(props: { remind: any }) {
   }
 
   const contents = { editWindow, setEditWindow }
+  // const contentx = { isModalVisible, setIsModalVisible, type, treeData, edit }
   return (
     <div>
       {!isModalVisible ? (
@@ -363,7 +342,7 @@ function ToPlan(props: { remind: any }) {
           <TabPane tab="待计划" key="0">
             {treeData !== undefined && treeData.length > 0 ? (
               <Tree
-                height={200}
+                height={500}
                 selectedKeys={keys}
                 defaultExpandAll={true}
                 // checkable

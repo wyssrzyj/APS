@@ -559,3 +559,40 @@ export const workingDate = async (params: any) => {
     console.log(e)
   }
 }
+
+//锁定工作/解锁工作
+export const unlockWork = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail/change-locked-status`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//解除分派任务
+export const releaseFromAssignment = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail/cancel-assignment`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}

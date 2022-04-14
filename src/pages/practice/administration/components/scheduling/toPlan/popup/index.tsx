@@ -40,7 +40,7 @@ function Popup(props: { content: any }) {
   const onFinish = (values: any) => {
     values.startTime = moment(values.startTime).valueOf()
     values.endTime = moment(values.startTime).valueOf()
-    console.log('Success:', values)
+    console.log('数据:', values)
     form.resetFields()
     setEditWindow(false)
   }

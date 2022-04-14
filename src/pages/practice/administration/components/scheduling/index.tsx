@@ -23,6 +23,7 @@ function Index() {
   const [scheduling, setScheduling] = useState(false) //规则排程弹窗
   const [schedule, setSchedule] = useState(false) //校验排程弹窗
   const [remind, setRemind] = useState() //甘特图高亮
+  const [formData, setFormData] = useState() //form数据
   const data = []
   for (let i = 0; i < 5; i++) {
     data.push({
@@ -34,7 +35,8 @@ function Index() {
   }
   //头部form的数据
   const FormData = (e: any) => {
-    console.log(e)
+    console.log('头部form的数据', e)
+    setFormData(e)
   }
 
   //删除
@@ -83,11 +85,11 @@ function Index() {
           <Forms FormData={FormData}></Forms>
           <div className={styles.team}>
             <div className={styles.leftContent}>
-              <ToPlan remind={remind} />
+              <ToPlan formData={formData} remind={remind} />
             </div>
             {/* 甘特图 */}
             <div className={styles.rightContent}>
-              <Dome setHighlighted={setHighlighted} />
+              <Dome formData={formData} setHighlighted={setHighlighted} />
             </div>
           </div>
 

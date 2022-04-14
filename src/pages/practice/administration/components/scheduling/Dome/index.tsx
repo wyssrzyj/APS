@@ -7,8 +7,9 @@ import { practice } from '@/recoil/apis'
 
 import Gantt from './Gantt/index'
 import styles from './index.module.less'
-const Dhx = (props: { setHighlighted: any }) => {
-  const { setHighlighted } = props
+import Popup from './popup'
+const Dhx = (props: { setHighlighted: any; formData: any }) => {
+  const { setHighlighted, formData } = props
   const { figureData, getLine, calculateEndTimeAfterMove, workingDate } =
     practice
 
@@ -108,13 +109,19 @@ const Dhx = (props: { setHighlighted: any }) => {
 
   const [select, setSelect] = useState<any>([]) //用于展示 线和不可用时间
   const [type, setType] = useState<any>() //判断是点击还是移动
+  const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
 
   useEffect(() => {
-    getChart()
-  }, [])
+    if (formData !== undefined) {
+      console.log('甘特中的formData', formData)
+      getChart(formData)
+    }
+  }, [formData])
 
-  const getChart = async () => {
-    const chart: any = await figureData({ factoryId: '1481903393613139970' }) //图
+  const getChart = async (id: undefined) => {
+    const chart: any = await figureData({ factoryId: id }) //图
+    console.log('图', chart)
+
     if (chart.code === 200) {
       //格式处理
       chart.data.map(
@@ -196,6 +203,13 @@ const Dhx = (props: { setHighlighted: any }) => {
         setRestDate(unavailable[0].time)
       }
     }
+    // console.log('测试线Dome~~~~~', select)
+    // if (select === '1') {
+    //   setLine([{ id: 1, source: 1, target: 3, type: 0 }])
+    // }
+    // if (select === '3') {
+    //   setLine([{ id: 1, source: 3, target: 4, type: 0 }])
+    // }
   }, [select, type])
 
   const getLineData = async () => {
@@ -244,12 +258,12 @@ const Dhx = (props: { setHighlighted: any }) => {
               (item: { id: any }) => item.id === updateData.parent
             )
             message.error(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
-            getChart()
+            getChart(formData)
           } else {
             // 同行
             const tips = chart.filter((item: { id: any }) => item.id === tipsID)
             message.error(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
-            getChart()
+            getChart(formData)
           }
         } else {
           getEndTime(
@@ -272,7 +286,7 @@ const Dhx = (props: { setHighlighted: any }) => {
       detailId,
       teamId
     })
-    getChart()
+    getChart(formData)
   }
   const choose = (type: any) => {
     setCurrentZoom(type)
@@ -282,23 +296,17 @@ const Dhx = (props: { setHighlighted: any }) => {
     setUpdateData(e)
   }
 
-  // const menu = (
-  //   <Menu>
-  //     {sum.map((item) => (
-  //       <>
-  //         <Menu.Item>
-  //           <div onClick={() => choose(item.id)} key={item.id}>
-  //             {item.name}
-  //           </div>
-  //         </Menu.Item>
-  //       </>
-  //     ))}
-  //   </Menu>
-  // )
   const rightClick = (
     <Menu>
       <Menu.Item key="1">
-        <Tag color="green">新增加班</Tag>
+        <Tag
+          color="green"
+          onClick={() => {
+            setIsModalVisible(true)
+          }}
+        >
+          新增加班
+        </Tag>
       </Menu.Item>
     </Menu>
   )
@@ -314,6 +322,7 @@ const Dhx = (props: { setHighlighted: any }) => {
     setType('0')
     setHighlighted && setHighlighted(e)
   }
+  const content = { isModalVisible, setIsModalVisible }
 
   return (
     <div>
@@ -352,6 +361,7 @@ const Dhx = (props: { setHighlighted: any }) => {
             ,
           </div>
         </div>
+        <Popup content={content} />
       </div>
     </div>
   )
