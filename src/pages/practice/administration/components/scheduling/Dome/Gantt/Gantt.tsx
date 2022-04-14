@@ -251,7 +251,7 @@ const Gantt = (props: any) => {
       return new Promise<void>((resolve, reject) => {
         // if (onDataUpdated) {
         //   onDataUpdated(type, action, item, id)
-        // 、}
+        // }
         return resolve()
       })
     })
