@@ -91,7 +91,7 @@ const BreakUp = (props: any) => {
     list: any
   ) => {
     /**
-     * record 修改后的单个值
+     * record 修改后的单个值.
      * list 老数据
      */
     const sum = cloneDeep(list)
