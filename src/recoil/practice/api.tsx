@@ -453,8 +453,6 @@ export const workingProcedure = async (params: any) => {
 
 // getTeamView
 export const figureData = async (params: any) => {
-  console.log('接口----------------------', params)
-
   try {
     const res: ResponseProps = await axios.get(
       `/aps/produce-assignment/get-team-view`,
@@ -583,6 +581,60 @@ export const releaseFromAssignment = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
       `/aps/produce-assignment-detail/cancel-assignment`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//编辑任务
+export const editingTasks = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail/update`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 效率模板
+export const efficiencyList = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/capacity-efficiency-manage/list-fuzzy-by-page`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 车缝工段拆分保存
+export const breakSave = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail/split-assignment`,
       params
     )
     if (res.code !== 200) {

@@ -8,93 +8,16 @@ import { practice } from '@/recoil/apis'
 import Gantt from './Gantt/index'
 import styles from './index.module.less'
 import Popup from './popup'
-const Dhx = (props: { setHighlighted: any; formData: any }) => {
-  const { setHighlighted, formData } = props
+const Dhx = (props: {
+  setHighlighted: any
+  formData: any
+  gunterType: any
+}) => {
+  const { setHighlighted, formData, gunterType } = props
+  // console.log('甘特图类型', gunterType)
+
   const { figureData, getLine, calculateEndTimeAfterMove, workingDate } =
     practice
-
-  const { Option } = Select
-  /**
-   * Year 年
-   * Quarter 月
-   * Days 日
-   * Hours 时
-   *
-   */
-  const dome = [
-    //给父节点设置一个单独的状态 用于判断不可移动
-    {
-      id: '1',
-      type: '1',
-      text: '裁剪车间—裁剪班组', //名称
-      startDate: null,
-      endDate: null,
-      progress: 0.0,
-      render: null,
-      parent: null,
-      // start_date: '2020-04-07', //日期
-      // duration: 6, //天数
-      // progress: 1, //控制完成百分比 范围0-1
-      color: 'red' //控制颜色
-    },
-    {
-      id: '1008611',
-      text: '车缝班组',
-      // start_date: '2020-04-07',
-      // duration: 2,
-      progress: 0.6,
-      parent: '1',
-      color: '', //控制颜色
-      render: 'split' //添加同一行
-    },
-    {
-      //孙子
-      id: '111',
-      parentID: '1', //父id
-      text: '卢英杰的子3',
-      start_date: '2020-04-6', //开始时间
-      end_date: '2020-04-7', //结束时间
-      duration: 1,
-      progress: 0.6,
-      parent: '1008611',
-      color: 'red' //控制颜色
-    },
-    {
-      //孙子
-      id: '112',
-      parentID: '1', //父id
-      text: '卢英杰的子4',
-      start_date: '2020-04-2', //开始时间
-      end_date: '2020-04-3', //结束时间
-      duration: 1,
-      progress: 0.6,
-      parent: '1008611',
-      color: 'red' //控制颜色
-    },
-    {
-      id: '12',
-      text: '待计划',
-      type: '1',
-      start_date: '2020-04-6',
-      duration: 2,
-      progress: 0.6
-    },
-    {
-      id: '8848',
-      text: '已计划',
-      type: '1',
-      start_date: '2020-04-6',
-      duration: 2,
-      color: 'pink',
-      progress: 0.6
-    }
-  ]
-  const sum = [
-    { name: '年', id: 'Year' },
-    { name: '月', id: 'Quarter' },
-    { name: '日', id: 'Days' },
-    { name: '时', id: 'Hours' }
-  ]
 
   const [currentZoom, setCurrentZoom] = useState<any>('Days') //缩放的状态  Days
   const [subjectData, setSubjectData] = useState<any>({ data: [], links: [] }) //甘特图主体数据
@@ -107,13 +30,12 @@ const Dhx = (props: { setHighlighted: any; formData: any }) => {
   const [InitialDrag, setInitialDrag] = useState<any>([]) //初始拖动数据
   const [restDate, setRestDate] = useState<any>() //单个班组的不可用日期
 
-  const [select, setSelect] = useState<any>([]) //用于展示 线和不可用时间
+  const [select, setSelect] = useState<any>([]) //用于展示 线和不可用时间、给树传递id判断
   const [type, setType] = useState<any>() //判断是点击还是移动
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
 
   useEffect(() => {
     if (formData !== undefined) {
-      console.log('甘特中的formData', formData)
       getChart(formData)
     }
   }, [formData])
@@ -156,7 +78,7 @@ const Dhx = (props: { setHighlighted: any; formData: any }) => {
     }
     //班组不可工作时间
 
-    const notAvailable = await workingDate({ type: '0' })
+    const notAvailable = await workingDate({ type: gunterType })
     const sum = keys(notAvailable).map((item) => {
       return { time: notAvailable[item], id: item }
     })
@@ -310,9 +232,7 @@ const Dhx = (props: { setHighlighted: any; formData: any }) => {
       </Menu.Item>
     </Menu>
   )
-  function handleChange(value: any) {
-    console.log(`判断是班组还是生产 ${value}`)
-  }
+
   const rightData = (e: any) => {
     console.log('右键', e)
   }
@@ -320,8 +240,22 @@ const Dhx = (props: { setHighlighted: any; formData: any }) => {
   const leftData = async (e: any) => {
     setSelect(e)
     setType('0')
-    setHighlighted && setHighlighted(e)
   }
+  // 图和树联动-判断传递的id
+  useEffect(() => {
+    if (!isEmpty(chart)) {
+      if (!isEmpty(select)) {
+        const gunter = chart.filter((item: { id: any }) => item.id === select)
+
+        if (!isEmpty(gunter[0])) {
+          const id =
+            gunter[0].section === '2' ? gunter[0].id : gunter[0].assignmentId
+          console.log('图数据', id)
+          setHighlighted && setHighlighted(id)
+        }
+      }
+    }
+  }, [select, chart])
   const content = { isModalVisible, setIsModalVisible }
 
   return (
@@ -331,14 +265,6 @@ const Dhx = (props: { setHighlighted: any; formData: any }) => {
           {/* <Dropdown overlay={menu} placement="topRight" arrow>
             <Button>缩放</Button>
           </Dropdown> */}
-          <Select
-            defaultValue="1"
-            style={{ width: 120 }}
-            onChange={handleChange}
-          >
-            <Option value="1">班组甘特图</Option>
-            <Option value="2">生产甘特图</Option>
-          </Select>
         </div>
         <div className={styles.ganttContent}>
           <div>

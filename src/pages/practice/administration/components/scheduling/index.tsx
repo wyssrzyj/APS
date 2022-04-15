@@ -1,4 +1,4 @@
-import { Button, message, Tree } from 'antd'
+import { Button, message, Select } from 'antd'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
@@ -13,6 +13,7 @@ import ToPlan from './toPlan'
 import Verification from './verification/index'
 
 function Index() {
+  const { Option } = Select
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
@@ -24,6 +25,7 @@ function Index() {
   const [schedule, setSchedule] = useState(false) //校验排程弹窗
   const [remind, setRemind] = useState() //甘特图高亮
   const [formData, setFormData] = useState() //form数据
+  const [gunterType, setGunterType] = useState('0') //班组、订单甘特图
   const data = []
   for (let i = 0; i < 5; i++) {
     data.push({
@@ -35,7 +37,6 @@ function Index() {
   }
   //头部form的数据
   const FormData = (e: any) => {
-    console.log('头部form的数据', e)
     setFormData(e)
   }
 
@@ -74,7 +75,9 @@ function Index() {
   const setHighlighted = (e: React.SetStateAction<undefined>) => {
     setRemind(e)
   }
-
+  function handleChange(value: any) {
+    setGunterType(value)
+  }
   return (
     <div className={styles.qualification}>
       <div>
@@ -85,11 +88,27 @@ function Index() {
           <Forms FormData={FormData}></Forms>
           <div className={styles.team}>
             <div className={styles.leftContent}>
-              <ToPlan formData={formData} remind={remind} />
+              <ToPlan
+                gunterType={gunterType}
+                formData={formData}
+                remind={remind}
+              />
             </div>
             {/* 甘特图 */}
             <div className={styles.rightContent}>
-              <Dome formData={formData} setHighlighted={setHighlighted} />
+              <Select
+                defaultValue={gunterType}
+                style={{ width: 120 }}
+                onChange={handleChange}
+              >
+                <Option value="0">班组甘特图</Option>
+                <Option value="1">生产甘特图</Option>
+              </Select>
+              <Dome
+                gunterType={gunterType}
+                formData={formData}
+                setHighlighted={setHighlighted}
+              />
             </div>
           </div>
 

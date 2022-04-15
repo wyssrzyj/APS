@@ -7,17 +7,23 @@ import { practice } from '@/recoil/apis'
 import BreakUp from './breakUp/index'
 import styles from './index.module.less'
 import Popup from './popup'
+import TheEfficiency from './theEfficiency'
 
 const { TabPane } = Tabs
-function ToPlan(props: { remind: any; formData: any }) {
-  const { remind, formData } = props
+function ToPlan(props: { remind: any; formData: any; gunterType: any }) {
+  const { remind, formData, gunterType } = props
+  // console.log('甘特图类型-树', gunterType)
   const { listProductionOrders, unlockWork, releaseFromAssignment } = practice
 
   const [list, setList] = useState<any>([]) //总
   const [editWindow, setEditWindow] = useState(false) //编辑窗
+  const [editWindowList, setEditWindowList] = useState() //编辑窗数据
   const [treeData, setTreeData] = useState([]) //处理后的待计划
   const [WaitingTreeData, setWaitingTreeData] = useState([]) //处理后的已计划
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [efficiencyData, setEfficiencyData] = useState(false) //效率
+  const [workSplitList, setWorkSplitList] = useState() //工作拆分
+
   const [current, setCurrent] = useState('0')
   const [keys, setKeys] = useState<any>()
 
@@ -38,7 +44,6 @@ function ToPlan(props: { remind: any; formData: any }) {
   useEffect(() => {
     if (formData !== undefined) {
       dataAcquisition(formData)
-      console.log('树的formData', formData)
     }
   }, [formData])
   //字段更改
@@ -179,11 +184,20 @@ function ToPlan(props: { remind: any; formData: any }) {
   }, [list, remind])
 
   //编辑工作
-  const theEditor = (id: any) => {
-    console.log('当前id值', id)
+  const theEditor = (data: any) => {
+    console.log('当前编辑工作值', data)
+    setEditWindowList(data)
+    setEditWindow(true)
+  }
+  //编辑提交
+  const editSubmission = () => {
+    setEditWindow(false)
+    dataAcquisition(formData)
   }
   //锁定 解锁
   const lockWork = async (type: number, id: any) => {
+    console.log('锁定解锁id', id)
+
     const arr = await unlockWork({
       isLocked: type,
       id: id
@@ -191,26 +205,28 @@ function ToPlan(props: { remind: any; formData: any }) {
     console.log(arr)
   }
   const removeDispatch = async (id: any) => {
-    const res = await releaseFromAssignment({ id: id })
+    console.log('接触分派id', id)
+    const res = await releaseFromAssignment({ idList: [id] })
     console.log('接触分派', res)
   }
   //工作拆分
-  const workSplit = (id: any) => {
-    console.log(id)
+  const workSplit = (data: any) => {
+    setWorkSplitList(data)
     setIsModalVisible(true)
   }
   //效率模板
-  const efficiency = (id: any) => {
-    console.log(id)
+  const efficiencyMethods = (id: any) => {
+    console.log('效率模板', id)
+    setEfficiencyData(true)
   }
-  const content = (id: any, type: any) => {
+  const content = (data: any, type: any) => {
     return (
       <div>
         {type === 1 ? (
           <div
             className={styles.card}
             onClick={() => {
-              workSplit(id)
+              workSplit(data)
             }}
           >
             <Tag className={styles.tag} color="gold">
@@ -219,17 +235,12 @@ function ToPlan(props: { remind: any; formData: any }) {
           </div>
         ) : null}
         {type === 2 ? (
-          <div
-            className={styles.card}
-            onClick={() => {
-              theEditor(id)
-            }}
-          >
+          <div className={styles.card}>
             <Tag
               className={styles.tag}
               color="magenta"
               onClick={() => {
-                setEditWindow(true)
+                theEditor(data)
               }}
             >
               {' '}
@@ -245,9 +256,7 @@ function ToPlan(props: { remind: any; formData: any }) {
                 className={styles.tag}
                 color="purple"
                 onClick={() => {
-                  theEditor(id)
-                  console.log('锁定工作')
-                  lockWork(1, id)
+                  lockWork(1, data.id)
                 }}
               >
                 锁定工作
@@ -258,9 +267,7 @@ function ToPlan(props: { remind: any; formData: any }) {
                 className={styles.tag}
                 color="volcano"
                 onClick={() => {
-                  theEditor(id)
-                  console.log('解锁工作')
-                  lockWork(0, id)
+                  lockWork(0, data.id)
                 }}
               >
                 解锁工作
@@ -269,8 +276,7 @@ function ToPlan(props: { remind: any; formData: any }) {
             <div
               className={styles.card}
               onClick={() => {
-                theEditor(id)
-                removeDispatch(id)
+                removeDispatch(data.id)
               }}
             >
               <Tag className={styles.tag} color="blue">
@@ -285,7 +291,7 @@ function ToPlan(props: { remind: any; formData: any }) {
           <div
             className={styles.card}
             onClick={() => {
-              efficiency(id)
+              efficiencyMethods(data.id)
             }}
           >
             <Tag className={styles.tag} color="geekblue">
@@ -296,31 +302,45 @@ function ToPlan(props: { remind: any; formData: any }) {
       </div>
     )
   }
+
   const sewing = (sewingData: any, type: any) => {
     //1是缝制
     //2的时候
-    return (
-      <div style={{ height: '20px' }}>
-        <Popover
-          placement="right"
-          content={() => {
-            if (type === 2) {
-              console.log('子id', sewingData.detailList)
-              if (sewingData.detailList !== null) {
-                content(sewingData.detailList[0].id, type)
-              }
-            } else {
-              console.log('非4个', type)
-              content(sewingData.id, type)
+    if (type === 2) {
+      return (
+        <div style={{ height: '20px' }}>
+          <Popover
+            placement="right"
+            content={() =>
+              content(
+                sewingData.detailList !== null ? sewingData.detailList[0] : [],
+                type
+              )
             }
-          }}
-          trigger="hover"
-        >
-          {sewingData.title}
-        </Popover>
-      </div>
-    )
+            trigger="hover"
+          >
+            {sewingData.title}
+          </Popover>
+        </div>
+      )
+    } else {
+      return (
+        <div style={{ height: '20px' }}>
+          <Popover
+            placement="right"
+            content={() => content(sewingData, type)}
+            trigger="hover"
+          >
+            {/* {sewingData.title} */}
+            {sewingData.title}
+          </Popover>
+        </div>
+      )
+    }
   }
+  // const obtainCorrespondingData = (sewingData: any, type: any) => {
+
+  // }
 
   const onSelect = (selectedKeys: React.Key[], info: any) => {
     console.log('selected', selectedKeys)
@@ -333,7 +353,7 @@ function ToPlan(props: { remind: any; formData: any }) {
     console.log('onCheck', checkedKeys, info)
   }
 
-  const contents = { editWindow, setEditWindow }
+  const contents = { editSubmission, editWindow, setEditWindow, editWindowList }
   // const contentx = { isModalVisible, setIsModalVisible, type, treeData, edit }
   return (
     <div>
@@ -341,36 +361,46 @@ function ToPlan(props: { remind: any; formData: any }) {
         <Tabs onChange={callback} activeKey={current} type="card">
           <TabPane tab="待计划" key="0">
             {treeData !== undefined && treeData.length > 0 ? (
-              <Tree
-                height={500}
-                selectedKeys={keys}
-                defaultExpandAll={true}
-                // checkable
-                onSelect={onSelect}
-                onCheck={onCheck}
-                treeData={treeData}
-              />
+              <div>
+                <Tree
+                  height={500}
+                  selectedKeys={keys}
+                  defaultExpandAll={true}
+                  // checkable
+                  onSelect={onSelect}
+                  onCheck={onCheck}
+                  treeData={treeData}
+                />
+              </div>
             ) : null}
           </TabPane>
           <TabPane tab="已计划" key="1">
             {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
-              <Tree
-                height={200}
-                selectedKeys={keys}
-                defaultExpandAll={true}
-                // checkable
-                onSelect={onSelect}
-                onCheck={onCheck}
-                treeData={WaitingTreeData}
-              />
+              <div>
+                <Tree
+                  height={200}
+                  selectedKeys={keys}
+                  defaultExpandAll={true}
+                  // checkable
+                  onSelect={onSelect}
+                  onCheck={onCheck}
+                  treeData={WaitingTreeData}
+                />
+              </div>
             ) : null}
           </TabPane>
         </Tabs>
       ) : null}
       {/* 拆分 */}
       <BreakUp
+        workSplitList={workSplitList}
         setIsModalVisible={setIsModalVisible}
         isModalVisible={isModalVisible}
+      />
+      {/* 效率模板 */}
+      <TheEfficiency
+        setEfficiencyData={setEfficiencyData}
+        efficiencyData={efficiencyData}
       />
       {/* 编辑工作 */}
       <Popup content={contents} />
