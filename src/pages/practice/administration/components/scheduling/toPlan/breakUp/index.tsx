@@ -10,14 +10,18 @@ import {
   Table
 } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
-import { cloneDeep } from 'lodash'
+import Item from 'antd/lib/list/Item'
+import { cloneDeep, isElement } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+
+import { practice } from '@/recoil/apis'
 
 import Details from './details/index'
 import styles from './index.module.less'
 const BreakUp = (props: any) => {
-  const { setIsModalVisible, isModalVisible } = props
+  const { setIsModalVisible, isModalVisible, workSplitList } = props
+  const { breakSave, breakQuery } = practice
 
   const { Option } = Select
   const [pageNum, setPageNum] = useState<number>(1)
@@ -27,26 +31,42 @@ const BreakUp = (props: any) => {
   const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
 
   useEffect(() => {
-    getInterfaceData()
-  }, [])
-
-  const getInterfaceData = () => {
-    const storage = []
-    for (let i = 0; i < 1; i++) {
-      storage.push({
-        id: i,
-        key: i,
-        name: `Edward King ${i}`,
-        age: 32,
-        address: `London, Park Lane no. ${i}`,
-        production: 1000,
-        breakUp: 800,
-        workshop: '1',
-        team: '1',
-        efficiency: '1'
-      })
+    if (!isElement(workSplitList) && workSplitList !== undefined) {
+      getInterfaceData(workSplitList)
     }
-    setData(storage)
+  }, [workSplitList])
+
+  const getInterfaceData = async (data: any) => {
+    /// data.id
+    const res = await breakQuery({ assignmentId: '1514764866136440833' })
+    // const storage = []
+    // for (let i = 0; i < 1; i++) {
+    //   storage.push({
+    //     id: i,
+    //     key: i,
+    //     ids: i,
+    //     productName: `Edward King ${i}`,
+    //     planEndTime: 1649144899000,
+    //     planStartTime: 1649058485000,
+    //     completedAmount: 100, //已完成量
+    //     templateId: '选择效率模板',
+    //     age: 32,
+    //     address: `London, Park Lane no. ${i}`,
+    //     productionAmount: 1000, //生产单总量
+    //     isFinished: 800,productionAmount
+    //     workshop: '1',
+    //     team: '1',
+    //     isLocked: true
+    //   })
+    // }
+    res.map((item: any) => {
+      item.isLocked = item.isLocked === 1 ? true : false
+      item.ids = item.id //用于时间更改时的判断条件
+    })
+    console.log('展示', res)
+
+    setData(res)
+    console.log('拆分数据', data.id)
   }
   const showModal = () => {
     setIsModalVisible(true)
@@ -63,21 +83,21 @@ const BreakUp = (props: any) => {
   const updateData = (
     record: {
       workshop?: any
-      id?: any
+      ids?: any
       team?: any
       efficiency?: any
-      breakUp?: any
+      isFinished?: any
       startTime?: number
       eddTime?: number
     },
     list: any
   ) => {
     /**
-     * record 修改后的单个值
+     * record 修改后的单个值.
      * list 老数据
      */
     const sum = cloneDeep(list)
-    const subscript = sum.findIndex((item: any) => item.id === record.id)
+    const subscript = sum.findIndex((item: any) => item.ids === record.ids)
     if (subscript !== -1) {
       sum.splice(subscript, 1, record)
       setData(sum)
@@ -87,18 +107,18 @@ const BreakUp = (props: any) => {
   const onLock = (
     e: CheckboxChangeEvent,
     record: {
-      lock?: any
+      isLocked?: any
       workshop?: any
       id?: any
       team?: any
       efficiency?: any
-      breakUp?: any
+      isFinished?: any
       startTime?: number | undefined
       eddTime?: number | undefined
     }
   ) => {
     const sum = cloneDeep(data)
-    record.lock = e.target.checked
+    record.isLocked = e.target.checked
     updateData(record, sum)
   }
   // 下拉处理
@@ -126,27 +146,59 @@ const BreakUp = (props: any) => {
   }
   //数字输入框的处理
   let timeout: NodeJS.Timeout
-  const onBreakUp = (e: any, record: { breakUp: any; id: any }) => {
+  const onBreakUp = (
+    e: any,
+    record: {
+      isFinished: any
+      completedAmount?: any
+      workshop?: any
+      id?: any
+      team?: any
+      efficiency?: any
+      startTime?: number | undefined
+      eddTime?: number | undefined
+    },
+    type: number
+  ) => {
     const sum = cloneDeep(data)
-    record.breakUp = e
-    clearTimeout(timeout)
-    timeout = setTimeout(() => {
-      updateData(record, sum)
-    }, 500)
+    if (type === 1) {
+      record.isFinished = e
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+        updateData(record, sum)
+      }, 500)
+    }
+    if (type === 2) {
+      record.completedAmount = e
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+        updateData(record, sum)
+      }, 500)
+    }
   }
   //时间的处理
   const time = (
     type: number,
     e: moment.MomentInput,
-    record: { startTime: number; eddTime: number }
+    record: {
+      planStartTime?: any
+      planEndTime?: any
+      workshop?: any
+      id?: any
+      team?: any
+      efficiency?: any
+      isFinished?: any
+      startTime?: number | undefined
+      eddTime?: number | undefined
+    }
   ) => {
     const sum = cloneDeep(data)
     if (type === 1) {
-      record.startTime = moment(e).valueOf()
+      record.planStartTime = moment(e).valueOf()
       updateData(record, sum)
     }
     if (type === 2) {
-      record.eddTime = moment(e).valueOf()
+      record.planEndTime = moment(e).valueOf()
       updateData(record, sum)
     }
   }
@@ -155,29 +207,32 @@ const BreakUp = (props: any) => {
     console.log('增加')
     const arr = cloneDeep(data)
     //拆分数量的总和
-    const res = arr.reduce((total: any, current: { breakUp: any }) => {
-      total += current.breakUp
+    const res = arr.reduce((total: any, current: { isFinished: any }) => {
+      total += current.isFinished
       return total
     }, 0)
-    const value = arr[0].production - res
-    if (value === 0) {
+    const value = arr[0].productionAmount - res
+    if (value <= 0) {
       message.success('拆分数量以到达最大值')
     } else {
       arr.push({
-        key: new Date(),
-        breakUp: value,
+        // key: Date.now(),
+        ids: Date.now() * Math.random(),
+        isFinished: value,
         workshop: arr[0].workshop,
         team: arr[0].team,
-        startTime: arr[0].startTime,
-        eddTime: arr[0].eddTime,
-        efficiency: arr[0].efficiency
+        planStartTime: undefined,
+        planEndTime: undefined,
+        efficiency: arr[0].efficiency,
+        isLocked: arr[0].isLocked,
+        completedAmount: 0
       })
       setData([...arr])
     }
   }
-  const reduce = (id: any) => {
+  const reduce = (ids: any) => {
     const arr = cloneDeep(data)
-    const res = arr.filter((item: { id: any }) => item.id !== id)
+    const res = arr.filter((item: { ids: any }) => item.ids !== ids)
     setData([...res])
   }
 
@@ -194,35 +249,53 @@ const BreakUp = (props: any) => {
     {
       title: '生产单号',
       align: 'center',
-      dataIndex: 'age'
+      dataIndex: 'productionAmount'
     },
     {
-      title: '产品',
+      title: '产品名称',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'productName'
     },
     {
       title: '产品款号',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'productNum'
     },
     {
       title: '生产单总量',
+      width: 120,
       align: 'center',
-      dataIndex: 'production'
+      dataIndex: 'productionAmount'
     },
     {
       title: '拆分数量',
       align: 'center',
-      width: 150,
-      dataIndex: 'breakUp', //
+      width: 120,
+      dataIndex: 'isFinished', //
       render: (_value: any, _row: any) => {
         return (
           <div>
             <InputNumber
               defaultValue={_value}
-              max={_row.production} //最大值是生产单总量
-              onChange={(e) => onBreakUp(e, _row)}
+              max={_row.productionAmount} //最大值是生产单总量
+              onChange={(e) => onBreakUp(e, _row, 1)}
+            />
+          </div>
+        )
+      }
+    },
+    {
+      title: '已完成量',
+      align: 'center',
+      width: 120,
+      dataIndex: 'completedAmount', //
+      render: (_value: any, _row: any) => {
+        return (
+          <div>
+            <InputNumber
+              defaultValue={_value}
+              max={_row.isFinished} //最大值是拆分数量
+              onChange={(e) => onBreakUp(e, _row, 2)}
             />
           </div>
         )
@@ -282,11 +355,12 @@ const BreakUp = (props: any) => {
       align: 'center',
       width: 200,
 
-      dataIndex: 'startTime',
+      dataIndex: 'planStartTime',
       render: (_value: any, _row: any) => {
         return (
           <div>
             <DatePicker
+              allowClear={false}
               format="YYYY-MM-DD HH:mm"
               showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
               onChange={(e) => {
@@ -311,11 +385,12 @@ const BreakUp = (props: any) => {
       align: 'center',
       width: 200,
 
-      dataIndex: 'eddTime',
+      dataIndex: 'planEndTime',
       render: (_value: any, _row: any) => {
         return (
           <div>
             <DatePicker
+              allowClear={false}
               format="YYYY-MM-DD HH:mm"
               showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
               // defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
@@ -333,7 +408,7 @@ const BreakUp = (props: any) => {
       align: 'center',
       width: 150,
 
-      dataIndex: 'efficiency',
+      dataIndex: 'templateId',
       render: (_value: any, _row: any) => {
         return (
           <div>
@@ -356,33 +431,36 @@ const BreakUp = (props: any) => {
       title: '是否锁定',
       align: 'center',
       fixed: 'right',
-      dataIndex: 'lock',
+      dataIndex: 'isLocked',
       render: (_value: any, _row: any) => {
         return (
           <div>
-            <Checkbox onChange={(e) => onLock(e, _row)}></Checkbox>
+            <Checkbox
+              checked={_value}
+              onChange={(e) => onLock(e, _row)}
+            ></Checkbox>
           </div>
         )
       }
     },
-    {
-      title: '操作',
-      align: 'center',
-      fixed: 'right',
-      dataIndex: 'lock',
-      render: (_value: any) => {
-        return (
-          <div
-            className={styles.text}
-            onClick={() => {
-              setDetailsPopup(true)
-            }}
-          >
-            编辑详情
-          </div>
-        )
-      }
-    },
+    // {
+    //   title: '操作99999',
+    //   align: 'center',
+    //   fixed: 'right',
+    //   dataIndex: 'lock',
+    //   render: (_value: any) => {
+    //     return (
+    //       <div
+    //         className={styles.text}
+    //         onClick={() => {
+    //           setDetailsPopup(true)
+    //         }}
+    //       >
+    //         编辑详情
+    //       </div>
+    //     )
+    //   }
+    // },
     {
       title: (
         <div>
@@ -397,7 +475,7 @@ const BreakUp = (props: any) => {
           <div className={styles.flex}>
             {index !== 0 ? (
               <Button
-                onClick={() => reduce(_row.id)}
+                onClick={() => reduce(_row.ids)}
                 type="primary"
                 icon={<MinusOutlined />}
               />
@@ -408,40 +486,51 @@ const BreakUp = (props: any) => {
     }
   ]
   // 保存事件
-  const handleOk = () => {
+  const handleOk = async () => {
     const arr = cloneDeep(data)
     //时间的过滤
     const state = { timeState: false, number: false }
+    console.log('总', arr)
+
     const Time = arr.filter(
-      (item: { startTime: undefined; eddTime: undefined }) =>
-        item.startTime === undefined || item.eddTime === undefined
+      (item: { planStartTime: undefined; planEndTime: undefined }) =>
+        item.planStartTime === undefined || item.planEndTime === undefined
     )
+    console.log('时间', Time)
+
     if (Time.length > 0) {
       message.warning(`时间不能为空`)
     } else {
       state.timeState = true
     }
     // 拆分数量
-
-    const res = arr.reduce((total: any, current: { breakUp: any }) => {
-      total += current.breakUp
+    const res = arr.reduce((total: any, current: { isFinished: any }) => {
+      total += current.isFinished
       return total
     }, 0)
-    const value = arr[0].production - res
+    const value = res - arr[0].productionAmount
     if (value !== 0) {
-      message.warning(`拆分数量未满足订单总量 剩余-【${value}】`)
+      if (value < 0) {
+        message.warning(`拆分数量总和未满足订单总量 剩余-【${value}】`)
+      } else {
+        message.warning(`拆分数量总和 超出订单总量 超出-【${Math.abs(value)}】`)
+      }
     } else {
       state.number = true
     }
 
     console.log('用于判断是否全部满足', state)
     if (state.timeState === true && state.number === true) {
-      console.log()
-
-      console.log('数据处理完毕，传给后台')
-      console.log(arr)
-
-      //   setIsModalVisible(false)
+      console.log('数据处理完毕，传给后台', arr)
+      arr.map((item: any) => {
+        item.isLocked = item.isLocked === true ? 1 : 0
+      })
+      const sum = await breakSave({
+        assignmentId: '1514764866136440833',
+        data: arr
+      })
+      console.log('保存', sum)
+      // setIsModalVisible(false)
     }
   }
 
@@ -467,7 +556,7 @@ const BreakUp = (props: any) => {
           columns={columns}
           scroll={{ x: 1500, y: 500 }}
           dataSource={data}
-          rowKey={'key'}
+          rowKey={'id'}
           pagination={{
             //分页
             showSizeChanger: true,

@@ -4,21 +4,41 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   Modal,
   Row,
   Select
 } from 'antd'
+import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+
+import { practice } from '@/recoil/apis'
 function Popup(props: { content: any }) {
   const { content } = props
-  const { editWindow, setEditWindow } = content
+  const { editWindow, setEditWindow, editWindowList, editSubmission } = content
   const { Option } = Select
 
+  const { editingTasks } = practice
+
   const [form] = Form.useForm()
+  const [list, setList] = useState<any>()
+  const [type, setType] = useState<any>()
+
   useEffect(() => {
-    form.resetFields()
-  }, [])
+    if (!isEmpty(editWindowList)) {
+      setList(editWindowList)
+    }
+  }, [editWindowList])
+  useEffect(() => {
+    if (!isEmpty(list)) {
+      list.planEndTime = moment(list.planEndTime)
+      list.planStartTime = moment(list.planStartTime)
+      list.remaining = list.productionAmount - list.completedAmount
+      setType(list.isLocked)
+      form.setFieldsValue(list)
+    }
+  }, [list])
 
   const layout = {
     labelCol: {
@@ -34,15 +54,17 @@ function Popup(props: { content: any }) {
   }
 
   const handleCancel = () => {
+    form.resetFields()
     setEditWindow(false)
   }
 
-  const onFinish = (values: any) => {
-    values.startTime = moment(values.startTime).valueOf()
-    values.endTime = moment(values.startTime).valueOf()
-    console.log('Success:', values)
+  const onFinish = async (values: any) => {
+    values.planEndTime = moment(values.planEndTime).valueOf()
+    values.planStartTime = moment(values.planStartTime).valueOf()
+    values.isLocked = type === false ? 0 : 1
+    const res = await editingTasks({ ...values, id: list.id })
     form.resetFields()
-    setEditWindow(false)
+    editSubmission()
   }
   //所属工段
   const section = [
@@ -65,9 +87,19 @@ function Popup(props: { content: any }) {
     { name: '哪吒汽车制造中心', id: 3 },
     { name: '保时捷车漆原材料制造中心', id: 4 }
   ]
-  // function disabledDate(current) {
-  //   return current && current < moment().endOf('day')
-  // }
+  let timeout: NodeJS.Timeout
+  const onChange = (e: any) => {
+    clearTimeout(timeout)
+    const arr = cloneDeep(list)
+    arr.completedAmount = e
+    timeout = setTimeout(() => {
+      console.log('完成量', arr.completedAmount)
+      setList(arr)
+    }, 500)
+  }
+  function onCheckbox(e: { target: { checked: any } }) {
+    setType(e.target.checked)
+  }
   return (
     <div>
       <Modal
@@ -87,7 +119,7 @@ function Popup(props: { content: any }) {
         >
           <Row>
             <Col span={12}>
-              <Form.Item label="生产单号" name="productionOrder">
+              <Form.Item label="生产单号" name="externalProduceOrderNum">
                 <Input
                   maxLength={100}
                   placeholder="请输入生产单号"
@@ -107,7 +139,7 @@ function Popup(props: { content: any }) {
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label="产品名称" name="holiday">
+              <Form.Item label="产品名称" name="">
                 <Input
                   maxLength={100}
                   placeholder="请输入产品名称"
@@ -116,7 +148,7 @@ function Popup(props: { content: any }) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="生产单总量" name="productionOrderYear">
+              <Form.Item label="生产单总量" name="completedAmount">
                 <Input
                   maxLength={100}
                   placeholder="请输入生产单"
@@ -127,7 +159,7 @@ function Popup(props: { content: any }) {
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label="所属工段" name="processName">
+              <Form.Item label="所属工段" name="section">
                 <Select defaultValue="请选择所属工段" disabled={true}>
                   {section.map((item) => (
                     // eslint-disable-next-line react/jsx-key
@@ -137,13 +169,12 @@ function Popup(props: { content: any }) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="工厂名称" name="operationNumber">
-                <Select defaultValue="请选择所属工段" disabled={true}>
-                  {section.map((item) => (
-                    // eslint-disable-next-line react/jsx-key
-                    <Option value={item.id}>{item.name}</Option>
-                  ))}
-                </Select>
+              <Form.Item label="工厂名称" name="factoryName">
+                <Input
+                  maxLength={100}
+                  placeholder="请输入工厂名称"
+                  disabled={true}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -151,7 +182,7 @@ function Popup(props: { content: any }) {
             <Col span={12}>
               <Form.Item
                 label="车间名称"
-                name="section"
+                name="shopName"
                 rules={[{ required: true, message: '请输入工作班组' }]}
               >
                 <Select defaultValue="请选择所属工段">
@@ -181,7 +212,7 @@ function Popup(props: { content: any }) {
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label="生产量" name="workshopName">
+              <Form.Item label="生产量" name="productionAmount">
                 <Select defaultValue="请选择车间名称" disabled={true}>
                   {workshop.map((item) => (
                     // eslint-disable-next-line react/jsx-key
@@ -191,8 +222,12 @@ function Popup(props: { content: any }) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="完成量" name="workTeam">
-                <Input maxLength={100} placeholder="请输入工作班组" />
+              <Form.Item label="完成量" name="completedAmount">
+                <InputNumber
+                  min={0}
+                  // defaultValue={3}
+                  onChange={onChange}
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -200,7 +235,7 @@ function Popup(props: { content: any }) {
             <Col span={12}>
               <Form.Item
                 label="计划开始时间"
-                name="startTime"
+                name="planStartTime"
                 rules={[{ required: true, message: '请选择计划开始时间' }]}
               >
                 <DatePicker
@@ -212,7 +247,7 @@ function Popup(props: { content: any }) {
             <Col span={12}>
               <Form.Item
                 label="计划结束时间"
-                name="endTime"
+                name="planEndTime"
                 rules={[{ required: true, message: '请选择计划结束时间' }]}
               >
                 <DatePicker
@@ -224,13 +259,18 @@ function Popup(props: { content: any }) {
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label="剩余量" name="yield">
-                <Input maxLength={100} placeholder="请输入生产量" />
+              <Form.Item label="剩余量" name="remaining">
+                <Input
+                  maxLength={100}
+                  placeholder="请输入生产量"
+                  disabled={true}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="锁定任务" name="yield">
-                <Checkbox></Checkbox>
+              <Form.Item label="锁定任务" name="isLocked">
+                <Checkbox checked={type} onChange={onCheckbox} />
+                {/* <Checkbox /> */}
               </Form.Item>
             </Col>
           </Row>

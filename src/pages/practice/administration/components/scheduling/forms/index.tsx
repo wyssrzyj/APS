@@ -11,6 +11,7 @@ const HeaderForm = (props: { FormData: any }) => {
   const { FormData } = props
   const { factoryList } = practice
   const [list, setList] = useState<any>([])
+  const [theDefault, setTheDefault] = useState<any>() //默认展示
   useEffect(() => {
     getData()
   }, [])
@@ -18,6 +19,9 @@ const HeaderForm = (props: { FormData: any }) => {
     const res: any = await factoryList()
     const arr: any = res.data
     if (res.code === 200) {
+      //  默认展示第2条数据
+      setTheDefault(arr[1])
+      FormData && FormData(arr[1].id)
       arr.map((item: { name: any; deptName: any }) => {
         item.name = item.deptName
       })
@@ -31,7 +35,7 @@ const HeaderForm = (props: { FormData: any }) => {
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
-    FormData && FormData(values)
+    FormData && FormData(values.keyword)
   }, 500)
 
   const getValueFromEvent = (event: any, type = 'text') => {
@@ -39,7 +43,7 @@ const HeaderForm = (props: { FormData: any }) => {
       await handleSubmit()
     })
     if (type === 'select') {
-      console.log(event)
+      return event
     }
   }
 
@@ -53,24 +57,31 @@ const HeaderForm = (props: { FormData: any }) => {
             getValueFromEvent(event, 'select')
           }
         >
-          <Select allowClear defaultValue="请选择工厂" style={{ width: 300 }}>
-            {list.map(
-              (item: {
-                id: React.Key | null | undefined
-                name:
-                  | boolean
-                  | React.ReactChild
-                  | React.ReactFragment
-                  | React.ReactPortal
-                  | null
-                  | undefined
-              }) => (
-                <Option key={item.id} value={item.id}>
-                  {item.name}
-                </Option>
-              )
-            )}
-          </Select>
+          {theDefault ? (
+            <Select
+              allowClear
+              defaultValue={theDefault.deptName}
+              style={{ width: 300 }}
+              // onChange={handleChange}
+            >
+              {list.map(
+                (item: {
+                  id: React.Key | null | undefined
+                  name:
+                    | boolean
+                    | React.ReactChild
+                    | React.ReactFragment
+                    | React.ReactPortal
+                    | null
+                    | undefined
+                }) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                )
+              )}
+            </Select>
+          ) : null}
         </Form.Item>
       </Form>
     </div>

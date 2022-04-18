@@ -20,16 +20,11 @@ const Gantt = (props: any) => {
 
   useEffect(() => {
     setZoom(zoom)
-    for (let i = 0; i < 2; i++) {
-      console.log('初始值', i)
-    }
   }, [zoom])
 
   useEffect(() => {
     if (tasks) {
-      console.log('甘特数据', tasks)
-
-      componentDidMount(tasks)
+      ganttShow(tasks)
     }
   }, [tasks])
   // 静态方法
@@ -74,12 +69,14 @@ const Gantt = (props: any) => {
     ]
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
+      console.log('单击事件', id)
+
       //折叠所有任务：
       // gantt.eachTask(function (task) {
       //   task.$open = true
       // })
       // gantt.render()
-      console.log('选中')
+      // gantt.render()
       leftData && leftData(id)
     })
     //单击右键
@@ -94,11 +91,12 @@ const Gantt = (props: any) => {
       console.log('我点击了空白')
     })
 
-    // 可以通过此控制 是否可以拖动
+    // 可以通过此控制 是否可以拖动 当前的状态=1不可拖动
     gantt.attachEvent(
       'onBeforeTaskDrag',
       function (id: any, mode: any, e: any) {
         const task = gantt.getTask(id)
+        console.log('可以通过此控制 是否可以拖动', task)
         if (task.type === '1') {
           return false
         } else {
@@ -160,7 +158,7 @@ const Gantt = (props: any) => {
       link: {
         create: function (data: any) {
           //线的操作
-          // console.log('link.create----------------------', data)
+          console.log('link.create----------------------', data)
         },
         update: function (_data: any) {
           // console.log('link.update----------------------')
@@ -244,6 +242,14 @@ const Gantt = (props: any) => {
           }
         ]
       }
+
+      // gantt.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
+      //   console.log(id)
+      //   console.log(mode)
+      //   console.log(e)
+      //   //any custom logic here
+      //   return true
+      // })
       gantt.ext.zoom.init(zoomConfig)
     }
   }
@@ -258,11 +264,10 @@ const Gantt = (props: any) => {
       })
     })
   }
-  const componentDidMount = (list: any) => {
+  const ganttShow = (list: any) => {
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
     initGanttDataProcessor()
-
     gantt.parse(list) //渲染数据
   }
   return <div id="main" style={{ width: '100%', height: '100%' }}></div>

@@ -22,9 +22,9 @@ function Rule() {
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [type, setType] = useState(false) //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
-  const [list, setlist] = useState([])
+  const [list, setList] = useState([])
   const [edit, setEdit] = useState([]) //编辑数据
-  const { holidayList, workOvertimeMov, overtimeDetails } = practice
+  const { efficiencyList } = practice
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
@@ -76,12 +76,12 @@ function Rule() {
   useEffect(() => {
     api(params)
   }, [params])
-  useEffect(() => {
-    console.log('执行测试 ')
-  }, [])
+
   const api = async (item: any) => {
-    const arr = await holidayList(item)
-    setlist(arr.records)
+    const arr = await efficiencyList(item)
+    console.log('执行测试i', arr.records)
+
+    // setList(arr.records)
   }
   const newlyAdded = async () => {
     api(params)
@@ -209,7 +209,7 @@ function Rule() {
   return (
     <div className={styles.qualification}>
       <div>
-        <Title title={'规则'} />
+        <Title title={'产能效率模板'} />
       </div>
       <div>
         <div className={styles.content}>

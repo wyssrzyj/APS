@@ -453,8 +453,6 @@ export const workingProcedure = async (params: any) => {
 
 // getTeamView
 export const figureData = async (params: any) => {
-  console.log('接口----------------------', params)
-
   try {
     const res: ResponseProps = await axios.get(
       `/aps/produce-assignment/get-team-view`,
