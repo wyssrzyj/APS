@@ -8,7 +8,7 @@ function WorkingHours(props: any) {
   const { onChange } = props
   const sum: any = [
     { day: '1', efficiency: '', key: 1 },
-    { day: 0, efficiency: 0, key: new Date() }
+    { day: 0, efficiency: 0, key: 2 }
   ]
   const [data, setData] = useState<any>(sum)
   const processing = (e: any, index: any, type: any) => {
@@ -45,7 +45,7 @@ function WorkingHours(props: any) {
   return (
     <div className={styles.const}>
       {data.map((_item: any, index: any) => (
-        <div className={styles.timePicker} key={_item.name}>
+        <div className={styles.timePicker} key={_item.key}>
           <div className={styles.top}>
             <div className={styles.left}>
               {index === 0 ? (

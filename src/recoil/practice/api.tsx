@@ -648,3 +648,22 @@ export const breakSave = async (params: any) => {
     console.log(e)
   }
 }
+
+//拆分查询
+export const breakQuery = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/produce-assignment/get-detail-by-assignment`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}

@@ -21,7 +21,7 @@ import Details from './details/index'
 import styles from './index.module.less'
 const BreakUp = (props: any) => {
   const { setIsModalVisible, isModalVisible, workSplitList } = props
-  const { breakSave } = practice
+  const { breakSave, breakQuery } = practice
 
   const { Option } = Select
   const [pageNum, setPageNum] = useState<number>(1)
@@ -36,35 +36,37 @@ const BreakUp = (props: any) => {
     }
   }, [workSplitList])
 
-  const getInterfaceData = (data: any) => {
-    const storage = []
-    for (let i = 0; i < 1; i++) {
-      storage.push({
-        id: i,
-        key: i,
-        ids: i,
-        name: `Edward King ${i}`,
-        planEndTime: 1649144899000,
-        planStartTime: 1649058485000,
-        complete: 100, //已完成量
-        templateId: '选择效率模板',
-        age: 32,
-        address: `London, Park Lane no. ${i}`,
-        productionAmount: 1000, //生产单总量
-        breakUp: 800,
-        workshop: '1',
-        team: '1',
-        isLocked: true
-      })
-    }
-    // storage.map((item: any) => {
-    //   item.isLocked = item.isLocked === '1' ? true : false
-    // item.ids=item.id //用于时间更改时的判断条件
-    // })
-    setData(storage)
-    console.log('拆分数据', data.children)
+  const getInterfaceData = async (data: any) => {
+    // data.id
+    const res = await breakQuery({ assignmentId: '1514764866136440833' })
+    // const storage = []
+    // for (let i = 0; i < 1; i++) {
+    //   storage.push({
+    //     id: i,
+    //     key: i,
+    //     ids: i,
+    //     productName: `Edward King ${i}`,
+    //     planEndTime: 1649144899000,
+    //     planStartTime: 1649058485000,
+    //     completedAmount: 100, //已完成量
+    //     templateId: '选择效率模板',
+    //     age: 32,
+    //     address: `London, Park Lane no. ${i}`,
+    //     productionAmount: 1000, //生产单总量
+    //     isFinished: 800,productionAmount
+    //     workshop: '1',
+    //     team: '1',
+    //     isLocked: true
+    //   })
+    // }
+    res.map((item: any) => {
+      item.isLocked = item.isLocked === 1 ? true : false
+      item.ids = item.id //用于时间更改时的判断条件
+    })
+    console.log('展示', res)
 
-    // setData(data.children)
+    setData(res)
+    console.log('拆分数据', data.id)
   }
   const showModal = () => {
     setIsModalVisible(true)
@@ -84,7 +86,7 @@ const BreakUp = (props: any) => {
       ids?: any
       team?: any
       efficiency?: any
-      breakUp?: any
+      isFinished?: any
       startTime?: number
       eddTime?: number
     },
@@ -105,18 +107,18 @@ const BreakUp = (props: any) => {
   const onLock = (
     e: CheckboxChangeEvent,
     record: {
-      lock?: any
+      isLocked?: any
       workshop?: any
       id?: any
       team?: any
       efficiency?: any
-      breakUp?: any
+      isFinished?: any
       startTime?: number | undefined
       eddTime?: number | undefined
     }
   ) => {
     const sum = cloneDeep(data)
-    record.lock = e.target.checked
+    record.isLocked = e.target.checked
     updateData(record, sum)
   }
   // 下拉处理
@@ -147,8 +149,8 @@ const BreakUp = (props: any) => {
   const onBreakUp = (
     e: any,
     record: {
-      breakUp: any
-      complete?: any
+      isFinished: any
+      completedAmount?: any
       workshop?: any
       id?: any
       team?: any
@@ -160,14 +162,14 @@ const BreakUp = (props: any) => {
   ) => {
     const sum = cloneDeep(data)
     if (type === 1) {
-      record.breakUp = e
+      record.isFinished = e
       clearTimeout(timeout)
       timeout = setTimeout(() => {
         updateData(record, sum)
       }, 500)
     }
     if (type === 2) {
-      record.complete = e
+      record.completedAmount = e
       clearTimeout(timeout)
       timeout = setTimeout(() => {
         updateData(record, sum)
@@ -185,7 +187,7 @@ const BreakUp = (props: any) => {
       id?: any
       team?: any
       efficiency?: any
-      breakUp?: any
+      isFinished?: any
       startTime?: number | undefined
       eddTime?: number | undefined
     }
@@ -205,8 +207,8 @@ const BreakUp = (props: any) => {
     console.log('增加')
     const arr = cloneDeep(data)
     //拆分数量的总和
-    const res = arr.reduce((total: any, current: { breakUp: any }) => {
-      total += current.breakUp
+    const res = arr.reduce((total: any, current: { isFinished: any }) => {
+      total += current.isFinished
       return total
     }, 0)
     const value = arr[0].productionAmount - res
@@ -216,14 +218,14 @@ const BreakUp = (props: any) => {
       arr.push({
         // key: Date.now(),
         ids: Date.now() * Math.random(),
-        breakUp: value,
+        isFinished: value,
         workshop: arr[0].workshop,
         team: arr[0].team,
         planStartTime: undefined,
         planEndTime: undefined,
         efficiency: arr[0].efficiency,
         isLocked: arr[0].isLocked,
-        complete: 0
+        completedAmount: 0
       })
       setData([...arr])
     }
@@ -250,14 +252,14 @@ const BreakUp = (props: any) => {
       dataIndex: 'productionAmount'
     },
     {
-      title: '产品',
+      title: '产品名称',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'productName'
     },
     {
       title: '产品款号',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'productNum'
     },
     {
       title: '生产单总量',
@@ -269,7 +271,7 @@ const BreakUp = (props: any) => {
       title: '拆分数量',
       align: 'center',
       width: 120,
-      dataIndex: 'breakUp', //
+      dataIndex: 'isFinished', //
       render: (_value: any, _row: any) => {
         return (
           <div>
@@ -286,13 +288,13 @@ const BreakUp = (props: any) => {
       title: '已完成量',
       align: 'center',
       width: 120,
-      dataIndex: 'complete', //
+      dataIndex: 'completedAmount', //
       render: (_value: any, _row: any) => {
         return (
           <div>
             <InputNumber
               defaultValue={_value}
-              max={_row.breakUp} //最大值是拆分数量
+              max={_row.isFinished} //最大值是拆分数量
               onChange={(e) => onBreakUp(e, _row, 2)}
             />
           </div>
@@ -502,8 +504,8 @@ const BreakUp = (props: any) => {
       state.timeState = true
     }
     // 拆分数量
-    const res = arr.reduce((total: any, current: { breakUp: any }) => {
-      total += current.breakUp
+    const res = arr.reduce((total: any, current: { isFinished: any }) => {
+      total += current.isFinished
       return total
     }, 0)
     const value = res - arr[0].productionAmount
@@ -519,11 +521,16 @@ const BreakUp = (props: any) => {
 
     console.log('用于判断是否全部满足', state)
     if (state.timeState === true && state.number === true) {
-      console.log(arr)
-      console.log('数据处理完毕，传给后台')
-      // const sum = await breakSave(arr)
-      // console.log(sum)
-      //   setIsModalVisible(false)
+      console.log('数据处理完毕，传给后台', arr)
+      arr.map((item: any) => {
+        item.isLocked = item.isLocked === true ? 1 : 0
+      })
+      const sum = await breakSave({
+        assignmentId: '1514764866136440833',
+        data: arr
+      })
+      console.log('保存', sum)
+      // setIsModalVisible(false)
     }
   }
 
@@ -549,7 +556,7 @@ const BreakUp = (props: any) => {
           columns={columns}
           scroll={{ x: 1500, y: 500 }}
           dataSource={data}
-          rowKey={'key'}
+          rowKey={'id'}
           pagination={{
             //分页
             showSizeChanger: true,

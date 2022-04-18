@@ -54,6 +54,7 @@ function Popup(props: { content: any }) {
   }
 
   const handleCancel = () => {
+    form.resetFields()
     setEditWindow(false)
   }
 
