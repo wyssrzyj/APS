@@ -102,10 +102,10 @@ function index(props: { content: any }) {
   }
 
   const onFinish = (values: any) => {
-    console.log('Success:', values)
     if (values.workTeam) {
       values.workTeam = getChild(values.workTeam, treeData) //下拉多选的处理
     }
+    console.log('Success:', values)
     form.resetFields()
     setIsModalVisible(false)
   }

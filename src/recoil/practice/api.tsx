@@ -559,3 +559,39 @@ export const workingDate = async (params: any) => {
     console.log(e)
   }
 }
+// 生产单规则排程
+export const rulesScheduling = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/product-order/product-order-rule-schedule`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 发布排程
+export const releaseSchedule = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail/check-schedule`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
