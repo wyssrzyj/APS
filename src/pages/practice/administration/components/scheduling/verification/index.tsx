@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { practice } from '@/recoil/apis'
-
+const { checkSchedule, releaseSchedule } = practice
 import styles from './index.module.less'
 const list = [
   { key: '延期生产单:', value: 'delayOrderProductList', list: [] },
@@ -25,7 +25,7 @@ function useVerifyModal(props: Record<string, any>) {
   const [checkList, setCheckList] = useState<Record<string, any>>(list)
   const verifyInfo = async () => {
     const data = cloneDeep(checkList)
-    const res = await practice.releaseSchedule(['1504272269944320002'])
+    const res = await checkSchedule(['1504272269944320002'])
     data.forEach((item: Record<string, any>) => {
       item.list = res[item.value]
     })
@@ -34,8 +34,9 @@ function useVerifyModal(props: Record<string, any>) {
   useEffect(() => {
     verifyInfo()
   }, [visibleVerify])
-  const release = () => {
-    console.log('发布')
+  const release = async () => {
+    await checkSchedule(['1504272269944320002'])
+    onCancel()
   }
   return (
     <div>

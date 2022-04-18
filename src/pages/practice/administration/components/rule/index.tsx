@@ -1,4 +1,5 @@
 import { Button, message, Table } from 'antd'
+import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
@@ -22,7 +23,7 @@ function Rule() {
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [type, setType] = useState(false) //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
-  const [list, setList] = useState([])
+  const [dataSource, setDataSource] = useState([])
   const [edit, setEdit] = useState([]) //编辑数据
   const { efficiencyList } = practice
   // eslint-disable-next-line no-sparse-arrays
@@ -30,44 +31,41 @@ function Rule() {
     {
       title: '模板名称',
       align: 'center',
-      dataIndex: 'name'
+      dataIndex: 'templateName'
     },
     {
       title: '工作班组',
       align: 'center',
-      dataIndex: 'age'
+      dataIndex: '班组id'
     },
     {
       title: '初始效率',
       align: 'center',
-      dataIndex: 'initial'
+      dataIndex: 'startEfficiency'
     },
     {
       title: '最终效率',
       align: 'center',
-      dataIndex: 'final'
+      dataIndex: 'finallyEfficiency'
     },
     {
       title: '备注',
       align: 'center',
-      dataIndex: 'remarks'
+      dataIndex: 'remark'
     },
     {
       title: '操作',
       align: 'center',
-      dataIndex: 'address',
-      render: (_value: any, _row: any) => {
+      dataIndex: 'operate',
+      render: (text: any, record: any, index: number) => {
         return (
           <div className={styles.flex}>
-            <div
-              className={styles.operation_item}
-              onClick={() => editUser(false)}
-            >
+            <Button type="link" onClick={() => editInfo(false)}>
               查看
-            </div>
-            <div className={styles.operation} onClick={() => editUser(true)}>
+            </Button>
+            <Button type="link" onClick={() => editInfo(true)}>
               编辑
-            </div>
+            </Button>
           </div>
         )
       }
@@ -80,8 +78,7 @@ function Rule() {
   const api = async (item: any) => {
     const arr = await efficiencyList(item)
     console.log('执行测试i', arr.records)
-
-    // setList(arr.records)
+    setDataSource(arr.records)
   }
   const newlyAdded = async () => {
     api(params)
@@ -92,6 +89,12 @@ function Rule() {
     console.log(e)
     setParams({ ...params, ...e })
   }
+  const onParamsChange = debounce(
+    (values: any, allValues: Record<string, number>) => {
+      console.log('!!!!!!!!!!!!!!!!!!!', allValues)
+    },
+    200
+  )
   const onPaginationChange = (
     page: React.SetStateAction<number>,
     pageSize: React.SetStateAction<number>
@@ -99,8 +102,8 @@ function Rule() {
     setPageNum(page)
     setPageSize(pageSize)
   }
-  const editUser = (type: boolean) => {
-    if (type === true) {
+  const editInfo = (isEdit: boolean) => {
+    if (isEdit === true) {
       setType(false)
       setIsModalVisible(true)
     } else {
@@ -108,7 +111,7 @@ function Rule() {
     }
   }
   //删除
-  const start = () => {
+  const deleteInfo = () => {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
@@ -142,6 +145,7 @@ function Rule() {
       title: '工厂',
       value: '1',
       key: '1',
+      disabled: true,
       children: [
         {
           title: '工厂1',
@@ -159,6 +163,7 @@ function Rule() {
       title: '原料',
       value: '2-9',
       key: '2-9',
+      disabled: true,
       children: [
         {
           title: '大米',
@@ -181,6 +186,7 @@ function Rule() {
       title: '玩具',
       value: '3-9',
       key: '3-9',
+      disabled: true,
       children: [
         {
           title: '金铲铲的冠冕',
@@ -202,7 +208,8 @@ function Rule() {
     {
       title: '蔬菜',
       value: '4',
-      key: '4'
+      key: '4',
+      disabled: true
     }
   ]
   const content = { isModalVisible, setIsModalVisible, type }
@@ -213,8 +220,11 @@ function Rule() {
       </div>
       <div>
         <div className={styles.content}>
-          <Forms FormData={FormData} treeData={treeData}></Forms>
-
+          <Forms
+            FormData={FormData}
+            treeData={treeData}
+            onChange={onParamsChange}
+          ></Forms>
           <Button
             className={styles.executionMethod}
             type="primary"
@@ -222,14 +232,14 @@ function Rule() {
           >
             新增
           </Button>
-          <Button type="primary" danger onClick={start}>
+          <Button type="primary" danger onClick={deleteInfo}>
             删除
           </Button>
           <Table
             className={styles.table}
             rowSelection={rowSelection}
             columns={columns}
-            dataSource={list}
+            dataSource={dataSource}
             rowKey={'id'}
             pagination={{
               //分页

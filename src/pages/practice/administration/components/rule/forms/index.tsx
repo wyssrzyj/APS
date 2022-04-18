@@ -5,14 +5,14 @@ import React from 'react'
 import { getChild } from '@/components/getChild/index'
 const layout = {
   labelCol: {
-    span: 5
+    span: 6
   },
   wrapperCol: {
-    span: 24
+    span: 18
   }
 }
-const HeaderForm = (props: { FormData: any; treeData: any }) => {
-  const { FormData, treeData } = props
+const HeaderForm = (props: Record<string, any>) => {
+  const { FormData, treeData, onChange } = props
   const { SHOW_PARENT } = TreeSelect
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
@@ -21,48 +21,23 @@ const HeaderForm = (props: { FormData: any; treeData: any }) => {
     const values = await validateFields()
     FormData && FormData(values)
   }, 500)
-  const getValueFromEvent = (event: any, type = 'text') => {
-    setTimeout(async () => {
-      await handleSubmit()
-    })
-    if (type === 'input') {
-      return event.target.value
-    }
-    if (type === 'treeSelect') {
-      return getChild(event, treeData)
-    }
-  }
   const tProps = {
+    allowClear: true,
     treeData,
-    treeCheckable: true,
     showCheckedStrategy: SHOW_PARENT,
     placeholder: '请选择工作班组'
   }
   return (
     <div>
-      <Form form={form}>
-        <Row>
+      <Form form={form} onValuesChange={onChange}>
+        <Row gutter={24}>
           <Col span={6}>
-            <Form.Item
-              {...layout}
-              name="workModeName"
-              label="工作模式"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
-              }
-            >
-              <Input placeholder="请输入工作模式" allowClear />
+            <Form.Item {...layout} name="workModeName" label="模板名称">
+              <Input placeholder="请输入模板名称" allowClear />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item
-              {...layout}
-              name="teams"
-              label="工作班组"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'treeSelect')
-              }
-            >
+            <Form.Item {...layout} name="teams" label="工作班组">
               <TreeSelect {...tProps} />
             </Form.Item>
           </Col>

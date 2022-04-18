@@ -1,5 +1,6 @@
 import { getAttribute } from '@antv/g2/lib/dependents'
 import { Button, Modal, Space } from 'antd'
+import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { practice } from '@/recoil/apis'
@@ -18,9 +19,12 @@ function useRuleScheduling(props: Record<string, any>) {
   useEffect(() => {
     getTableList({ ...searchParams, factoryId: 1481903393613139970 })
   }, [searchParams])
-  const valuesChange = (values: Record<string, number>) => {
-    setSearchParams({ ...values })
-  }
+  const valuesChange = debounce(
+    (values: any, allValues: Record<string, number>) => {
+      setSearchParams({ ...allValues })
+    },
+    200
+  )
   const getTableList = async (params: Record<string, number | string>) => {
     const data = await practice.rulesScheduling(params)
     setDataSource(data)

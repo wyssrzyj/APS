@@ -575,11 +575,47 @@ export const rulesScheduling = async (params: any) => {
     console.log(e)
   }
 }
+// 校验排程
+export const checkSchedule = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail/check-schedule`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
 // 发布排程
 export const releaseSchedule = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
       `/aps/produce-assignment-detail/check-schedule`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 效率模板
+export const efficiencyList = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/capacity-efficiency-manage/list-fuzzy-by-page`,
       params
     )
     if (res.code !== 200) {

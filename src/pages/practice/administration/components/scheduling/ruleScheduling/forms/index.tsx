@@ -1,5 +1,4 @@
 import { Form, InputNumber } from 'antd'
-import { debounce } from 'lodash'
 import React, { useEffect, useRef } from 'react'
 
 import styles from './index.module.less'
@@ -8,16 +7,9 @@ const useHeaderForm = (props: Record<string, any>) => {
   const { searchParams, onChange } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
-  const valuesChange = debounce((_values: any, allValues: any) => {
-    onChange && onChange(allValues)
-  }, 200)
   return (
     <div className={styles.top}>
-      <Form
-        form={form}
-        onValuesChange={valuesChange}
-        initialValues={searchParams}
-      >
+      <Form form={form} onValuesChange={onChange} initialValues={searchParams}>
         <div className={styles.formContainer}>
           <Form.Item name="customerPriorityWeight" label="客户优先级权重">
             <InputNumber
