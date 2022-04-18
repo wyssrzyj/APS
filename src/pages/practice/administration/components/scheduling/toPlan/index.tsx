@@ -34,7 +34,7 @@ function ToPlan(props: {
   const [keys, setKeys] = useState<any>()
 
   const [equal, setEqual] = useState<any>('1')
-  const [currentItem, setCurrentItem] = useState<any>() //点击的值
+  const [currentItem, setCurrentItem] = useState<any>() //点击的值.
   const [toPlanID, setToPlanID] = useState<any>([]) //待计划的id
   const [plannedID, setPlannedID] = useState<any>([]) //已计划的id
 
