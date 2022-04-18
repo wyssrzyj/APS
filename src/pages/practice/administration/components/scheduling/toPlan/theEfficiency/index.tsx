@@ -14,10 +14,9 @@ import { cloneDeep } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
-import Details from './details/index'
 import styles from './index.module.less'
 const BreakUp = (props: any) => {
-  const { setEfficiencyData, efficiencyData } = props
+  const { setEfficiencyData, efficiencyData, dataUpdate } = props
 
   const { Option } = Select
   const [data, setData] = useState<any>([])
@@ -25,6 +24,7 @@ const BreakUp = (props: any) => {
 
   // 保存事件
   const handleOk = () => {
+    dataUpdate && dataUpdate()
     setEfficiencyData(false)
   }
   const handleCancel = () => {

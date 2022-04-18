@@ -20,8 +20,8 @@ import { practice } from '@/recoil/apis'
 import Details from './details/index'
 import styles from './index.module.less'
 const BreakUp = (props: any) => {
-  const { setIsModalVisible, isModalVisible, workSplitList } = props
-  const { breakSave, breakQuery } = practice
+  const { setIsModalVisible, isModalVisible, workSplitList, breakSave } = props
+  const { splitMethod, breakQuery } = practice
 
   const { Option } = Select
   const [pageNum, setPageNum] = useState<number>(1)
@@ -37,6 +37,10 @@ const BreakUp = (props: any) => {
   }, [workSplitList])
 
   const getInterfaceData = async (data: any) => {
+    console.log('生产单总量', data.orderSum)
+    const theTotal = 2000
+    // data.productionAmount = 100
+
     // data.id
     const res = await breakQuery({ assignmentId: '1514764866136440833' })
     // const storage = []
@@ -45,6 +49,7 @@ const BreakUp = (props: any) => {
     //     id: i,
     //     key: i,
     //     ids: i,
+    //     productNum: `Edward King ${i}`,
     //     productName: `Edward King ${i}`,
     //     planEndTime: 1649144899000,
     //     planStartTime: 1649058485000,
@@ -52,8 +57,8 @@ const BreakUp = (props: any) => {
     //     templateId: '选择效率模板',
     //     age: 32,
     //     address: `London, Park Lane no. ${i}`,
-    //     productionAmount: 1000, //生产单总量
-    //     isFinished: 800,productionAmount
+    //     theTotal: 1000, //生产单总量
+    //     productionAmount: 800,
     //     workshop: '1',
     //     team: '1',
     //     isLocked: true
@@ -63,8 +68,8 @@ const BreakUp = (props: any) => {
       item.isLocked = item.isLocked === 1 ? true : false
       item.ids = item.id //用于时间更改时的判断条件
     })
+    res[0].theTotal = theTotal
     console.log('展示', res)
-
     setData(res)
     console.log('拆分数据', data.id)
   }
@@ -86,7 +91,7 @@ const BreakUp = (props: any) => {
       ids?: any
       team?: any
       efficiency?: any
-      isFinished?: any
+      productionAmount?: any
       startTime?: number
       eddTime?: number
     },
@@ -112,7 +117,7 @@ const BreakUp = (props: any) => {
       id?: any
       team?: any
       efficiency?: any
-      isFinished?: any
+      productionAmount?: any
       startTime?: number | undefined
       eddTime?: number | undefined
     }
@@ -149,7 +154,7 @@ const BreakUp = (props: any) => {
   const onBreakUp = (
     e: any,
     record: {
-      isFinished: any
+      productionAmount: any
       completedAmount?: any
       workshop?: any
       id?: any
@@ -162,7 +167,7 @@ const BreakUp = (props: any) => {
   ) => {
     const sum = cloneDeep(data)
     if (type === 1) {
-      record.isFinished = e
+      record.productionAmount = e
       clearTimeout(timeout)
       timeout = setTimeout(() => {
         updateData(record, sum)
@@ -187,7 +192,7 @@ const BreakUp = (props: any) => {
       id?: any
       team?: any
       efficiency?: any
-      isFinished?: any
+      productionAmount?: any
       startTime?: number | undefined
       eddTime?: number | undefined
     }
@@ -207,18 +212,18 @@ const BreakUp = (props: any) => {
     console.log('增加')
     const arr = cloneDeep(data)
     //拆分数量的总和
-    const res = arr.reduce((total: any, current: { isFinished: any }) => {
-      total += current.isFinished
+    const res = arr.reduce((total: any, current: { productionAmount: any }) => {
+      total += current.productionAmount
       return total
     }, 0)
-    const value = arr[0].productionAmount - res
+    const value = arr[0].theTotal - res
     if (value <= 0) {
       message.success('拆分数量以到达最大值')
     } else {
       arr.push({
         // key: Date.now(),
         ids: Date.now() * Math.random(),
-        isFinished: value,
+        productionAmount: value,
         workshop: arr[0].workshop,
         team: arr[0].team,
         planStartTime: undefined,
@@ -249,7 +254,7 @@ const BreakUp = (props: any) => {
     {
       title: '生产单号',
       align: 'center',
-      dataIndex: 'productionAmount'
+      dataIndex: 'externalProduceOrderNum'
     },
     {
       title: '产品名称',
@@ -265,19 +270,19 @@ const BreakUp = (props: any) => {
       title: '生产单总量',
       width: 120,
       align: 'center',
-      dataIndex: 'productionAmount'
+      dataIndex: 'theTotal'
     },
     {
       title: '拆分数量',
       align: 'center',
       width: 120,
-      dataIndex: 'isFinished', //
+      dataIndex: 'productionAmount', //
       render: (_value: any, _row: any) => {
         return (
           <div>
             <InputNumber
               defaultValue={_value}
-              max={_row.productionAmount} //最大值是生产单总量
+              max={_row.theTotal} //最大值是生产单总量
               onChange={(e) => onBreakUp(e, _row, 1)}
             />
           </div>
@@ -294,7 +299,7 @@ const BreakUp = (props: any) => {
           <div>
             <InputNumber
               defaultValue={_value}
-              max={_row.isFinished} //最大值是拆分数量
+              max={_row.productionAmount} //最大值是拆分数量
               onChange={(e) => onBreakUp(e, _row, 2)}
             />
           </div>
@@ -504,11 +509,11 @@ const BreakUp = (props: any) => {
       state.timeState = true
     }
     // 拆分数量
-    const res = arr.reduce((total: any, current: { isFinished: any }) => {
-      total += current.isFinished
+    const res = arr.reduce((total: any, current: { productionAmount: any }) => {
+      total += current.productionAmount
       return total
     }, 0)
-    const value = res - arr[0].productionAmount
+    const value = res - arr[0].theTotal
     if (value !== 0) {
       if (value < 0) {
         message.warning(`拆分数量总和未满足订单总量 剩余-【${value}】`)
@@ -525,12 +530,12 @@ const BreakUp = (props: any) => {
       arr.map((item: any) => {
         item.isLocked = item.isLocked === true ? 1 : 0
       })
-      const sum = await breakSave({
+      const sum = await splitMethod({
         assignmentId: '1514764866136440833',
         data: arr
       })
       console.log('保存', sum)
-      // setIsModalVisible(false)
+      breakSave && breakSave()
     }
   }
 

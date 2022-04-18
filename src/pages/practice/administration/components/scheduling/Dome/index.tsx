@@ -8,12 +8,15 @@ import { practice } from '@/recoil/apis'
 import Gantt from './Gantt/index'
 import styles from './index.module.less'
 import Popup from './popup'
-const Dhx = (props: {
-  setHighlighted: any
-  formData: any
-  gunterType: any
-}) => {
-  const { setHighlighted, formData, gunterType } = props
+const Dhx = (props) => {
+  const {
+    gunterData,
+    notWork,
+    updateMethod,
+    setHighlighted,
+    formData,
+    gunterType
+  } = props
   // console.log('甘特图类型', gunterType)
 
   const { figureData, getLine, calculateEndTimeAfterMove, workingDate } =
@@ -35,55 +38,15 @@ const Dhx = (props: {
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
 
   useEffect(() => {
-    if (formData !== undefined) {
-      getChart(formData)
-    }
-  }, [formData])
-
-  const getChart = async (id: undefined) => {
-    const chart: any = await figureData({ factoryId: id }) //图
-    console.log('图', chart)
-
-    if (chart.code === 200) {
-      //格式处理
-      chart.data.map(
-        (item: {
-          start_date: string | null
-          startDate: moment.MomentInput
-          end_date: string | null
-          endDate: moment.MomentInput
-        }) => {
-          item.start_date = item.startDate
-            ? moment(item.startDate).format('YYYY-MM-DD HH:mm')
-            : null
-          item.end_date = item.endDate
-            ? moment(item.endDate).format('YYYY-MM-DD HH:mm')
-            : null
-        }
-      )
-      /**
-       * type //判断是否可以移动
-       * text 名称
-       * duration 天数
-       * progress 控制完成百分比 范围0-1
-       *  color控制颜色
-       * start_date 开始时间
-       * end_date 结束时间
-       *  render: 'split' 添加同一行 只有儿子用
-       * parent ***谁是自己的父亲*** 儿子和父亲用
-       */
-
-      setChart(chart.data) //图
+    if (!isEmpty(gunterData) && !isEmpty(notWork)) {
+      console.log('图', gunterData)
+      console.log('b不可', notWork)
+      setChart(gunterData)
       setLine([]) //线 //初始的时候传空
+      setNotWorking(notWork)
     }
-    //班组不可工作时间
+  }, [gunterData, notWork])
 
-    const notAvailable = await workingDate({ type: gunterType })
-    const sum = keys(notAvailable).map((item) => {
-      return { time: notAvailable[item], id: item }
-    })
-    setNotWorking(sum)
-  }
   useEffect(() => {
     if (chart !== undefined && line !== undefined) {
       setSubjectData({
@@ -180,12 +143,12 @@ const Dhx = (props: {
               (item: { id: any }) => item.id === updateData.parent
             )
             message.error(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
-            getChart(formData)
+            updateMethod && updateMethod()
           } else {
             // 同行
             const tips = chart.filter((item: { id: any }) => item.id === tipsID)
             message.error(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
-            getChart(formData)
+            updateMethod && updateMethod()
           }
         } else {
           getEndTime(
@@ -208,7 +171,7 @@ const Dhx = (props: {
       detailId,
       teamId
     })
-    getChart(formData)
+    updateMethod && updateMethod()
   }
   const choose = (type: any) => {
     setCurrentZoom(type)

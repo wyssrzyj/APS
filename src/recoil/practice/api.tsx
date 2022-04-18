@@ -631,7 +631,7 @@ export const efficiencyList = async (params: any) => {
   }
 }
 // 车缝工段拆分保存
-export const breakSave = async (params: any) => {
+export const splitMethod = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
       `/aps/produce-assignment-detail/split-assignment`,

@@ -10,8 +10,14 @@ import Popup from './popup'
 import TheEfficiency from './theEfficiency'
 
 const { TabPane } = Tabs
-function ToPlan(props: { remind: any; formData: any; gunterType: any }) {
-  const { remind, formData, gunterType } = props
+function ToPlan(props: {
+  remind: any
+  formData: any
+  gunterType: any
+  updateMethod: any
+  checkSchedule: any
+}) {
+  const { remind, formData, updateMethod, checkSchedule } = props
   // console.log('甘特图类型-树', gunterType)
   const { listProductionOrders, unlockWork, releaseFromAssignment } = practice
 
@@ -29,6 +35,8 @@ function ToPlan(props: { remind: any; formData: any; gunterType: any }) {
 
   const [equal, setEqual] = useState<any>('1')
   const [currentItem, setCurrentItem] = useState<any>() //点击的值
+  const [toPlanID, setToPlanID] = useState<any>([]) //待计划的id
+  const [plannedID, setPlannedID] = useState<any>([]) //已计划的id
 
   const map = new Map()
   map.set('1', '裁剪工段')
@@ -40,6 +48,9 @@ function ToPlan(props: { remind: any; formData: any; gunterType: any }) {
   const callback = (key: any) => {
     setCurrent(key)
   }
+  useEffect(() => {
+    checkSchedule && checkSchedule(plannedID.concat(toPlanID))
+  }, [plannedID, toPlanID])
 
   useEffect(() => {
     if (formData !== undefined) {
@@ -89,10 +100,18 @@ function ToPlan(props: { remind: any; formData: any; gunterType: any }) {
       factoryId: id,
       isPlanned: 0
     })
+
     const planned = await listProductionOrders({
       factoryId: id,
       isPlanned: 1
     })
+    if (!isEmpty(planned)) {
+      const plannedData = planned.map((item: any) => {
+        return item.externalProduceOrderId
+      })
+      setPlannedID(planned)
+    }
+
     //添加字段
     const sum = [fieldChanges(notPlan), fieldChanges(planned)]
     setList(sum)
@@ -102,13 +121,15 @@ function ToPlan(props: { remind: any; formData: any; gunterType: any }) {
   useEffect(() => {
     getData(list[Number(current)], current)
   }, [current])
+  //处理数据
   const getData = (data: any, type: string) => {
-    //处理数据
     if (!isEmpty(data)) {
-      data.map((i: { children: any[] }) => {
+      data.map((i: any) => {
+        i.key = i.externalProduceOrderId //用于校验排程
         !isEmpty(i.children) &&
           i.children.map((item: any) => {
-            // data.map((item: any) => {
+            // item.disabled = true
+
             item.key = item.id
             item.type = item.title === '缝制工段' ? 1 : 0 //用于判断
             item.popover = false
@@ -182,7 +203,12 @@ function ToPlan(props: { remind: any; formData: any; gunterType: any }) {
     setEqual(remind)
     setKeys([remind])
   }, [list, remind])
-
+  // 数据刷新
+  const dataUpdate = () => {
+    console.log(' 数据刷新')
+    dataAcquisition(formData) //树刷新
+    updateMethod() //图刷新
+  }
   //编辑工作
   const theEditor = (data: any) => {
     console.log('当前编辑工作值', data)
@@ -192,28 +218,36 @@ function ToPlan(props: { remind: any; formData: any; gunterType: any }) {
   //编辑提交
   const editSubmission = () => {
     setEditWindow(false)
-    dataAcquisition(formData)
+    dataUpdate() //数据刷新
   }
   //锁定 解锁
   const lockWork = async (type: number, id: any) => {
     console.log('锁定解锁id', id)
-
     const arr = await unlockWork({
       isLocked: type,
       id: id
     })
     console.log(arr)
+    dataUpdate() //数据刷新
   }
   const removeDispatch = async (id: any) => {
     console.log('接触分派id', id)
     const res = await releaseFromAssignment({ idList: [id] })
     console.log('接触分派', res)
+    dataUpdate() //数据刷新
   }
   //工作拆分
   const workSplit = (data: any) => {
     setWorkSplitList(data)
     setIsModalVisible(true)
   }
+  //工作拆分 保存
+  const breakSave = () => {
+    setIsModalVisible(false)
+    dataUpdate() //数据刷新
+  }
+
+  // setIsModalVisible
   //效率模板
   const efficiencyMethods = (id: any) => {
     console.log('效率模板', id)
@@ -350,11 +384,22 @@ function ToPlan(props: { remind: any; formData: any; gunterType: any }) {
   }
 
   const onCheck = (checkedKeys: any, info: any) => {
-    console.log('onCheck', checkedKeys, info)
+    const toPlan = treeData.map((item: any) => {
+      return item.externalProduceOrderId
+    })
+
+    const sum: any[][] = []
+    toPlan.map((item) => {
+      sum.push(toPlanFilterID(item, checkedKeys))
+    })
+    setToPlanID(sum.flat(Infinity))
+  }
+
+  const toPlanFilterID = (v: any, data: any[]) => {
+    return data.filter((item: any) => item === v)
   }
 
   const contents = { editSubmission, editWindow, setEditWindow, editWindowList }
-  // const contentx = { isModalVisible, setIsModalVisible, type, treeData, edit }
   return (
     <div>
       {!isModalVisible ? (
@@ -363,10 +408,12 @@ function ToPlan(props: { remind: any; formData: any; gunterType: any }) {
             {treeData !== undefined && treeData.length > 0 ? (
               <div>
                 <Tree
+                  // selectable={false}
+                  checkable
+                  // checkStrictly={true}
                   height={500}
                   selectedKeys={keys}
                   defaultExpandAll={true}
-                  // checkable
                   onSelect={onSelect}
                   onCheck={onCheck}
                   treeData={treeData}
@@ -393,12 +440,14 @@ function ToPlan(props: { remind: any; formData: any; gunterType: any }) {
       ) : null}
       {/* 拆分 */}
       <BreakUp
+        breakSave={breakSave}
         workSplitList={workSplitList}
         setIsModalVisible={setIsModalVisible}
         isModalVisible={isModalVisible}
       />
       {/* 效率模板 */}
       <TheEfficiency
+        dataUpdate={dataUpdate}
         setEfficiencyData={setEfficiencyData}
         efficiencyData={efficiencyData}
       />
