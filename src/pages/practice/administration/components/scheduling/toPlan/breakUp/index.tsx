@@ -37,7 +37,7 @@ const BreakUp = (props: any) => {
   }, [workSplitList])
 
   const getInterfaceData = async (data: any) => {
-    // data.id
+    /// data.id
     const res = await breakQuery({ assignmentId: '1514764866136440833' })
     // const storage = []
     // for (let i = 0; i < 1; i++) {
