@@ -105,7 +105,7 @@ function index(props: { content: any }) {
     if (values.workTeam) {
       values.workTeam = getChild(values.workTeam, treeData) //下拉多选的处理
     }
-    console.log('数据:', values)
+    console.log('Success:', values)
     form.resetFields()
     setIsModalVisible(false)
   }

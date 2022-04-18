@@ -557,12 +557,11 @@ export const workingDate = async (params: any) => {
     console.log(e)
   }
 }
-
-//锁定工作/解锁工作
-export const unlockWork = async (params: any) => {
+// 生产单规则排程
+export const rulesScheduling = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
-      `/aps/produce-assignment-detail/change-locked-status`,
+      `/aps/product-order/product-order-rule-schedule`,
       params
     )
     if (res.code !== 200) {
@@ -576,11 +575,11 @@ export const unlockWork = async (params: any) => {
     console.log(e)
   }
 }
-//解除分派任务
-export const releaseFromAssignment = async (params: any) => {
+// 校验排程
+export const checkSchedule = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
-      `/aps/produce-assignment-detail/cancel-assignment`,
+      `/aps/produce-assignment-detail/check-schedule`,
       params
     )
     if (res.code !== 200) {
@@ -594,11 +593,11 @@ export const releaseFromAssignment = async (params: any) => {
     console.log(e)
   }
 }
-//编辑任务
-export const editingTasks = async (params: any) => {
+// 发布排程
+export const releaseSchedule = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
-      `/aps/produce-assignment-detail/update`,
+      `/aps/produce-assignment-detail/check-schedule`,
       params
     )
     if (res.code !== 200) {
@@ -617,43 +616,6 @@ export const efficiencyList = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
       `/aps/capacity-efficiency-manage/list-fuzzy-by-page`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-// 车缝工段拆分保存
-export const breakSave = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/produce-assignment-detail/split-assignment`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-
-//拆分查询
-export const breakQuery = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.get(
-      `/aps/produce-assignment/get-detail-by-assignment`,
       params
     )
     if (res.code !== 200) {

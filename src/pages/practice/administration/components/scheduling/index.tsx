@@ -21,8 +21,8 @@ function Index() {
 
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
-  const [scheduling, setScheduling] = useState(false) //规则排程弹窗
-  const [schedule, setSchedule] = useState(false) //校验排程弹窗
+  const [visibleRule, setVisibleRule] = useState(false) //规则排程弹窗
+  const [visibleVerify, setVisibleVerify] = useState(false) //校验排程弹窗
   const [remind, setRemind] = useState() //甘特图高亮
   const [formData, setFormData] = useState() //form数据
   const [gunterType, setGunterType] = useState('0') //班组、订单甘特图
@@ -56,11 +56,11 @@ function Index() {
     setMaterialModal(true)
   }
 
-  const schedulingBtn = () => {
-    setScheduling(true)
+  const toggleRuleVisible = (visible: boolean) => {
+    setVisibleRule(visible)
   }
-  const scheduleBtn = () => {
-    setSchedule(true)
+  const toggleVerifyVisible = (visible: boolean) => {
+    setVisibleVerify(visible)
   }
 
   const onSelect = (selectedKeys: React.Key[], info: any) => {
@@ -70,7 +70,6 @@ function Index() {
   const onCheck = (checkedKeys: React.Key[], info: any) => {
     console.log('onCheck', checkedKeys, info)
   }
-
   //甘特图左键
   const setHighlighted = (e: React.SetStateAction<undefined>) => {
     setRemind(e)
@@ -117,22 +116,31 @@ function Index() {
           </Button>
         </div>
       </div>
-      <Button type="primary" onClick={schedulingBtn}>
+      <Button type="primary" onClick={() => toggleRuleVisible(true)}>
         规则排程
       </Button>
-      <Button type="primary" onClick={scheduleBtn}>
+      <Button type="primary" onClick={() => toggleVerifyVisible(true)}>
         校验排程
       </Button>
       {/* //规则排程 */}
-      <RuleScheduling scheduling={scheduling} setScheduling={setScheduling} />
-      <Verification schedule={schedule} setSchedule={setSchedule} />
+      {visibleRule && (
+        <RuleScheduling
+          visibleRule={visibleRule}
+          onCancel={() => toggleRuleVisible(false)}
+        />
+      )}
+      {visibleVerify && (
+        <Verification
+          visibleVerify={visibleVerify}
+          onCancel={() => toggleVerifyVisible(false)}
+        />
+      )}
       <MovPopup
         type="mov"
         movIsModalVisible={movIsModalVisible}
         setMovIsModalVisible={setMovIsModalVisible}
         movApi={movApi}
       />
-
       <div>测试</div>
     </div>
   )
