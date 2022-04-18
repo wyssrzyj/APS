@@ -1,0 +1,32 @@
+.searchBar {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px 16px 0 16px;
+  background: #ffffff;
+}
+
+.searchItem {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 360px;
+  max-width: 360px;
+  margin-bottom: 16px;
+  padding-right: 48px;
+}
+
+.searchLabel {
+  min-width: 80px;
+  margin-right: 16px;
+  text-align: right;
+}
+
+.searchValue {
+  flex: 1;
+
+  :global {
+    div {
+      width: 100%;
+    }
+  }
+}

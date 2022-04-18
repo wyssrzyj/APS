@@ -11,25 +11,21 @@ const layout = {
     span: 18
   }
 }
-const HeaderForm = (props: Record<string, any>) => {
-  const { FormData, treeData, onChange } = props
+const useSearchForm = (props: Record<string, any>) => {
+  const { formData, treeData, onChange } = props
   const { SHOW_PARENT } = TreeSelect
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
-  const { validateFields } = form
-  const handleSubmit = debounce(async () => {
-    const values = await validateFields()
-    FormData && FormData(values)
-  }, 500)
   const tProps = {
     allowClear: true,
+    treeDefaultExpandAll: true,
     treeData,
     showCheckedStrategy: SHOW_PARENT,
     placeholder: '请选择工作班组'
   }
   return (
     <div>
-      <Form form={form} onValuesChange={onChange}>
+      <Form form={form} onValuesChange={onChange} initialValues={formData}>
         <Row gutter={24}>
           <Col span={6}>
             <Form.Item {...layout} name="workModeName" label="模板名称">
@@ -47,4 +43,4 @@ const HeaderForm = (props: Record<string, any>) => {
   )
 }
 
-export default HeaderForm
+export default useSearchForm

@@ -613,6 +613,7 @@ export const releaseSchedule = async (params: any) => {
 }
 // 效率模板
 export const efficiencyList = async (params: any) => {
+  console.log('🚀 ~ ~~~~~~~~~~~~~~~~~', params)
   try {
     const res: ResponseProps = await axios.post(
       `/aps/capacity-efficiency-manage/list-fuzzy-by-page`,
