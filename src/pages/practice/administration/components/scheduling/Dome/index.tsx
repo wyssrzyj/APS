@@ -8,7 +8,14 @@ import { practice } from '@/recoil/apis'
 import Gantt from './Gantt/index'
 import styles from './index.module.less'
 import Popup from './popup'
-const Dhx = (props) => {
+const Dhx = (props: {
+  gunterData: any
+  notWork: any
+  updateMethod: any
+  setHighlighted: any
+  formData: any
+  gunterType: any
+}) => {
   const {
     gunterData,
     notWork,

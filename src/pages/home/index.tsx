@@ -9,7 +9,6 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 import { commonState } from '@/recoil'
 import { commonApis } from '@/recoil/apis'
 
-import Dome from './Dome/index'
 import styles from './index.module.less'
 
 const Home = () => {
@@ -21,7 +20,7 @@ const Home = () => {
   }
 
   return (
-    // 多个样式处理方法classNames 可使用三元
+    // 多个样式处理方法classNames 可使用三元.
     <div>
       <input value={value} onChange={(e) => setValue(e.target.value)} />
       <button onClick={executionMethod}>存全局的id</button>
