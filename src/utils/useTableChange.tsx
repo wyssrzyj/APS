@@ -13,9 +13,9 @@ type Target = {
   [key: string]: any
 }
 
-const useTableChangeAll = (
+const useTableChange = (
   params: Target,
-  getData: (arg0: Target) => any,
+  getData: (params: any) => any,
   type?: string,
   required: string[] = [] // params中满足必选参数才发起请求
 ) => {
@@ -33,13 +33,13 @@ const useTableChangeAll = (
       const flag = required.every((item) => keys.includes(item))
       flag && (await getDataList())
     })()
-  }, [params, sorterField, order])
+  }, [params, pageNum, pageSize, sorterField, order])
 
   const getDataList = async () => {
     setLoading(true)
     let target: Target = {}
-    target.pageNum = 1
-    target.pageSize = 9999
+    target.pageNum = pageNum
+    target.pageSize = pageSize
     const keys = Reflect.ownKeys(params)
     if (keys.length > 0) {
       target = { ...params, ...target }
@@ -80,9 +80,9 @@ const useTableChangeAll = (
     _filters: Record<string, FilterValue | null>,
     sorter: SorterResult<any> | SorterResult<any>[]
   ) => {
-    const { current = 1, pageSize = 20 } = pagination
-    setPageNum(current)
-    setPageSize(pageSize)
+    const { current, pageSize } = pagination
+    setPageNum(current as number)
+    setPageSize(pageSize as number)
 
     const { field, order } = sorter as SorterResult<any>
     setSorterField(field as string)
@@ -109,4 +109,4 @@ const useTableChangeAll = (
   }
 }
 
-export default useTableChangeAll
+export default useTableChange
