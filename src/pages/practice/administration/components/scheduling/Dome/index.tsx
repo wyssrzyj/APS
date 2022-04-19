@@ -2,7 +2,9 @@ import { Button, Dropdown, Menu, message, Select, Tag } from 'antd'
 import { cloneDeep, isEmpty, keys } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+import { useRecoilState } from 'recoil'
 
+import { dockingData } from '@/recoil'
 import { practice } from '@/recoil/apis'
 
 import Gantt from './Gantt/index'
@@ -28,6 +30,9 @@ const Dhx = (props: {
 
   const { figureData, getLine, calculateEndTimeAfterMove, workingDate } =
     practice
+  const [FactoryData, setFactoryData] = useRecoilState(
+    dockingData.globalFactoryData
+  )
 
   const [currentZoom, setCurrentZoom] = useState<any>('Days') //缩放的状态  Days
   const [subjectData, setSubjectData] = useState<any>({ data: [], links: [] }) //甘特图主体数据
@@ -43,11 +48,8 @@ const Dhx = (props: {
   const [select, setSelect] = useState<any>([]) //用于展示 线和不可用时间、给树传递id判断
   const [type, setType] = useState<any>() //判断是点击还是移动
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
-
   useEffect(() => {
     if (!isEmpty(gunterData) && !isEmpty(notWork)) {
-      console.log('图', gunterData)
-      console.log('b不可', notWork)
       setChart(gunterData)
       setLine([]) //线 //初始的时候传空
       setNotWorking(notWork)
@@ -226,7 +228,7 @@ const Dhx = (props: {
       }
     }
   }, [select, chart])
-  const content = { isModalVisible, setIsModalVisible }
+  const content = { formData, isModalVisible, setIsModalVisible }
 
   return (
     <div>

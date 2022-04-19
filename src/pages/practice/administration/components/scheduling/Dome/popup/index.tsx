@@ -1,20 +1,40 @@
 import { DatePicker, Form, Input, Modal, TreeSelect } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+import { useRecoilState } from 'recoil'
 
-import { getChild } from '@/components/getChild'
-import { practice } from '@/recoil/apis'
+import { dockingData } from '@/recoil'
+import { dockingDataApis, practice } from '@/recoil/apis'
+const { teamList } = dockingDataApis
 
 import WorkingHours from './workingHours/index'
 function Popup(props: { content: any }) {
   const { content } = props
-  const { isModalVisible, setIsModalVisible } = content
+  const { isModalVisible, setIsModalVisible, formData } = content
+
   const { overtimeAddition, teamId } = practice
   const { SHOW_PARENT } = TreeSelect
   const { RangePicker } = DatePicker
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const [time, settime] = useState<any>()
+  const [treeData, setTreeData] = useState<any>([]) //班组列表
+  useEffect(() => {
+    if (formData) {
+      dataDictionary(formData)
+    }
+  }, [formData])
+  const dataDictionary = async (e: any) => {
+    const teamData = await teamList({ factoryId: e }) //班组列表
+    teamData.map(
+      (item: { title: any; teamName: any; value: any; id: any; key: any }) => {
+        item.title = item.teamName
+        item.value = item.id
+        item.key = item.id
+      }
+    )
+    setTreeData(teamData)
+  }
 
   const value = ['0-0-0']
 
@@ -45,9 +65,9 @@ function Popup(props: { content: any }) {
     type: number
   ) => {
     //编辑
-    if (values.teamIds) {
-      values.teamIds = getChild(values.teamIds, treeData) //下拉多选的处理
-    }
+    // if (values.teamIds) {
+    //   values.teamIds = getChild(values.teamIds, treeData) //下拉多选的处理
+    // }
     //时间的处理
     if (values.date) {
       const arr = moment(values.date).format('YYYY-MM-DD')
@@ -58,6 +78,8 @@ function Popup(props: { content: any }) {
     }
     const list = type === 1 ? values : { ...values }
     //班组为false才执行
+    console.log('提交数据', values)
+
     const arr: any = await teamId({ idList: values.teamIds })
 
     if (arr.success === true) {
@@ -74,74 +96,7 @@ function Popup(props: { content: any }) {
     onOk(values, 2)
   }
   // 假数据
-  const treeData = [
-    {
-      title: '工厂',
-      value: '1',
-      key: '1',
-      children: [
-        {
-          title: '工厂1',
-          value: '2',
-          key: '2'
-        },
-        {
-          title: '工厂2',
-          value: '3',
-          key: '3'
-        }
-      ]
-    },
-    {
-      title: '原料',
-      value: '29',
-      key: '29',
-      children: [
-        {
-          title: '大米',
-          value: '21',
-          key: '21'
-        },
-        {
-          title: '土豆',
-          value: '22',
-          key: '22'
-        },
-        {
-          title: '菠萝',
-          value: '23',
-          key: '23'
-        }
-      ]
-    },
-    {
-      title: '玩具',
-      value: '39',
-      key: '39',
-      children: [
-        {
-          title: '金铲铲的冠冕',
-          value: '31',
-          key: '31'
-        },
-        {
-          title: '残暴之力',
-          value: '32',
-          key: '32'
-        },
-        {
-          title: '末日寒冬',
-          value: '33',
-          key: '33'
-        }
-      ]
-    },
-    {
-      title: '蔬菜',
-      value: '4',
-      key: '4'
-    }
-  ]
+
   const tProps = {
     treeData,
     value: value,

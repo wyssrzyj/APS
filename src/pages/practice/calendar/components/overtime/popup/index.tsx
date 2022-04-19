@@ -1,22 +1,58 @@
-import { DatePicker, Form, Input, Modal, TreeSelect } from 'antd'
+import { DatePicker, Form, Input, Modal, Select, TreeSelect } from 'antd'
+import { isElement, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
-import { getChild } from '@/components/getChild'
-import { practice } from '@/recoil/apis'
+import { dockingDataApis, practice } from '@/recoil/apis'
 
 import WorkingHours from './workingHours/index'
 function Popup(props: { content: any; newlyAdded: any }) {
   const { content, newlyAdded } = props
-  const { isModalVisible, setIsModalVisible, type, treeData, edit } = content
-  const { overtimeAddition, teamId } = practice
+  const { isModalVisible, setIsModalVisible, type, edit } = content
+  const { teamList } = dockingDataApis
+  const { overtimeAddition, teamId, factoryList } = practice
   const { SHOW_PARENT } = TreeSelect
   const { RangePicker } = DatePicker
+  const { Option } = Select
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const [time, settime] = useState<any>()
+  const [list, setList] = useState<any>([]) //工厂
+  const [listID, setListID] = useState<any>() //工厂ID
+  const [treeData, setTreeData] = useState<any>() //班组列表
 
-  //回显
+  //工厂名称
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setList(arr)
+    }
+  }
+  //加班班组
+  useEffect(() => {
+    if (!isEmpty(listID)) {
+      dataDictionary(listID)
+    }
+  }, [listID])
+  const dataDictionary = async (e: any) => {
+    const teamData = await teamList({ factoryId: e }) //班组列表
+    teamData.map(
+      (item: { title: any; teamName: any; value: any; id: any; key: any }) => {
+        item.title = item.teamName
+        item.value = item.id
+        item.key = item.id
+      }
+    )
+    setTreeData(teamData)
+  }
+
   useEffect(() => {
     if (type !== 1) {
       // endDate
@@ -57,9 +93,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
     type: number
   ) => {
     //编辑
-    if (values.teamIds) {
-      values.teamIds = getChild(values.teamIds, treeData) //下拉多选的处理
-    }
+
     //时间的处理
     if (values.date) {
       const arr = moment(values.date).format('YYYY-MM-DD')
@@ -71,13 +105,9 @@ function Popup(props: { content: any; newlyAdded: any }) {
     const list = type === 1 ? values : { ...values, id: edit.id }
     //班组为false才执行
     const arr: any = await teamId({ idList: values.teamIds })
-
     if (arr.success === true) {
       const res = await overtimeAddition(list)
-
       if (res === true) {
-        console.log('执行')
-
         newlyAdded()
         form.resetFields()
         setIsModalVisible(false)
@@ -94,10 +124,9 @@ function Popup(props: { content: any; newlyAdded: any }) {
   }
   const tProps = {
     treeData,
-    value: value,
     treeCheckable: true,
     showCheckedStrategy: SHOW_PARENT,
-    placeholder: '请选择工作班组',
+    placeholder: '请先选择工厂名称',
     style: {
       width: '100%'
     }
@@ -106,6 +135,9 @@ function Popup(props: { content: any; newlyAdded: any }) {
     const arr = moment(e).format('YYYY-MM-DD')
     console.log(moment(arr).valueOf())
     settime(moment(arr).valueOf())
+  }
+  const getFactoryName = (e: any) => {
+    setListID(e)
   }
   return (
     <div>
@@ -126,16 +158,44 @@ function Popup(props: { content: any; newlyAdded: any }) {
           autoComplete="off"
         >
           <Form.Item
-            label="加班班组"
+            label="工厂名称"
+            name="teamIdss"
+            rules={[{ required: true, message: '请选择工厂名称!' }]}
+          >
+            <Select
+              onChange={getFactoryName}
+              placeholder="请选择工厂名称"
+              allowClear
+            >
+              {list.map(
+                (item: {
+                  id: React.Key | null | undefined
+                  name:
+                    | boolean
+                    | React.ReactChild
+                    | React.ReactFragment
+                    | React.ReactPortal
+                    | null
+                    | undefined
+                }) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                )
+              )}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="班组名称"
             name="teamIds"
-            rules={[{ required: true, message: '请选择加班班组!' }]}
+            rules={[{ required: true, message: '请先选择班组名称!' }]}
           >
             <TreeSelect {...tProps} disabled={type === 3 ? true : false} />
           </Form.Item>
           <Form.Item
             label="加班日期"
             name="date"
-            rules={[{ required: true, message: '请选择加班日期!' }]}
+            rules={[{ required: true, message: '请先选择加班日期!' }]}
           >
             <DatePicker
               onChange={onChange}

@@ -38,12 +38,12 @@ const allArea = atom({
 //存全局的数据
 const textState = atom({
   key: 'textState', // unique ID (with respect to other atoms/selectors)
-  default: '150549' // default value (aka initial value)
+  default: '1008611' // default value (aka initial value)
 })
 
 const lyj = atom({
   key: 'lyj', // unique ID (with respect to other atoms/selectors)
-  default: '空' // default value (aka initial value)
+  default: '123456789' // default value (aka initial value)
 })
 // 同步设置数据
 const charCountState = selector({

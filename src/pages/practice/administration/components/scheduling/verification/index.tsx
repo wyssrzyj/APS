@@ -1,35 +1,110 @@
-import { Button, Modal } from 'antd'
-import React from 'react'
+import { Button, Modal, Space, Tag } from 'antd'
+import classNames from 'classnames'
+import { cloneDeep } from 'lodash'
+import React, { useEffect, useState } from 'react'
 
-function index(props: { schedule: any; setSchedule: any }) {
-  const { schedule, setSchedule } = props
+import { practice } from '@/recoil/apis'
+const { checkSchedule, releaseSchedule } = practice
+import styles from './index.module.less'
+const list = [
+  { key: '延期生产单:', value: 'delayOrderProductList', list: [] },
+  {
+    key: '物料在工段开始时间到达:',
+    value: 'materialDalaySectionList',
+    list: []
+  },
+  {
+    key: '生产单后工段在前工段前开始:',
+    value: 'sectionSequenceMistakeList',
+    list: []
+  },
+  { key: '工作时间重叠班组:', value: 'workTimeOverlapTeamList', list: [] }
+]
+function useVerifyModal(props: Record<string, any>) {
+  const { visibleVerify, onCancel, checkIDs } = props
+  const [checkList, setCheckList] = useState<Record<string, any>>(list)
+  const verifyInfo = async (id) => {
+    console.log('处理后的数据', id)
 
-  const onCancel = () => {
-    setSchedule(false)
+    const data = cloneDeep(checkList)
+    // ['1504272269944320002']
+    const res = await checkSchedule(['1504272269944320002'])
+    data.forEach((item: Record<string, any>) => {
+      item.list = res[item.value]
+    })
+    setCheckList(data)
   }
-  const handleCancel = () => {
-    setSchedule(false)
-  }
-  //头部form的数据
-  const FormData = (e: any) => {
-    console.log('头部form的数据', e)
-  }
+  useEffect(() => {
+    console.log('测试,', checkIDs)
 
+    verifyInfo(checkIDs)
+  }, [checkIDs])
+  const release = async () => {
+    await checkSchedule(['1504272269944320002'])
+    onCancel()
+  }
   return (
     <div>
       <Modal
-        visible={schedule}
+        visible={visibleVerify}
         centered={true}
-        // footer={null}
+        footer={null}
         onCancel={onCancel}
-        // maskClosable={false}
+        maskClosable={false}
+        width={700}
       >
-        <div>生产单：00000000延期</div>
-        <div> 班组A：资源冲突</div>
-        <div> 产品xxx工序信息异常</div>
+        <section>
+          {checkList.map((item: any) => {
+            return (
+              <div
+                key={item.value}
+                className={classNames(styles.mb10, styles.listContainer)}
+              >
+                <div>
+                  <Tag
+                    color={
+                      [
+                        'delayOrderProductList',
+                        'workTimeOverlapTeamList'
+                      ].includes(item.value)
+                        ? 'red'
+                        : 'orange'
+                    }
+                  >
+                    {item.key}
+                  </Tag>
+                </div>
+                <div>
+                  {item.list.map((i: string, index: number) => {
+                    return (
+                      <div
+                        key={index}
+                        className={
+                          index === item.list.length - 1 ? '' : styles.mb10
+                        }
+                      >
+                        {i}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+        </section>
+        <footer>
+          <Space>
+            <Button type="primary" onClick={onCancel}>
+              返回
+            </Button>
+            <Button type="primary" onClick={release}>
+              发布
+            </Button>
+          </Space>
+        </footer>
       </Modal>
     </div>
   )
 }
 
-export default index
+export default useVerifyModal

@@ -13,91 +13,21 @@ import Popup from './popup'
 function Overtime() {
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const defaultCurrent = 1
-  const defaultPageSize = 10
-
+  const [total, setTotal] = useState<number>(20)
   const [params, setParams] = useState<any>({
     pageNum: 1,
-    pageSize: defaultPageSize
+    pageSize: 10
   })
-  const [total] = useState<number>(0)
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [type, setType] = useState(1) //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
-  const [list, setlist] = useState([])
+  const [list, setList] = useState([])
   const [edit, setEdit] = useState([]) //编辑数据
 
   const { overtimedisplay, workOvertimeMov, overtimeDetails } = practice
-  // 假数据
-  const treeData = [
-    {
-      title: '工厂',
-      value: '1',
-      key: '1',
-      children: [
-        {
-          title: '工厂1',
-          value: '2',
-          key: '2'
-        },
-        {
-          title: '工厂2',
-          value: '3',
-          key: '3'
-        }
-      ]
-    },
-    {
-      title: '原料',
-      value: '2-9',
-      key: '2-9',
-      children: [
-        {
-          title: '大米',
-          value: '2-1',
-          key: '2-1'
-        },
-        {
-          title: '土豆',
-          value: '2-2',
-          key: '2-2'
-        },
-        {
-          title: '菠萝',
-          value: '2-3',
-          key: '2-3'
-        }
-      ]
-    },
-    {
-      title: '玩具',
-      value: '3-9',
-      key: '3-9',
-      children: [
-        {
-          title: '金铲铲的冠冕',
-          value: '3-1',
-          key: '3-1'
-        },
-        {
-          title: '残暴之力',
-          value: '3-2',
-          key: '3-2'
-        },
-        {
-          title: '末日寒冬',
-          value: '3-3',
-          key: '3-3'
-        }
-      ]
-    },
-    {
-      title: '蔬菜',
-      value: '4',
-      key: '4'
-    }
-  ]
+
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
@@ -214,11 +144,18 @@ function Overtime() {
     }
   ]
   useEffect(() => {
+    setParams({
+      pageNum: pageNum,
+      pageSize: pageSize
+    })
+  }, [pageNum, pageSize])
+  useEffect(() => {
     api(params)
   }, [params])
   const api = async (item: any) => {
     const arr = await overtimedisplay(item)
-    setlist(arr.records)
+    setTotal(arr.total)
+    setList(arr.records)
   }
 
   const newlyAdded = async () => {
@@ -226,7 +163,6 @@ function Overtime() {
   }
   //头部form的数据
   const FormData = (e: any) => {
-    console.log(e)
     setParams({ ...params, ...e })
   }
   const onPaginationChange = (
@@ -255,9 +191,8 @@ function Overtime() {
     }
   }
   const movApi = async () => {
-    console.log('删除逻辑')
-    console.log('选中的删除id', selectedRowKeys)
     const arr = await workOvertimeMov({ idList: selectedRowKeys })
+    setSelectedRowKeys([])
     newlyAdded()
   }
   const onSelectChange = (selectedRowKeys: React.SetStateAction<never[]>) => {
@@ -276,7 +211,7 @@ function Overtime() {
     setIsModalVisible(true)
     setType(1)
   }
-  const content = { isModalVisible, setIsModalVisible, type, treeData, edit }
+  const content = { isModalVisible, setIsModalVisible, type, edit }
   return (
     <div className={styles.qualification}>
       <div>
@@ -284,7 +219,7 @@ function Overtime() {
       </div>
       <div>
         <div className={styles.content}>
-          <Forms FormData={FormData} treeData={treeData}></Forms>
+          <Forms FormData={FormData}></Forms>
           <Button
             className={styles.executionMethod}
             type="primary"

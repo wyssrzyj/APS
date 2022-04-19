@@ -15,12 +15,20 @@ import { cloneDeep, isElement } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
-import { practice } from '@/recoil/apis'
+import { dockingDataApis, practice } from '@/recoil/apis'
 
 import Details from './details/index'
 import styles from './index.module.less'
 const BreakUp = (props: any) => {
-  const { setIsModalVisible, isModalVisible, workSplitList, breakSave } = props
+  const {
+    setIsModalVisible,
+    isModalVisible,
+    workSplitList,
+    breakSave,
+    formData
+  } = props
+  const { workshopList, teamList, capacityList } = dockingDataApis
+
   const { splitMethod, breakQuery } = practice
 
   const { Option } = Select
@@ -29,6 +37,53 @@ const BreakUp = (props: any) => {
   const [total] = useState<number>(0)
   const [data, setData] = useState<any>([])
   const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
+
+  const [factoryName, setFactoryName] = useState<any>([]) //车间
+  const [workshopId, setWorkshopId] = useState<any>() //车间id
+  const [teamName, setTeamName] = useState<any>([]) //班组
+  const [capacityData, setCapacityData] = useState<any>([]) //x效率
+
+  useEffect(() => {
+    if (formData) {
+      dataAcquisition(formData)
+    }
+  }, [formData])
+  const dataAcquisition = async (e: any) => {
+    const res = await workshopList({ factoryId: e })
+    if (res) {
+      res.map((item: { name: any; shopName: any }) => {
+        item.name = item.shopName
+      })
+      setFactoryName(res)
+    }
+
+    const capacity = await capacityList()
+    if (res) {
+      capacity.map((item: { name: any; templateName: any }) => {
+        item.name = item.templateName
+      })
+      setCapacityData(capacity)
+    }
+  }
+
+  useEffect(() => {
+    if (workshopId && workshopId) {
+      console.log('formData', workshopId)
+      teamData(formData, workshopId)
+    }
+  }, [workshopId, formData])
+  const teamData = async (e: any, id: any) => {
+    const team = await teamList({
+      factoryId: e,
+      shopMannagerId: id
+    })
+    if (team) {
+      team.map((item: { name: any; teamName: any }) => {
+        item.name = item.teamName
+      })
+      setTeamName(team)
+    }
+  }
 
   useEffect(() => {
     if (!isElement(workSplitList) && workSplitList !== undefined) {
@@ -42,6 +97,7 @@ const BreakUp = (props: any) => {
     // data.productionAmount = 100
 
     // data.id
+    /// data.id
     const res = await breakQuery({ assignmentId: '1514764866136440833' })
     // const storage = []
     // for (let i = 0; i < 1; i++) {
@@ -135,6 +191,9 @@ const BreakUp = (props: any) => {
     const sum = cloneDeep(data)
     //工作车间
     if (type === 1) {
+      console.log('工作车间', e)
+      setWorkshopId(e)
+
       record.workshop = e
       updateData(record, sum)
     }
@@ -314,17 +373,17 @@ const BreakUp = (props: any) => {
       render: (_value: any, _row: any) => {
         return (
           <div>
-            {_value ? (
-              <Select
-                defaultValue={_value}
-                style={{ width: 120 }}
-                onChange={(e) => handleChange(1, e, _row)}
-              >
-                <Option value="1">工作车间1</Option>
-                <Option value="2">工作车间2</Option>
-                <Option value="3">工作车间3</Option>
-              </Select>
-            ) : null}
+            <Select
+              placeholder="请选择工作车间"
+              defaultValue={_value}
+              style={{ width: 120 }}
+              onChange={(e) => handleChange(1, e, _row)}
+            >
+              {factoryName.map((item: any) => (
+                // eslint-disable-next-line react/jsx-key
+                <Option value={item.id}>{item.name}</Option>
+              ))}
+            </Select>
           </div>
         )
       }
@@ -339,17 +398,17 @@ const BreakUp = (props: any) => {
       render: (_value: any, _row: any) => {
         return (
           <div>
-            {_value ? (
-              <Select
-                defaultValue={_value}
-                style={{ width: 120 }}
-                onChange={(e) => handleChange(2, e, _row)}
-              >
-                <Option value="1">工作班组1</Option>
-                <Option value="2">工作班组2</Option>
-                <Option value="3">工作班组3</Option>
-              </Select>
-            ) : null}
+            <Select
+              placeholder="请选择工作车间"
+              defaultValue={_value}
+              style={{ width: 120 }}
+              onChange={(e) => handleChange(2, e, _row)}
+            >
+              {teamName.map((item: any) => (
+                // eslint-disable-next-line react/jsx-key
+                <Option value={item.id}>{item.name}</Option>
+              ))}
+            </Select>
           </div>
         )
       }
@@ -417,17 +476,17 @@ const BreakUp = (props: any) => {
       render: (_value: any, _row: any) => {
         return (
           <div>
-            {_value ? (
-              <Select
-                defaultValue={_value}
-                style={{ width: 120 }}
-                onChange={(e) => handleChange(3, e, _row)}
-              >
-                <Option value="1">效率模板1</Option>
-                <Option value="2">效率模板2</Option>
-                <Option value="3">效率模板3</Option>
-              </Select>
-            ) : null}
+            <Select
+              placeholder="请选择效率模板"
+              defaultValue={_value}
+              style={{ width: 120 }}
+              onChange={(e) => handleChange(3, e, _row)}
+            >
+              {capacityData.map((item: any) => (
+                // eslint-disable-next-line react/jsx-key
+                <Option value={item.id}>{item.name}</Option>
+              ))}
+            </Select>
           </div>
         )
       }

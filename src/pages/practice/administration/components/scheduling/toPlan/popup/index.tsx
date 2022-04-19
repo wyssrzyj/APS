@@ -12,19 +12,49 @@ import {
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+import { useRecoilState } from 'recoil'
 
-import { practice } from '@/recoil/apis'
+import { commonState, dockingData } from '@/recoil'
+import { dockingDataApis, practice } from '@/recoil/apis'
 function Popup(props: { content: any }) {
   const { content } = props
-  const { editWindow, setEditWindow, editWindowList, editSubmission } = content
+  const {
+    editWindow,
+    setEditWindow,
+    editWindowList,
+    editSubmission,
+    formData
+  } = content
   const { Option } = Select
-
-  const { editingTasks } = practice
-
+  const { workshopList, teamList } = dockingDataApis
   const [form] = Form.useForm()
   const [list, setList] = useState<any>()
   const [type, setType] = useState<any>()
 
+  const [factoryName, setFactoryName] = useState<any>([])
+  const [teamName, setTeamName] = useState<any>([])
+  useEffect(() => {
+    if (formData) {
+      dataAcquisition(formData)
+    }
+  }, [formData])
+  const dataAcquisition = async (e: any) => {
+    const res = await workshopList({ factoryId: e })
+    if (res) {
+      res.map((item: { name: any; shopName: any }) => {
+        item.name = item.shopName
+      })
+      setFactoryName(res)
+    }
+
+    const team = await teamList({ factoryId: e })
+    if (team) {
+      team.map((item: { name: any; teamName: any }) => {
+        item.name = item.teamName
+      })
+      setTeamName(team)
+    }
+  }
   useEffect(() => {
     if (!isEmpty(editWindowList)) {
       setList(editWindowList)
@@ -62,7 +92,7 @@ function Popup(props: { content: any }) {
     values.planEndTime = moment(values.planEndTime).valueOf()
     values.planStartTime = moment(values.planStartTime).valueOf()
     values.isLocked = type === false ? 0 : 1
-    const res = await editingTasks({ ...values, id: list.id })
+    // const res = await editingTasks({ ...values, id: list.id })
     form.resetFields()
     editSubmission()
   }
@@ -73,20 +103,11 @@ function Popup(props: { content: any }) {
     { name: 'ul设计', id: 3 },
     { name: '产品经理', id: 4 }
   ]
-  //工厂名称
-  const factory = [
-    { name: '糯软甜甜酱', id: 1 },
-    { name: '甜糯软软酱', id: 2 },
-    { name: '软甜糯糯酱', id: 3 },
-    { name: '糯甜软软酱', id: 4 }
-  ]
   //车间名称
-  const workshop = [
-    { name: '老头乐制造车间', id: 1 },
-    { name: '梅赛德斯塔寨村分厂', id: 2 },
-    { name: '哪吒汽车制造中心', id: 3 },
-    { name: '保时捷车漆原材料制造中心', id: 4 }
-  ]
+  const workshop = factoryName
+  //班组
+  const factory = teamName
+
   let timeout: NodeJS.Timeout
   const onChange = (e: any) => {
     clearTimeout(timeout)
@@ -185,8 +206,8 @@ function Popup(props: { content: any }) {
                 name="shopName"
                 rules={[{ required: true, message: '请输入工作班组' }]}
               >
-                <Select defaultValue="请选择所属工段">
-                  {section.map((item) => (
+                <Select placeholder="请选择所属工段">
+                  {workshop.map((item: any) => (
                     // eslint-disable-next-line react/jsx-key
                     <Option value={item.id}>{item.name}</Option>
                   ))}
@@ -199,8 +220,8 @@ function Popup(props: { content: any }) {
                 name="factory"
                 rules={[{ required: true, message: '请输入工作班组' }]}
               >
-                <Select defaultValue="请选择工厂名称">
-                  {factory.map((item) => (
+                <Select placeholder="请选择工作班组">
+                  {factory.map((item: any) => (
                     // eslint-disable-next-line react/jsx-key
 
                     // eslint-disable-next-line react/jsx-key
@@ -213,12 +234,11 @@ function Popup(props: { content: any }) {
           <Row>
             <Col span={12}>
               <Form.Item label="生产量" name="productionAmount">
-                <Select defaultValue="请选择车间名称" disabled={true}>
-                  {workshop.map((item) => (
-                    // eslint-disable-next-line react/jsx-key
-                    <Option value={item.id}>{item.name}</Option>
-                  ))}
-                </Select>
+                <Input
+                  maxLength={100}
+                  placeholder="请输入生产量"
+                  disabled={true}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>

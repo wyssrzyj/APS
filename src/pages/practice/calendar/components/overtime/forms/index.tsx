@@ -1,25 +1,70 @@
-import { Col, Form, Row, TreeSelect } from 'antd'
-import { debounce } from 'lodash'
-import React from 'react'
+import { Col, Form, Row, Select, TreeSelect } from 'antd'
+import { debounce, isEmpty } from 'lodash'
+import React, { useEffect, useState } from 'react'
 
 import { getChild } from '@/components/getChild/index'
+import { dockingDataApis, practice } from '@/recoil/apis'
 
-const { SHOW_PARENT } = TreeSelect
-
-const layout = {
-  labelCol: {
-    span: 6
-  },
-  wrapperCol: {
-    span: 24
-  }
-}
-
-const HeaderForm = (props: { FormData: any; treeData: any }) => {
-  const { FormData, treeData } = props
+const HeaderForm = (props: { FormData: any }) => {
+  const { FormData } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const { validateFields } = form
+  const { teamList } = dockingDataApis
+  const { factoryList } = practice
+  const { SHOW_PARENT } = TreeSelect
+  const { Option } = Select
+
+  const layout = {
+    labelCol: {
+      span: 6
+    },
+    wrapperCol: {
+      span: 24
+    }
+  }
+
+  const [list, setList] = useState<any>([]) //工厂
+  const [listID, setListID] = useState<any>() //工厂ID
+  const [treeData, setTreeData] = useState<any>() //班组列表
+
+  //工厂名称
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setList(arr)
+    }
+  }
+
+  //加班班组
+  useEffect(() => {
+    if (!isEmpty(listID)) {
+      dataDictionary(listID)
+    }
+  }, [listID])
+  const dataDictionary = async (e: any) => {
+    const teamData = await teamList({ factoryId: e }) //班组列表
+    teamData.map(
+      (item: { title: any; teamName: any; value: any; id: any; key: any }) => {
+        item.title = item.teamName
+        item.value = item.id
+        item.key = item.id
+      }
+    )
+    setTreeData(teamData)
+  }
+
+  const getFactoryName = (e: any) => {
+    setListID(e)
+  }
+
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
     FormData && FormData(values)
@@ -33,7 +78,7 @@ const HeaderForm = (props: { FormData: any; treeData: any }) => {
       return event.target.value
     }
     if (type === 'treeSelect') {
-      return getChild(event, treeData)
+      // return getChild(event, treeData)
     }
     return event
   }
@@ -41,7 +86,10 @@ const HeaderForm = (props: { FormData: any; treeData: any }) => {
     treeData,
     treeCheckable: true,
     showCheckedStrategy: SHOW_PARENT,
-    placeholder: '请选择工作班组'
+    placeholder: '请先选择工厂名称',
+    style: {
+      width: '100%'
+    }
   }
   return (
     <div>
@@ -50,8 +98,42 @@ const HeaderForm = (props: { FormData: any; treeData: any }) => {
           <Col span={6}>
             <Form.Item
               {...layout}
+              label="工厂名称"
+              name="teamIdss"
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'treeSelect')
+              }
+            >
+              <Select
+                onChange={getFactoryName}
+                placeholder="请选择工厂名称"
+                allowClear
+              >
+                {list.map(
+                  (item: {
+                    id: React.Key | null | undefined
+                    name:
+                      | boolean
+                      | React.ReactChild
+                      | React.ReactFragment
+                      | React.ReactPortal
+                      | null
+                      | undefined
+                  }) => (
+                    <Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Option>
+                  )
+                )}
+              </Select>
+            </Form.Item>
+          </Col>
+
+          <Col span={6}>
+            <Form.Item
+              {...layout}
               name="teamIds"
-              label="加班班组"
+              label="班组名称"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'treeSelect')
               }

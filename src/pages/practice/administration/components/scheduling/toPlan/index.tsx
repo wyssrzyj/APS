@@ -35,8 +35,9 @@ function ToPlan(props: {
 
   const [equal, setEqual] = useState<any>('1')
   const [currentItem, setCurrentItem] = useState<any>() //点击的值.
-  const [toPlanID, setToPlanID] = useState<any>([]) //待计划的id
+  const [toPlanID, setToPlanID] = useState<any>([]) //待计划选中的id
   const [plannedID, setPlannedID] = useState<any>([]) //已计划的id
+  const [stateAdd, setStateAdd] = useState<any>([]) //状态添加版本
 
   const map = new Map()
   map.set('1', '裁剪工段')
@@ -49,14 +50,50 @@ function ToPlan(props: {
     setCurrent(key)
   }
   useEffect(() => {
-    checkSchedule && checkSchedule(plannedID.concat(toPlanID))
-  }, [plannedID, toPlanID])
+    checkSchedule && checkSchedule(toPlanID, plannedID, stateAdd)
+  }, [plannedID, toPlanID, stateAdd])
 
   useEffect(() => {
     if (formData !== undefined) {
       dataAcquisition(formData)
     }
   }, [formData])
+
+  useEffect(() => {
+    if (!isEmpty(treeData)) {
+      treeData.map((item: any) => {
+        item.type = judgeTeamId(item.children)
+      })
+      setStateAdd(treeData)
+    }
+  }, [treeData])
+  // 校验排程 判断条件 detailList teamId 时间
+  const judgeTeamId = (data: any) => {
+    if (!isEmpty(data)) {
+      const arr = data.every(
+        (item: { detailList: null }) => item.detailList !== null
+      )
+      if (arr === true) {
+        //把子项全部抽出来 进行判断
+        const sum: any[] = []
+        data.map((v: { detailList: any }) => {
+          sum.push(v.detailList)
+        })
+        const flat = sum.flat(Infinity)
+        return flat.every(
+          (s) =>
+            s.planEndTime !== null &&
+            s.planStartTime !== null &&
+            s.teamId !== null
+        )
+      } else {
+        //判断 detailList 全部有值
+        return false
+      }
+
+      // return '1'
+    }
+  }
   //字段更改
   const fieldChanges = (
     data: {
@@ -65,32 +102,25 @@ function ToPlan(props: {
       productionAmount: any
       children: any
       assignmentVOList: any
+      orderSum: any
     }[]
   ) => {
     !isEmpty(data) &&
-      data.map(
-        (item: {
-          title: string
-          externalProduceOrderNum: any
-          productionAmount: any
-          children: any
-          assignmentVOList: any
-        }) => {
-          item.title = `${item.externalProduceOrderNum}(${item.productionAmount})件`
-          item.children = item.assignmentVOList
-          !isEmpty(item.children) &&
-            item.children.map((v: any) => {
-              v.title = map.get(v.section)
-              //待会进行修改
-              v.children = v.section === '2' ? v.detailList : null
-              !isEmpty(v.children) &&
-                v.children.map((s: any) => {
-                  s.title = s.teamName
-                  //待会进行修改
-                })
-            })
-        }
-      )
+      data.map((item) => {
+        item.title = `${item.externalProduceOrderNum}(${item.orderSum})件`
+        item.children = item.assignmentVOList
+        !isEmpty(item.children) &&
+          item.children.map((v: any) => {
+            v.title = map.get(v.section)
+            //待会进行修改
+            v.children = v.section === '2' ? v.detailList : null
+            !isEmpty(v.children) &&
+              v.children.map((s: any) => {
+                s.title = s.teamName
+                //待会进行修改
+              })
+          })
+      })
     return data
   }
   const dataAcquisition = async (id: any) => {
@@ -109,7 +139,7 @@ function ToPlan(props: {
       const plannedData = planned.map((item: any) => {
         return item.externalProduceOrderId
       })
-      setPlannedID(planned)
+      setPlannedID(plannedData)
     }
 
     //添加字段
@@ -128,8 +158,7 @@ function ToPlan(props: {
         i.key = i.externalProduceOrderId //用于校验排程
         !isEmpty(i.children) &&
           i.children.map((item: any) => {
-            // item.disabled = true
-
+            item.disableCheckbox = true
             item.key = item.id
             item.type = item.title === '缝制工段' ? 1 : 0 //用于判断
             item.popover = false
@@ -138,6 +167,7 @@ function ToPlan(props: {
             if (!isEmpty(item.children)) {
               item.children.map((singled: any) => {
                 singled.key = singled.id
+                singled.disableCheckbox = true
               })
             }
             //子项处理
@@ -145,6 +175,8 @@ function ToPlan(props: {
               if (!isEmpty(item.children)) {
                 item.children.map((singled: any) => {
                   item.popover = false
+                  singled.disableCheckbox = true
+
                   singled.title = sewing(singled, 3)
                 })
               }
@@ -377,29 +409,34 @@ function ToPlan(props: {
   // }
 
   const onSelect = (selectedKeys: React.Key[], info: any) => {
-    console.log('selected', selectedKeys)
-    console.log('当前项', info.node.id)
     setCurrentItem(info.node)
     setKeys(selectedKeys)
   }
 
   const onCheck = (checkedKeys: any, info: any) => {
-    const toPlan = treeData.map((item: any) => {
-      return item.externalProduceOrderId
-    })
+    setToPlanID(checkedKeys)
+    // const toPlan = treeData.map((item: any) => {
+    //   return item.externalProduceOrderId
+    // })
 
-    const sum: any[][] = []
-    toPlan.map((item) => {
-      sum.push(toPlanFilterID(item, checkedKeys))
-    })
-    setToPlanID(sum.flat(Infinity))
+    // const sum: any[][] = []
+    // toPlan.map((item) => {
+    //   sum.push(toPlanFilterID(item, checkedKeys))
+    // })
+    // setToPlanID(sum.flat(Infinity))
   }
 
-  const toPlanFilterID = (v: any, data: any[]) => {
-    return data.filter((item: any) => item === v)
-  }
+  // const toPlanFilterID = (v: any, data: any[]) => {
+  //   return data.filter((item: any) => item === v)
+  // }
 
-  const contents = { editSubmission, editWindow, setEditWindow, editWindowList }
+  const contents = {
+    formData,
+    editSubmission,
+    editWindow,
+    setEditWindow,
+    editWindowList
+  }
   return (
     <div>
       {!isModalVisible ? (
@@ -440,6 +477,7 @@ function ToPlan(props: {
       ) : null}
       {/* 拆分 */}
       <BreakUp
+        formData={formData}
         breakSave={breakSave}
         workSplitList={workSplitList}
         setIsModalVisible={setIsModalVisible}

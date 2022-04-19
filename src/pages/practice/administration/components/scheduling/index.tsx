@@ -1,5 +1,5 @@
 import { Button, message, Select } from 'antd'
-import { keys } from 'lodash'
+import { isError, keys } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
@@ -24,13 +24,15 @@ function Index() {
 
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
-  const [scheduling, setScheduling] = useState(false) //规则排程弹窗
-  const [schedule, setSchedule] = useState(false) //校验排程弹窗
+  const [visibleRule, setVisibleRule] = useState(false) //规则排程弹窗
+  const [visibleVerify, setVisibleVerify] = useState(false) //校验排程弹窗
   const [remind, setRemind] = useState() //甘特图高亮
   const [formData, setFormData] = useState() //form数据
   const [gunterType, setGunterType] = useState('0') //班组、订单
   const [gunterData, setGunterData] = useState<any>() //甘特图数据
   const [notWork, setNotWork] = useState<any>([]) //不可工作时间
+  const [checkIDs, setCheckIDs] = useState<any>([]) //校验id
+  const [promptList, setPromptList] = useState<any>([]) //提示数据
 
   const { figureData, workingDate } = practice
 
@@ -116,16 +118,59 @@ function Index() {
     setMaterialModal(true)
   }
 
-  const schedulingBtn = () => {
-    setScheduling(true)
+  const toggleRuleVisible = (visible: boolean) => {
+    setVisibleRule(visible)
   }
-  //校验排程
-  const scheduleBtn = () => {
-    setSchedule(true)
+  const toggleVerifyVisible = (visible: boolean) => {
+    const arr: any[] = []
+    promptList.map((item: { title: any }) => {
+      arr.push(item.title)
+    })
+    if (visible === true && arr.length > 0) {
+      console.log('判断长度', arr.length)
+      message.warning(`${arr.join('、')}不可用，请取消选中`)
+    }
+    if (arr.length <= 0) {
+      setVisibleVerify(visible)
+    }
   }
   // 校验排程需要的数据=
-  const checkSchedule = (e: any) => {
-    console.log('校验排程需要的数据', e)
+  const checkSchedule = (plannedID: any, toPlanID: any, stateAdd: any) => {
+    if (!isError(stateAdd)) {
+      //可用
+      const available = stateAdd.filter(
+        (item: { type: boolean }) => item.type === true
+      )
+      //不可用
+      const doNotUse = stateAdd.filter(
+        (item: { type: boolean }) => item.type === false
+      )
+      // 提示 判断选中的中是否有不可用的
+      // plannedID
+      const prompt = plannedID.map((item: any) => {
+        return filterPrompt(item, doNotUse)
+      })
+      setPromptList(prompt.flat(Infinity))
+
+      //待计划数据
+      const waiting = available
+        .map((item: any) => {
+          return filterList(plannedID, item)
+        })
+        .flat(Infinity)
+      setCheckIDs(waiting.concat(toPlanID))
+    }
+  }
+  const filterList = (data: any[], v: { externalProduceOrderId: any }) => {
+    return data.filter((item: any) => item === v.externalProduceOrderId)
+  }
+  //  提示  选中但是状态为满足
+  const filterPrompt = (v: any, data: any[]) => {
+    const arr = data.filter(
+      (item: { externalProduceOrderId: any }) =>
+        item.externalProduceOrderId === v
+    )
+    return arr
   }
 
   const onSelect = (selectedKeys: React.Key[], info: any) => {
@@ -135,7 +180,6 @@ function Index() {
   const onCheck = (checkedKeys: React.Key[], info: any) => {
     console.log('onCheck', checkedKeys, info)
   }
-
   //甘特图左键
   const setHighlighted = (e: React.SetStateAction<undefined>) => {
     setRemind(e)
@@ -187,22 +231,32 @@ function Index() {
           </Button>
         </div>
       </div>
-      <Button type="primary" onClick={schedulingBtn}>
+      <Button type="primary" onClick={() => toggleRuleVisible(true)}>
         规则排程
       </Button>
-      <Button type="primary" onClick={scheduleBtn}>
+      <Button type="primary" onClick={() => toggleVerifyVisible(true)}>
         校验排程
       </Button>
       {/* //规则排程 */}
-      <RuleScheduling scheduling={scheduling} setScheduling={setScheduling} />
-      <Verification schedule={schedule} setSchedule={setSchedule} />
+      {visibleRule && (
+        <RuleScheduling
+          visibleRule={visibleRule}
+          onCancel={() => toggleRuleVisible(false)}
+        />
+      )}
+      {visibleVerify && (
+        <Verification
+          checkIDs={checkIDs}
+          visibleVerify={visibleVerify}
+          onCancel={() => toggleVerifyVisible(false)}
+        />
+      )}
       <MovPopup
         type="mov"
         movIsModalVisible={movIsModalVisible}
         setMovIsModalVisible={setMovIsModalVisible}
         movApi={movApi}
       />
-
       <div>测试</div>
     </div>
   )

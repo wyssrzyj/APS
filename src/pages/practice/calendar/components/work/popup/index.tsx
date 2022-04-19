@@ -1,17 +1,54 @@
-import { Checkbox, Form, Input, message, Modal, TreeSelect } from 'antd'
-import { useEffect } from 'react'
+import { Checkbox, Form, Input, message, Modal, Select, TreeSelect } from 'antd'
+import { isElement, isEmpty } from 'lodash'
+import { useEffect, useState } from 'react'
 
 import { getChild } from '@/components/getChild/index'
-import { practice } from '@/recoil/apis'
+import { dockingDataApis, practice } from '@/recoil/apis'
 
 import WorkingHours from './workingHours/index'
 function Popup(props: { content: any; newlyAdded: any }) {
   const { content, newlyAdded } = props
-  const { isModalVisible, setIsModalVisible, type, treeData, edit } = content
+  const { isModalVisible, setIsModalVisible, type, edit } = content
   const { SHOW_PARENT } = TreeSelect
   const [form] = Form.useForm()
+  const { Option } = Select
+  const { teamList } = dockingDataApis
+  const { operatingModeDetails, teamId, factoryList } = practice
+  const [list, setList] = useState<any>([]) //工厂
+  const [listID, setListID] = useState<any>() //工厂ID
+  const [treeData, setTreeData] = useState<any>() //班组列表
 
-  const { operatingModeDetails, teamId } = practice
+  //工厂名称
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setList(arr)
+    }
+  }
+  //加班班组
+  useEffect(() => {
+    if (!isEmpty(listID)) {
+      dataDictionary(listID)
+    }
+  }, [listID])
+  const dataDictionary = async (e: any) => {
+    const teamData = await teamList({ factoryId: e }) //班组列表
+    teamData.map(
+      (item: { title: any; teamName: any; value: any; id: any; key: any }) => {
+        item.title = item.teamName
+        item.value = item.id
+        item.key = item.id
+      }
+    )
+    setTreeData(teamData)
+  }
   //回显
   useEffect(() => {
     if (type !== 1) {
@@ -57,8 +94,6 @@ function Popup(props: { content: any; newlyAdded: any }) {
     },
     type: number
   ) => {
-    //编辑
-    values.teamIds = getChild(values.teamIds, treeData) //下拉多选的处理
     // 合并
     const lyj: { week: any; dayTimeList: any }[] = []
     values.weeks.map((item: any, index: any) => {
@@ -97,6 +132,9 @@ function Popup(props: { content: any; newlyAdded: any }) {
     style: {
       width: '100%'
     }
+  }
+  const getFactoryName = (e: any) => {
+    setListID(e)
   }
   return (
     <div>
@@ -152,9 +190,37 @@ function Popup(props: { content: any; newlyAdded: any }) {
             <WorkingHours edit={edit} type={type} onChange={undefined} />
           </Form.Item>
           <Form.Item
-            label="工作班组"
+            label="工厂名称"
+            name="teamIdss"
+            rules={[{ required: true, message: '请选择工厂名称!' }]}
+          >
+            <Select
+              onChange={getFactoryName}
+              placeholder="请选择工厂名称"
+              allowClear
+            >
+              {list.map(
+                (item: {
+                  id: React.Key | null | undefined
+                  name:
+                    | boolean
+                    | React.ReactChild
+                    | React.ReactFragment
+                    | React.ReactPortal
+                    | null
+                    | undefined
+                }) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                )
+              )}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="班组名称"
             name="teamIds"
-            rules={[{ required: true, message: '请选择工作班组!' }]}
+            rules={[{ required: true, message: '请选择班组名称!' }]}
           >
             <TreeSelect disabled={type === 3 ? true : false} {...tProps} />
           </Form.Item>
