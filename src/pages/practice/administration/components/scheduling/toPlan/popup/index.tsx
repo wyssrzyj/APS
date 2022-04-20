@@ -260,7 +260,7 @@ function Popup(props: { content: any }) {
               >
                 <DatePicker
                   style={{ width: '100%' }}
-                  // disabledDate={disabledDate}
+                  // disabledDate={disabledDate}.
                 />
               </Form.Item>
             </Col>
