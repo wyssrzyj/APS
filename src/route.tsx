@@ -52,6 +52,10 @@ const ProductionList = React.lazy(
 const Scheduling = React.lazy(
   () => import('@/pages/practice/administration/components/scheduling')
 )
+//生产管理 生产单排程-生产图
+const ProductionFigure = React.lazy(
+  () => import('@/pages/practice/administration/components/productionFigure')
+)
 //生产管理 物料齐套检查
 const Materials = React.lazy(
   () => import('@/pages/practice/administration/components/materials')
@@ -107,6 +111,8 @@ const RouteList = () => {
       <Route path="/materials" element={<Materials />} />
       {/* 生产管理-生产单排程 */}
       <Route path="/scheduling" element={<Scheduling />} />
+      {/* 生产管理-生产单排程 */}
+      <Route path="/productionFigure" element={<ProductionFigure />} />
 
       {/* 生产管理-规则排程 */}
       <Route path="/rule" element={<Rule />} />

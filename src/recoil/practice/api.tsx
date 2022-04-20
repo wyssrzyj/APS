@@ -451,11 +451,29 @@ export const workingProcedure = async (params: any) => {
   }
 }
 
-// getTeamView
+//班组  getTeamView
 export const figureData = async (params: any) => {
   try {
     const res: ResponseProps = await axios.get(
       `/aps/produce-assignment/get-team-view`,
+      params
+    )
+
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+//生产  getTeamView
+export const productionView = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/produce-assignment/get-order-view`,
       params
     )
 

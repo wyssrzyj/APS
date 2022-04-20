@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 const Gantt = (props: any) => {
   const { zoom, tasks, updateList, rightData, leftData, restDate, name } = props
 
-  const chartDom = document.getElementById('666') //获取id
+  const chartDom = document.getElementById('main') //获取id
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   const dataDome = ['2020-04-07', '2020-04-08']
@@ -272,7 +272,7 @@ const Gantt = (props: any) => {
     gantt.parse(list) //渲染数据
   }
   // "main"
-  return <div id={'666'} style={{ width: '100%', height: '100%' }}></div>
+  return <div id={'main'} style={{ width: '100%', height: '100%' }}></div>
 }
 
 export default Gantt
