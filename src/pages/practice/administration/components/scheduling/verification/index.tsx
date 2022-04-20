@@ -23,7 +23,7 @@ const list = [
 function useVerifyModal(props: Record<string, any>) {
   const { visibleVerify, onCancel, checkIDs } = props
   const [checkList, setCheckList] = useState<Record<string, any>>(list)
-  const verifyInfo = async (id) => {
+  const verifyInfo = async (id: string) => {
     console.log('处理后的数据', id)
 
     const data = cloneDeep(checkList)
