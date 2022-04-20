@@ -1,4 +1,6 @@
+export { default as CusDragTable } from './cusDragTable'
 export { default as FormNode } from './FormNode'
 export { default as Icon } from './Icon'
+export { default as SearchBar } from './searchBar'
 export { default as SearchInput } from './searchInput'
 export { default as Title } from './title'
