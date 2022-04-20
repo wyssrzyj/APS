@@ -103,12 +103,6 @@ export const menus = [
         key: 'scheduling',
         icon: 'jack-jihuapaicheng',
         url: '/scheduling'
-      },
-      {
-        label: '生产',
-        key: 'productionFigure',
-        icon: 'jack-jihuapaicheng',
-        url: '/productionFigure'
       }
     ]
   },

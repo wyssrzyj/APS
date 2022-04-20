@@ -30,7 +30,7 @@ function Index() {
   const [formData, setFormData] = useState() //form数据
   const [gunterType, setGunterType] = useState('0') //班组、订单
   const [gunterData, setGunterData] = useState<any>([]) //甘特图数据-班组
-  const [productionData, setProductionData] = useState<any>([]) //甘特图数据-生产
+  // const [productionData, setProductionData] = useState<any>([]) //甘特图数据-生产
   const [notWork, setNotWork] = useState<any>([]) //不可工作时间
   const [checkIDs, setCheckIDs] = useState<any>([]) //校验id
   const [promptList, setPromptList] = useState<any>([]) //提示数据
@@ -108,12 +108,7 @@ function Index() {
           : null
       }
     )
-    if (type === '0') {
-      setGunterData(arr) //图
-    }
-    if (type === '1') {
-      setProductionData(arr) //图
-    }
+    setGunterData(arr) //图
   }
 
   //  图刷新
@@ -238,7 +233,6 @@ function Index() {
               <Dome
                 updateMethod={updateMethod}
                 gunterData={gunterData}
-                productionData={productionData}
                 notWork={notWork}
                 gunterType={gunterType}
                 formData={formData}

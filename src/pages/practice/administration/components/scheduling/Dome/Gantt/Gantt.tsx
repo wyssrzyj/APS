@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 const Gantt = (props: any) => {
   const { zoom, tasks, updateList, rightData, leftData, restDate, name } = props
 
-  const chartDom = document.getElementById('666') //获取id
+  const chartDom = document.getElementById(name) //获取id
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   const dataDome = ['2020-04-07', '2020-04-08']
@@ -23,9 +23,7 @@ const Gantt = (props: any) => {
   }, [zoom])
 
   useEffect(() => {
-    if (tasks) {
-      ganttShow(tasks)
-    }
+    ganttShow(tasks)
   }, [tasks])
   // 静态方法
   const setZoom = (value: any) => {
@@ -264,15 +262,15 @@ const Gantt = (props: any) => {
       })
     })
   }
-  const ganttShow = (list: any) => {
+  const ganttShow = async (list: any) => {
     gantt.config.date_format = '%Y-%m-%d %H:%i'
+    gantt.clearAll() //缓存问题 先清楚后添加
     gantt.init(chartDom) //根据 id
     initGanttDataProcessor()
-    console.log('最终数据', list)
     gantt.parse(list) //渲染数据
   }
   // "main"
-  return <div id={'666'} style={{ width: '100%', height: '100%' }}></div>
+  return <div id={name} style={{ width: '100%', height: '100%' }}></div>
 }
 
 export default Gantt

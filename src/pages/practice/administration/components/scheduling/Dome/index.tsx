@@ -1,5 +1,5 @@
 import { Button, Dropdown, Menu, message, Select, Tag } from 'antd'
-import { cloneDeep, isEmpty, keys } from 'lodash'
+import { cloneDeep, divide, isEmpty, keys } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
@@ -7,12 +7,11 @@ import { useRecoilState } from 'recoil'
 import { dockingData } from '@/recoil'
 import { practice } from '@/recoil/apis'
 
-import GanttS from './Gantt copy'
+// import GanttS from './Gantt copy'
 import Gantt from './Gantt/index'
 import styles from './index.module.less'
 import Popup from './popup'
 const Dhx = (props: {
-  productionData: any
   gunterData: any
   notWork: any
   updateMethod: any
@@ -21,7 +20,6 @@ const Dhx = (props: {
   gunterType: any
 }) => {
   const {
-    productionData,
     gunterData,
     notWork,
     updateMethod,
@@ -29,7 +27,6 @@ const Dhx = (props: {
     formData,
     gunterType
   } = props
-  // console.log('甘特图类型', gunterType)
 
   const { getLine, calculateEndTimeAfterMove } = practice
   const [FactoryData, setFactoryData] = useRecoilState(
@@ -39,13 +36,8 @@ const Dhx = (props: {
   const [currentZoom, setCurrentZoom] = useState<any>('Days') //缩放的状态  Days
 
   const [updateData, setUpdateData] = useState<any>() //更新的值
-  const [subjectData, setSubjectData] = useState<any>({ data: [], links: [] }) //甘特图【班组】主体数据
+  const [subjectData, setSubjectData] = useState<any>({ data: [], links: [] }) //甘特图主体数据
   const [chart, setChart] = useState<any>([]) //图
-  const [productionDataChart, setProductionDataChart] = useState<any>({
-    data: [],
-    links: []
-  }) //甘特图【生产】主体数据
-  const [productionChart, setProductionChart] = useState<any>([]) //图-生产
   const [line, setLine] = useState<any>([]) //线
 
   const [notWorking, setNotWorking] = useState<any>([]) //不可工作时间
@@ -57,20 +49,14 @@ const Dhx = (props: {
   const [select, setSelect] = useState<any>([]) //用于展示 线和不可用时间、给树传递id判断
   const [type, setType] = useState<any>() //判断是点击还是移动
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
+
   useEffect(() => {
-    if (gunterType === '0') {
-      if (!isEmpty(gunterData) && !isEmpty(notWork)) {
-        setChart(gunterData)
-      }
-    }
-    if (gunterType === '1') {
-      if (!isEmpty(productionData) && !isEmpty(notWork)) {
-        setProductionChart(productionData)
-      }
+    if (!isEmpty(gunterData) && !isEmpty(notWork)) {
+      setChart(gunterData)
     }
     setLine([]) //线 //初始的时候传空
     setNotWorking(notWork)
-  }, [gunterData, notWork, productionData, gunterType])
+  }, [gunterData, notWork, gunterType])
 
   useEffect(() => {
     if (chart !== undefined && line !== undefined) {
@@ -79,28 +65,7 @@ const Dhx = (props: {
         links: line
       })
     }
-  }, [chart, line])
-
-  useEffect(() => {
-    if (productionChart !== undefined && line !== undefined) {
-      setProductionDataChart({
-        data: productionChart,
-        links: line
-      })
-    }
-  }, [productionChart, line])
-
-  //测试
-  useEffect(() => {
-    if (gunterType === '0') {
-      console.log('我是班组')
-      console.log('subjectData', subjectData)
-    }
-    if (gunterType === '1') {
-      console.log('我是生产')
-      console.log('subjectData', productionDataChart)
-    }
-  }, [subjectData, productionDataChart, gunterType])
+  }, [chart, line, gunterType])
 
   useEffect(() => {
     // 线
@@ -134,13 +99,6 @@ const Dhx = (props: {
         setRestDate(unavailable[0].time)
       }
     }
-    // console.log('测试线Dome~~~~~', select)
-    // if (select === '1') {
-    //   setLine([{ id: 1, source: 1, target: 3, type: 0 }])
-    // }
-    // if (select === '3') {
-    //   setLine([{ id: 1, source: 3, target: 4, type: 0 }])
-    // }
   }, [select, type])
 
   const getLineData = async () => {
@@ -276,47 +234,15 @@ const Dhx = (props: {
               <div className="site-dropdown-context-menu">
                 <div className="gantt-container">
                   <Gantt
-                    name={'team'}
+                    name={'test'}
+                    gunterType={gunterType}
                     leftData={leftData}
                     rightData={rightData}
                     tasks={subjectData}
                     zoom={currentZoom}
-                    // onDataUpdated={logDataUpdate}
                     updateList={updateList}
-                    // drag={drag}
                     restDate={restDate}
                   />
-
-                  {/* {gunterType === '0' ? (
-                    <>
-                      <Gantt
-                        // name={'team'}
-                        leftData={leftData}
-                        rightData={rightData}
-                        tasks={subjectData}
-                        zoom={currentZoom}
-                        // onDataUpdated={logDataUpdate}
-                        updateList={updateList}
-                        // drag={drag}
-                        restDate={restDate}
-                      />
-                    </>
-                  ) : null} */}
-                  {/* {gunterType === '1' ? (
-                    <>
-                      <GanttS
-                        // name={'production'}
-                        leftData={leftData}
-                        rightData={rightData}
-                        tasks={productionDataChart}
-                        zoom={currentZoom}
-                        // onDataUpdated={logDataUpdate}
-                        updateList={updateList}
-                        // drag={drag}
-                        restDate={restDate}
-                      />
-                    </>
-                  ) : null} */}
                 </div>
               </div>
             </Dropdown>

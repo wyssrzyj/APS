@@ -20,8 +20,8 @@ const HeaderForm = (props: { FormData: any }) => {
     const arr: any = res.data
     if (res.code === 200) {
       //  默认展示第2条数据
-      setTheDefault(arr[1])
-      FormData && FormData(arr[1].id)
+      setTheDefault(arr[2])
+      FormData && FormData(arr[2].id)
       arr.map((item: { name: any; deptName: any }) => {
         item.name = item.deptName
       })
