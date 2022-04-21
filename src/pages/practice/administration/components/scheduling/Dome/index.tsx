@@ -217,7 +217,6 @@ const Dhx = (props: {
         if (!isEmpty(gunter[0])) {
           const id =
             gunter[0].section === '2' ? gunter[0].id : gunter[0].assignmentId
-          console.log('图数据', id)
           setHighlighted && setHighlighted(id)
         }
       }

@@ -9,8 +9,6 @@ import { practice } from '@/recoil/apis'
 import Dome from './Dome/index'
 import Forms from './forms'
 import styles from './index.module.less'
-import MovPopup from './movPopup'
-import ProductionOrder from './productionOrder/index'
 import RuleScheduling from './ruleScheduling/index'
 import ToPlan from './toPlan'
 import Verification from './verification/index'
@@ -113,7 +111,6 @@ function Index() {
 
   //  图刷新
   const updateMethod = () => {
-    console.log('图刷新')
     getChart(formData, gunterType)
   }
 
@@ -125,10 +122,7 @@ function Index() {
       setMovIsModalVisible(true)
     }
   }
-  const movApi = () => {
-    console.log('删除逻辑')
-    console.log('选中的删除id', selectedRowKeys)
-  }
+
   const materials = () => {
     setMaterialModal(true)
   }
@@ -142,7 +136,6 @@ function Index() {
       arr.push(item.title)
     })
     if (visible === true && arr.length > 0) {
-      console.log('判断长度', arr.length)
       message.warning(`${arr.join('、')}不可用，请取消选中`)
     }
     if (arr.length <= 0) {
@@ -187,14 +180,6 @@ function Index() {
     )
     return arr
   }
-
-  const onSelect = (selectedKeys: React.Key[], info: any) => {
-    console.log('selected', selectedKeys, info)
-  }
-
-  const onCheck = (checkedKeys: React.Key[], info: any) => {
-    console.log('onCheck', checkedKeys, info)
-  }
   //甘特图左键
   const setHighlighted = (e: React.SetStateAction<undefined>) => {
     setRemind(e)
@@ -227,8 +212,12 @@ function Index() {
                 style={{ width: 120 }}
                 onChange={handleChange}
               >
-                <Option value="0">班组甘特图</Option>
-                <Option value="1">生产甘特图</Option>
+                <Option key={'0'} value="0">
+                  班组甘特图
+                </Option>
+                <Option key={'1'} value="1">
+                  生产甘特图
+                </Option>
               </Select>
               <Dome
                 updateMethod={updateMethod}
@@ -266,12 +255,7 @@ function Index() {
           onCancel={() => toggleVerifyVisible(false)}
         />
       )}
-      <MovPopup
-        type="mov"
-        movIsModalVisible={movIsModalVisible}
-        setMovIsModalVisible={setMovIsModalVisible}
-        movApi={movApi}
-      />
+
       <div>测试</div>
     </div>
   )

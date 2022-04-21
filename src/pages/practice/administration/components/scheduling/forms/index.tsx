@@ -1,6 +1,5 @@
 import { Form, Select } from 'antd'
 import { debounce } from 'lodash'
-import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { practice } from '@/recoil/apis'

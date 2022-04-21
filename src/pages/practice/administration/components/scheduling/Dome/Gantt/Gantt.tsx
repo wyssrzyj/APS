@@ -85,9 +85,11 @@ const Gantt = (props: any) => {
     // gantt.attachEvent('onTaskDrag', function (id: any, v: any, item: any) {
     //   drag(item)
     // })
-    gantt.attachEvent('onEmptyClick', function (e: any) {
-      console.log('我点击了空白')
-    })
+
+    //点击了空白
+    // gantt.attachEvent('onEmptyClick', function (e: any) {
+    //   console.log(e)
+    // })
 
     // 可以通过此控制 是否可以拖动 当前的状态=1不可拖动
     gantt.attachEvent(

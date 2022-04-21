@@ -18,7 +18,6 @@ function ToPlan(props: {
   checkSchedule: any
 }) {
   const { remind, formData, updateMethod, checkSchedule } = props
-  // console.log('甘特图类型-树', gunterType)
   const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
     practice
   const { workshopList, teamList, capacityList } = dockingDataApis
@@ -106,6 +105,7 @@ function ToPlan(props: {
       treeData.map((item: any) => {
         item.type = judgeTeamId(item.children)
       })
+
       setStateAdd(treeData)
     }
   }, [treeData])
@@ -132,8 +132,6 @@ function ToPlan(props: {
         //判断 detailList 全部有值
         return false
       }
-
-      // return '1'
     }
   }
   //字段更改
@@ -172,7 +170,6 @@ function ToPlan(props: {
       factoryId: id,
       isPlanned: 0
     })
-
     const planned = await listProductionOrders({
       factoryId: id,
       isPlanned: 1
@@ -183,7 +180,6 @@ function ToPlan(props: {
       })
       setPlannedID(plannedData)
     }
-
     //添加字段
     const sum = [fieldChanges(notPlan), fieldChanges(planned)]
     setList(sum)
@@ -223,10 +219,8 @@ function ToPlan(props: {
                 })
               }
             }
-            // })
           })
       })
-
       if (type === '0') {
         setTreeData(data)
       } else {
@@ -234,7 +228,6 @@ function ToPlan(props: {
       }
     }
   }
-
   const getCurrentTabs = (data: any[], i: any) => {
     // 待计划
     const stayData = data[0]
@@ -279,13 +272,11 @@ function ToPlan(props: {
   }, [list, remind])
   // 数据刷新
   const dataUpdate = () => {
-    console.log(' 数据刷新')
     dataAcquisition(formData) //树刷新
     updateMethod() //图刷新
   }
   //编辑工作
   const theEditor = (data: any) => {
-    console.log('当前编辑工作值', data)
     setEditWindowList(data)
     setEditWindow(true)
   }
@@ -296,24 +287,18 @@ function ToPlan(props: {
   }
   //锁定 解锁
   const lockWork = async (type: number, id: any) => {
-    console.log('锁定解锁id', id)
     const arr = await unlockWork({
       isLocked: type,
       id: id
     })
-    console.log(arr)
     dataUpdate() //数据刷新
   }
   const removeDispatch = async (id: any) => {
-    console.log('接触分派id', id)
     const res = await releaseFromAssignment({ idList: [id] })
-    console.log('接触分派', res)
     dataUpdate() //数据刷新
   }
   //工作拆分
   const workSplit = (data: any) => {
-    console.log('测试', data)
-
     setWorkSplitList(data)
     setIsModalVisible(true)
   }
@@ -322,11 +307,8 @@ function ToPlan(props: {
     setIsModalVisible(false)
     dataUpdate() //数据刷新
   }
-
-  // setIsModalVisible
   //效率模板
   const efficiencyMethods = async (id: any) => {
-    console.log('效率模板', id)
     setEfficiencyID(id)
     const res = await forDetail({ id })
     setTemplateId(res.templateId)
@@ -356,7 +338,6 @@ function ToPlan(props: {
                 theEditor(data)
               }}
             >
-              {' '}
               编辑工作
             </Tag>
           </div>
@@ -393,7 +374,6 @@ function ToPlan(props: {
               }}
             >
               <Tag className={styles.tag} color="blue">
-                {' '}
                 解除分派
               </Tag>
             </div>
@@ -423,6 +403,7 @@ function ToPlan(props: {
       return (
         <div style={{ height: '20px' }}>
           <Popover
+            key={sewingData.id}
             placement="right"
             content={() =>
               content(
@@ -440,43 +421,24 @@ function ToPlan(props: {
       return (
         <div style={{ height: '20px' }}>
           <Popover
+            key={sewingData.id}
             placement="right"
             content={() => content(sewingData, type)}
             trigger="hover"
           >
-            {/* {sewingData.title} */}
             {sewingData.title}
           </Popover>
         </div>
       )
     }
   }
-  // const obtainCorrespondingData = (sewingData: any, type: any) => {
-
-  // }
-
   const onSelect = (selectedKeys: React.Key[], info: any) => {
     setCurrentItem(info.node)
     setKeys(selectedKeys)
   }
-
   const onCheck = (checkedKeys: any, info: any) => {
     setToPlanID(checkedKeys)
-    // const toPlan = treeData.map((item: any) => {
-    //   return item.externalProduceOrderId
-    // })
-
-    // const sum: any[][] = []
-    // toPlan.map((item) => {
-    //   sum.push(toPlanFilterID(item, checkedKeys))
-    // })
-    // setToPlanID(sum.flat(Infinity))
   }
-
-  // const toPlanFilterID = (v: any, data: any[]) => {
-  //   return data.filter((item: any) => item === v)
-  // }
-
   const contents = {
     factoryName,
     teamName,
@@ -494,9 +456,7 @@ function ToPlan(props: {
             {treeData !== undefined && treeData.length > 0 ? (
               <div>
                 <Tree
-                  // selectable={false}
                   checkable
-                  // checkStrictly={true}
                   height={500}
                   selectedKeys={keys}
                   defaultExpandAll={true}
@@ -514,7 +474,6 @@ function ToPlan(props: {
                   height={200}
                   selectedKeys={keys}
                   defaultExpandAll={true}
-                  // checkable
                   onSelect={onSelect}
                   onCheck={onCheck}
                   treeData={WaitingTreeData}

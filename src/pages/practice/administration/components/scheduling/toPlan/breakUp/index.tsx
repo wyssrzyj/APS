@@ -47,13 +47,12 @@ const BreakUp = (props: any) => {
     if (formData !== undefined) {
       dataAcquisition(formData)
     }
-    console.log('formDataformDatformDataa', formData)
   }, [formData])
   // 车间
   const dataAcquisition = async (e: any) => {
     //车间
     const res = await workshopList({ factoryId: e })
-    console.log('车间车间车间车间', res)
+
     if (res) {
       res.map((item: { name: any; shopName: any }) => {
         item.name = item.shopName
@@ -103,6 +102,7 @@ const BreakUp = (props: any) => {
       })
       setData(res)
     } else {
+      delete data.id //防止 id和父级一样
       delete data.children
       setData([data])
     }

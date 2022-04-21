@@ -257,7 +257,9 @@ function Popup(props: { content: any }) {
                 <Select placeholder="请选择所属工段">
                   {factoryName.map((item: any) => (
                     // eslint-disable-next-line react/jsx-key
-                    <Option value={item.id}>{item.name}</Option>
+                    <Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -272,7 +274,9 @@ function Popup(props: { content: any }) {
                   {teamName.map((item: any) => (
                     // eslint-disable-next-line react/jsx-key
                     // eslint-disable-next-line react/jsx-key
-                    <Option value={item.id}>{item.name}</Option>
+                    <Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Option>
                   ))}
                 </Select>
               </Form.Item>
