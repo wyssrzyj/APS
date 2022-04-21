@@ -721,3 +721,75 @@ export const releaseFromAssignment = async (params: any) => {
     console.log(e)
   }
 }
+//获取单个明细
+export const getIndividualDetails = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/produce-assignment-detail/get-detail-by-id`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//编辑任务
+export const editingTasks = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail/update`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//保存明细
+export const saveDetails = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail/save-detail`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//获取单个明细
+export const forDetail = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      ` /aps/produce-assignment-detail/get-detail-by-id`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}

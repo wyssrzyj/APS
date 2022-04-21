@@ -23,53 +23,27 @@ function Popup(props: { content: any }) {
     setEditWindow,
     editWindowList,
     editSubmission,
-    formData
+    formData,
+    factoryName,
+    teamName
   } = content
   const { Option } = Select
   const { workshopList, teamList } = dockingDataApis
+  const { getIndividualDetails, factoryList, editingTasks } = practice
   const [form] = Form.useForm()
   const [list, setList] = useState<any>()
   const [type, setType] = useState<any>()
+  const [largestNumber, setLargestNumber] = useState<any>(0)
 
-  const [factoryName, setFactoryName] = useState<any>([])
-  const [teamName, setTeamName] = useState<any>([])
-  useEffect(() => {
-    if (formData) {
-      dataAcquisition(formData)
-    }
-  }, [formData])
-  const dataAcquisition = async (e: any) => {
-    const res = await workshopList({ factoryId: e })
-    if (res) {
-      res.map((item: { name: any; shopName: any }) => {
-        item.name = item.shopName
-      })
-      setFactoryName(res)
-    }
+  const [factoryData, setFactoryData] = useState<any>([])
 
-    const team = await teamList({ factoryId: e })
-    if (team) {
-      team.map((item: { name: any; teamName: any }) => {
-        item.name = item.teamName
-      })
-      setTeamName(team)
-    }
-  }
-  useEffect(() => {
-    if (!isEmpty(editWindowList)) {
-      setList(editWindowList)
-    }
-  }, [editWindowList])
-  useEffect(() => {
-    if (!isEmpty(list)) {
-      list.planEndTime = moment(list.planEndTime)
-      list.planStartTime = moment(list.planStartTime)
-      list.remaining = list.productionAmount - list.completedAmount
-      setType(list.isLocked)
-      form.setFieldsValue(list)
-    }
-  }, [list])
-
+  const map = new Map()
+  map.set('1', '裁剪工段')
+  map.set('2', '缝制工段')
+  map.set('3', '后整工段')
+  map.set('4', '包装工段')
+  map.set('5', '外发工段')
+  map.set('6', '缝制线外组')
   const layout = {
     labelCol: {
       span: 8
@@ -78,6 +52,51 @@ function Popup(props: { content: any }) {
       span: 18
     }
   }
+
+  //工厂数据
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setFactoryData(arr)
+    }
+  }
+
+  useEffect(() => {
+    if (!isEmpty(editWindowList)) {
+      interfaceData(editWindowList.id)
+      setList(editWindowList)
+    }
+  }, [editWindowList])
+  const interfaceData = async (id: any) => {
+    const arr = await getIndividualDetails({ id })
+    setList(arr)
+  }
+  useEffect(() => {
+    if (!isEmpty(list)) {
+      console.log('接口编辑书', list)
+      // console.log('接口编辑书', moment(list.planEndTime))
+      list.planStartTime =
+        list.planStartTime === null ? null : moment(list.planStartTime)
+
+      list.planEndTime =
+        list.planEndTime === null ? null : moment(list.planEndTime)
+
+      list.section = map.get(list.section)
+      list.factoryName = formData
+      setLargestNumber(list.productionAmount)
+
+      list.remaining = list.productionAmount - list.completedAmount
+      setType(list.isLocked)
+      form.setFieldsValue(list)
+    }
+  }, [list])
 
   const handleOk = () => {
     form.submit()
@@ -92,22 +111,12 @@ function Popup(props: { content: any }) {
     values.planEndTime = moment(values.planEndTime).valueOf()
     values.planStartTime = moment(values.planStartTime).valueOf()
     values.isLocked = type === false ? 0 : 1
-    // const res = await editingTasks({ ...values, id: list.id })
+    values.id = editWindowList.id
+    delete values.section
+    const res = await editingTasks(values)
     form.resetFields()
     editSubmission()
   }
-  //所属工段
-  const section = [
-    { name: '前段', id: 1 },
-    { name: '后段', id: 2 },
-    { name: 'ul设计', id: 3 },
-    { name: '产品经理', id: 4 }
-  ]
-  //车间名称
-  const workshop = factoryName
-  //班组
-  const factory = teamName
-
   let timeout: NodeJS.Timeout
   const onChange = (e: any) => {
     clearTimeout(timeout)
@@ -149,7 +158,7 @@ function Popup(props: { content: any }) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="产品款号" name="sale">
+              <Form.Item label="产品款号" name="productNum">
                 <Input
                   maxLength={100}
                   placeholder="请输入销售单号"
@@ -160,7 +169,7 @@ function Popup(props: { content: any }) {
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label="产品名称" name="">
+              <Form.Item label="产品名称" name="productName">
                 <Input
                   maxLength={100}
                   placeholder="请输入产品名称"
@@ -169,7 +178,7 @@ function Popup(props: { content: any }) {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="生产单总量" name="completedAmount">
+              <Form.Item label="生产单总量" name="orderSum">
                 <Input
                   maxLength={100}
                   placeholder="请输入生产单"
@@ -181,56 +190,42 @@ function Popup(props: { content: any }) {
           <Row>
             <Col span={12}>
               <Form.Item label="所属工段" name="section">
-                <Select defaultValue="请选择所属工段" disabled={true}>
-                  {section.map((item) => (
-                    // eslint-disable-next-line react/jsx-key
-                    <Option value={item.id}>{item.name}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="工厂名称" name="factoryName">
                 <Input
                   maxLength={100}
-                  placeholder="请输入工厂名称"
+                  placeholder="请输入销售单号"
                   disabled={true}
                 />
               </Form.Item>
             </Col>
-          </Row>
-          <Row>
             <Col span={12}>
-              <Form.Item
-                label="车间名称"
-                name="shopName"
-                rules={[{ required: true, message: '请输入工作班组' }]}
-              >
-                <Select placeholder="请选择所属工段">
-                  {workshop.map((item: any) => (
-                    // eslint-disable-next-line react/jsx-key
-                    <Option value={item.id}>{item.name}</Option>
-                  ))}
+              <Form.Item label="工厂名称" name="factoryName">
+                <Select
+                  allowClear
+                  disabled={true}
+                  // defaultValue={theDefault.deptName}
+                  // onChange={handleChange}
+                >
+                  {factoryData.map(
+                    (item: {
+                      id: React.Key | null | undefined
+                      name:
+                        | boolean
+                        | React.ReactChild
+                        | React.ReactFragment
+                        | React.ReactPortal
+                        | null
+                        | undefined
+                    }) => (
+                      <Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Option>
+                    )
+                  )}
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item
-                label="工作班组"
-                name="factory"
-                rules={[{ required: true, message: '请输入工作班组' }]}
-              >
-                <Select placeholder="请选择工作班组">
-                  {factory.map((item: any) => (
-                    // eslint-disable-next-line react/jsx-key
+          </Row>
 
-                    // eslint-disable-next-line react/jsx-key
-                    <Option value={item.id}>{item.name}</Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
           <Row>
             <Col span={12}>
               <Form.Item label="生产量" name="productionAmount">
@@ -245,9 +240,41 @@ function Popup(props: { content: any }) {
               <Form.Item label="完成量" name="completedAmount">
                 <InputNumber
                   min={0}
+                  max={largestNumber}
                   // defaultValue={3}
                   onChange={onChange}
                 />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                label="车间名称"
+                name="shopName"
+                rules={[{ required: true, message: '请输入工作班组' }]}
+              >
+                <Select placeholder="请选择所属工段">
+                  {factoryName.map((item: any) => (
+                    // eslint-disable-next-line react/jsx-key
+                    <Option value={item.id}>{item.name}</Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="班组名称"
+                name="teamName"
+                rules={[{ required: true, message: '请输入工作班组' }]}
+              >
+                <Select placeholder="请选择工作班组">
+                  {teamName.map((item: any) => (
+                    // eslint-disable-next-line react/jsx-key
+                    // eslint-disable-next-line react/jsx-key
+                    <Option value={item.id}>{item.name}</Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Col>
           </Row>

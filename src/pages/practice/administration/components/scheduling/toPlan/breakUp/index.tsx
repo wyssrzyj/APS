@@ -11,7 +11,7 @@ import {
 } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import Item from 'antd/lib/list/Item'
-import { cloneDeep, isElement } from 'lodash'
+import { cloneDeep, isElement, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
@@ -25,9 +25,11 @@ const BreakUp = (props: any) => {
     isModalVisible,
     workSplitList,
     breakSave,
-    formData
+    formData,
+    capacityData,
+    teamName
   } = props
-  const { workshopList, teamList, capacityList } = dockingDataApis
+  const { workshopList, teamList } = dockingDataApis
 
   const { splitMethod, breakQuery } = practice
 
@@ -40,48 +42,23 @@ const BreakUp = (props: any) => {
 
   const [factoryName, setFactoryName] = useState<any>([]) //车间
   const [workshopId, setWorkshopId] = useState<any>() //车间id
-  const [teamName, setTeamName] = useState<any>([]) //班组
-  const [capacityData, setCapacityData] = useState<any>([]) //x效率
 
   useEffect(() => {
-    if (formData) {
+    if (formData !== undefined) {
       dataAcquisition(formData)
     }
+    console.log('formDataformDatformDataa', formData)
   }, [formData])
+  // 车间
   const dataAcquisition = async (e: any) => {
+    //车间
     const res = await workshopList({ factoryId: e })
+    console.log('车间车间车间车间', res)
     if (res) {
       res.map((item: { name: any; shopName: any }) => {
         item.name = item.shopName
       })
       setFactoryName(res)
-    }
-
-    const capacity = await capacityList()
-    if (res) {
-      capacity.map((item: { name: any; templateName: any }) => {
-        item.name = item.templateName
-      })
-      setCapacityData(capacity)
-    }
-  }
-
-  useEffect(() => {
-    if (workshopId && workshopId) {
-      console.log('formData', workshopId)
-      teamData(formData, workshopId)
-    }
-  }, [workshopId, formData])
-  const teamData = async (e: any, id: any) => {
-    const team = await teamList({
-      factoryId: e,
-      shopMannagerId: id
-    })
-    if (team) {
-      team.map((item: { name: any; teamName: any }) => {
-        item.name = item.teamName
-      })
-      setTeamName(team)
     }
   }
 
@@ -92,13 +69,10 @@ const BreakUp = (props: any) => {
   }, [workSplitList])
 
   const getInterfaceData = async (data: any) => {
-    console.log('生产单总量', data.orderSum)
-    const theTotal = 2000
-    // data.productionAmount = 100
-
     // data.id
     /// data.id
-    const res = await breakQuery({ assignmentId: '1514764866136440833' })
+
+    const res = await breakQuery({ assignmentId: data.id })
     // const storage = []
     // for (let i = 0; i < 1; i++) {
     //   storage.push({
@@ -113,21 +87,25 @@ const BreakUp = (props: any) => {
     //     templateId: '选择效率模板',
     //     age: 32,
     //     address: `London, Park Lane no. ${i}`,
-    //     theTotal: 1000, //生产单总量
+    //     orderSum: 1000, //生产单总量
     //     productionAmount: 800,
-    //     workshop: '1',
-    //     team: '1',
+    //     shopId: '1',
+    //     teamId: '1',
     //     isLocked: true
     //   })
     // }
-    res.map((item: any) => {
-      item.isLocked = item.isLocked === 1 ? true : false
-      item.ids = item.id //用于时间更改时的判断条件
-    })
-    res[0].theTotal = theTotal
-    console.log('展示', res)
-    setData(res)
-    console.log('拆分数据', data.id)
+    console.log('数据-------------------------------', res)
+    if (!isEmpty(res)) {
+      res.map((item: any) => {
+        item.isLocked = item.isLocked === 1 ? true : false
+        item.orderSum = data.orderSum
+        item.ids = item.id //用于时间更改时的判断条件
+      })
+      setData(res)
+    } else {
+      delete data.children
+      setData([data])
+    }
   }
   const showModal = () => {
     setIsModalVisible(true)
@@ -143,9 +121,9 @@ const BreakUp = (props: any) => {
   //替换数据
   const updateData = (
     record: {
-      workshop?: any
+      shopId?: any
       ids?: any
-      team?: any
+      teamId?: any
       efficiency?: any
       productionAmount?: any
       startTime?: number
@@ -169,9 +147,9 @@ const BreakUp = (props: any) => {
     e: CheckboxChangeEvent,
     record: {
       isLocked?: any
-      workshop?: any
+      shopId?: any
       id?: any
-      team?: any
+      teamId?: any
       efficiency?: any
       productionAmount?: any
       startTime?: number | undefined
@@ -186,25 +164,24 @@ const BreakUp = (props: any) => {
   const handleChange = (
     type: number,
     e: any,
-    record: { workshop: any; id: any; team: any; efficiency: any }
+    record: { shopId: any; id: any; teamId: any; templateId: any }
   ) => {
     const sum = cloneDeep(data)
     //工作车间
     if (type === 1) {
       console.log('工作车间', e)
       setWorkshopId(e)
-
-      record.workshop = e
+      record.shopId = e
       updateData(record, sum)
     }
     //工作班组
     if (type === 2) {
-      record.team = e
+      record.teamId = e
       updateData(record, sum)
     }
     //效率模板
     if (type === 3) {
-      record.efficiency = e
+      record.templateId = e
       updateData(record, sum)
     }
   }
@@ -215,9 +192,9 @@ const BreakUp = (props: any) => {
     record: {
       productionAmount: any
       completedAmount?: any
-      workshop?: any
+      shopId?: any
       id?: any
-      team?: any
+      teamId?: any
       efficiency?: any
       startTime?: number | undefined
       eddTime?: number | undefined
@@ -247,9 +224,9 @@ const BreakUp = (props: any) => {
     record: {
       planStartTime?: any
       planEndTime?: any
-      workshop?: any
+      shopId?: any
       id?: any
-      team?: any
+      teamId?: any
       efficiency?: any
       productionAmount?: any
       startTime?: number | undefined
@@ -275,7 +252,7 @@ const BreakUp = (props: any) => {
       total += current.productionAmount
       return total
     }, 0)
-    const value = arr[0].theTotal - res
+    const value = arr[0].orderSum - res
     if (value <= 0) {
       message.success('拆分数量以到达最大值')
     } else {
@@ -283,8 +260,8 @@ const BreakUp = (props: any) => {
         // key: Date.now(),
         ids: Date.now() * Math.random(),
         productionAmount: value,
-        workshop: arr[0].workshop,
-        team: arr[0].team,
+        shopId: arr[0].shopId,
+        teamId: arr[0].teamId,
         planStartTime: undefined,
         planEndTime: undefined,
         efficiency: arr[0].efficiency,
@@ -305,6 +282,8 @@ const BreakUp = (props: any) => {
     {
       title: '序号',
       align: 'center',
+      fixed: 'left',
+      width: 80,
       dataIndex: 'name',
       render: (_value: any, _row: any, index: any) => {
         return <div>{index + 1}</div>
@@ -313,23 +292,29 @@ const BreakUp = (props: any) => {
     {
       title: '生产单号',
       align: 'center',
+      fixed: 'left',
+      width: 80,
       dataIndex: 'externalProduceOrderNum'
     },
     {
       title: '产品名称',
       align: 'center',
+      // fixed: 'left',
+      width: 80,
       dataIndex: 'productName'
     },
     {
       title: '产品款号',
       align: 'center',
+      // fixed: 'left',
+      width: 80,
       dataIndex: 'productNum'
     },
     {
       title: '生产单总量',
-      width: 120,
+      width: 80,
       align: 'center',
-      dataIndex: 'theTotal'
+      dataIndex: 'orderSum'
     },
     {
       title: '拆分数量',
@@ -341,7 +326,7 @@ const BreakUp = (props: any) => {
           <div>
             <InputNumber
               defaultValue={_value}
-              max={_row.theTotal} //最大值是生产单总量
+              max={_row.orderSum} //最大值是生产单总量
               onChange={(e) => onBreakUp(e, _row, 1)}
             />
           </div>
@@ -369,7 +354,7 @@ const BreakUp = (props: any) => {
       title: '工作车间',
       width: 150,
       align: 'center',
-      dataIndex: 'workshop',
+      dataIndex: 'shopId',
       render: (_value: any, _row: any) => {
         return (
           <div>
@@ -394,11 +379,12 @@ const BreakUp = (props: any) => {
       align: 'center',
       width: 150,
 
-      dataIndex: 'team',
+      dataIndex: 'teamId',
       render: (_value: any, _row: any) => {
         return (
           <div>
             <Select
+              disabled={workshopId === undefined ? true : false}
               placeholder="请选择工作车间"
               defaultValue={_value}
               style={{ width: 120 }}
@@ -471,7 +457,6 @@ const BreakUp = (props: any) => {
       title: '选择效率模板',
       align: 'center',
       width: 150,
-
       dataIndex: 'templateId',
       render: (_value: any, _row: any) => {
         return (
@@ -495,6 +480,7 @@ const BreakUp = (props: any) => {
       title: '是否锁定',
       align: 'center',
       fixed: 'right',
+      width: 80,
       dataIndex: 'isLocked',
       render: (_value: any, _row: any) => {
         return (
@@ -503,6 +489,7 @@ const BreakUp = (props: any) => {
               checked={_value}
               onChange={(e) => onLock(e, _row)}
             ></Checkbox>
+            {console.log('单选', _value)}
           </div>
         )
       }
@@ -533,6 +520,7 @@ const BreakUp = (props: any) => {
       ),
       align: 'center',
       dataIndex: 'address',
+      width: 80,
       fixed: 'right',
       render: (_value: any, _row: any, index: number) => {
         return (
@@ -572,7 +560,7 @@ const BreakUp = (props: any) => {
       total += current.productionAmount
       return total
     }, 0)
-    const value = res - arr[0].theTotal
+    const value = res - arr[0].orderSum
     if (value !== 0) {
       if (value < 0) {
         message.warning(`拆分数量总和未满足订单总量 剩余-【${value}】`)
@@ -589,12 +577,15 @@ const BreakUp = (props: any) => {
       arr.map((item: any) => {
         item.isLocked = item.isLocked === true ? 1 : 0
       })
+
       const sum = await splitMethod({
-        assignmentId: '1514764866136440833',
+        assignmentId: workSplitList.id,
         data: arr
       })
-      console.log('保存', sum)
-      breakSave && breakSave()
+      console.log(sum)
+      if (sum) {
+        breakSave && breakSave()
+      }
     }
   }
 

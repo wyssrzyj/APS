@@ -2,7 +2,7 @@ import { Popover, Tabs, Tag, Tree } from 'antd'
 import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
-import { practice } from '@/recoil/apis'
+import { dockingDataApis, practice } from '@/recoil/apis'
 
 import BreakUp from './breakUp/index'
 import styles from './index.module.less'
@@ -19,8 +19,9 @@ function ToPlan(props: {
 }) {
   const { remind, formData, updateMethod, checkSchedule } = props
   // console.log('甘特图类型-树', gunterType)
-  const { listProductionOrders, unlockWork, releaseFromAssignment } = practice
-
+  const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
+    practice
+  const { workshopList, teamList, capacityList } = dockingDataApis
   const [list, setList] = useState<any>([]) //总
   const [editWindow, setEditWindow] = useState(false) //编辑窗
   const [editWindowList, setEditWindowList] = useState() //编辑窗数据
@@ -39,6 +40,12 @@ function ToPlan(props: {
   const [plannedID, setPlannedID] = useState<any>([]) //已计划的id
   const [stateAdd, setStateAdd] = useState<any>([]) //状态添加版本
 
+  const [factoryName, setFactoryName] = useState<any>([])
+  const [teamName, setTeamName] = useState<any>([]) ///班组
+  const [capacityData, setCapacityData] = useState<any>([]) //效率模板
+  const [efficiencyID, setEfficiencyID] = useState<any>()
+  const [templateId, setTemplateId] = useState<any>() //效率模板数据
+
   const map = new Map()
   map.set('1', '裁剪工段')
   map.set('2', '缝制工段')
@@ -56,8 +63,43 @@ function ToPlan(props: {
   useEffect(() => {
     if (formData !== undefined) {
       dataAcquisition(formData)
+      //车间/班组
+      workshopTeam(formData)
     }
   }, [formData])
+  //效率模板
+  useEffect(() => {
+    efficiency()
+  }, [])
+  const efficiency = async () => {
+    const capacity = await capacityList()
+    if (capacity) {
+      capacity.map(
+        (item: { name: any; templateName: any; key: any; templateId: any }) => {
+          item.name = item.templateName
+          item.key = item.templateId
+        }
+      )
+      setCapacityData(capacity)
+    }
+  }
+  const workshopTeam = async (e: any) => {
+    const res = await workshopList({ factoryId: e })
+    if (res) {
+      res.map((item: { name: any; shopName: any }) => {
+        item.name = item.shopName
+      })
+      setFactoryName(res)
+    }
+
+    const team = await teamList({ factoryId: e })
+    if (team) {
+      team.map((item: { name: any; teamName: any }) => {
+        item.name = item.teamName
+      })
+      setTeamName(team)
+    }
+  }
 
   useEffect(() => {
     if (!isEmpty(treeData)) {
@@ -270,6 +312,8 @@ function ToPlan(props: {
   }
   //工作拆分
   const workSplit = (data: any) => {
+    console.log('测试', data)
+
     setWorkSplitList(data)
     setIsModalVisible(true)
   }
@@ -281,8 +325,11 @@ function ToPlan(props: {
 
   // setIsModalVisible
   //效率模板
-  const efficiencyMethods = (id: any) => {
+  const efficiencyMethods = async (id: any) => {
     console.log('效率模板', id)
+    setEfficiencyID(id)
+    const res = await forDetail({ id })
+    setTemplateId(res.templateId)
     setEfficiencyData(true)
   }
   const content = (data: any, type: any) => {
@@ -431,6 +478,8 @@ function ToPlan(props: {
   // }
 
   const contents = {
+    factoryName,
+    teamName,
     formData,
     editSubmission,
     editWindow,
@@ -477,6 +526,8 @@ function ToPlan(props: {
       ) : null}
       {/* 拆分 */}
       <BreakUp
+        teamName={teamName}
+        capacityData={capacityData}
         formData={formData}
         breakSave={breakSave}
         workSplitList={workSplitList}
@@ -485,6 +536,9 @@ function ToPlan(props: {
       />
       {/* 效率模板 */}
       <TheEfficiency
+        templateId={templateId}
+        efficiencyID={efficiencyID}
+        capacityData={capacityData}
         dataUpdate={dataUpdate}
         setEfficiencyData={setEfficiencyData}
         efficiencyData={efficiencyData}

@@ -102,10 +102,10 @@ function Index() {
       }) => {
         item.start_date = item.startDate
           ? moment(item.startDate).format('YYYY-MM-DD HH:mm')
-          : null
+          : moment(new Date()).format('YYYY-MM-DD ')
         item.end_date = item.endDate
           ? moment(item.endDate).format('YYYY-MM-DD HH:mm')
-          : null
+          : moment(new Date()).format('YYYY-MM-DD ')
       }
     )
     setGunterData(arr) //图
