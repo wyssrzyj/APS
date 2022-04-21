@@ -80,8 +80,6 @@ function Popup(props: { content: any }) {
   }
   useEffect(() => {
     if (!isEmpty(list)) {
-      console.log('接口编辑书', list)
-      // console.log('接口编辑书', moment(list.planEndTime))
       list.planStartTime =
         list.planStartTime === null ? null : moment(list.planStartTime)
 
@@ -123,7 +121,6 @@ function Popup(props: { content: any }) {
     const arr = cloneDeep(list)
     arr.completedAmount = e
     timeout = setTimeout(() => {
-      console.log('完成量', arr.completedAmount)
       setList(arr)
     }, 500)
   }

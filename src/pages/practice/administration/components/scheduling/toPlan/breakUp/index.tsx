@@ -99,6 +99,7 @@ const BreakUp = (props: any) => {
         item.isLocked = item.isLocked === 1 ? true : false
         item.orderSum = data.orderSum
         item.ids = item.id //用于时间更改时的判断条件
+        item.key = item.id //用于时间更改时的判断条件
       })
       setData(res)
     } else {
@@ -285,6 +286,7 @@ const BreakUp = (props: any) => {
       fixed: 'left',
       width: 80,
       dataIndex: 'name',
+      key: 'name',
       render: (_value: any, _row: any, index: any) => {
         return <div>{index + 1}</div>
       }
@@ -294,6 +296,7 @@ const BreakUp = (props: any) => {
       align: 'center',
       fixed: 'left',
       width: 80,
+      key: 'externalProduceOrderNum',
       dataIndex: 'externalProduceOrderNum'
     },
     {
@@ -301,6 +304,7 @@ const BreakUp = (props: any) => {
       align: 'center',
       // fixed: 'left',
       width: 80,
+      key: 'productName',
       dataIndex: 'productName'
     },
     {
@@ -308,12 +312,14 @@ const BreakUp = (props: any) => {
       align: 'center',
       // fixed: 'left',
       width: 80,
+      key: 'productNum',
       dataIndex: 'productNum'
     },
     {
       title: '生产单总量',
       width: 80,
       align: 'center',
+      key: 'orderSum',
       dataIndex: 'orderSum'
     },
     {
@@ -321,6 +327,8 @@ const BreakUp = (props: any) => {
       align: 'center',
       width: 120,
       dataIndex: 'productionAmount', //
+      key: 'productionAmount',
+
       render: (_value: any, _row: any) => {
         return (
           <div>
@@ -338,6 +346,7 @@ const BreakUp = (props: any) => {
       align: 'center',
       width: 120,
       dataIndex: 'completedAmount', //
+      key: 'completedAmount',
       render: (_value: any, _row: any) => {
         return (
           <div>
@@ -355,6 +364,8 @@ const BreakUp = (props: any) => {
       width: 150,
       align: 'center',
       dataIndex: 'shopId',
+      key: 'shopId',
+
       render: (_value: any, _row: any) => {
         return (
           <div>
@@ -378,7 +389,7 @@ const BreakUp = (props: any) => {
       title: '工作班组',
       align: 'center',
       width: 150,
-
+      key: 'teamId',
       dataIndex: 'teamId',
       render: (_value: any, _row: any) => {
         return (
@@ -404,7 +415,7 @@ const BreakUp = (props: any) => {
       title: '计划开始时间',
       align: 'center',
       width: 200,
-
+      key: 'planStartTime',
       dataIndex: 'planStartTime',
       render: (_value: any, _row: any) => {
         return (
@@ -434,7 +445,7 @@ const BreakUp = (props: any) => {
       title: '计划结束时间',
       align: 'center',
       width: 200,
-
+      key: 'planEndTime',
       dataIndex: 'planEndTime',
       render: (_value: any, _row: any) => {
         return (
@@ -458,6 +469,7 @@ const BreakUp = (props: any) => {
       align: 'center',
       width: 150,
       dataIndex: 'templateId',
+      key: 'templateId',
       render: (_value: any, _row: any) => {
         return (
           <div>
@@ -482,6 +494,7 @@ const BreakUp = (props: any) => {
       fixed: 'right',
       width: 80,
       dataIndex: 'isLocked',
+      key: 'isLocked',
       render: (_value: any, _row: any) => {
         return (
           <div>
@@ -520,6 +533,7 @@ const BreakUp = (props: any) => {
       ),
       align: 'center',
       dataIndex: 'address',
+      key: 'address',
       width: 80,
       fixed: 'right',
       render: (_value: any, _row: any, index: number) => {
