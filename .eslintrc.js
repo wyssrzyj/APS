@@ -48,7 +48,8 @@ module.exports = {
     'no-case-declarations': 'off',
     'no-irregular-whitespace': 'off',
     'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
-    '@typescript-eslint/no-unused-vars': 'off'
+    '@typescript-eslint/no-unused-vars': 'off',
+    'no-empty': 'off'
     // 'jsx-a11y/anchor-is-valid': [
     //   'error',
     //   {

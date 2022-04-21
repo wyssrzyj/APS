@@ -648,11 +648,47 @@ export const efficiencyList = async (params: any) => {
     console.log(e)
   }
 }
-// 车缝工段拆分保存
-export const splitMethod = async (params: any) => {
+// 单条效率信息
+export const efficiencyInfo = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/capacity-efficiency-manage/get`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 更新或新增产能效率
+export const updateEfficiencyInfo = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
-      `/aps/produce-assignment-detail/split-assignment`,
+      `/aps/capacity-efficiency-manage/save-or-update`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 更新或新增产能效率
+export const deleteEfficiencyInfo = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/capacity-efficiency-manage/delete`,
       params
     )
     if (res.code !== 200) {
@@ -667,47 +703,11 @@ export const splitMethod = async (params: any) => {
   }
 }
 
-//拆分查询
-export const breakQuery = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.get(
-      `/aps/produce-assignment/get-detail-by-assignment`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-//锁定工作/解锁工作
-export const unlockWork = async (params: any) => {
+// 班组信息
+export const teamList = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
-      `/aps/produce-assignment-detail/change-locked-status`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-//解除分派任务
-export const releaseFromAssignment = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/produce-assignment-detail/cancel-assignment`,
+      `/aps/mes/get-team-manager-list`,
       params
     )
     if (res.code !== 200) {
