@@ -44,7 +44,6 @@ const useTableChange = (
     if (keys.length > 0) {
       target = { ...params, ...target }
     }
-
     let res = await getData(target)
 
     if (Array.isArray(res)) {
@@ -71,7 +70,6 @@ const useTableChange = (
       //   setDataSource([...nData, ...records])
       // }
     }
-
     setLoading(false)
   }
 

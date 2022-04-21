@@ -41,6 +41,7 @@ const SearchBar = (props: Record<string, any>) => {
           <span className={styles.searchLabel}>{item.label}</span>
           <div className={styles.searchValue}>
             <FormNode
+              key={params[item.field]}
               {...obj}
               onChange={(value) => valuesChange(value, item.field)}
               value={params[item.field]}
