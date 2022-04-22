@@ -4,7 +4,7 @@ import { cloneDeep, values } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
-function useEfficiencyTable(props: Record<string, any>) {
+function EfficiencyTable(props: Record<string, any>) {
   const { onChange, value, disabled } = props
 
   const [data, setData] = useState<any>(value || [{ day: 0, efficiency: 0 }])
@@ -87,4 +87,4 @@ function useEfficiencyTable(props: Record<string, any>) {
   )
 }
 
-export default useEfficiencyTable
+export default EfficiencyTable

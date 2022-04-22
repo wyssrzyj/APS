@@ -721,3 +721,66 @@ export const teamList = async (params: any) => {
     console.log(e)
   }
 }
+// 生产计划列表
+export const productList = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail-pulished/page-detail-pulished`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 导出生产计划
+export const exportProductList = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail-pulished/export-produce-assignment-info`,
+      params
+    )
+    return res
+  } catch (e) {
+    return e
+  }
+}
+// 生产计划详情
+export const productDetail = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail-pulished/get`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || null
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 生产计划详情
+export const getWorkshopSectionList = async () => {
+  try {
+    const res: ResponseProps = await axios.get(`/aps/mes/get-section-list`)
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}

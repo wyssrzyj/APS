@@ -1,3 +1,4 @@
+import { Col, Row } from 'antd'
 import { cloneDeep, debounce } from 'lodash'
 import React, { useEffect, useMemo, useRef } from 'react'
 
@@ -8,7 +9,7 @@ import styles from './index.module.less'
 const SearchBar = (props: Record<string, any>) => {
   const { params, callback, configs } = props
 
-  const paramsRef = useRef(params)
+  const paramsRef = useRef<any>(params)
 
   useEffect(() => {
     paramsRef.current = { ...params }
@@ -31,23 +32,30 @@ const SearchBar = (props: Record<string, any>) => {
         'filterOption',
         'showSearch',
         'onSearch',
-        'treeData'
+        'treeData',
+        'showTime'
       ]
       const obj: any = {}
 
       keys.forEach((i) => (obj[i] = item[i]))
       return (
-        <div key={idx} className={styles.searchItem}>
-          <span className={styles.searchLabel}>{item.label}</span>
-          <div className={styles.searchValue}>
-            <FormNode
-              key={params[item.field]}
-              {...obj}
-              onChange={(value) => valuesChange(value, item.field)}
-              value={params[item.field]}
-            ></FormNode>
+        <Col key={idx} span={8}>
+          <div
+            key={idx}
+            className={styles.searchItem}
+            style={{ width: item.width }}
+          >
+            <span className={styles.searchLabel}>{item.label}</span>
+            <div className={styles.searchValue}>
+              <FormNode
+                key={params[item.field]}
+                {...obj}
+                onChange={(value) => valuesChange(value, item.field)}
+                value={paramsRef.current[item.field]}
+              ></FormNode>
+            </div>
           </div>
-        </div>
+        </Col>
       )
     })
   }, [configs])

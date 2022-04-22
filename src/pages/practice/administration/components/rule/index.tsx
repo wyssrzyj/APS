@@ -21,7 +21,7 @@ const {
   deleteEfficiencyInfo
 } = practice
 
-function useRule() {
+function Rule() {
   tableColumns[tableColumns.length - 1].render = (
     _text: any,
     record: any,
@@ -48,8 +48,6 @@ function useRule() {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) // 选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) // 新增展示弹窗
   const [modalType, setModalType] = useState('add')
-  const [disabled, setDisabled] = useState(false)
-  const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [rowInfo, setRowInfo] = useState()
   const {
     tableChange,
@@ -109,7 +107,6 @@ function useRule() {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
-      // setMovIsModalVisible(true)
       confirm({
         title: '确认删除?',
         icon: <ExclamationCircleOutlined />,
@@ -124,10 +121,7 @@ function useRule() {
       })
     }
   }
-  const movApi = () => {
-    console.log('删除逻辑')
-    console.log('选中的删除id', selectedRowKeys)
-  }
+
   const onSelectChange = (selectedRowKeys: React.SetStateAction<never[]>) => {
     console.log('selectedRowKeys', selectedRowKeys)
     setSelectedRowKeys(selectedRowKeys)
@@ -199,11 +193,7 @@ function useRule() {
             rowKey={'id'}
             scroll={{ x: 1000 }}
             loading={loading}
-            onChange={(
-              pagination: TablePaginationConfig,
-              filters: Record<string, FilterValue | null>,
-              sorter: SorterResult<any> | SorterResult<any>[]
-            ) => tableChange(pagination, filters, sorter)}
+            onChange={tableChange}
             pagination={{
               //分页
               showSizeChanger: true,
@@ -230,4 +220,4 @@ function useRule() {
   )
 }
 
-export default useRule
+export default Rule

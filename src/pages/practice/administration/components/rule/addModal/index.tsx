@@ -18,7 +18,7 @@ const itemLayout = {
   labelCol: { span: 0 },
   wrapperCol: { span: 22 }
 }
-function useAddModal(props: Record<string, any>) {
+function AddModal(props: Record<string, any>) {
   const { isModalVisible, onAddCancel, type, modalInfo, facList } = props
   const disabled = type === 'view'
   const [form] = Form.useForm()
@@ -163,4 +163,4 @@ function useAddModal(props: Record<string, any>) {
   )
 }
 
-export default useAddModal
+export default AddModal
