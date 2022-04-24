@@ -4,7 +4,7 @@ import axios, { Canceler, Method } from 'axios'
 import { getCurrentUser, getRefresh, getToken } from '../tool'
 import {
   addSubscriber,
-  dealRefresh,
+  // dealRefresh,
   filterNull,
   isRefreshing
 } from './filterNull'
@@ -40,9 +40,9 @@ customAxios.interceptors.response.use(
     const pathFlag = !noTokenList.includes(location.pathname)
 
     if (pathFlag && (flag || code === 40101)) {
-      if (!isRefreshing) {
-        dealRefresh()
-      }
+      // if (!isRefreshing) {
+      //   dealRefresh()
+      // }
       const retryOriginalRequest = new Promise((resolve) => {
         addSubscriber(() => {
           resolve(customAxios(config))

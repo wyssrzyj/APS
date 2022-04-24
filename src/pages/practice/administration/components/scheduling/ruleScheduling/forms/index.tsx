@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react'
 
 import styles from './index.module.less'
 
-const useHeaderForm = (props: Record<string, any>) => {
+const HeaderForm = (props: Record<string, any>) => {
   const { searchParams, onChange } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
@@ -35,4 +35,4 @@ const useHeaderForm = (props: Record<string, any>) => {
   )
 }
 
-export default useHeaderForm
+export default HeaderForm

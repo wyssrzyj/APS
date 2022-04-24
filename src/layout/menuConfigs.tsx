@@ -113,7 +113,7 @@ export const menus = [
     url: '/',
     children: [
       {
-        label: '派工计划',
+        label: '生产计划',
         key: 'dispatchPan',
         icon: 'jack-paigong',
         url: '/dispatchPan'

@@ -170,6 +170,8 @@ function ToPlan(props: {
       factoryId: id,
       isPlanned: 0
     })
+    console.log('未计划', notPlan)
+
     const planned = await listProductionOrders({
       factoryId: id,
       isPlanned: 1

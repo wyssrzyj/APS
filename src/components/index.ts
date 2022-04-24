@@ -1,4 +1,5 @@
 export { default as CusDragTable } from './cusDragTable'
+export { default as CustomModal } from './customModal'
 export { default as FormNode } from './FormNode'
 export { default as Icon } from './Icon'
 export { default as SearchBar } from './searchBar'
