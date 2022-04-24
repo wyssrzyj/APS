@@ -60,7 +60,7 @@ const Materials = React.lazy(
 
 // ----------------生产管理结束
 
-//进度跟踪 派工计划
+//进度跟踪 生产计划
 const DispatchPan = React.lazy(
   () => import('@/pages/practice/progressTracking/dispatchPan')
 )
@@ -112,7 +112,7 @@ const RouteList = () => {
 
       {/* 生产管理-规则排程 */}
       <Route path="/rule" element={<Rule />} />
-      {/* 进度跟踪 派工计划查看 */}
+      {/* 进度跟踪 生产计划查看 */}
       <Route path="/dispatchPan" element={<DispatchPan />} />
 
       {/* 排程结果 -资源甘特图 */}

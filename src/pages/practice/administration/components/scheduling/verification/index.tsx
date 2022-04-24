@@ -20,10 +20,10 @@ const list = [
   },
   { key: '工作时间重叠班组:', value: 'workTimeOverlapTeamList', list: [] }
 ]
-function useVerifyModal(props: Record<string, any>) {
+function VerifyModal(props: Record<string, any>) {
   const { visibleVerify, onCancel, checkIDs } = props
   const [checkList, setCheckList] = useState<Record<string, any>>(list)
-  const verifyInfo = async (id: any) => {
+  const verifyInfo = async (id: string) => {
     console.log('处理后的数据', id)
 
     const data = cloneDeep(checkList)
@@ -107,4 +107,4 @@ function useVerifyModal(props: Record<string, any>) {
   )
 }
 
-export default useVerifyModal
+export default VerifyModal

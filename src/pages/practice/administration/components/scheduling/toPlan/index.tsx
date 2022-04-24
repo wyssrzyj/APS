@@ -170,6 +170,8 @@ function ToPlan(props: {
       factoryId: id,
       isPlanned: 0
     })
+    console.log('未计划', notPlan)
+
     const planned = await listProductionOrders({
       factoryId: id,
       isPlanned: 1
@@ -293,6 +295,7 @@ function ToPlan(props: {
     })
     dataUpdate() //数据刷新
   }
+
   const removeDispatch = async (id: any) => {
     const res = await releaseFromAssignment({ idList: [id] })
     dataUpdate() //数据刷新

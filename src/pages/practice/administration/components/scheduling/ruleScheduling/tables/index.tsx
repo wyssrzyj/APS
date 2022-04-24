@@ -10,7 +10,7 @@ import React, { useState } from 'react'
 
 import styles from './index.module.less'
 
-function useRuleTables(props: Record<string, any>) {
+function RuleTables(props: Record<string, any>) {
   const { dataSource, changeTableOrder } = props
   const statusList = [
     { key: '待计划', value: 1 },
@@ -137,4 +137,4 @@ function useRuleTables(props: Record<string, any>) {
   )
 }
 
-export default useRuleTables
+export default RuleTables

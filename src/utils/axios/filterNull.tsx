@@ -25,7 +25,7 @@ export const filterNull = (o: O) => {
 }
 
 // 是否正在刷新的标记
-export let isRefreshing = false
+export const isRefreshing = false
 //重试队列
 export let requests: any[] = []
 
@@ -41,7 +41,7 @@ export function addSubscriber(callback: any) {
   requests.push(callback)
 }
 
-export let rToken = ''
+export const rToken = ''
 
 // refresh axios
 export const refreshAxios = axios.create({
@@ -66,35 +66,35 @@ refreshAxios.interceptors.request.use(
 )
 
 // 刷新token的处理
-export const dealRefresh = async () => {
-  isRefreshing = true
+// export const dealRefresh = async () => {
+//   isRefreshing = true
 
-  const url = `/api/user/account/refresh-token?accessToken=${getToken()}`
+//   const url = `/api/user/account/refresh-token?accessToken=${getToken()}`
 
-  refreshAxios
-    .post(url)
-    .then((refresData) => {
-      rToken = refresData.data.data.access_token // access_token 主token
-      const expiresTime = refresData.data.data.expires_in // 过期时间
-      // request.headers.authorization = rToken // 设置请求体的token
-      // 更新用户信息
-      const updateUser = JSON.parse(localStorage.getItem('currentUser') || '{}')
-      updateUser.expire = expiresTime
-      updateUser.access_token = rToken
-      localStorage.setItem('token', rToken)
-      localStorage.setItem('currentUser', JSON.stringify(updateUser))
-      onAccessTokenFetched()
-      isRefreshing = false
-    })
-    .catch((err) => {
-      const { response } = err
-      const { data } = response
-      const { code } = data
-      console.log(code, 'code')
-      if (+code === 401) {
-        // 401 跳登录页
-        const { pathname } = location
-        pathname !== '/user/login' && location.replace('/user/login')
-      }
-    })
-}
+//   refreshAxios
+//     .post(url)
+//     .then((refresData) => {
+//       rToken = refresData.data.data.access_token // access_token 主token
+//       const expiresTime = refresData.data.data.expires_in // 过期时间
+//       // request.headers.authorization = rToken // 设置请求体的token
+//       // 更新用户信息
+//       const updateUser = JSON.parse(localStorage.getItem('currentUser') || '{}')
+//       updateUser.expire = expiresTime
+//       updateUser.access_token = rToken
+//       localStorage.setItem('token', rToken)
+//       localStorage.setItem('currentUser', JSON.stringify(updateUser))
+//       onAccessTokenFetched()
+//       isRefreshing = false
+//     })
+//     .catch((err) => {
+//       const { response } = err
+//       const { data } = response
+//       const { code } = data
+//       console.log(code, 'code')
+//       if (+code === 401) {
+//         // 401 跳登录页
+//         const { pathname } = location
+//         pathname !== '/user/login' && location.replace('/user/login')
+//       }
+//     })
+// }
