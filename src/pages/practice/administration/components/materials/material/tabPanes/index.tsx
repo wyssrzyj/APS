@@ -5,9 +5,13 @@ import Forms from './forms'
 import FormTable from './formTable/index'
 
 function TabPanes(props: any) {
-  const { materialList, index, dataReset, analogData, sizeList } = props
+  const { materialList, index, dataReset, analogData, sizeList, switchSave } =
+    props
   const dataProcessing = (e: any) => {
     dataReset && dataReset(e)
+  }
+  const saveData = (e: any) => {
+    switchSave && switchSave(e)
   }
 
   return (
@@ -15,6 +19,7 @@ function TabPanes(props: any) {
       <Forms list={materialList[index]} />
       {analogData && analogData.length > 0 ? (
         <FormTable
+          saveData={saveData}
           tableData={analogData}
           materialList={materialList}
           index={index}

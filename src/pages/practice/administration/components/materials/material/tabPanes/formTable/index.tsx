@@ -8,60 +8,21 @@ import { Icon } from '@/components'
 
 import styles from './index.module.less'
 const FormTable = (props: any) => {
-  const { tableData, materialList, index, dataProcessing, sizeList } = props
-
+  const { tableData, materialList, index, dataProcessing, sizeList, saveData } =
+    props
   const [expandedRowKeys, setExpandedRowKeys] = useState<any>([])
-  const [data, setData] = useState<any>(tableData) //添加字段后的数据
-  const [list, setList] = useState<any>([])
-  // useEffect(() => {
-  //   console.log('总数据发生改变准备return', data)
-  // }, [data])
+  const [data, setData] = useState<any>(tableData) //table 数据  防止为空
+  const [list, setList] = useState<any>([]) //table处理后的格式
 
   useEffect(() => {
-    // 调取接口口添加 key和 counteractNum -半成品冲销数量的字段
-    !isEmpty(tableData) &&
-      tableData.map((item: any) => {
-        item.issuedQuantity = 0 //测试~~~已出库数量暂无 设置0
-        item.id = item.materialCode //id是 materialCode
-        item.key = item.id //添加 key
-        item.counteractNum = 0 //添加初始 冲销数量
-        if (!isEmpty(item.children)) {
-          item.children.map((v: any) => {
-            v.issuedQuantity = 0 //测试~~~已出库数量暂无 设置0
-            v.counteractNum = 0
-            v.id = v.materialCode + v.materialColCode
-            v.key = v.id
+    saveData && saveData(data)
+  }, [data])
 
-            //物料缺少数量 计算
-            v.shortOfProductNum =
-              v.requireQuantity -
-                v.availableStockQtyTotal -
-                v.inTransitStockQtyTotal -
-                v.counteractNum -
-                v.issuedQuantity >
-              0
-                ? v.requireQuantity -
-                  v.availableStockQtyTotal -
-                  v.inTransitStockQtyTotal -
-                  v.counteractNum -
-                  v.issuedQuantity
-                : 0
-
-            v.enoughFlag = v.shortOfProductNum > 0 ? false : true
-          })
-        }
-        item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
-        item.enoughFlag = item.shortOfProductNum > 0 ? false : true //物料缺少数量-头
-      })
-    console.log('查看是否拼接', tableData)
-
-    setData([...tableData])
-  }, [])
   useEffect(() => {
     const columns: any = [
       {
         title: '物料代码',
-        dataIndex: 'material',
+        dataIndex: 'materialCode',
         width: 150,
         align: 'center',
         fixed: 'left',
@@ -78,37 +39,19 @@ const FormTable = (props: any) => {
       },
       {
         title: '物料颜色代码',
-        dataIndex: 'materialColCode',
+        dataIndex: 'skuCode',
         width: 100,
         align: 'center',
         key: 'materialColCode'
       },
       {
         title: '颜色',
-        dataIndex: 'materialColName',
-        // dataIndex: 'materialColName',
+        dataIndex: 'proColName',
+        // dataIndex: 'proColName',
         width: 100,
         align: 'center',
-        key: 'materialColName'
+        key: 'proColName'
       },
-      // {
-      //   title: 'S',
-      //   dataIndex: 'S',
-      //   align: 'center',
-      //   key: 'S'
-      // },
-      // {
-      //   title: 'M',
-      //   dataIndex: 'M',
-      //   align: 'center',
-      //   key: 'M'
-      // },
-      // {
-      //   title: 'L',
-      //   dataIndex: 'L',
-      //   align: 'center',
-      //   key: 'L'
-      // },
       {
         title: '物料需求数量',
         width: 100,
@@ -131,18 +74,11 @@ const FormTable = (props: any) => {
         key: 'availableStockQtyTotal'
       },
       {
-        title: '物料在途数量',
+        title: '已出库数量',
         width: 100,
-        dataIndex: 'inTransitStockQtyTotal',
+        dataIndex: 'deliveredQty',
         align: 'center',
-        key: 'inTransitStockQtyTotal'
-      },
-      {
-        title: '已出库数量', //暂无字段 后面补齐
-        width: 100,
-        dataIndex: 'issuedQuantity',
-        align: 'center',
-        key: 'issuedQuantity'
+        key: 'deliveredQty'
       },
       {
         title: '半成品冲销数量',
@@ -176,6 +112,8 @@ const FormTable = (props: any) => {
       {
         title: '是否充足',
         dataIndex: 'enoughFlag',
+        width: 150,
+
         align: 'center',
         key: 'enoughFlag',
         fixed: 'right',
@@ -219,16 +157,52 @@ const FormTable = (props: any) => {
       item.align = 'center'
     })
     const index = columns.findIndex(
-      (item: { dataIndex: string }) => item.dataIndex === 'materialColName'
+      (item: { dataIndex: string }) => item.dataIndex === 'proColName'
     )
 
     if (sizeList !== undefined) {
-      console.log('测试sizeList', sizeList)
-
       columns.splice(index + 1, 0, sizeList)
       setList(columns.flat(Infinity))
     }
   }, [sizeList])
+
+  useEffect(() => {
+    // 调取接口口添加 key和 counteractNum -半成品冲销数量的字段
+    !isEmpty(tableData) &&
+      tableData.map((item: any) => {
+        item.deliveredQty = item.deliveredQty === null ? 0 : item.deliveredQty //测试~~~已出库数量暂无 设置0
+        item.id = item.materialCode //id是 materialCode
+        item.key = item.id //添加 key
+        item.counteractNum = 0 //添加初始 冲销数量
+        if (!isEmpty(item.children)) {
+          item.children.map((v: any) => {
+            v.deliveredQty = v.deliveredQty === null ? 0 : v.deliveredQty //测试~~~已出库数量暂无 设置0
+            v.counteractNum = 0
+            v.id = v.materialCode + v.materialColCode
+            v.key = v.id
+            //物料缺少数量 计算
+            v.shortOfProductNum =
+              v.requireQuantity -
+                v.availableStockQtyTotal -
+                v.deliveredQty -
+                v.counteractNum -
+                v.deliveredQty >
+              0
+                ? v.requireQuantity -
+                  v.availableStockQtyTotal -
+                  v.deliveredQty -
+                  v.counteractNum -
+                  v.deliveredQty
+                : 0
+
+            v.enoughFlag = v.shortOfProductNum > 0 ? false : true
+          })
+        }
+        item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
+        item.enoughFlag = item.shortOfProductNum > 0 ? false : true //物料缺少数量-头
+      })
+    setData([...tableData])
+  }, [tableData])
 
   //计算总值
   const total = (count: any[], field: string) => {
@@ -263,8 +237,6 @@ const FormTable = (props: any) => {
     if (!isEmpty(current)) {
       current.map((item: any) => {
         if (item.key === currentValue.materialCode) {
-          console.log('走进来了')
-
           if (!isEmpty(item.children)) {
             item.children.map((v: any) => {
               // 先赋值
@@ -275,15 +247,13 @@ const FormTable = (props: any) => {
                   v.shortOfProductNum =
                     v.requireQuantity -
                       v.availableStockQtyTotal -
-                      v.inTransitStockQtyTotal -
                       v.counteractNum -
-                      v.issuedQuantity >
+                      v.deliveredQty >
                     0
                       ? v.requireQuantity -
                         v.availableStockQtyTotal -
-                        v.inTransitStockQtyTotal -
                         v.counteractNum -
-                        v.issuedQuantity
+                        v.deliveredQty
                       : 0
 
                   v.enoughFlag = v.shortOfProductNum > 0 ? false : true
@@ -300,8 +270,6 @@ const FormTable = (props: any) => {
           }
         }
       })
-      console.log('处理后的值', current)
-
       setData([...current])
       //
     }
@@ -313,8 +281,6 @@ const FormTable = (props: any) => {
     }
     // 给当前页的数据添加 一个状态 用于判断当前页是否全部打钩
     materialList[index].satisfy = data.every(checkAdult)
-    console.log('/暴露出去', materialList)
-
     dataProcessing(materialList) //暴露出去
   }, [data])
   const onExpandedRowsChange = (e: any) => {

@@ -365,6 +365,24 @@ export const systemParameter = async () => {
 export const materialData = async (props: any) => {
   try {
     const res: ResponseProps = await axios.get(
+      `/aps/check-product/get-change`,
+      props
+    )
+
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 系统参数 - 历史
+export const checked = async (props: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
       `/aps/check-product/get-history`,
       props
     )
@@ -780,6 +798,39 @@ export const forDetail = async (params: any) => {
   try {
     const res: ResponseProps = await axios.get(
       ` /aps/produce-assignment-detail/get-detail-by-id`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//生产单-列表
+export const materialListApi = async () => {
+  try {
+    const res: ResponseProps = await axios.post(`/aps/product-order/list`)
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//保存/更新齐套检查
+export const materialSaved = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/check-product/save`,
       params
     )
     if (res.code !== 200) {

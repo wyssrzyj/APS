@@ -16,28 +16,79 @@ function Material(props: {
   materialList: any
 }) {
   const { materialModal, setMaterialModal, materialList } = props
-  const { getTheSize, materialData } = practice
+  const { getTheSize, materialData, materialSaved, checked } = practice
   const [list, setList] = useState<any>() //处理后的数据
-  const [type, setType] = useState<any>() //top值
   const [tableList, setTableList] = useState<any>() //table的数据
   const [sizeList, setSizeList] = useState<any>() //table的尺码
-  // const [params, setParams] = useState<any>({}) //table所有数据
+  const [modifyData, setModifyData] = useState<any>() //修改的值-用于保存
 
   useEffect(() => {
     if (materialList && !isEmpty(materialList)) {
-      setType(materialList[0].id)
+      tableData(materialList[0])
     }
+
+    console.log('数据', materialList)
   }, [materialList])
-  useEffect(() => {
-    if (type !== undefined) {
-      tableData(type)
+
+  // ***js数组对象转键值对
+  const conversion = (data: any[]) => {
+    const obj: any = {}
+    data.map((e: { sizeCode: string | number; quantity: any }) => {
+      obj[e.sizeCode] = e.quantity
+    })
+    return obj
+  }
+  // *** table 数据处理
+  const processData = (data: any) => {
+    if (!isEmpty(data)) {
+      const tableData = data
+      // 父
+      tableData.map(
+        (item: { produceCheckSizeVOList: any[]; children: any[] }) => {
+          item = Object.assign(item, conversion(item.produceCheckSizeVOList))
+          //子
+          if (!isEmpty(item.children)) {
+            item.children.map((v: { produceCheckSizeVOList: any[] }) => {
+              v = Object.assign(v, conversion(v.produceCheckSizeVOList))
+            })
+          }
+        }
+      )
+      return tableData
     }
-  }, [type])
+  }
 
   //获取table数据
-  const tableData = async (id: any) => {
+  const tableData = async (data: any) => {
+    console.log(data.checkStatus)
+
+    //  未检查
+    if (data.checkStatus === 2) {
+      console.log('未检查')
+      const resData = await materialData({
+        externalProduceOrderId: '1503965241543753729'
+      })
+      setTableList(resData.splice(15))
+    }
+    //  已检查
+    if (data.checkStatus === 1) {
+      console.log('已检查')
+      const resData = await checked({
+        externalProduceOrderId: '1503965241543753729'
+      })
+      setTableList(resData.splice(15))
+    }
+    //table数据
+    // if (!isEmpty(resData.tableContent)) {
+    //   const processingComplete = processData(resData.tableContent)
+    //   resData.list = processingComplete
+    // }
+    // setTableList(resData.list)
+
     //尺寸
-    const resSize = await getTheSize({ externalProduceOrderId: 1 })
+    const resSize = await getTheSize({
+      externalProduceOrderId: '1503965241543753729'
+    })
     const goodsSize: {
       title: any
       dataIndex: any
@@ -54,190 +105,7 @@ function Material(props: {
         width: 50
       })
     })
-    const resData = await materialData({
-      externalProduceOrderId: '1504272269944320002'
-    })
-    //处理数据---------------
-
-    // ***js数组对象转键值对
-    const conversion = (data: any[]) => {
-      const obj: any = {}
-      data.map((e: { sizeCode: string | number; quantity: any }) => {
-        obj[e.sizeCode] = e.quantity
-      })
-      return obj
-    }
-
-    if (!isEmpty(resData.tableContent)) {
-      const tableData = resData.tableContent
-      // 父
-      tableData.map(
-        (item: { produceCheckSizeVOList: any[]; children: any[] }) => {
-          item = Object.assign(item, conversion(item.produceCheckSizeVOList))
-          //子
-          if (!isEmpty(item.children)) {
-            item.children.map((v: { produceCheckSizeVOList: any[] }) => {
-              v = Object.assign(v, conversion(v.produceCheckSizeVOList))
-            })
-          }
-        }
-      )
-      setTableList(tableData)
-    }
-
-    //处理数据结束---------------
-
-    // let res =await ()
-    const analogData = [
-      {
-        id: '197',
-        material: '8848',
-        materialName: '牛仔服666',
-        size: '',
-        color: '',
-        issuedQuantity: 30,
-        S: 100,
-        M: 100,
-        L: 100,
-        blue: 200,
-        requireQuantity: 100,
-        unit: '米',
-        availableStockQtyTotal: 10,
-        inTransitStockQtyTotal: 20,
-        children: [
-          {
-            fatherID: '197', //父id
-            id: '22',
-            S: 30,
-            M: 30,
-            L: 30,
-            material: '001',
-            materialName: '牛仔服',
-            issuedQuantity: 10,
-            size: 'C001',
-            color: '红色',
-            blue: 50,
-            unit: '米',
-            availableStockQtyTotal: 5,
-            inTransitStockQtyTotal: 10,
-            requireQuantity: 50
-          },
-          {
-            fatherID: '197', //父id
-            id: '33',
-            material: '001',
-            materialName: '牛仔服',
-            issuedQuantity: 10,
-
-            size: 'C002',
-            color: '蓝色',
-            S: 30,
-            M: 30,
-            L: 30,
-            blue: 30,
-            unit: '米',
-            availableStockQtyTotal: 3,
-            inTransitStockQtyTotal: 5,
-
-            requireQuantity: 30
-          },
-          {
-            fatherID: '197', //父id
-            id: '44',
-            S: 40,
-            M: 40,
-            L: 40,
-            material: '001',
-            materialName: '牛仔服',
-            issuedQuantity: 10,
-
-            size: 'C003',
-            color: '绿色',
-            blue: 20,
-            unit: '米',
-            availableStockQtyTotal: 2,
-            inTransitStockQtyTotal: 5,
-            requireQuantity: 20
-          }
-        ]
-      },
-      {
-        id: '272',
-        material: '001',
-        materialName: '牛仔服',
-        issuedQuantity: 30,
-
-        size: '',
-        color: '',
-        S: 100,
-        M: 100,
-        L: 100,
-        blue: 200,
-        requireQuantity: 100,
-        unit: '米',
-        availableStockQtyTotal: 10,
-        inTransitStockQtyTotal: 20,
-        children: [
-          {
-            fatherID: '272', //父id
-            id: '222',
-            S: 30,
-            M: 30,
-            L: 30,
-            material: '001',
-            materialName: '牛仔服',
-            issuedQuantity: 10,
-
-            size: 'C001',
-            color: '红色',
-            blue: 50,
-            unit: '米',
-            availableStockQtyTotal: 5,
-            inTransitStockQtyTotal: 10,
-            requireQuantity: 50
-          },
-          {
-            fatherID: '272', //父id
-            id: '333',
-            material: '001',
-            materialName: '牛仔服',
-            issuedQuantity: 10,
-
-            size: 'C002',
-            color: '蓝色',
-            S: 30,
-            M: 30,
-            L: 30,
-            blue: 30,
-            unit: '米',
-            availableStockQtyTotal: 3,
-            inTransitStockQtyTotal: 5,
-
-            requireQuantity: 30
-          },
-          {
-            fatherID: '272', //父id
-            id: '444',
-            S: 40,
-            M: 40,
-            L: 40,
-            material: '001',
-            materialName: '牛仔服',
-            issuedQuantity: 10,
-
-            size: 'C003',
-            color: '绿色',
-            blue: 20,
-            unit: '米',
-            availableStockQtyTotal: 2,
-            inTransitStockQtyTotal: 5,
-            requireQuantity: 20
-          }
-        ]
-      }
-    ]
     setSizeList(goodsSize)
-    // setTableList(analogData)
   }
 
   const { TabPane } = Tabs
@@ -257,7 +125,10 @@ function Material(props: {
 
     setList(e)
   }
+  //确认
   const confirm = () => {
+    meetConditions(modifyData)
+
     if (!isEmpty(list)) {
       const hangInTheAir = list.filter((item: any) => item.satisfy !== true) //长度为空才能关闭
       const sum: any = []
@@ -267,12 +138,38 @@ function Material(props: {
       message.warning(sum.join('、'))
     }
   }
-
+  //切换保存
   const callback = (key: any) => {
-    console.log(key)
-    setType(key)
+    meetConditions(modifyData)
     //点击获取table的数据，初始化展示第一条
   }
+  const switchSave = (e: any) => {
+    console.log('数据已被修改~~~~~~~~', modifyData)
+    setModifyData(e)
+  }
+  //判断是否满足保存条件
+  const meetConditions = async (data: any[]) => {
+    data.map((item) => {
+      if (!isEmpty(item.children)) {
+        item.save = meet(item.children)
+      }
+    })
+    const allMeet = data.every((item) => item.save === true)
+    //满足保存 不满足 提示
+    if (allMeet === true) {
+      console.log('可以走保存')
+      const res = await materialSaved(data)
+      console.log('保存是否成功', res)
+    } else {
+      console.log('没有填写完毕')
+    }
+  }
+  const meet = (data: any[]) => {
+    return data.every((item: any) => {
+      return item.prepareTime !== null || item.enoughFlag !== false
+    })
+  }
+
   return (
     <div>
       <Modal
@@ -287,6 +184,7 @@ function Material(props: {
             materialList.map((item: any, index: any) => (
               <TabPane tab={item.name} key={item.id}>
                 <TabPanes
+                  switchSave={switchSave}
                   index={index}
                   materialList={materialList}
                   analogData={tableList}
@@ -296,7 +194,7 @@ function Material(props: {
               </TabPane>
             ))}
         </Tabs>
-        ,
+
         <div className={styles.bottom}>
           <Button type="primary" onClick={confirm}>
             确认

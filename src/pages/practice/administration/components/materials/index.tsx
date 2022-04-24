@@ -1,7 +1,8 @@
 import { Button, Dropdown, Menu, message, Space, Table } from 'antd'
 import { isEmpty } from 'lodash'
+import moment from 'moment'
 import { any } from 'prop-types'
-import { SetStateAction, useEffect, useState } from 'react'
+import { memo, SetStateAction, useEffect, useState } from 'react'
 
 import { Title } from '@/components'
 import { practice } from '@/recoil/apis'
@@ -24,92 +25,94 @@ function Materials() {
   const [materialList, setMaterialList] = useState<any>() //物料齐套数据
   const [list, setList] = useState<any>() //物料齐套数据
 
-  const { materialData } = practice
+  const { materialListApi } = practice
 
+  const map = new Map()
+  map.set(1, '已检查')
+  map.set(2, '未检查')
+  map.set(3, '重新检查')
   const columns: any = [
     {
       title: '生产单号',
       align: 'center',
-      dataIndex: 'name'
+      dataIndex: 'externalProduceOrderNum'
     },
     {
       title: '销售单号',
       align: 'center',
-      dataIndex: 'age'
+      dataIndex: 'orderNum'
     },
     {
-      title: '接单工厂',
+      title: '工厂名称',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'factoryName'
     },
     {
       title: '产品名称',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'productName'
     },
     {
       title: '产品款号',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'productNum'
     },
     {
       title: '客户款号',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'productClientNum'
     },
     {
       title: '生产单总量',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'orderSum'
     },
     {
       title: '计划完成日期',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: ' planEndDate',
+      width: 100,
+      render: (v: any) => {
+        return moment(v).format('YYYY-MM-DD')
+      }
     },
     {
       title: '生产单权重',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'produceWeight'
     },
     {
       title: '物料齐套状态',
       align: 'center',
-      dataIndex: 'address'
+      dataIndex: 'checkStatus', //生产单状态（1、已检查 2 未检查 3 重新检查）
+      render: (v: any) => {
+        return map.get(v)
+      }
     }
   ]
   //获取列表数据
   useEffect(() => {
     formApi()
   }, [])
-  const formApi = () => {
-    const data = [
-      {
-        id: 5,
+  const formApi = async () => {
+    const res = await materialListApi()
+    if (isEmpty(!res.records)) {
+      res.records.map(
+        (item: {
+          id: any
+          externalProduceOrderId: any
+          key: any
+          name: any
+          externalProduceOrderNum: any
+        }) => {
+          item.id = item.externalProduceOrderId
+          item.key = item.externalProduceOrderId
+          item.name = `生产单：${item.externalProduceOrderNum}`
+        }
+      )
 
-        name: `商品 1号`,
-        age: 32,
-        serial: '1',
-        process: '8848',
-        processTime: '3',
-        remarks: '4',
-        front: '5',
-        totalProduction: '6'
-      },
-      {
-        id: 6,
-        name: `商品 2号`,
-        age: 32,
-        serial: '222222',
-        process: '8848',
-        processTime: '3',
-        remarks: '4',
-        front: '5',
-        totalProduction: '6'
-      }
-    ]
-
-    setList(data)
+      setList(res.records)
+    }
   }
 
   //头部form的数据
@@ -131,13 +134,54 @@ function Materials() {
       console.log('查看')
     }
   }
-  //删除
+  //获取选中的数据
+  const selectedList = (v: any[], data: any[]) => {
+    /**
+     * v 选中的值
+     * data 总数据
+     */
+
+    //过滤出对应的
+    const selectedForm = (v: any, data: any[]) => {
+      if (!isEmpty(data)) {
+        const processData = data.filter((item: { id: any }) => item.id === v)
+        return processData
+      }
+    }
+
+    const dataList: (any[] | undefined)[] = []
+    v.map((item: any) => {
+      const sum = selectedForm(item, data)
+      dataList.push(sum)
+    })
+    return dataList.flat(Infinity)
+  }
+
+  //物料齐套检查检查
+  const materials = async () => {
+    if (selectedRowKeys[0] === undefined) {
+      message.warning('请至少选择一个')
+    } else {
+      //获取选中的数据
+      const selectedValue = selectedList(selectedRowKeys, list)
+      //判断选中的状态是否一样
+      const stateConsistent = selectedValue.every(
+        (item) => item.checkStatus === selectedValue[0].checkStatus
+      )
+      if (stateConsistent === true) {
+        setMaterialList(selectedValue)
+        setMaterialModal(true)
+      } else {
+        message.warning('物料齐套状态不一致')
+      }
+    }
+  }
+  //导出报告
   const start = (type: any) => {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
       if (type === 1) {
-        console.log('选中的删除id-齐套检查报告', selectedRowKeys)
         const res: any = []
         // 导出elsx表格
         const blob = new Blob([res], { type: 'application/octet-stream' })
@@ -147,7 +191,7 @@ function Materials() {
         download.click()
         window.URL.revokeObjectURL(download.href)
       } else {
-        console.log('选中的删除id', selectedRowKeys)
+        console.log('选中的值', selectedRowKeys)
       }
     }
   }
@@ -156,6 +200,7 @@ function Materials() {
     console.log('删除逻辑')
     console.log('选中的删除id', selectedRowKeys)
   }
+
   const onSelectChange = (selectedRowKeys: SetStateAction<never[]>) => {
     //后面有数据的时候 根据id获取所有数据中对应的 然后给from
 
@@ -192,29 +237,7 @@ function Materials() {
       </Menu.Item>
     </Menu>
   )
-  // 获取选中的from数据
-  const selectedForm = (v: never, data: any[]) => {
-    if (!isEmpty(data)) {
-      const processData = data.filter((item: { id: any }) => item.id === v)
-      return processData
-    }
-  }
-  const materials = async () => {
-    if (selectedRowKeys[0] === undefined) {
-      message.warning('请至少选择一个')
-    } else {
-      console.log('选中的删除id-物料齐套检查', selectedRowKeys)
-      //获取选中的数据
-      const dataList: (any[] | undefined)[] = []
-      selectedRowKeys.map((item) => {
-        const sum = selectedForm(item, list)
-        dataList.push(sum)
-      })
 
-      setMaterialList(dataList.flat(Infinity))
-      setMaterialModal(true)
-    }
-  }
   const content = { isModalVisible, setIsModalVisible, type }
 
   return (

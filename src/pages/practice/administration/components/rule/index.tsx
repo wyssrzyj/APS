@@ -155,12 +155,12 @@ function Rule() {
       render: (text: any, record: any, index: number) => {
         return (
           <div className={styles.flex}>
-            <Button type="link" onClick={() => editInfo(false)}>
+            {/* <Button type="link" onClick={() => editInfo(false)}>
               查看
             </Button>
             <Button type="link" onClick={() => editInfo(true)}>
               编辑
-            </Button>
+            </Button> */}
           </div>
         )
       }
