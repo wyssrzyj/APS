@@ -27,7 +27,7 @@ function VerifyModal(props: Record<string, any>) {
     console.log('处理后的数据', id)
 
     const data = cloneDeep(checkList)
-    // ['1504272269944320002']
+    // ['15042722699443200022']
     const res = await checkSchedule(['1504272269944320002'])
     data.forEach((item: Record<string, any>) => {
       item.list = res[item.value]
