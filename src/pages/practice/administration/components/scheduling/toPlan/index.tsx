@@ -295,6 +295,7 @@ function ToPlan(props: {
     })
     dataUpdate() //数据刷新
   }
+
   const removeDispatch = async (id: any) => {
     const res = await releaseFromAssignment({ idList: [id] })
     dataUpdate() //数据刷新
