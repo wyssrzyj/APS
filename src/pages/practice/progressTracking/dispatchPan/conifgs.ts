@@ -22,7 +22,7 @@ export const searchConfigs = [
   },
   {
     label: '所属工段',
-    field: 'teamId',
+    field: 'section',
     allowClear: true,
     placeholder: '请选择所属工段',
     type: 'select',
