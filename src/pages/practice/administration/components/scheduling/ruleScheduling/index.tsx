@@ -7,7 +7,7 @@ import { practice } from '@/recoil/apis'
 
 import Forms from './forms/index'
 import RulesTables from './tables/index'
-function useRuleScheduling(props: Record<string, any>) {
+function RuleScheduling(props: Record<string, any>) {
   const { visibleRule, onCancel } = props
   const [searchParams, setSearchParams] = useState<Record<string, number>>({
     customerPriorityWeight: 1,
@@ -66,4 +66,4 @@ function useRuleScheduling(props: Record<string, any>) {
   )
 }
 
-export default useRuleScheduling
+export default RuleScheduling

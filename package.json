@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "prepare": "husky install",
     "dev:webpack": "cross-env NODE_ENV=development webpack serve --config ./config/webpack.dev.js",
+    "build:dev": "cross-env NODE_ENV=development webpack --config ./config/webpack.prod.js",
     "build:prod": "cross-env NODE_ENV=production webpack --config ./config/webpack.prod.js",
     "build:test": "cross-env NODE_ENV=test webpack --config ./config/webpack.prod.js"
   },

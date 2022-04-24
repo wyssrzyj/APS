@@ -11,7 +11,7 @@ const layout = {
     span: 18
   }
 }
-const useSearchForm = (props: Record<string, any>) => {
+const SearchForm = (props: Record<string, any>) => {
   const { formData, treeData, onChange } = props
   const { SHOW_PARENT } = TreeSelect
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -43,4 +43,4 @@ const useSearchForm = (props: Record<string, any>) => {
   )
 }
 
-export default useSearchForm
+export default SearchForm
