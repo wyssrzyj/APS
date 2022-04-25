@@ -21,13 +21,13 @@ function Material(props: {
   const [tableList, setTableList] = useState<any>() //table的数据
   const [sizeList, setSizeList] = useState<any>() //table的尺码
   const [modifyData, setModifyData] = useState<any>() //修改的值-用于保存
+  const [activeKey, setActiveKey] = useState<any>() //当前激活的key
 
   useEffect(() => {
     if (materialList && !isEmpty(materialList)) {
+      setActiveKey(materialList[0].id)
       tableData(materialList[0])
     }
-
-    console.log('数据', materialList)
   }, [materialList])
 
   // ***js数组对象转键值对
@@ -38,52 +38,46 @@ function Material(props: {
     })
     return obj
   }
-  // *** table 数据处理
-  const processData = (data: any) => {
-    if (!isEmpty(data)) {
-      const tableData = data
-      // 父
-      tableData.map(
-        (item: { produceCheckSizeVOList: any[]; children: any[] }) => {
-          item = Object.assign(item, conversion(item.produceCheckSizeVOList))
-          //子
-          if (!isEmpty(item.children)) {
-            item.children.map((v: { produceCheckSizeVOList: any[] }) => {
-              v = Object.assign(v, conversion(v.produceCheckSizeVOList))
-            })
-          }
-        }
-      )
-      return tableData
-    }
-  }
 
-  //获取table数据
+  //获取table数据 -只需要传当前项就可以
   const tableData = async (data: any) => {
-    console.log(data.checkStatus)
+    console.log('获取当前项', data)
 
     //  未检查
     if (data.checkStatus === 2) {
-      console.log('未检查')
       const resData = await materialData({
         externalProduceOrderId: '1503965241543753729'
       })
-      setTableList(resData.splice(15))
+
+      setTableList(resData.splice(17))
     }
-    //  已检查
+    //  已检查.
+
     if (data.checkStatus === 1) {
-      console.log('已检查')
       const resData = await checked({
         externalProduceOrderId: '1503965241543753729'
       })
-      setTableList(resData.splice(15))
+      setTableList(resData.tableContent)
     }
-    //table数据
-    // if (!isEmpty(resData.tableContent)) {
-    //   const processingComplete = processData(resData.tableContent)
-    //   resData.list = processingComplete
-    // }
-    // setTableList(resData.list)
+
+    //  重新检查
+    if (data.checkStatus === 3) {
+      //已检查
+      if (data.type === 1) {
+        const resData = await materialData({
+          externalProduceOrderId: '1503965241543753729'
+        })
+        setTableList(resData.splice(17))
+        // setTableList(resData)
+      }
+      if (data.type === 2) {
+        //重新检查
+        const resData = await checked({
+          externalProduceOrderId: '1503965241543753729'
+        })
+        setTableList(resData)
+      }
+    }
 
     //尺寸
     const resSize = await getTheSize({
@@ -121,52 +115,87 @@ function Material(props: {
   }
 
   const dataReset = (e: any) => {
-    console.log('保存的时候判读是否全部打钩', e)
-
     setList(e)
   }
   //确认
   const confirm = () => {
-    meetConditions(modifyData)
+    save('2', activeKey)
+  }
 
-    if (!isEmpty(list)) {
-      const hangInTheAir = list.filter((item: any) => item.satisfy !== true) //长度为空才能关闭
-      const sum: any = []
-      hangInTheAir.map((item: any) => {
-        sum.push(item.name)
-      })
-      message.warning(sum.join('、'))
+  //切换
+  const callback = async (key: any) => {
+    save('1', key)
+  }
+
+  //保存
+  const added = async (current: any, methods: any, key: any) => {
+    const type: any = meetConditions(modifyData)
+    if (type === true) {
+      //确认保存
+      current.tableContent = modifyData //添加
+      current.externalProduceOrderId = '1503965241543753729' //添加
+
+      const res = await materialSaved(current)
+      if (res) {
+        if (methods === '确认') {
+          setMaterialModal(false)
+        }
+        if (methods === '切换') {
+          setActiveKey(key)
+          tableData(current)
+
+          //给数据
+        }
+      }
+    } else {
+      message.error('数据未添加完毕')
     }
   }
-  //切换保存
-  const callback = (key: any) => {
-    meetConditions(modifyData)
-    //点击获取table的数据，初始化展示第一条
+
+  const save = async (state: string, key: string) => {
+    //   确认
+    if (state === '2') {
+      // 确认 满足才走接口
+      const current = materialList.filter(
+        (item: { externalProduceOrderId: any }) =>
+          item.externalProduceOrderId === key
+      )[0]
+      added(current, '确认', key)
+    }
+    //切换
+    if (state === '1') {
+      const current = materialList.filter(
+        (item: { externalProduceOrderId: any }) =>
+          item.externalProduceOrderId === key
+      )[0]
+      if (activeKey === '1314520') {
+        //重新计划的已减产 不需要判断是否填写
+        setActiveKey(key)
+        tableData(current)
+      } else {
+        added(current, '切换', key)
+      }
+    }
   }
   const switchSave = (e: any) => {
-    console.log('数据已被修改~~~~~~~~', modifyData)
     setModifyData(e)
   }
+
   //判断是否满足保存条件
-  const meetConditions = async (data: any[]) => {
+  const meetConditions = (data: any[]) => {
     data.map((item) => {
       if (!isEmpty(item.children)) {
         item.save = meet(item.children)
       }
     })
     const allMeet = data.every((item) => item.save === true)
-    //满足保存 不满足 提示
-    if (allMeet === true) {
-      console.log('可以走保存')
-      const res = await materialSaved(data)
-      console.log('保存是否成功', res)
-    } else {
-      console.log('没有填写完毕')
-    }
+
+    return allMeet
   }
+
   const meet = (data: any[]) => {
     return data.every((item: any) => {
-      return item.prepareTime !== null || item.enoughFlag !== false
+      return item.prepareTime !== null || item.enoughFlag !== 0
     })
   }
 
@@ -179,7 +208,7 @@ function Material(props: {
         footer={null}
         onCancel={onCancel}
       >
-        <Tabs onChange={callback} type="card">
+        <Tabs onChange={callback} type="card" activeKey={activeKey}>
           {materialList &&
             materialList.map((item: any, index: any) => (
               <TabPane tab={item.name} key={item.id}>

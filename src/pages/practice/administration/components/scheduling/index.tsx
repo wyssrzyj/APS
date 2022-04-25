@@ -255,8 +255,6 @@ function Index() {
           onCancel={() => toggleVerifyVisible(false)}
         />
       )}
-
-      <div>测试</div>
     </div>
   )
 }

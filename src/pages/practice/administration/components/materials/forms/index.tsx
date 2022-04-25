@@ -36,13 +36,23 @@ const HeaderForm = (props: { FormData: any }) => {
         <Row>
           <Form.Item
             {...layout}
-            name="keyword"
+            name="productOrderNum"
             label="生产单号"
             getValueFromEvent={(event: InputEvent) =>
               getValueFromEvent(event, 'input')
             }
           >
-            <Input placeholder="请输入生产单号" allowClear />
+            <Input placeholder="请输入生产单号" />
+          </Form.Item>
+          <Form.Item
+            {...layout}
+            name="orderNum"
+            label="销售单号"
+            getValueFromEvent={(event: InputEvent) =>
+              getValueFromEvent(event, 'input')
+            }
+          >
+            <Input placeholder="请输入销售单号" />
           </Form.Item>
         </Row>
       </Form>

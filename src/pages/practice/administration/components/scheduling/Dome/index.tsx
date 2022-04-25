@@ -234,7 +234,6 @@ const Dhx = (props: {
                 <div className="gantt-container">
                   <Gantt
                     name={'test'}
-                    gunterType={gunterType}
                     leftData={leftData}
                     rightData={rightData}
                     tasks={subjectData}

@@ -6,6 +6,7 @@ import { memo, SetStateAction, useEffect, useState } from 'react'
 
 import { Title } from '@/components'
 import { practice } from '@/recoil/apis'
+import { completeInspectionReport } from '@/recoil/practice/api'
 
 import Forms from './forms'
 import styles from './index.module.less'
@@ -24,8 +25,10 @@ function Materials() {
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
   const [materialList, setMaterialList] = useState<any>() //物料齐套数据
   const [list, setList] = useState<any>() //物料齐套数据
+  const [queryData, setQueryData] = useState<any>({}) //物料齐套数据
 
-  const { materialListApi } = practice
+  const { materialListApi, completeInspectionReport, exportShortageReport } =
+    practice
 
   const map = new Map()
   map.set(1, '已检查')
@@ -92,10 +95,10 @@ function Materials() {
   ]
   //获取列表数据
   useEffect(() => {
-    formApi()
-  }, [])
-  const formApi = async () => {
-    const res = await materialListApi()
+    formApi(queryData)
+  }, [queryData])
+  const formApi = async (v: any) => {
+    const res = await materialListApi(v)
     if (isEmpty(!res.records)) {
       res.records.map(
         (item: {
@@ -117,7 +120,7 @@ function Materials() {
 
   //头部form的数据
   const FormData = (e: any) => {
-    console.log(e)
+    setQueryData(e)
   }
   const onPaginationChange = (
     page: SetStateAction<number>,
@@ -126,14 +129,7 @@ function Materials() {
     setPageNum(page)
     setPageSize(pageSize)
   }
-  const editUser = (type: boolean) => {
-    if (type === true) {
-      setType(false)
-      setIsModalVisible(true)
-    } else {
-      console.log('查看')
-    }
-  }
+
   //获取选中的数据
   const selectedList = (v: any[], data: any[]) => {
     /**
@@ -157,48 +153,81 @@ function Materials() {
     return dataList.flat(Infinity)
   }
 
-  //物料齐套检查检查
-  const materials = async () => {
+  // 选中的状态
+  const materials = async (type: string | boolean) => {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
       //获取选中的数据
       const selectedValue = selectedList(selectedRowKeys, list)
+
       //判断选中的状态是否一样
       const stateConsistent = selectedValue.every(
         (item) => item.checkStatus === selectedValue[0].checkStatus
       )
       if (stateConsistent === true) {
-        setMaterialList(selectedValue)
-        setMaterialModal(true)
+        if (type === '1' && selectedValue[0].checkStatus !== 3) {
+          setMaterialModal(true)
+        }
+
+        //重新检查只能选择一个
+        if (selectedValue[0].checkStatus === 3) {
+          if (selectedValue.length === 1) {
+            const checked = {
+              ...selectedValue[0],
+              id: '1314520',
+              type: 1,
+              name: '已检查'
+            }
+            const unchecked = {
+              ...selectedValue[0],
+              type: 2,
+              name: '重新检查'
+            }
+            const sum = [checked, unchecked]
+            setMaterialList(sum)
+            //只有物料齐套才会展示弹窗
+            if (type === '1') {
+              setMaterialModal(true)
+            }
+          } else {
+            message.warning('重新检查只能选择一个')
+          }
+        } else {
+          setMaterialList(selectedValue)
+        }
+
+        if (type === '2') {
+          start('2')
+        }
+        if (type === '3') {
+          start('3')
+        }
       } else {
         message.warning('物料齐套状态不一致')
       }
     }
   }
   //导出报告
-  const start = (type: any) => {
-    if (selectedRowKeys[0] === undefined) {
-      message.warning('请至少选择一个')
-    } else {
-      if (type === 1) {
-        const res: any = []
-        // 导出elsx表格
-        const blob = new Blob([res], { type: 'application/octet-stream' })
-        const download = document.createElement('a')
-        download.href = window.URL.createObjectURL(blob)
-        download.download = `齐套检查报告.xls`
-        download.click()
-        window.URL.revokeObjectURL(download.href)
-      } else {
-        console.log('选中的值', selectedRowKeys)
-      }
+  const start = async (type: any) => {
+    // 导出elsx表格
+    if (type === '2') {
+      const res = await completeInspectionReport({ idList: selectedRowKeys })
+      elsxTable(res, '齐套检查报告')
+    }
+    if (type === '3') {
+      const res = await exportShortageReport({ idList: selectedRowKeys })
+      elsxTable(res, '缺料报告')
     }
   }
-  //选中的值
-  const movApi = () => {
-    console.log('删除逻辑')
-    console.log('选中的删除id', selectedRowKeys)
+
+  const elsxTable = (res: any, title: string) => {
+    const blob = new Blob([res], { type: 'application/octet-stream' })
+    const download = document.createElement('a')
+    download.href = window.URL.createObjectURL(blob)
+    download.download = `${title}.xls`
+    download.click()
+    window.URL.revokeObjectURL(download.href)
   }
 
   const onSelectChange = (selectedRowKeys: SetStateAction<never[]>) => {
@@ -220,7 +249,7 @@ function Materials() {
       <Menu.Item>
         <div
           onClick={() => {
-            start(1)
+            materials('2')
           }}
         >
           齐套检查报告
@@ -229,7 +258,7 @@ function Materials() {
       <Menu.Item>
         <div
           onClick={() => {
-            start(2)
+            materials('3')
           }}
         >
           缺料报告
@@ -251,7 +280,9 @@ function Materials() {
           <Button
             className={styles.executionMethod}
             type="primary"
-            onClick={materials}
+            onClick={() => {
+              materials('1')
+            }}
             // onClick={executionMethod}
           >
             物料齐套检查
@@ -288,12 +319,12 @@ function Materials() {
         materialModal={materialModal}
         setMaterialModal={setMaterialModal}
       />
-      <MovPopup
+      {/* <MovPopup
         type="mov"
         movIsModalVisible={movIsModalVisible}
         setMovIsModalVisible={setMovIsModalVisible}
         movApi={movApi}
-      />
+      /> */}
     </div>
   )
 }

@@ -1,19 +1,20 @@
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 
-// import 'dhtmlxgantt.css'
-//****外层必须设置宽高 否则不会展示
 import { gantt } from 'dhtmlx-gantt'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+
 const Gantt = (props: any) => {
-  const { zoom, tasks, updateList, rightData, leftData, restDate, name } = props
+  console.log('资源图')
+
+  const { zoom, tasks, updateList, leftData, restDate, name } = props
 
   const chartDom = document.getElementById(name) //获取id
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   const dataDome = ['2020-04-07', '2020-04-08']
-  console.log('生产')
+
   useEffect(() => {
     if (!isEmpty(restDate)) {
       setRest(restDate)
@@ -47,9 +48,6 @@ const Gantt = (props: any) => {
 
   // 主要参数设置
   const initZoom = () => {
-    // gantt.templates.grid_header_class = function (columnName, column) {
-    //   if (columnName == 'duration' || columnName == 'text') return 'updColor'
-    // }
     gantt.i18n.setLocale('cn') //设置中文
     // gantt.config.readonly = true//只读
     gantt.config.autoscroll = true //如果线超出屏幕可以x滚动
@@ -84,7 +82,7 @@ const Gantt = (props: any) => {
     })
     //单击右键
     gantt.attachEvent('onContextMenu', function (id: any) {
-      rightData && rightData(id)
+      // rightData && rightData(id)
     })
     // //拖拽时
     // gantt.attachEvent('onTaskDrag', function (id: any, v: any, item: any) {
@@ -270,9 +268,10 @@ const Gantt = (props: any) => {
     })
   }
   const ganttShow = async (list: any) => {
-    gantt.clearAll() //缓存问题 先清楚后添加
+    console.log('我是沙', list)
 
     gantt.config.date_format = '%Y-%m-%d %H:%i'
+    gantt.clearAll() //缓存问题 先清楚后添加
     gantt.init(chartDom) //根据 id
     initGanttDataProcessor()
     gantt.parse(list) //渲染数据
