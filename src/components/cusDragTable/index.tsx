@@ -93,7 +93,7 @@ type CusTableProps = {
  */
 const CusDragTable = (props: CusTableProps) => {
   const {
-    columns,
+    columns = [],
     minWidth = 80,
     // container,
     cusBarLeft,

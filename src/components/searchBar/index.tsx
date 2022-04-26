@@ -22,22 +22,7 @@ const SearchBar = (props: Record<string, any>) => {
   }, 200)
 
   const Search = useMemo(() => {
-    return configs.map((item: Record<string, any>, idx: number) => {
-      const keys = [
-        'type',
-        'options',
-        'field',
-        'placeholder',
-        'allowClear',
-        'filterOption',
-        'showSearch',
-        'onSearch',
-        'treeData',
-        'showTime'
-      ]
-      const obj: any = {}
-
-      keys.forEach((i) => (obj[i] = item[i]))
+    return configs.map((item: any, idx: number) => {
       return (
         <Col key={idx} span={8}>
           <div
@@ -49,7 +34,7 @@ const SearchBar = (props: Record<string, any>) => {
             <div className={styles.searchValue}>
               <FormNode
                 key={params[item.field]}
-                {...obj}
+                {...item}
                 onChange={(value) => valuesChange(value, item.field)}
                 value={paramsRef.current[item.field]}
               ></FormNode>

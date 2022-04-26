@@ -649,7 +649,6 @@ export const releaseSchedule = async (params: any) => {
 }
 // 效率模板
 export const efficiencyList = async (params: any) => {
-  console.log('🚀 ~ ~~~~~~~~~~~~~~~~~', params)
   try {
     const res: ResponseProps = await axios.post(
       `/aps/capacity-efficiency-manage/list-fuzzy-by-page`,
@@ -787,7 +786,7 @@ export const productDetail = async (params: any) => {
     console.log(e)
   }
 }
-// 生产计划详情
+// 工段
 export const getWorkshopSectionList = async () => {
   try {
     const res: ResponseProps = await axios.get(`/aps/mes/get-section-list`)

@@ -1,4 +1,3 @@
-import { TreeSelect } from 'antd'
 import moment from 'moment'
 import { ReactNode } from 'react'
 
@@ -33,16 +32,16 @@ export const searchConfigs = [
     field: 'startTime',
     type: 'rangePicker',
     allowClear: true,
-    placeholder: '请选择计划开始时间',
-    showTime: true
+    placeholder: '请选择计划开始时间'
+    // showTime: true
   },
   {
     label: '计划结束时间',
     field: 'endTime',
     allowClear: true,
     placeholder: '请选择计划结束时间',
-    type: 'rangePicker',
-    showTime: true
+    type: 'rangePicker'
+    // showTime: true
   }
 ]
 

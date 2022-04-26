@@ -76,7 +76,8 @@ const OrderChart = React.lazy(
 const SchedulingResults = React.lazy(
   () => import('@/pages/practice/progressTracking/schedulingResults')
 )
-
+//排程结果 - 生产实绩
+const ActualProduction = React.lazy(() => import('@/pages/actualProduction'))
 /* ------------------------//测试 */
 
 const RouteList = () => {
@@ -121,6 +122,8 @@ const RouteList = () => {
       <Route path="/orderChart" element={<OrderChart />} />
       {/* 排程结果 -资源负荷图 */}
       <Route path="/schedulingResults" element={<SchedulingResults />} />
+      {/* 生产实绩 */}
+      <Route path="/actualProduction" element={<ActualProduction />} />
 
       {/* 无匹配路由 放置在最后一个路由的位置 */}
       <Route path="*" element={<Home />} />
