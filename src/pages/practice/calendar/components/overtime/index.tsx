@@ -25,8 +25,10 @@ function Overtime() {
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [list, setList] = useState([])
   const [edit, setEdit] = useState([]) //编辑数据
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
-  const { overtimedisplay, workOvertimeMov, overtimeDetails } = practice
+  const { overtimedisplay, workOvertimeMov, overtimeDetails, factoryList } =
+    practice
 
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
@@ -143,6 +145,21 @@ function Overtime() {
       }
     }
   ]
+
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setFactoryData(arr)
+    }
+  }
   useEffect(() => {
     setParams({
       pageNum: pageNum,
@@ -191,7 +208,7 @@ function Overtime() {
     }
   }
   const movApi = async () => {
-    const arr = await workOvertimeMov({ idList: selectedRowKeys })
+    await workOvertimeMov({ idList: selectedRowKeys })
     setSelectedRowKeys([])
     newlyAdded()
   }
@@ -211,7 +228,7 @@ function Overtime() {
     setIsModalVisible(true)
     setType(1)
   }
-  const content = { isModalVisible, setIsModalVisible, type, edit }
+  const content = { isModalVisible, setIsModalVisible, type, edit, factoryData }
   return (
     <div className={styles.qualification}>
       <div>
@@ -219,7 +236,7 @@ function Overtime() {
       </div>
       <div>
         <div className={styles.content}>
-          <Forms FormData={FormData}></Forms>
+          <Forms factoryData={factoryData} FormData={FormData}></Forms>
           <Button
             className={styles.executionMethod}
             type="primary"

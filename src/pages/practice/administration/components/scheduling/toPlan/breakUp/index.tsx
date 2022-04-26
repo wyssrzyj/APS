@@ -41,7 +41,6 @@ const BreakUp = (props: any) => {
   const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
 
   const [factoryName, setFactoryName] = useState<any>([]) //车间
-  const [workshopId, setWorkshopId] = useState<any>() //车间id
 
   useEffect(() => {
     if (formData !== undefined) {
@@ -68,32 +67,7 @@ const BreakUp = (props: any) => {
   }, [workSplitList])
 
   const getInterfaceData = async (data: any) => {
-    // data.id
-    /// data.id
-
     const res = await breakQuery({ assignmentId: data.id })
-    // const storage = []
-    // for (let i = 0; i < 1; i++) {
-    //   storage.push({
-    //     id: i,
-    //     key: i,
-    //     ids: i,
-    //     productNum: `Edward King ${i}`,
-    //     productName: `Edward King ${i}`,
-    //     planEndTime: 1649144899000,
-    //     planStartTime: 1649058485000,
-    //     completedAmount: 100, //已完成量
-    //     templateId: '选择效率模板',
-    //     age: 32,
-    //     address: `London, Park Lane no. ${i}`,
-    //     orderSum: 1000, //生产单总量
-    //     productionAmount: 800,
-    //     shopId: '1',
-    //     teamId: '1',
-    //     isLocked: true
-    //   })
-    // }
-    console.log('数据-------------------------------', res)
     if (!isEmpty(res)) {
       res.map((item: any) => {
         item.isLocked = item.isLocked === 1 ? true : false
@@ -162,21 +136,36 @@ const BreakUp = (props: any) => {
     updateData(record, sum)
   }
   // 下拉处理
-  const handleChange = (
+  const handleChange = async (
     type: number,
     e: any,
-    record: { shopId: any; id: any; teamId: any; templateId: any }
+    record: {
+      shopId: any
+      id: any
+      teamId: any
+      templateId: any
+      teamType: any
+      teamList: any
+    }
   ) => {
     const sum = cloneDeep(data)
     //工作车间
     if (type === 1) {
-      console.log('工作车间', e)
-      setWorkshopId(e)
       record.shopId = e
-      updateData(record, sum)
+      record.teamType = true
+      //班组是独立的
+      const team = await teamList({ factoryId: formData, shopMannagerId: e })
+      if (team) {
+        team.map((item: { name: any; teamName: any }) => {
+          item.name = item.teamName
+        })
+        record.teamList = team
+        updateData(record, sum)
+      }
     }
     //工作班组
     if (type === 2) {
+      //工作班组不可重复
       record.teamId = e
       updateData(record, sum)
     }
@@ -261,8 +250,8 @@ const BreakUp = (props: any) => {
         // key: Date.now(),
         ids: Date.now() * Math.random(),
         productionAmount: value,
-        shopId: arr[0].shopId,
-        teamId: arr[0].teamId,
+        // shopId: arr[0].shopId,
+        // teamId: arr[0].teamId,
         planStartTime: undefined,
         planEndTime: undefined,
         efficiency: arr[0].efficiency,
@@ -288,7 +277,7 @@ const BreakUp = (props: any) => {
       dataIndex: 'name',
       key: 'name',
       render: (_value: any, _row: any, index: any) => {
-        return <div>{index + 1}</div>
+        return <div key={_value}>{index + 1}</div>
       }
     },
     {
@@ -377,7 +366,9 @@ const BreakUp = (props: any) => {
             >
               {factoryName.map((item: any) => (
                 // eslint-disable-next-line react/jsx-key
-                <Option value={item.id}>{item.name}</Option>
+                <Option key={item.id} value={item.id}>
+                  {item.name}
+                </Option>
               ))}
             </Select>
           </div>
@@ -395,16 +386,20 @@ const BreakUp = (props: any) => {
         return (
           <div>
             <Select
-              disabled={workshopId === undefined ? true : false}
+              disabled={_row.teamType === true ? false : true}
               placeholder="请选择工作车间"
-              defaultValue={_value}
+              // defaultValue={_value}
               style={{ width: 120 }}
               onChange={(e) => handleChange(2, e, _row)}
             >
-              {teamName.map((item: any) => (
-                // eslint-disable-next-line react/jsx-key
-                <Option value={item.id}>{item.name}</Option>
-              ))}
+              {!isElement(_row.teamList) && _row.teamList !== undefined
+                ? _row.teamList.map((item: any) => (
+                    // eslint-disable-next-line react/jsx-key
+                    <Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Option>
+                  ))
+                : null}
             </Select>
           </div>
         )
@@ -429,13 +424,6 @@ const BreakUp = (props: any) => {
               }}
               defaultValue={_value ? moment(_value) : undefined}
             />
-            {/* <DatePicker
-              format="YYYY-MM-DD HH:mm"
-              defaultValue={_value ? moment(_value) : undefined}
-              onChange={(e) => {
-                time(1, e, _row)
-              }}
-            /> */}
           </div>
         )
       }
@@ -481,7 +469,9 @@ const BreakUp = (props: any) => {
             >
               {capacityData.map((item: any) => (
                 // eslint-disable-next-line react/jsx-key
-                <Option value={item.id}>{item.name}</Option>
+                <Option key={item.id} value={item.id}>
+                  {item.name}
+                </Option>
               ))}
             </Select>
           </div>
@@ -502,7 +492,6 @@ const BreakUp = (props: any) => {
               checked={_value}
               onChange={(e) => onLock(e, _row)}
             ></Checkbox>
-            {console.log('单选', _value)}
           </div>
         )
       }
@@ -554,16 +543,12 @@ const BreakUp = (props: any) => {
   // 保存事件
   const handleOk = async () => {
     const arr = cloneDeep(data)
+    const state = { timeState: false, number: false, teamType: false }
     //时间的过滤
-    const state = { timeState: false, number: false }
-    console.log('总', arr)
-
     const Time = arr.filter(
       (item: { planStartTime: undefined; planEndTime: undefined }) =>
         item.planStartTime === undefined || item.planEndTime === undefined
     )
-    console.log('时间', Time)
-
     if (Time.length > 0) {
       message.warning(`时间不能为空`)
     } else {
@@ -585,8 +570,32 @@ const BreakUp = (props: any) => {
       state.number = true
     }
 
-    console.log('用于判断是否全部满足', state)
-    if (state.timeState === true && state.number === true) {
+    //工作班组 不可重复
+    //判断班组是否重复
+    const team: any = []
+    arr.map((item: { teamId: any }) => {
+      team.push(item.teamId)
+    })
+    function isRepeat(arr: any) {
+      const hash: any = {}
+      for (const i in arr) {
+        if (hash[arr[i]]) return true
+        hash[arr[i]] = true
+      }
+      return false
+    }
+
+    if (!isRepeat(team)) {
+      state.teamType = true
+    } else {
+      state.teamType = false
+      message.warning(`班组不能相同`)
+    }
+    if (
+      state.timeState === true &&
+      state.number === true &&
+      state.teamType === true
+    ) {
       console.log('数据处理完毕，传给后台', arr)
       arr.map((item: any) => {
         item.isLocked = item.isLocked === true ? 1 : 0
@@ -596,7 +605,6 @@ const BreakUp = (props: any) => {
         assignmentId: workSplitList.id,
         data: arr
       })
-      console.log(sum)
       if (sum) {
         breakSave && breakSave()
       }
@@ -617,6 +625,7 @@ const BreakUp = (props: any) => {
         width={1500}
         visible={isModalVisible}
         onOk={handleOk}
+        destroyOnClose={true}
         onCancel={handleCancel}
       >
         <Table

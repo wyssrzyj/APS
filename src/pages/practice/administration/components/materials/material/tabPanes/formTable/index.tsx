@@ -8,13 +8,19 @@ import { Icon } from '@/components'
 
 import styles from './index.module.less'
 const FormTable = (props: any) => {
-  const { tableData, materialList, index, dataProcessing, sizeList, saveData } =
-    props
+  const {
+    tableData,
+    materialList,
+    index,
+    dataProcessing,
+    sizeList,
+    saveData,
+    select
+  } = props
   const [expandedRowKeys, setExpandedRowKeys] = useState<any>([])
   const [data, setData] = useState<any>([]) //table 数据  防止为空
   const [list, setList] = useState<any>([]) //table处理后的格式
   const [loading, setLoading] = useState<any>(true) //加载
-
   useEffect(() => {
     saveData && saveData(data)
   }, [data])
@@ -93,7 +99,7 @@ const FormTable = (props: any) => {
             <>
               <InputNumber
                 // key={v.unit}
-                disabled={materialList[0].id === '1314520'}
+                disabled={select.type === 1}
                 min={0}
                 defaultValue={_item}
                 onChange={(e) => {
@@ -143,7 +149,7 @@ const FormTable = (props: any) => {
               !v.enoughFlag ? (
                 <>
                   <DatePicker
-                    disabled={materialList[0].id === '1314520'}
+                    disabled={select.type === 1}
                     allowClear={false}
                     defaultValue={_item ? moment(Number(_item)) : undefined}
                     onChange={(e) => {

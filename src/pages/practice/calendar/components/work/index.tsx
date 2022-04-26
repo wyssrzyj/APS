@@ -31,7 +31,7 @@ const Index = () => {
 
   const {
     workingModes,
-    operatingModeDetails,
+    factoryList,
     listSorkingModesDelete,
     operatingModeDetailsData
   } = practice
@@ -43,6 +43,7 @@ const Index = () => {
   const [list, setlist] = useState([])
   const [edit, setEdit] = useState() //编辑数据
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
   // const value = useRecoilValue(practices.lyj)
   useEffect(() => {
@@ -51,6 +52,22 @@ const Index = () => {
   const api = async (item: any) => {
     const arr = await workingModes(item)
     setlist(arr.records)
+  }
+
+  //工厂名称
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setFactoryData(arr)
+    }
   }
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
@@ -231,7 +248,7 @@ const Index = () => {
   const newlyAdded = async () => {
     api(params)
   }
-  const content = { isModalVisible, setIsModalVisible, type, edit }
+  const content = { isModalVisible, setIsModalVisible, type, edit, factoryData }
   return (
     <div className={styles.qualification}>
       <div>
@@ -239,7 +256,7 @@ const Index = () => {
       </div>
       <div>
         <div className={styles.content}>
-          <Forms FormData={FormData}></Forms>
+          <Forms factoryData={factoryData} FormData={FormData}></Forms>
 
           <Button
             className={styles.executionMethod}

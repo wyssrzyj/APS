@@ -22,11 +22,13 @@ function Material(props: {
   const [sizeList, setSizeList] = useState<any>() //table的尺码
   const [modifyData, setModifyData] = useState<any>() //修改的值-用于保存
   const [activeKey, setActiveKey] = useState<any>() //当前激活的key
+  const [select, setSelect] = useState<any>() //当前选中的值
 
   useEffect(() => {
     if (materialList && !isEmpty(materialList)) {
       setActiveKey(materialList[0].id)
       tableData(materialList[0])
+      setSelect(materialList[0])
     }
   }, [materialList])
 
@@ -41,12 +43,10 @@ function Material(props: {
 
   //获取table数据 -只需要传当前项就可以
   const tableData = async (data: any) => {
-    console.log('获取当前项', data)
-
     //  未检查
     if (data.checkStatus === 2) {
       const resData = await materialData({
-        externalProduceOrderId: '1503965241543753729'
+        externalProduceOrderId: data.externalProduceOrderId
       })
 
       setTableList(resData.splice(17))
@@ -55,25 +55,24 @@ function Material(props: {
 
     if (data.checkStatus === 1) {
       const resData = await checked({
-        externalProduceOrderId: '1503965241543753729'
+        externalProduceOrderId: data.externalProduceOrderId
       })
       setTableList(resData.tableContent)
     }
-
     //  重新检查
     if (data.checkStatus === 3) {
       //已检查
       if (data.type === 1) {
-        const resData = await materialData({
-          externalProduceOrderId: '1503965241543753729'
+        const resData = await checked({
+          externalProduceOrderId: data.externalProduceOrderId
         })
-        setTableList(resData.splice(17))
-        // setTableList(resData)
+
+        setTableList(resData.tableContent)
       }
       if (data.type === 2) {
         //重新检查
-        const resData = await checked({
-          externalProduceOrderId: '1503965241543753729'
+        const resData = await materialData({
+          externalProduceOrderId: data.externalProduceOrderId
         })
         setTableList(resData)
       }
@@ -81,7 +80,7 @@ function Material(props: {
 
     //尺寸
     const resSize = await getTheSize({
-      externalProduceOrderId: '1503965241543753729'
+      externalProduceOrderId: data.externalProduceOrderId
     })
     const goodsSize: {
       title: any
@@ -165,9 +164,17 @@ function Material(props: {
     //切换
     if (state === '1') {
       const current = materialList.filter(
-        (item: { externalProduceOrderId: any }) =>
-          item.externalProduceOrderId === key
+        (item: { id: any }) => item.id === key
       )[0]
+      console.log('过滤出来的数据', key)
+      console.log('过滤出来的数据', current)
+
+      if (current !== undefined) {
+        setSelect(current)
+      } else {
+        setSelect(materialList[0])
+      }
+
       if (activeKey === '1314520') {
         //重新计划的已减产 不需要判断是否填写
         setActiveKey(key)
@@ -213,6 +220,7 @@ function Material(props: {
             materialList.map((item: any, index: any) => (
               <TabPane tab={item.name} key={item.id}>
                 <TabPanes
+                  select={select}
                   switchSave={switchSave}
                   index={index}
                   materialList={materialList}
