@@ -145,5 +145,11 @@ export const menus = [
         ]
       }
     ]
+  },
+  {
+    label: '生产实绩',
+    key: 'actualProduction',
+    icon: 'jack-shengchan',
+    url: '/actualProduction'
   }
 ]

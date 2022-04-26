@@ -45,7 +45,7 @@ function ProductionPlan() {
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
-  const [rowInfo, setRowInfo] = useState(false) //展示弹窗
+  const [rowInfo, setRowInfo] = useState() //展示弹窗
   const [facList, setFacList] = useState([])
   const [workshopSectionList, setWorkshopSectionList] = useState([])
   const { dataSource, total, pageNum, pageSize, loading, tableChange } =
@@ -113,12 +113,8 @@ function ProductionPlan() {
   }
 
   const exportFile = () => {
-    // if (selectedRowKeys[0] === undefined) {
-    //   message.warning('请至少选择一个')
-    // } else {
     exportProductList({
       ...params
-      // idList: [...selectedRowKeys]
     }).then((res: any) => {
       const blob = new Blob([res], { type: 'application/octet-stream' })
       const download = document.createElement('a')
@@ -127,7 +123,6 @@ function ProductionPlan() {
       download.click()
       window.URL.revokeObjectURL(download.href)
     })
-    // }
   }
 
   const handleDetailInfo = async (rowInfo: any) => {
