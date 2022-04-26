@@ -18,7 +18,7 @@ function ActualProductionList() {
   const [facList, setFacList] = useState([])
   const [workshopSectionList, setWorkshopSectionList] = useState([])
   const [configs, setConfigs] = useState(searchConfig)
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值.
   const [params, setParams] = useState<Record<string, any>>({
     pageSize: 10,
     pageNum: 1
