@@ -874,9 +874,12 @@ export const forDetail = async (params: any) => {
   }
 }
 //生产单-列表
-export const materialListApi = async () => {
+export const materialListApi = async (params: any) => {
   try {
-    const res: ResponseProps = await axios.post(`/aps/product-order/list`)
+    const res: ResponseProps = await axios.post(
+      `/aps/product-order/list`,
+      params
+    )
     if (res.code !== 200) {
       message.error(res.msg)
     }
@@ -974,6 +977,38 @@ export const releaseFromAssignment = async (params: any) => {
     }
     if (res) {
       return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+//导出齐套检查报告
+export const completeInspectionReport = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/check-product/export-check-report`,
+      params
+    )
+    if (res) {
+      return res
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+//导出缺料报告
+export const exportShortageReport = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/check-product/export-short-report`,
+      params
+    )
+    if (res) {
+      return res
     }
     return []
   } catch (e) {

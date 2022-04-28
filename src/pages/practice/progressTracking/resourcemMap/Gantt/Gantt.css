@@ -1,3 +1,11 @@
+/* @import '~dhtmlx-gantt/codebase/dhtmlxgantt.css'; */
+.gunter {
+  height: 100%;
+  margin-top: 11px;
+  /* .gunter-content {
+    height: 100%;
+  } */
+}
 .gantt-container {
   height: calc(100vh - 50px - 200px);
 }
@@ -100,24 +108,24 @@
   margin-right: 0.3rem;
 }
 /* 减号 */
-/* .gantt_tree_icon.gantt_close {
+.gantt_tree_icon.gantt_close {
   background-image: url('https://i.52112.com/icon/jpg/256/20190807/52484/2373424.jpg');
   width: 12px;
   height: 100%;
   background-size: contain;
   background-position: 50%;
   margin-right: 0.3rem;
-} */
+}
 /* 左侧背景 */
-/* .gantt_grid_scale {
+.gantt_grid_scale {
   background-color: #11a98318;
-} */
+}
 .gantt_grid_data {
   /* background-color:#11a98318 */
   background-color: #11a98318;
 }
 /* 右侧横条弹框 */
-/* .gantt_btn_set.gantt_save_btn_set {
+.gantt_btn_set.gantt_save_btn_set {
   background-color: #1890ff;
 }
 .gantt_btn_set.gantt_delete_btn_set {
@@ -125,9 +133,9 @@
 }
 .gantt_btn_set.gantt_cancel_btn_set {
   background-color: rgba(150, 153, 156, 0.27);
-} */
+}
 
-/* .gantt_task_link.link-type-0 .gantt_line_wrapper:nth-of-type(2)::before {
+.gantt_task_link.link-type-0 .gantt_line_wrapper:nth-of-type(2)::before {
   content: 'fs';
   position: absolute;
   top: 10px;
@@ -154,4 +162,4 @@
   top: 10px;
   left: 15px;
   font-size: 16px;
-} */
+}

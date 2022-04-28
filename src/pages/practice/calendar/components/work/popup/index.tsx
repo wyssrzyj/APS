@@ -8,30 +8,15 @@ import { dockingDataApis, practice } from '@/recoil/apis'
 import WorkingHours from './workingHours/index'
 function Popup(props: { content: any; newlyAdded: any }) {
   const { content, newlyAdded } = props
-  const { isModalVisible, setIsModalVisible, type, edit } = content
+  const { isModalVisible, setIsModalVisible, type, edit, factoryData } = content
   const { SHOW_PARENT } = TreeSelect
   const [form] = Form.useForm()
   const { Option } = Select
   const { teamList } = dockingDataApis
-  const { operatingModeDetails, teamId, factoryList } = practice
-  const [list, setList] = useState<any>([]) //工厂
+  const { operatingModeDetails, teamId } = practice
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
 
-  //工厂名称
-  useEffect(() => {
-    getData()
-  }, [])
-  const getData = async () => {
-    const res: any = await factoryList()
-    const arr: any = res.data
-    if (res.code === 200) {
-      arr.map((item: { name: any; deptName: any }) => {
-        item.name = item.deptName
-      })
-      setList(arr)
-    }
-  }
   //加班班组
   useEffect(() => {
     if (!isEmpty(listID)) {
@@ -191,7 +176,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
           </Form.Item>
           <Form.Item
             label="工厂名称"
-            name="teamIdss"
+            name="factoryId"
             rules={[{ required: true, message: '请选择工厂名称!' }]}
           >
             <Select
@@ -199,22 +184,24 @@ function Popup(props: { content: any; newlyAdded: any }) {
               placeholder="请选择工厂名称"
               allowClear
             >
-              {list.map(
-                (item: {
-                  id: React.Key | null | undefined
-                  name:
-                    | boolean
-                    | React.ReactChild
-                    | React.ReactFragment
-                    | React.ReactPortal
-                    | null
-                    | undefined
-                }) => (
-                  <Option key={item.id} value={item.id}>
-                    {item.name}
-                  </Option>
-                )
-              )}
+              {factoryData !== undefined
+                ? factoryData.map(
+                    (item: {
+                      id: React.Key | null | undefined
+                      name:
+                        | boolean
+                        | React.ReactChild
+                        | React.ReactFragment
+                        | React.ReactPortal
+                        | null
+                        | undefined
+                    }) => (
+                      <Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Option>
+                    )
+                  )
+                : null}
             </Select>
           </Form.Item>
           <Form.Item

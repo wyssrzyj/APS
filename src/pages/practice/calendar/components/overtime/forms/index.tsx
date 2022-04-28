@@ -5,8 +5,8 @@ import React, { useEffect, useState } from 'react'
 import { getChild } from '@/components/getChild/index'
 import { dockingDataApis, practice } from '@/recoil/apis'
 
-const HeaderForm = (props: { FormData: any }) => {
-  const { FormData } = props
+const HeaderForm = (props: { FormData: any; factoryData: any }) => {
+  const { FormData, factoryData } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const { validateFields } = form
@@ -24,24 +24,8 @@ const HeaderForm = (props: { FormData: any }) => {
     }
   }
 
-  const [list, setList] = useState<any>([]) //工厂
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
-
-  //工厂名称
-  useEffect(() => {
-    getData()
-  }, [])
-  const getData = async () => {
-    const res: any = await factoryList()
-    const arr: any = res.data
-    if (res.code === 200) {
-      arr.map((item: { name: any; deptName: any }) => {
-        item.name = item.deptName
-      })
-      setList(arr)
-    }
-  }
 
   //加班班组
   useEffect(() => {
@@ -99,7 +83,7 @@ const HeaderForm = (props: { FormData: any }) => {
             <Form.Item
               {...layout}
               label="工厂名称"
-              name="teamIdss"
+              name="factoryId"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'treeSelect')
               }
@@ -109,22 +93,24 @@ const HeaderForm = (props: { FormData: any }) => {
                 placeholder="请选择工厂名称"
                 allowClear
               >
-                {list.map(
-                  (item: {
-                    id: React.Key | null | undefined
-                    name:
-                      | boolean
-                      | React.ReactChild
-                      | React.ReactFragment
-                      | React.ReactPortal
-                      | null
-                      | undefined
-                  }) => (
-                    <Option key={item.id} value={item.id}>
-                      {item.name}
-                    </Option>
-                  )
-                )}
+                {factoryData !== undefined
+                  ? factoryData.map(
+                      (item: {
+                        id: React.Key | null | undefined
+                        name:
+                          | boolean
+                          | React.ReactChild
+                          | React.ReactFragment
+                          | React.ReactPortal
+                          | null
+                          | undefined
+                      }) => (
+                        <Option key={item.id} value={item.id}>
+                          {item.name}
+                        </Option>
+                      )
+                    )
+                  : null}
               </Select>
             </Form.Item>
           </Col>
@@ -132,7 +118,7 @@ const HeaderForm = (props: { FormData: any }) => {
           <Col span={6}>
             <Form.Item
               {...layout}
-              name="teamIds"
+              name="teamId"
               label="班组名称"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'treeSelect')

@@ -8,12 +8,19 @@ import { Icon } from '@/components'
 
 import styles from './index.module.less'
 const FormTable = (props: any) => {
-  const { tableData, materialList, index, dataProcessing, sizeList, saveData } =
-    props
+  const {
+    tableData,
+    materialList,
+    index,
+    dataProcessing,
+    sizeList,
+    saveData,
+    select
+  } = props
   const [expandedRowKeys, setExpandedRowKeys] = useState<any>([])
-  const [data, setData] = useState<any>(tableData) //table 数据  防止为空
+  const [data, setData] = useState<any>([]) //table 数据  防止为空
   const [list, setList] = useState<any>([]) //table处理后的格式
-
+  const [loading, setLoading] = useState<any>(true) //加载
   useEffect(() => {
     saveData && saveData(data)
   }, [data])
@@ -89,14 +96,17 @@ const FormTable = (props: any) => {
         key: 'counteractNum',
         render: (_item: any, v: any) =>
           isEmpty(v.children) ? (
-            <InputNumber
-              // key={v.unit}
-              min={0}
-              defaultValue={_item}
-              onChange={(e) => {
-                quantity(e, v)
-              }}
-            />
+            <>
+              <InputNumber
+                // key={v.unit}
+                disabled={select.type === 1}
+                min={0}
+                defaultValue={_item}
+                onChange={(e) => {
+                  quantity(e, v)
+                }}
+              />
+            </>
           ) : (
             _item
           )
@@ -113,13 +123,12 @@ const FormTable = (props: any) => {
         title: '是否充足',
         dataIndex: 'enoughFlag',
         width: 150,
-
         align: 'center',
         key: 'enoughFlag',
         fixed: 'right',
         render: (_item: any) => (
           <Space size="middle">
-            {_item ? (
+            {_item === 1 ? (
               <Icon type="jack-icon-test" className={styles.previous} />
             ) : (
               <Icon type="jack-cuowu" className={styles.previous} />
@@ -138,13 +147,16 @@ const FormTable = (props: any) => {
           <Space size="middle">
             {isEmpty(v.children) ? (
               !v.enoughFlag ? (
-                <DatePicker
-                  allowClear={false}
-                  defaultValue={_item ? moment(_item) : undefined}
-                  onChange={(e) => {
-                    onChange(e, v)
-                  }}
-                />
+                <>
+                  <DatePicker
+                    disabled={select.type === 1}
+                    allowClear={false}
+                    defaultValue={_item ? moment(Number(_item)) : undefined}
+                    onChange={(e) => {
+                      onChange(e, v)
+                    }}
+                  />
+                </>
               ) : (
                 <Icon type="jack-icon-test" className={styles.previous} />
               )
@@ -168,16 +180,17 @@ const FormTable = (props: any) => {
 
   useEffect(() => {
     // 调取接口口添加 key和 counteractNum -半成品冲销数量的字段
-    !isEmpty(tableData) &&
+    if (!isEmpty(tableData)) {
+      setLoading(false)
       tableData.map((item: any) => {
         item.deliveredQty = item.deliveredQty === null ? 0 : item.deliveredQty //测试~~~已出库数量暂无 设置0
         item.id = item.materialCode //id是 materialCode
         item.key = item.id //添加 key
-        item.counteractNum = 0 //添加初始 冲销数量
+        // item.counteractNum = 0 //添加初始 冲销数量
         if (!isEmpty(item.children)) {
           item.children.map((v: any) => {
             v.deliveredQty = v.deliveredQty === null ? 0 : v.deliveredQty //测试~~~已出库数量暂无 设置0
-            v.counteractNum = 0
+            // v.counteractNum = 0
             v.id = v.materialCode + v.materialColCode
             v.key = v.id
             //物料缺少数量 计算
@@ -195,13 +208,14 @@ const FormTable = (props: any) => {
                   v.deliveredQty
                 : 0
 
-            v.enoughFlag = v.shortOfProductNum > 0 ? false : true
+            v.enoughFlag = v.shortOfProductNum > 0 ? 0 : 1
           })
         }
         item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
-        item.enoughFlag = item.shortOfProductNum > 0 ? false : true //物料缺少数量-头
+        item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
-    setData([...tableData])
+      setData([...tableData])
+    }
   }, [tableData])
 
   //计算总值
@@ -256,7 +270,7 @@ const FormTable = (props: any) => {
                         v.deliveredQty
                       : 0
 
-                  v.enoughFlag = v.shortOfProductNum > 0 ? false : true
+                  v.enoughFlag = v.shortOfProductNum > 0 ? 0 : 1
                 }
                 if (type === 'time') {
                   v.prepareTime = e
@@ -265,7 +279,7 @@ const FormTable = (props: any) => {
               // 在累加
               item.counteractNum = total(item.children, 'counteractNum') //顶部数据
               item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
-              item.enoughFlag = item.shortOfProductNum > 0 ? false : true //物料缺少数量-头
+              item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
             })
           }
         }
@@ -277,7 +291,7 @@ const FormTable = (props: any) => {
   useEffect(() => {
     //判断子项是否全部满足
     function checkAdult(data: any) {
-      return data.enoughFlag === true
+      return data.enoughFlag === 1
     }
     // 给当前页的数据添加 一个状态 用于判断当前页是否全部打钩
     materialList[index].satisfy = data.every(checkAdult)
@@ -286,16 +300,16 @@ const FormTable = (props: any) => {
   const onExpandedRowsChange = (e: any) => {
     setExpandedRowKeys(e)
   }
+
   function TreeData() {
     return (
       <>
         <Table
-          expandedRowKeys={expandedRowKeys}
-          onExpandedRowsChange={onExpandedRowsChange}
           columns={list}
+          loading={loading}
           dataSource={data}
           scroll={{ x: 1500, y: 300 }}
-          // scroll={{ x: 1200, y: 'calc(100vh - 400px)' }}
+          pagination={false}
         />
       </>
     )

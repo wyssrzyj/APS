@@ -5,7 +5,7 @@ import styles from './index.module.less'
 
 function Edition() {
   const arr: any = [
-    { date: 1.1, key: 1, height: 10 },
+    { date: 1, key: 1, height: 10 },
     { date: 2, key: 2, height: 20 },
     { date: 3, key: 3, height: 30 },
     { date: 4, key: 4, height: 40 },
