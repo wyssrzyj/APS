@@ -405,7 +405,7 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
       const obj: any = {}
       obj.billingDate = ''
       obj.billingUserId = ''
-      obj.detailId = editData.id // 发单详情id
+      obj.detailId = editData.id // 发单详情id.
       obj.estimatedDate = editData.id // 预估工期
 
       const estimatedDate =
