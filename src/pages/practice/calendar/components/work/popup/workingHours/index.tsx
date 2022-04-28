@@ -4,7 +4,11 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
-function WorkingHours(props: { onChange: any; type: any; edit: any }) {
+function WorkingHours(props: {
+  onChange?: (params?: any) => void
+  type: any
+  edit: any
+}) {
   const format = 'HH:mm'
   const { onChange, type, edit } = props
   const [data, setData] = useState<any>([])
@@ -19,7 +23,6 @@ function WorkingHours(props: { onChange: any; type: any; edit: any }) {
   }, [type, edit])
 
   const start = (index: string | number, e: moment.MomentInput) => {
-    console.log(e)
     data[index].startDateTime = moment(e).valueOf()
   }
   const end = (index: string | number, e: moment.MomentInput) => {

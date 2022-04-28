@@ -771,7 +771,7 @@ export const exportProductList = async (params: any) => {
 // 生产计划详情
 export const productDetail = async (params: any) => {
   try {
-    const res: ResponseProps = await axios.post(
+    const res: ResponseProps = await axios.get(
       `/aps/produce-assignment-detail-pulished/get`,
       params
     )
@@ -1005,6 +1005,52 @@ export const exportShortageReport = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
       `/aps/check-product/export-short-report`,
+      params
+    )
+    if (res) {
+      return res
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+//导出缺料报告
+export const detailsSewingPlan = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/produce-assignment-detail-pulished/sewing-task-info`,
+      params
+    )
+    if (res) {
+      return res
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//取sku
+export const getSKU = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/mes/get-produce-sku-list`,
+      params
+    )
+    if (res) {
+      return res.data
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+//新增或更新缝制计划
+export const updateSewingPlan = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail-pulished/add-sewing-task`,
       params
     )
     if (res) {

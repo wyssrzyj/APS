@@ -11,15 +11,12 @@ import { completeInspectionReport } from '@/recoil/practice/api'
 import Forms from './forms'
 import styles from './index.module.less'
 import Material from './material'
-import MovPopup from './movPopup'
-import Popup from './popup'
 
 function Materials() {
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
-  const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [type, setType] = useState(false) //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState<boolean>(false) //删除弹窗
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
@@ -239,10 +236,6 @@ function Materials() {
     selectedRowKeys,
     onChange: onSelectChange
   }
-  const executionMethod = () => {
-    setIsModalVisible(true)
-    setType(true)
-  }
 
   const menu = (
     <Menu>
@@ -266,8 +259,6 @@ function Materials() {
       </Menu.Item>
     </Menu>
   )
-
-  const content = { isModalVisible, setIsModalVisible, type }
 
   return (
     <div className={styles.qualification}>
@@ -310,7 +301,6 @@ function Materials() {
               onChange: onPaginationChange //获取当前页码是一个function
             }}
           />
-          <Popup content={content} />
         </div>
       </div>
       {/* 物料齐套检查弹窗 */}

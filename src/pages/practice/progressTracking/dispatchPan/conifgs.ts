@@ -122,8 +122,7 @@ export const tableColumns: Array<Partial<Column>> = [
     title: '操作',
     align: 'center',
     dataIndex: 'operate',
-    fixed: 'right',
-    width: 200
+    fixed: 'right'
   }
 ]
 type viewFormConfig = {
