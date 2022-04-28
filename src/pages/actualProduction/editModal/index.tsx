@@ -1,8 +1,12 @@
-import { Checkbox, DatePicker, InputNumber, Modal, Table } from 'antd'
+import { Checkbox, DatePicker, InputNumber, message, Modal, Table } from 'antd'
 import { cloneDeep } from 'lodash'
+import moment from 'moment'
 import { useEffect, useState } from 'react'
 
+import { saveEfficiency } from '@/recoil/actualProduction/api'
+
 import { editTableColumn } from '../config'
+const FORMAT_DATE = 'YYYY-MM-DD HH:mm'
 function EditActualProduction(props: Record<string, any>) {
   const { callback, visible, tableData } = props
   const [dataSource, setDataSource] = useState()
@@ -12,10 +16,6 @@ function EditActualProduction(props: Record<string, any>) {
   }, [tableData])
 
   const onValChange = (value: any, type: any, index: any) => {
-    console.log('🚀 ~ file: index.tsx ~ line 15 ~ onValChange ~ value', value)
-    console.log('🚀 ~ file: index.tsx ~ line 20 ~ onValChange ~ index', index)
-    console.log('🚀 ~ file: index.tsx ~ line 20 ~ onValChange ~ type', type)
-
     const nData: any = cloneDeep(dataSource)
     const changeRowInfo = nData[index]
     changeRowInfo[type] = value
@@ -26,12 +26,33 @@ function EditActualProduction(props: Record<string, any>) {
       )
     }
     nData[index][type] = value
-    // if(type === )
     setDataSource(nData)
   }
 
-  const timePickerOptions = {
-    format: 'HH:mm'
+  const handleOk = async () => {
+    const confirmData: any = cloneDeep(dataSource)
+    confirmData.forEach((item: any) => {
+      item.realityStartTime &&
+        (item.realityStartTime = moment(item.realityStartTime).format(
+          FORMAT_DATE
+        ))
+      item.realityEndTime &&
+        (item.realityEndTime = moment(item.realityEndTime).format(FORMAT_DATE))
+      item.isFinished = item.isFinished ? 1 : 0
+    })
+    const res: any = await saveEfficiency(confirmData)
+    if (res.success) {
+      message.success('操作成功')
+      callback(false, true)
+    }
+  }
+
+  const disabledStartDate = (current: any, endTime: any) => {
+    return current && endTime && current > endTime
+  }
+
+  const disabledEndDate = (current: any, startTime: any) => {
+    return current && startTime && current < startTime
   }
 
   const changeTableColumn: any = () => {
@@ -50,11 +71,15 @@ function EditActualProduction(props: Record<string, any>) {
         }
       }
       if (item.dataIndex === 'realityStartTime') {
-        item.render = (text: any, _record: any, index: number) => {
+        item.render = (text: any, record: any, index: number) => {
           return (
             <DatePicker
               value={text}
               showTime
+              format="YYYY-MM-DD HH:mm"
+              disabledDate={(current) =>
+                disabledStartDate(current, record.realityEndTime)
+              }
               onChange={(value) =>
                 onValChange(value, 'realityStartTime', index)
               }
@@ -63,11 +88,15 @@ function EditActualProduction(props: Record<string, any>) {
         }
       }
       if (item.dataIndex === 'realityEndTime') {
-        item.render = (text: any, _record: any, index: number) => {
+        item.render = (text: any, record: any, index: number) => {
           return (
             <DatePicker
               showTime
               value={text}
+              format="YYYY-MM-DD HH:mm"
+              disabledDate={(current) =>
+                disabledEndDate(current, record.realityStartTime)
+              }
               onChange={(value) => onValChange(value, 'realityEndTime', index)}
             ></DatePicker>
           )
@@ -88,12 +117,14 @@ function EditActualProduction(props: Record<string, any>) {
     })
     return editTableColumn
   }
+
   return (
     <Modal
       title="工作实绩明细"
       visible={visible}
       width={1000}
       onCancel={() => callback(false)}
+      onOk={handleOk}
     >
       <Table
         rowKey={'id'}

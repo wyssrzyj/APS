@@ -1,5 +1,6 @@
 import { Button } from 'antd'
 import { cloneDeep } from 'lodash'
+import moment from 'moment'
 import React, { SetStateAction, useCallback, useEffect, useState } from 'react'
 
 import { CusDragTable, SearchBar, Title } from '@/components'
@@ -83,10 +84,14 @@ function ActualProductionList() {
     if (data) {
       toggleModalVisible(true)
       data.forEach((item: any) => {
-        item.completedAmount = undefined
-        item.realityStartTime = null
-        item.realityEndTime = null
-        item.isFinished = true
+        // item.completedAmount = undefined
+        item.realityStartTime = item.realityStartTime
+          ? moment(item.realityStartTime)
+          : null
+        item.realityEndTime = item.realityEndTime
+          ? moment(item.realityEndTime)
+          : null
+        item.isFinished = item.isFinished === 1
       })
       setRowInfo(data)
     }
@@ -183,11 +188,9 @@ function ActualProductionList() {
       {editModalVisible && (
         <EditActualProduction
           visible={editModalVisible}
-          callback={(value: boolean) => {
-            console.log('@@@@@@@@@@@@')
-
+          callback={(value: boolean, isOk?: boolean) => {
             toggleModalVisible(value)
-            value && getDataList()
+            isOk && getDataList()
           }}
           tableData={rowInfo}
         ></EditActualProduction>

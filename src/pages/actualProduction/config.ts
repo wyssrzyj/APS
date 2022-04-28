@@ -93,7 +93,7 @@ export const tableColumn: Array<Partial<Column>> = [
   {
     title: '生产量',
     align: 'center',
-    dataIndex: 'productionAmount',
+    dataIndex: 'orderSum',
     width: 100
   },
   {
@@ -242,13 +242,13 @@ export const editTableColumn: any = [
     title: '实际开始时间',
     align: 'center',
     dataIndex: 'realityStartTime',
-    width: 150
+    width: 190
   },
   {
     title: '实际结束时间',
     align: 'center',
     dataIndex: 'realityEndTime',
-    width: 150
+    width: 190
   },
   {
     title: '工作已完成',

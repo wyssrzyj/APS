@@ -44,3 +44,17 @@ export const efficiencyDetailInfo = async (params: any) => {
     console.log(e)
   }
 }
+//    保存实绩
+export const saveEfficiency = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-reality/save`,
+      params
+    )
+    if (res.code === 200) {
+      return res
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
