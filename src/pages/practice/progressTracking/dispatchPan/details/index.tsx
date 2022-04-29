@@ -15,7 +15,11 @@ type Column = {
   [key: string]: any
 }
 
-function Details(props: { setDetailsPopup; detailsPopup; editData }) {
+function Details(props: {
+  setDetailsPopup: any
+  detailsPopup: any
+  editData: any
+}) {
   const { setDetailsPopup, detailsPopup, editData } = props
   const { detailsSewingPlan, getSKU, updateSewingPlan, detailsSewing } =
     practice
@@ -64,7 +68,17 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
       width: 100,
       fixed: 'right',
       dataIndex: 'totalPrice', //
-      render: (_value, _row, index: number) => {
+      render: (
+        _value:
+          | boolean
+          | React.ReactChild
+          | React.ReactFragment
+          | React.ReactPortal
+          | null
+          | undefined,
+        _row: any,
+        index: number
+      ) => {
         return (
           <div>
             {/* {console.log('渲染顺序', _value)} */}
@@ -82,7 +96,10 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
       tableData(editData)
     }
   }, [editData])
-  const tableData = async (v) => {
+  const tableData = async (v: {
+    auditStatus: number
+    externalProduceOrderId: any
+  }) => {
     // 判断是新增还是编辑
     console.log('判断是新增还是编辑', v.auditStatus)
     //生成
@@ -95,7 +112,7 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
     }
   }
   //**处理 sku格式问题 、获取尺码
-  const formatProcessing = (v, externalData) => {
+  const formatProcessing = (v: any, externalData: any) => {
     /**
      * v 是尺码
      * externalData 是外部数据
@@ -109,7 +126,7 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
     //   {
     //     id: '1',
     //     colorName: '特白',
-    //     colorCode: '01-0 01 ',
+    //     colorCode: '01-0 01 ',.
     //     sizeCode: 'A',
     //     sizeName: 'A',
     //     productionNum: 6,
@@ -199,15 +216,15 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
     // ]
 
     //生成 才设置0
-    dome.map((item) => {
+    dome.map((item: { sizeNumber: any }) => {
       item.sizeNumber = item.sizeNumber ? item.sizeNumber : 0
     })
 
     setSku(dome)
 
     //尺码  ["xxx","xxl","l","m"]
-    const size = []
-    dome.map((item: { sizeName }) => {
+    const size: any[] = []
+    dome.map((item: { sizeName: any }) => {
       if (size.includes(item.sizeName) === false) {
         size.push(item.sizeName)
       }
@@ -215,26 +232,26 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
 
     //测试生成--------------------------
     // 拆分出来    [{},{}]
-    const colorCode = []
-    dome.map((item: { colorCode }) => {
+    const colorCode: any[] = []
+    dome.map((item: { colorCode: any }) => {
       if (colorCode.includes(item.colorCode) === false) {
         colorCode.push(item.colorCode)
       }
     })
     console.log('拆分出来', colorCode)
 
-    const list = []
+    const list: { list: any }[] = []
     if (!isEmpty(colorCode)) {
       colorCode.map((item) => {
         list.push({
-          list: dome.filter((i: { colorCode }) => i.colorCode === item)
+          list: dome.filter((i: { colorCode: any }) => i.colorCode === item)
         })
       })
     }
     //转成 需要的格式
     console.log('过滤出来的', list)
     if (!isEmpty(list)) {
-      list.map((item, index) => {
+      list.map((item: any, index) => {
         item.id = index + 1
         item.type = index + 1
         item.productNum = externalData.productNum
@@ -245,7 +262,7 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
       })
     }
     // 处理对象嵌套
-    const handleObject = list.map((item: { demo; list }) => {
+    const handleObject = list.map((item: { demo: any; list: any }) => {
       const obj = { ...item, ...item.demo }
       delete item.demo
       delete item.list
@@ -282,9 +299,9 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
   }
 
   // 获取 a：0，b:1
-  const ownKeys = (data) => {
+  const ownKeys = (data: { sizeName: string | number; sizeNumber: any }[]) => {
     const obj = {}
-    data.map((e: { sizeName: string | number; sizeNumber }) => {
+    data.map((e: { sizeName: string | number; sizeNumber: any }) => {
       obj[e.sizeName] = e.sizeNumber
     })
     return obj
@@ -296,16 +313,16 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
       sizeReplace(size)
     }
   }, [size])
-  const sizeReplace = (resSize) => {
+  const sizeReplace = (resSize: any[]) => {
     const goodsSize: {
-      title
-      dataIndex
-      key
+      title: number
+      dataIndex: any
+      key: any
       align: string
       width: number
       render?: (value: any, row: Record<string, any>, index: number) => any
     }[] = []
-    resSize.map((item) => {
+    resSize.map((item: any) => {
       goodsSize.push({
         title: item.toUpperCase(),
         dataIndex: item.toUpperCase(),
@@ -354,17 +371,19 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
     }
   }, [data, modifyValue])
 
-  const updateData = (record, clone) => {
+  const updateData = (record: { id: any }, clone: any[]) => {
     /**
      * record 修改后的单个值
      * clone 老数据  用最新的值 不能用旧值
      */
 
-    const subscript = clone.findIndex((item) => item.id === record.id)
+    const subscript = clone.findIndex(
+      (item: { id: any }) => item.id === record.id
+    )
     if (subscript !== -1) {
       clone.splice(subscript, 1, record) //替换
       let sum = 0
-      clone.map((item) => {
+      clone.map((item: { type: boolean; totalPrice: number }) => {
         if (item.type !== false) {
           sum += item.totalPrice
         }
@@ -377,7 +396,12 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
   }
   //数字输入框的处理
   let timeout: NodeJS.Timeout
-  const onBreakUp = (e, record, value: number, size) => {
+  const onBreakUp = (
+    e: any,
+    record: Record<string, any>,
+    value: number,
+    size: any[]
+  ) => {
     console.log('没执行')
 
     //当前
@@ -385,7 +409,7 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
 
     //总和
     let sum = 0
-    size.map((item) => {
+    size.map((item: string | number) => {
       sum += record[item]
     })
     record.totalPrice = sum
@@ -397,7 +421,7 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
   }
   const handleOk = async () => {
     if (newData[newData.length - 1].totalPrice <= editData.productionAmount) {
-      sku.map((item) => {
+      sku.map((item: any) => {
         item.planNum = saveFormatConversion(item, newData)
         item.produceSkuId = item.id
         item.id = ''
@@ -436,22 +460,28 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
     // setDetailsPopup(false)
   }
   // 获取当前最大值
-  const maximum = (v, title) => {
+  const maximum = (v: { colorCode: any }, title: any) => {
     // return 20
     const colorCode = sku.filter(
-      (item: { colorCode }) => item.colorCode === v.colorCode
+      (item: { colorCode: any }) => item.colorCode === v.colorCode
     )
     if (!isEmpty(colorCode)) {
-      const remainNum = colorCode.filter((item) => item.sizeName === title)[0]
-        .remainNum
+      const remainNum = colorCode.filter(
+        (item: { sizeName: any }) => item.sizeName === title
+      )[0].remainNum
       console.log(remainNum)
 
       return remainNum
     }
   }
   //保存格式转换
-  const saveFormatConversion = (v, value) => {
-    const colorCode = value.filter((item) => item.colorCode === v.colorCode)
+  const saveFormatConversion = (
+    v: { colorCode: any; sizeName: string | number },
+    value: any[]
+  ) => {
+    const colorCode = value.filter(
+      (item: { colorCode: any }) => item.colorCode === v.colorCode
+    )
     return colorCode[0][v.sizeName]
   }
   //HUQOU D
