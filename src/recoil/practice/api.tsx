@@ -1061,3 +1061,18 @@ export const updateSewingPlan = async (params: any) => {
     console.log(e)
   }
 }
+//缝制计划详情
+export const detailsSewing = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail-pulished/sewing-task-info`,
+      params
+    )
+    if (res) {
+      return res
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}

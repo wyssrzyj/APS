@@ -17,7 +17,8 @@ type Column = {
 
 function Details(props: { setDetailsPopup; detailsPopup; editData }) {
   const { setDetailsPopup, detailsPopup, editData } = props
-  const { detailsSewingPlan, getSKU, updateSewingPlan } = practice
+  const { detailsSewingPlan, getSKU, updateSewingPlan, detailsSewing } =
+    practice
   const [list, setList] = useState<any>() //table处理后的格式
 
   const [sku, setSku] = useState<any>() //后台的sku
@@ -83,7 +84,7 @@ function Details(props: { setDetailsPopup; detailsPopup; editData }) {
   }, [editData])
   const tableData = async (v) => {
     // 判断是新增还是编辑
-    console.log(v.auditStatus)
+    console.log('判断是新增还是编辑', v.auditStatus)
     //生成
     if (v.auditStatus === -1) {
       console.log(v)
