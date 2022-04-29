@@ -4,38 +4,32 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
-function WorkingHours(props: any) {
+function WorkingHours(props: {
+  onChange?: (params?: any) => void
+  type: any
+  edit: any
+}) {
   const format = 'HH:mm'
-  const { onChange, type, edit, time } = props
+  const { onChange, type, edit } = props
+  console.log('测试哦', edit)
+
   const [data, setData] = useState<any>([])
 
   //新增就是空数据，编辑和查看使用接口数据
   useEffect(() => {
-    const nyr = moment(Date.now()).format('YYYY-MM-DD ')
-    const sf = moment(Date.now()).format('YYYY-MM-DD HH:mm')
-    const sum = moment(sf).valueOf() - moment(nyr).valueOf()
     type === 1
       ? setData([
-          {
-            name: '1',
-            startDateTime: time ? sum + time : Date.now(),
-            endDateTime: time ? sum + time : Date.now()
-          }
+          { name: '1', startDateTime: Date.now(), endDateTime: Date.now() }
         ])
       : setData(edit.timeList)
-  }, [type, edit, time])
-  const onTime = (e: any, index: any) => {
-    // 开始时间
-    const arr =
-      Number(moment(e[0]).format('x')) -
-      moment(moment(e[0]).format('YYYY-MM-DD')).valueOf()
-    // 结束时间
-    const arrno =
-      Number(moment(e[1]).format('x')) -
-      moment(moment(e[1]).format('YYYY-MM-DD')).valueOf()
+  }, [type, edit])
 
-    data[index].startDateTime = time + arr
-    data[index].endDateTime = time + arrno
+  const start = (index: string | number, e: moment.MomentInput) => {
+    data[index].startDateTime = moment(e).valueOf()
+  }
+  const end = (index: string | number, e: moment.MomentInput) => {
+    data[index].endDateTime = moment(e).valueOf()
+    console.log([...data])
   }
 
   useEffect(() => {
@@ -44,13 +38,10 @@ function WorkingHours(props: any) {
   }, [data])
   const executionMethod = (type: string, index: number) => {
     if (type === 'push') {
-      const nyr = moment(Date.now()).format('YYYY-MM-DD ')
-      const sf = moment(Date.now()).format('YYYY-MM-DD HH:mm')
-      const sum = moment(sf).valueOf() - moment(nyr).valueOf()
       data.push({
         name: index + new Date().valueOf() * Math.random(),
-        startDateTime: time ? sum + time : Date.now(),
-        endDateTime: time ? sum + time : Date.now()
+        startDateTime: Date.now(),
+        endDateTime: Date.now()
       })
 
       setData([...data])
@@ -70,24 +61,26 @@ function WorkingHours(props: any) {
           index: number
         ) => (
           <div className={styles.timePicker} key={item.startDateTime}>
-            <TimePicker.RangePicker
-              key={index}
+            <TimePicker
+              defaultValue={moment(item.endDateTime)}
               disabled={type === 3 ? true : false}
-              defaultValue={[
-                moment(item.startDateTime),
-                moment(item.endDateTime)
-              ]}
-              // defaultValue={moment('12:08:23', 'HH:mm:ss')}
-              format=" HH:mm"
-              onChange={(e, index) => {
-                onTime(e, index)
+              format={format}
+              onChange={(e) => {
+                start(index, e)
               }}
             />
-
-            <div className={styles.executionMethod} key={index + 1}>
+            ~
+            <TimePicker
+              defaultValue={moment(item.endDateTime)}
+              disabled={type === 3 ? true : false}
+              format={format}
+              onChange={(e) => {
+                end(index, e)
+              }}
+            />
+            <div className={styles.executionMethod}>
               {index === 0 ? (
                 <Button
-                  key={index + 1}
                   disabled={type === 3 ? true : false}
                   type="primary"
                   icon={<PlusOutlined />}
@@ -95,7 +88,6 @@ function WorkingHours(props: any) {
                 />
               ) : (
                 <Button
-                  key={index + 1}
                   disabled={type === 3 ? true : false}
                   type="primary"
                   icon={<MinusOutlined />}

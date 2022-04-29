@@ -87,9 +87,12 @@ function Popup(props: { content: any; newlyAdded: any }) {
     if (values.createTime) {
       values.createTime = moment(values.createTime).valueOf()
     }
-    const list = type === 1 ? values : { ...values, id: edit.id }
+    const list: any = type === 1 ? values : { ...values, id: edit.id }
     //班组为false才执行
-    const arr: any = await teamId({ idList: values.teamIds })
+    const arr: any = await teamId({
+      teamIds: values.teamIds,
+      timeList: list.timeList
+    })
 
     if (arr.success === true) {
       console.log('/班组为false才执行', list)
@@ -197,7 +200,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
             name="timeList"
             rules={[{ required: true, message: '请选择工作时间!' }]}
           >
-            <WorkingHours time={time} edit={edit} type={type} />
+            <WorkingHours edit={edit} type={type} />
           </Form.Item>
 
           <Form.Item label="备注" name="remark">

@@ -191,6 +191,8 @@ const FormTable = (props: any) => {
         if (!isEmpty(item.children)) {
           item.children.map((v: any) => {
             v.deliveredQty = v.deliveredQty === null ? 0 : v.deliveredQty //测试~~~已出库数量暂无 设置0
+            v.availableStockQtyTotal =
+              v.availableStockQtyTotal === null ? 0 : v.availableStockQtyTotal //测试~~~物料库存数量暂无 设置0
             // v.counteractNum = 0
             v.id = v.materialCode + v.materialColCode
             v.key = v.id
@@ -240,7 +242,7 @@ const FormTable = (props: any) => {
     clearTimeout(timeout)
     timeout = setTimeout(() => {
       processingData(data, e, currentValue, 'number')
-    }, 500)
+    }, 1000)
   }
   //**处理数据**
   const processingData = (

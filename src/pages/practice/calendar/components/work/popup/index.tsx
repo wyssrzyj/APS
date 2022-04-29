@@ -87,7 +87,10 @@ function Popup(props: { content: any; newlyAdded: any }) {
     values.workModes = lyj
     const list = type === 1 ? values : { ...values, id: edit.id }
     //班组为false才执行
-    const arr: any = await teamId({ idList: values.teamIds })
+    const arr: any = await teamId({
+      teamIds: values.teamIds,
+      workModes: list.workModes
+    })
 
     if (arr.success === true) {
       const res = await operatingModeDetails(list)

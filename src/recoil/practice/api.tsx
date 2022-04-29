@@ -1076,3 +1076,18 @@ export const detailsSewing = async (params: any) => {
     console.log(e)
   }
 }
+//班组负荷图
+export const teamLoadDiagram = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/schedule-view/get-load-view`,
+      params
+    )
+    if (res) {
+      return res
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
