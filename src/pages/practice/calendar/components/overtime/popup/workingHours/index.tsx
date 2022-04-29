@@ -71,6 +71,7 @@ function WorkingHours(props: any) {
         ) => (
           <div className={styles.timePicker} key={item.startDateTime}>
             <TimePicker.RangePicker
+              key={index}
               disabled={type === 3 ? true : false}
               defaultValue={[
                 moment(item.startDateTime),
@@ -83,9 +84,10 @@ function WorkingHours(props: any) {
               }}
             />
 
-            <div className={styles.executionMethod}>
+            <div className={styles.executionMethod} key={index + 1}>
               {index === 0 ? (
                 <Button
+                  key={index + 1}
                   disabled={type === 3 ? true : false}
                   type="primary"
                   icon={<PlusOutlined />}
@@ -93,6 +95,7 @@ function WorkingHours(props: any) {
                 />
               ) : (
                 <Button
+                  key={index + 1}
                   disabled={type === 3 ? true : false}
                   type="primary"
                   icon={<MinusOutlined />}

@@ -17,7 +17,7 @@ import React, { useEffect, useState } from 'react'
 
 import { dockingDataApis, practice } from '@/recoil/apis'
 
-import Details from './details/index'
+// import Details from './details/index'
 import styles from './index.module.less'
 const BreakUp = (props: any) => {
   const {
@@ -38,7 +38,7 @@ const BreakUp = (props: any) => {
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
   const [data, setData] = useState<any>([])
-  const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
+  // const [detailsPopup, setDetailsPopup] = useState<any>(true) //编辑详情
 
   const [factoryName, setFactoryName] = useState<any>([]) //车间
 
@@ -496,24 +496,7 @@ const BreakUp = (props: any) => {
         )
       }
     },
-    // {
-    //   title: '操作99999',
-    //   align: 'center',
-    //   fixed: 'right',
-    //   dataIndex: 'lock',
-    //   render: (_value: any) => {
-    //     return (
-    //       <div
-    //         className={styles.text}
-    //         onClick={() => {
-    //           setDetailsPopup(true)
-    //         }}
-    //       >
-    //         编辑详情
-    //       </div>
-    //     )
-    //   }
-    // },
+
     {
       title: (
         <div>
@@ -648,7 +631,7 @@ const BreakUp = (props: any) => {
           }}
         />
       </Modal>
-      <Details setDetailsPopup={setDetailsPopup} detailsPopup={detailsPopup} />
+      {/* <Details setDetailsPopup={setDetailsPopup} detailsPopup={detailsPopup} /> */}
     </div>
   )
 }
