@@ -90,7 +90,10 @@ function Popup(props: { content: any; newlyAdded: any }) {
     const list = type === 1 ? values : { ...values, id: edit.id }
     //班组为false才执行
     const arr: any = await teamId({ idList: values.teamIds })
+
     if (arr.success === true) {
+      console.log('/班组为false才执行', list)
+
       const res = await overtimeAddition(list)
       if (res === true) {
         newlyAdded()
@@ -174,7 +177,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
           </Form.Item>
           <Form.Item
             label="班组名称"
-            name="teamId"
+            name="teamIds"
             rules={[{ required: true, message: '请先选择班组名称!' }]}
           >
             <TreeSelect {...tProps} disabled={type === 3 ? true : false} />
@@ -194,12 +197,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
             name="timeList"
             rules={[{ required: true, message: '请选择工作时间!' }]}
           >
-            <WorkingHours
-              time={time}
-              edit={edit}
-              onChange={undefined}
-              type={type}
-            />
+            <WorkingHours time={time} edit={edit} type={type} />
           </Form.Item>
 
           <Form.Item label="备注" name="remark">

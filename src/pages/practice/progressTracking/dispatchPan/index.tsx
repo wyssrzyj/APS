@@ -10,6 +10,7 @@ import { practice } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
 import { formItemConfig, searchConfigs, tableColumns } from './conifgs'
+import Details from './details/index'
 import styles from './index.module.less'
 import ViewModal from './viewModal'
 
@@ -22,6 +23,11 @@ const {
 } = practice
 
 const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const map = new Map()
+map.set(-1, '生成缝制任务')
+map.set(0, '编辑缝制任务')
+map.set(1, '查看缝制任务')
+map.set(2, '查看缝制任务')
 
 function ProductionPlan() {
   tableColumns[tableColumns.length - 1].render = (
@@ -33,6 +39,9 @@ function ProductionPlan() {
       <div key={index}>
         <Button type="link" onClick={() => handleDetailInfo(record)}>
           查看
+        </Button>
+        <Button type="link" onClick={() => showSewing(record)}>
+          {map.get(record.auditStatus)}
         </Button>
       </div>
     )
@@ -48,9 +57,11 @@ function ProductionPlan() {
   const [rowInfo, setRowInfo] = useState() //展示弹窗
   const [facList, setFacList] = useState([])
   const [workshopSectionList, setWorkshopSectionList] = useState([])
+  const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
+  const [editData, setEditData] = useState<any>() //编辑数据
+
   const { dataSource, total, pageNum, pageSize, loading, tableChange } =
     useTableChange(params, productList)
-
   useEffect(() => {
     ;(async () => {
       getFacList()
@@ -127,10 +138,12 @@ function ProductionPlan() {
 
   const handleDetailInfo = async (rowInfo: any) => {
     try {
+      toggleModalVisible(true)
+      console.log('dangqianhang ', rowInfo)
+
       const res = await productDetail({ id: rowInfo.id })
       if (res) {
         setRowInfo(res)
-        toggleModalVisible(true)
       }
     } catch (err) {}
   }
@@ -149,6 +162,10 @@ function ProductionPlan() {
     onChange: (selectedRowKeys: SetStateAction<never[]>) => {
       setSelectedRowKeys(selectedRowKeys)
     }
+  }
+  const showSewing = (v: any) => {
+    setEditData(v)
+    setDetailsPopup(true)
   }
 
   const TableLeft = () => {
@@ -205,6 +222,12 @@ function ProductionPlan() {
           initialValues={rowInfo}
         ></CustomModal>
       ) : null}
+      {/* 缝制任务 */}
+      <Details
+        editData={editData}
+        setDetailsPopup={setDetailsPopup}
+        detailsPopup={detailsPopup}
+      />
     </div>
   )
 }

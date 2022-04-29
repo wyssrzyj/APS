@@ -172,7 +172,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
             name="times"
             rules={[{ required: true, message: '请选择工作时间!' }]}
           >
-            <WorkingHours edit={edit} type={type} onChange={undefined} />
+            <WorkingHours edit={edit} type={type} />
           </Form.Item>
           <Form.Item
             label="工厂名称"

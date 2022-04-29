@@ -120,6 +120,8 @@ function Popup(props: any) {
     type: number
   ) => {
     const list = type === 1 ? values : { ...values, id: edit.id }
+    console.log('传递的数据', values)
+
     const res = await holidayAddition(list)
     if (res === true) {
       newlyAdded()
@@ -170,7 +172,7 @@ function Popup(props: any) {
             name="holidayList"
             rules={[{ required: true, message: '请选择节假日时间!' }]}
           >
-            <WorkingHours type={type} onChange={undefined} edit={edit} />
+            <WorkingHours type={type} edit={edit} />
           </Form.Item>
 
           <Form.Item label="备注" name="remark">
