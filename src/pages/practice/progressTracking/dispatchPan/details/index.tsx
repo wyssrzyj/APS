@@ -424,7 +424,7 @@ function Details(props: {
       return remainNum
     }
   }
-  //保存格式转换
+  //保存格式转换.
   const saveFormatConversion = (
     v: { colorCode: any; sizeName: string | number },
     value: any[]
