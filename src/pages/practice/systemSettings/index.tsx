@@ -150,18 +150,18 @@ function Vacations() {
   const sum = [
     { label: '重新排程时锁定', name: 'lockTime', unit: 'lockTimeUnit' },
     {
-      label: '库存负荷图默认显示时间区间',
+      label: '班组负荷图默认显示时间区间',
       name: 'stockLoadTime',
       unit: 'stockLoadTimeUnit'
     },
 
     {
-      label: '订单甘特图默认显示时间区间',
+      label: '生产单甘特图默认显示时间区间',
       name: 'orderGanttTime',
       unit: 'orderGanttTimeUnit'
     },
     {
-      label: '资源甘特图默认显示时间区间',
+      label: '班组甘特图默认显示时间区间',
       name: 'resourceTime',
       unit: 'resourceTimeUnit'
     }

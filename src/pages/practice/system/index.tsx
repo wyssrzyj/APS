@@ -56,7 +56,7 @@ const HeaderForm = () => {
             <Form.Item
               {...layout}
               name="keyword5"
-              label="资源甘特图默认显示时间区间"
+              label="班组甘特图默认显示时间区间"
             >
               <Input placeholder="请输入用户关键字" size="small" allowClear />
             </Form.Item>
