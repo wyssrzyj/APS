@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2022-04-29 11:22:59
+ * @LastEditTime: 2022-04-29 11:23:00
+ * @LastEditors: Please set LastEditors
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: \jack-aps\src\pages\practice\progressTracking\dispatchPan\details\index copy.tsx
+ */
 import { InputNumber, message, Modal, Table } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
@@ -32,9 +40,6 @@ function Details(props: {
   const [size, setSize] = useState<any>([]) //尺码
   const [modifyValue, setModifyValue] = useState<any>() //更改值
   const [edit, setEdit] = useState<any>() //编辑
-  const [loading, setLoading] = useState<any>(true)
-  const [type, setType] = useState<any>(false) //true 编辑 false 生成
-  const [disabled, setDisabled] = useState<any>(false) //true 编辑 false 生成
 
   const columns: Partial<Column>[] = [
     {
@@ -86,6 +91,8 @@ function Details(props: {
       ) => {
         return (
           <div>
+            {/* {console.log('渲染顺序', _value)} */}
+
             <div>{_value}</div>
           </div>
         )
@@ -95,35 +102,32 @@ function Details(props: {
 
   //table数据
   useEffect(() => {
+    console.log('table 展示数据', newData)
+  }, [newData])
+  //table数据
+  useEffect(() => {
     if (editData !== undefined) {
-      console.log(editData.auditStatus)
-      if (editData.auditStatus === 1 || editData.auditStatus === 2) {
-        setDisabled(true)
-      }
-      // auditStatus
       tableData(editData)
     }
   }, [editData])
   const tableData = async (v: any) => {
-    setNewData([])
-    setData([])
-    setLoading(true)
-    setType(false)
     // 判断是新增还是编辑
+    console.log('判断是新增还是编辑', v.auditStatus)
     //生成
     if (v.auditStatus === -1) {
       const sku = await getSKU({ produceOrderId: v.externalProduceOrderId })
       if (!isEmpty(sku)) {
+        console.log('生成')
         formatProcessing(sku, v)
       }
     } else {
       const editor = await detailsSewing({
         id: v.sewingPlanTaskId
       })
-
       if (editor.code === 200) {
         if (!isEmpty(editor.data.sewingSkuDTOList)) {
           //sku  主题
+          console.log('编辑')
           setEdit(editor.data)
           formatProcessing(editor.data.sewingSkuDTOList, v)
         }
@@ -132,8 +136,6 @@ function Details(props: {
   }
   //**处理 sku格式问题 、获取尺码
   const formatProcessing = (v: any, externalData: any) => {
-    setLoading(false)
-
     /**
      * v 是尺码
      * externalData 是外部数据
@@ -144,6 +146,7 @@ function Details(props: {
     dome.map((item: { planNum: any }) => {
       item.planNum = item.planNum !== undefined ? item.planNum : 0
     })
+    console.log('第一条的数据', dome[0].planNum)
 
     setSku(dome)
 
@@ -163,6 +166,7 @@ function Details(props: {
         colorCode.push(item.colorCode)
       }
     })
+    console.log('拆分出来', colorCode)
 
     const list: { list: any }[] = []
     if (!isEmpty(colorCode)) {
@@ -173,6 +177,7 @@ function Details(props: {
       })
     }
     //转成 需要的格式
+    console.log('过滤出来的', list)
     if (!isEmpty(list)) {
       list.map((item: any, index) => {
         item.id = index + 1
@@ -209,6 +214,8 @@ function Details(props: {
         sum += item.totalPrice
       })
     }
+    console.log(sum)
+
     //  handleObject[handleObject.length - 1].totalPrice =
     //    sum - handleObject[handleObject.length - 1].totalPrice
     //添加最后一行
@@ -255,15 +262,14 @@ function Details(props: {
       })
     })
     goodsSize.map((item) => {
-      item.render = (_value, _row: any) => {
+      item.render = (_value, _row) => {
         return (
           <div>
             {_row.type ? (
               <InputNumber
-                disabled={disabled}
                 key={_row.id}
-                max={maximum(_row, item.title)}
-                // max={20}
+                // max={maximum(_row, item.title)}
+                max={20}
                 min={0}
                 defaultValue={_value === undefined ? 0 : _value}
                 onChange={(e) => onBreakUp(e, _row, item.title, resSize)}
@@ -286,17 +292,16 @@ function Details(props: {
   //处理尾部
   useEffect(() => {
     if (!isEmpty(data)) {
-      if (type === false) {
+      if (modifyValue === undefined) {
+        console.log('传递的值', data)
+
         setNewData([...data])
-      }
-      if (type === true) {
+      } else {
         //替换数据
-        if (modifyValue !== undefined) {
-          updateData(modifyValue, data)
-        }
+        updateData(modifyValue, data)
       }
     }
-  }, [data, modifyValue, type])
+  }, [data, modifyValue])
 
   const updateData = (record: { id: any }, clone: any[]) => {
     /**
@@ -318,7 +323,6 @@ function Details(props: {
 
       clone[clone.length - 1].totalPrice = sum
       const dome = cloneDeep(clone) //传递的时候深拷贝一下
-
       setNewData([...dome])
     }
   }
@@ -330,6 +334,8 @@ function Details(props: {
     value: number,
     size: any[]
   ) => {
+    console.log('没执行')
+
     //当前
     record[value] = e
 
@@ -342,73 +348,70 @@ function Details(props: {
 
     clearTimeout(timeout)
     timeout = setTimeout(() => {
-      setType(true)
       setModifyValue({ ...record })
     }, 200)
   }
   const handleOk = async () => {
-    if (disabled == false) {
-      if (newData[newData.length - 1].totalPrice <= editData.productionAmount) {
-        //生产
-        if (editData.auditStatus === -1) {
-          sku.map((item: any) => {
-            item.planNum = saveFormatConversion(item, newData)
-            item.produceSkuId = item.id
-            item.id = ''
-            item.sewingPlanTaskId = ''
-          })
+    if (newData[newData.length - 1].totalPrice <= editData.productionAmount) {
+      console.log(editData.auditStatus)
+      //生产
+      if (editData.auditStatus === -1) {
+        sku.map((item: any) => {
+          item.planNum = saveFormatConversion(item, newData)
+          item.produceSkuId = item.id
+          item.id = ''
+          item.sewingPlanTaskId = ''
+        })
 
-          // 生产
-          const obj: any = {}
-          obj.billingDate = ''
-          obj.billingUserId = ''
-          obj.detailId = editData.id // 发单详情id.
-          obj.estimatedDate = editData.id // 预估工期
+        // 生产
+        const obj: any = {}
+        obj.billingDate = ''
+        obj.billingUserId = ''
+        obj.detailId = editData.id // 发单详情id.
+        obj.estimatedDate = editData.id // 预估工期
 
-          const estimatedDate =
-            (editData.planEndTime - editData.planStartTime) /
-            1000 /
-            60 /
-            60 /
-            24
-          obj.estimatedDate = Math.abs(Math.ceil(estimatedDate)) //预估工期
-          obj.id = ''
-          obj.outType = ''
-          // 开始时间
-          obj.planStartDate = moment(editData.planStartTime).format(
-            'YYYY-MM-DD HH:mm:ss'
-          )
-          // 结束时间
-          obj.planEndDate = moment(editData.planEndTime).format(
-            'YYYY-MM-DD HH:mm:ss'
-          )
-          // 生产单id
-          obj.produceOrderId = editData.externalProduceOrderId
+        const estimatedDate =
+          (editData.planEndTime - editData.planStartTime) / 1000 / 60 / 60 / 24
+        obj.estimatedDate = Math.abs(Math.ceil(estimatedDate)) //预估工期
+        obj.id = ''
+        obj.outType = ''
+        // 开始时间
+        obj.planStartDate = moment(editData.planStartTime).format(
+          'YYYY-MM-DD HH:mm:ss'
+        )
+        // 结束时间
+        obj.planEndDate = moment(editData.planEndTime).format(
+          'YYYY-MM-DD HH:mm:ss'
+        )
+        // 生产单id
+        obj.produceOrderId = editData.externalProduceOrderId
 
-          obj.sewingSkuDTOList = sku
-          obj.teamManagerId = editData.teamId
-          const res = await updateSewingPlan(obj)
-          if (res.code === 200) {
-            setDetailsPopup(false)
-            update && update()
-          }
-        } else {
-          // 编辑
-          sku.map((item: any) => {
-            item.planNum = saveFormatConversion(item, newData)
-          })
-          edit.sewingSkuDTOList = sku
-          const res = await updateSewingPlan(edit)
-          if (res.code === 200) {
-            setDetailsPopup(false)
-            update && update()
-          }
+        obj.sewingSkuDTOList = sku
+        obj.teamManagerId = editData.teamId
+        console.log('生产', sku)
+
+        const res = await updateSewingPlan(obj)
+        if (res.code === 200) {
+          setDetailsPopup(false)
+          update && update()
         }
       } else {
-        message.error('已超出生产量总量')
+        // 编辑
+        console.log('编辑', sku)
+        sku.map((item: any) => {
+          item.planNum = saveFormatConversion(item, newData)
+        })
+        console.log('查看', sku)
+
+        edit.sewingSkuDTOList = sku
+        const res = await updateSewingPlan(edit)
+        if (res.code === 200) {
+          setDetailsPopup(false)
+          update && update()
+        }
       }
     } else {
-      setDetailsPopup(false)
+      message.error('已超出生产量总量')
     }
   }
   // 获取当前最大值
@@ -421,6 +424,8 @@ function Details(props: {
       const remainNum = colorCode.filter(
         (item: { sizeName: any }) => item.sizeName === title
       )[0].remainNum
+      console.log(remainNum)
+
       return remainNum
     }
   }
@@ -436,29 +441,28 @@ function Details(props: {
   }
   //HUQOU D
   const handleCancel = () => {
-    setNewData([])
     setDetailsPopup(false)
   }
 
   return (
     <div>
-      <Modal
-        destroyOnClose={true}
-        width={1200}
-        visible={detailsPopup}
-        centered={true}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <Table
-          bordered
-          loading={loading}
-          columns={list}
-          scroll={{ x: 1500, y: 1000 }}
-          dataSource={newData}
-          rowKey={'id'}
-        />
-      </Modal>
+      {detailsPopup ? (
+        <Modal
+          width={1200}
+          visible={detailsPopup}
+          centered={true}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <Table
+            bordered
+            columns={list}
+            scroll={{ x: 1500, y: 1000 }}
+            dataSource={newData}
+            rowKey={'id'}
+          />
+        </Modal>
+      ) : null}
     </div>
   )
 }

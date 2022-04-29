@@ -1064,7 +1064,7 @@ export const updateSewingPlan = async (params: any) => {
 //缝制计划详情
 export const detailsSewing = async (params: any) => {
   try {
-    const res: ResponseProps = await axios.post(
+    const res: ResponseProps = await axios.get(
       `/aps/produce-assignment-detail-pulished/sewing-task-info`,
       params
     )

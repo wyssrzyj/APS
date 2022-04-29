@@ -62,6 +62,7 @@ function ProductionPlan() {
 
   const { dataSource, total, pageNum, pageSize, loading, tableChange } =
     useTableChange(params, productList)
+
   useEffect(() => {
     ;(async () => {
       getFacList()
@@ -167,6 +168,9 @@ function ProductionPlan() {
     setEditData(v)
     setDetailsPopup(true)
   }
+  const update = async () => {
+    const arr = await productList(params)
+  }
 
   const TableLeft = () => {
     return (
@@ -224,6 +228,7 @@ function ProductionPlan() {
       ) : null}
       {/* 缝制任务 */}
       <Details
+        update={update}
         editData={editData}
         setDetailsPopup={setDetailsPopup}
         detailsPopup={detailsPopup}
