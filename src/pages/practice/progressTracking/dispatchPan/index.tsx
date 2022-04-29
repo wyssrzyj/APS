@@ -88,7 +88,8 @@ function ProductionPlan() {
     } catch (err) {}
   }
   const dealDate = (date: any[], index: number) => {
-    return date ? moment(date[index]).format(FORMAT_DATE) : null
+    // return date ? moment(date[index]).format(FORMAT_DATE) : null
+    return date ? moment(date[index]).valueOf() : null
   }
 
   const searchParamsChange = (values: Record<string, any>) => {
@@ -98,10 +99,10 @@ function ProductionPlan() {
       if (['endTime', 'startTime'].includes(key)) {
         if (key === 'startTime') {
           nParams.startPlanStartTime = dealDate(values.startTime, 0)
-          nParams.startPlanEndTime = dealDate(values.startTime, 1)
+          nParams.endPlanStartTime = dealDate(values.startTime, 1)
         }
         if (key === 'endTime') {
-          nParams.endPlanStartTime = dealDate(values.endTime, 0)
+          nParams.startPlanEndTime = dealDate(values.endTime, 0)
           nParams.endPlanEndTime = dealDate(values.endTime, 1)
         }
       } else {

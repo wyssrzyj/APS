@@ -1,13 +1,13 @@
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, InputNumber, message } from 'antd'
-import { cloneDeep, values } from 'lodash'
+import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
 function EfficiencyTable(props: Record<string, any>) {
   const { onChange, value, disabled } = props
 
-  const [data, setData] = useState<any>(value || [{ day: 0, efficiency: 0 }])
+  const [data, setData] = useState<any>(value)
 
   useEffect(() => {
     onChange && onChange(cloneDeep(data))
@@ -15,13 +15,17 @@ function EfficiencyTable(props: Record<string, any>) {
 
   const executionMethod = (type: any, index?: number) => {
     const nData = cloneDeep(data)
+
     if (type === 'push') {
-      nData.push({ day: 0, efficiency: 0, key: Math.random() })
+      nData.push({ day: nData.length + 1, efficiency: 0, key: Math.random() })
       setData([...nData])
       onChange && onChange([...nData])
     } else {
       if (nData.length > 1) {
         nData.splice(index, 1)
+        nData.forEach((item: any, index: number) => {
+          item.day = index + 1
+        })
         setData([...nData])
         onChange && onChange([...nData])
       } else {
@@ -59,7 +63,7 @@ function EfficiencyTable(props: Record<string, any>) {
               value={item.day}
               min={0}
               precision={0}
-              disabled={disabled}
+              disabled
               onChange={(value) => onValChange(value, 'day', index)}
             />
           </div>

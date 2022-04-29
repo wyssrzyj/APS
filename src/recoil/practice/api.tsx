@@ -701,7 +701,7 @@ export const updateEfficiencyInfo = async (params: any) => {
     console.log(e)
   }
 }
-// 更新或新增产能效率
+// 删除产能效率
 export const deleteEfficiencyInfo = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(

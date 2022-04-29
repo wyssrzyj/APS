@@ -125,19 +125,19 @@ export const menus = [
         url: '/schedulingResults',
         children: [
           {
-            label: '资源甘特图',
+            label: '班组甘特图',
             key: 'resourcedMap',
             icon: 'jack-ziyuan1',
             url: '/resourcedMap'
           },
           {
-            label: '订单甘特图',
+            label: '生产单甘特图',
             key: 'orderChart',
             icon: 'jack-chartmixed',
             url: '/orderChart'
           },
           {
-            label: '资源负荷图',
+            label: '班组负荷图',
             key: 'sjack-xianshijieguo2',
             icon: 'jack-fuhe',
             url: '/schedulingResults'

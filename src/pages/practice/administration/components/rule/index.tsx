@@ -147,7 +147,9 @@ function Rule() {
         initAddModal(isEdit ? 'edit' : 'view', res)
       } catch (err) {}
     } else {
-      initAddModal('add', {})
+      initAddModal('add', {
+        capacityEfficiencyList: [{ day: 1, efficiency: 0 }]
+      })
     }
   }
   const initAddModal = (type: string, info?: any) => {

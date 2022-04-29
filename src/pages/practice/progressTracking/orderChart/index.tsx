@@ -157,7 +157,7 @@ const SchedulingResults = () => {
   return (
     <div className={styles.qualification}>
       <div>
-        <Title title={'订单甘特图'} />
+        <Title title={'生产单甘特图'} />
       </div>
       <Forms FormData={FormData} treeData={treeData}></Forms>
       <div id="c1"></div>
