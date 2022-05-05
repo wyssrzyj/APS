@@ -27,11 +27,11 @@ function Index() {
   const [remind, setRemind] = useState() //甘特图高亮
   const [formData, setFormData] = useState() //form数据
   const [gunterType, setGunterType] = useState('0') //班组、订单
-  const [gunterData, setGunterData] = useState<any>([]) //甘特图数据-班组
+  const [gunterData, setGunterData] = useState<any[]>([]) //甘特图数据-班组
   // const [productionData, setProductionData] = useState<any>([]) //甘特图数据-生产
-  const [notWork, setNotWork] = useState<any>([]) //不可工作时间
-  const [checkIDs, setCheckIDs] = useState<any>([]) //校验id
-  const [promptList, setPromptList] = useState<any>([]) //提示数据
+  const [notWork, setNotWork] = useState<any[]>([]) //不可工作时间
+  const [checkIDs, setCheckIDs] = useState<any[]>([]) //校验id
+  const [promptList, setPromptList] = useState<any[]>([]) //提示数据
 
   const { figureData, productionView, workingDate } = practice
 
@@ -70,6 +70,7 @@ function Index() {
     if (type === '0') {
       const chart: any = await figureData({ factoryId: id })
       const arr = cloneDeep(chart.data)
+
       if (chart.code === 200) {
         dateFormat(arr, type)
       }
@@ -90,23 +91,39 @@ function Index() {
   }
   //处理Gantt时间格式
   const dateFormat = (data: any, type: any) => {
-    const arr = cloneDeep(data)
-    arr.map(
-      (item: {
-        start_date: string | null
-        startDate: moment.MomentInput
-        end_date: string | null
-        endDate: moment.MomentInput
-      }) => {
-        item.start_date = item.startDate
-          ? moment(item.startDate).format('YYYY-MM-DD HH:mm')
-          : moment(new Date()).format('YYYY-MM-DD ')
-        item.end_date = item.endDate
-          ? moment(item.endDate).format('YYYY-MM-DD HH:mm')
-          : moment(new Date()).format('YYYY-MM-DD ')
+    const arr = data.map(
+      (
+        item: {
+          start_date: string | null
+          startDate: moment.MomentInput
+          end_date: string | null
+          endDate: moment.MomentInput
+          delete: boolean
+        },
+        index
+      ) => {
+        if (item.startDate !== null) {
+          item.start_date = moment(item.startDate).format('YYYY-MM-DD HH:mm')
+        } else {
+          item.delete = true
+        }
+        if (item.endDate !== null) {
+          item.end_date = moment(item.endDate).format('YYYY-MM-DD HH:mm')
+        } else {
+          item.delete = true
+        }
+        if (item.delete === true) {
+          delete item.startDate
+          delete item.endDate
+          delete item.start_date
+          delete item.end_date
+        }
+
+        return item
       }
     )
-    setGunterData(arr) //图
+    const cloneArr = cloneDeep(arr)
+    setGunterData(cloneArr) //图
   }
 
   //  图刷新

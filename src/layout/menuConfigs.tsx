@@ -39,45 +39,52 @@ export const menus = [
     url: '/',
     children: [
       {
-        label: '日历管理',
-        key: 'management',
-        icon: 'jack-rili',
-        url: '/',
-        children: [
-          {
-            label: '工作模式',
-            key: 'work',
-            icon: 'jack-kuaisugongzuoliu',
-            url: '/work'
-          },
-          {
-            label: '加班管理',
-            key: 'overtime',
-            icon: 'jack-jiaban',
-            url: '/overtime'
-          },
-          {
-            label: '节假日',
-            key: 'vacations',
-            icon: 'jack-jiejiarishezhi',
-            url: '/vacations'
-          }
-        ]
+        label: '工作模式',
+        key: 'work',
+        icon: 'jack-kuaisugongzuoliu',
+        url: '/work'
       },
       {
-        label: '产能效率管理',
-        key: 'capacity',
-        icon: 'jack-channengxiaoshuai-01',
-        url: '/',
-        children: [
-          {
-            label: '产能效率模板',
-            key: 'rule',
-            icon: 'jack-guanlimoban1',
-            url: '/rule'
-          }
-        ]
+        label: '加班管理',
+        key: 'overtime',
+        icon: 'jack-jiaban',
+        url: '/overtime'
+      },
+      {
+        label: '节假日',
+        key: 'vacations',
+        icon: 'jack-jiejiarishezhi',
+        url: '/vacations'
+      },
+      {
+        label: '产能效率模板',
+        key: 'rule',
+        icon: 'jack-guanlimoban1',
+        url: '/rule'
       }
+      // {
+      //   label: '日历管理',
+      //   key: 'management',
+      //   icon: 'jack-rili',
+      //   url: '/',
+      //   children: [
+
+      //   ]
+      // },
+      // {
+      //   label: '产能效率管理',
+      //   key: 'capacity',
+      //   icon: 'jack-channengxiaoshuai-01',
+      //   url: '/',
+      //   children: [
+      //     {
+      //       label: '产能效率模板',
+      //       key: 'rule',
+      //       icon: 'jack-guanlimoban1',
+      //       url: '/rule'
+      //     }
+      //   ]
+      // }
     ]
   },
 
@@ -128,37 +135,29 @@ export const menus = [
         url: '/dispatchPan'
       },
       {
-        label: '排程结果',
-        key: 'scheduling ',
-        icon: 'jack-xianshijieguo',
-        url: '/scheduling ',
-        children: [
-          {
-            label: '班组甘特图',
-            key: 'resourcedMap',
-            icon: 'jack-ziyuan1',
-            url: '/resourcedMap'
-          },
-          {
-            label: '生产单甘特图',
-            key: 'orderChart',
-            icon: 'jack-chartmixed',
-            url: '/orderChart'
-          },
-          {
-            label: '班组负荷图',
-            key: 'schedulingResults',
-            icon: 'jack-fuhe',
-            url: '/schedulingResults'
-          }
-        ]
+        label: '资源甘特图',
+        key: 'resourcedMap',
+        icon: 'jack-ziyuan1',
+        url: '/resourcedMap'
+      },
+      {
+        label: '订单甘特图',
+        key: 'orderChart',
+        icon: 'jack-chartmixed',
+        url: '/orderChart'
+      },
+      {
+        label: '资源负荷图',
+        key: 'schedulingResults',
+        icon: 'jack-fuhe',
+        url: '/schedulingResults'
+      },
+      {
+        label: '生产实绩',
+        key: 'actualProduction',
+        icon: 'jack-shengchanpicishiji',
+        url: '/actualProduction'
       }
     ]
-  },
-  {
-    label: '生产实绩',
-    key: 'actualProduction',
-    icon: 'jack-shengchanpicishiji',
-    url: '/actualProduction'
   }
 ]

@@ -1,5 +1,7 @@
+/* eslint-disable use-isnan */
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, TimePicker } from 'antd'
+import { isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
@@ -17,31 +19,51 @@ function WorkingHours(props: {
   useEffect(() => {
     type === 1
       ? setData([
-          { name: '1', startDateTime: Date.now(), endDateTime: Date.now() }
+          { name: '1', startDateTime: undefined, endDateTime: undefined }
         ])
       : setData(edit.times)
   }, [type, edit])
 
   const start = (index: string | number, e: moment.MomentInput) => {
+    console.log(moment(e).valueOf())
+
     data[index].startDateTime = moment(e).valueOf()
+    setData([...data])
   }
   const end = (index: string | number, e: moment.MomentInput) => {
     data[index].endDateTime = moment(e).valueOf()
-    console.log([...data])
+    setData([...data])
   }
 
   useEffect(() => {
-    //传递给外部
-    onChange && onChange([...data])
+    if (!isEmpty(data)) {
+      console.log('增加是否更改', data)
+      //传递给外部
+      const initial = data.every((item: any) => {
+        return (
+          item.startDateTime !== undefined && item.endDateTime !== undefined
+        )
+      })
+      const remove = data.every((item: any) => {
+        return !isNaN(item.startDateTime) && !isNaN(item.endDateTime)
+      })
+      console.log('删除测试', remove)
+      //全部不为空的时候才进行传递
+      if (initial === true && remove === true) {
+        onChange && onChange([...data])
+      } else {
+        onChange && onChange(null)
+      }
+    }
   }, [data])
+
   const executionMethod = (type: string, index: number) => {
     if (type === 'push') {
       data.push({
         name: index + new Date().valueOf() * Math.random(),
-        startDateTime: Date.now(),
-        endDateTime: Date.now()
+        startDateTime: undefined,
+        endDateTime: undefined
       })
-
       setData([...data])
     } else {
       data.splice(index, 1)
@@ -60,7 +82,11 @@ function WorkingHours(props: {
         ) => (
           <div className={styles.timePicker} key={item.startDateTime}>
             <TimePicker
-              defaultValue={moment(item.endDateTime)}
+              defaultValue={
+                item.startDateTime === undefined
+                  ? null
+                  : moment(item.startDateTime)
+              }
               disabled={type === 3 ? true : false}
               format={format}
               onChange={(e) => {
@@ -69,7 +95,11 @@ function WorkingHours(props: {
             />
             ~
             <TimePicker
-              defaultValue={moment(item.endDateTime)}
+              defaultValue={
+                item.startDateTime === undefined
+                  ? null
+                  : moment(item.startDateTime)
+              }
               disabled={type === 3 ? true : false}
               format={format}
               onChange={(e) => {

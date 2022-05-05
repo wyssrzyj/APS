@@ -33,16 +33,40 @@ function Overtime() {
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
-      title: '加班班组',
+      title: '加班名称',
       align: 'center',
-      dataIndex: 'remark'
+      dataIndex: 'teamName',
+      render: (value: string, row: any) => {
+        const chars = value !== null ? value.split(',') : []
+        return (
+          <div>
+            {chars.map(
+              (
+                item:
+                  | boolean
+                  | React.ReactChild
+                  | React.ReactFragment
+                  | React.ReactPortal
+                  | null
+                  | undefined,
+                index: any | null | undefined
+              ) => (
+                // eslint-disable-next-line react/jsx-key
+                <Tag key={index}>{item}</Tag>
+              )
+            )}
+          </div>
+        )
+      }
     },
     {
       title: '加班日期',
       align: 'center',
       dataIndex: 'date',
       render: (value: string, row: any) => {
-        const chars = value.split(',')
+        // const chars = value.split(',')
+        const chars = value !== null ? value.split(',') : []
+
         return (
           <div>
             {chars.map(

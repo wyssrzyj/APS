@@ -505,6 +505,43 @@ export const productionView = async (params: any) => {
     console.log(e)
   }
 }
+
+//资源图
+export const resourceMap = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      ` /aps/schedule-view/get-team-view`,
+      params
+    )
+
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+//生产单视图
+export const productionSingleView = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/schedule-view/get-order-view`,
+      params
+    )
+
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
 // getTeamView
 export const getLine = async (params: any) => {
   try {

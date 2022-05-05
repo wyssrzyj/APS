@@ -1,6 +1,9 @@
+import { cloneDeep, isEmpty, keys } from 'lodash'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
+import { practice } from '@/recoil/apis'
 
 import Forms from './forms'
 import Gantt from './Gantt/index'
@@ -11,139 +14,89 @@ import Load from './load/index'
 const SchedulingResults = () => {
   const [currentZoom, setCurrentZoom] = useState<any>('Days') //缩放的状态  Days
   const [subjectData, setSubjectData] = useState<any>({ data: [], links: [] }) //甘特图主体数据
-  const [restDate, setRestDate] = useState<any>() //单个班组的不可用日期
+  // const [restDate, setRestDate] = useState<any>() //单个班组的不可用日期
+  const [formData, setFormData] = useState() //form数据
+  const [gunterData, setGunterData] = useState<any>([]) //图数据
 
+  const [select, setSelect] = useState<any>() //用于展示 线和不可用时间、给树传递id判断
+  const [chart, setChart] = useState<any>([]) //图
+  const [line, setLine] = useState<any>([]) //线
+  const { resourceMap, getLine } = practice
+
+  // 甘特图数据
   useEffect(() => {
-    const data = [
-      {
-        //父亲
-        id: 1,
-        type: true, //判断是否可以移动
-        text: '裁剪车间—裁剪班组', //名称
-        // duration: 6, //天数
-        // progress: 1, //控制完成百分比 范围0-1
-        color: 'red' //控制颜色
-      },
-      {
-        //儿子
-        id: 11,
-        text: '-生产单号10086',
-        // start_date: '2020-04-07',
-        // duration: 2,
-        progress: 0.6,
-        parent: 1,
-        color: '', //控制颜色
-        render: 'split' //添加同一行
-      },
-      {
-        //孙子
-        id: 111,
-        text: '卢英杰的子1',
-        start_date: '2020-04-6 ', //开始时间
-        end_date: '2020-04-7 ', //结束时间
-        duration: 1,
-        progress: 0.6,
-        parent: 11,
-        color: 'red' //控制颜色
-      },
-      {
-        id: 112,
-        text: '卢英杰的子2',
-        start_date: '2020-04-10',
-        duration: 2,
-        progress: 0.6,
-        parent: 11
-      },
-      {
-        id: 113,
-        text: '卢英杰号的子3',
-        start_date: '2020-04-12',
-        duration: 2,
-        progress: 0.6,
-        parent: 11
-      }
-    ]
-
-    const links = [
-      { id: 1, source: 1, target: 2, type: 0 },
-      { id: 3, source: 2, target: 3, type: 0 }
-    ]
-    setSubjectData({
-      data,
-      links
-    })
-  }, [])
-  // 假数据
-  const treeData = [
-    {
-      title: '工厂',
-      value: 1,
-      key: 1,
-      children: [
-        {
-          title: '工厂1',
-          value: 2,
-          key: 2
-        },
-        {
-          title: '工厂2',
-          value: 3,
-          key: 3
-        }
-      ]
-    },
-    {
-      title: '原料',
-      value: '2-9',
-      key: '2-9',
-      children: [
-        {
-          title: '大米',
-          value: '2-1',
-          key: '2-1'
-        },
-        {
-          title: '土豆',
-          value: '2-2',
-          key: '2-2'
-        },
-        {
-          title: '菠萝',
-          value: '2-3',
-          key: '2-3'
-        }
-      ]
-    },
-    {
-      title: '玩具',
-      value: '3-9',
-      key: '3-9',
-      children: [
-        {
-          title: '金铲铲的冠冕',
-          value: '3-1',
-          key: '3-1'
-        },
-        {
-          title: '残暴之力',
-          value: '3-2',
-          key: '3-2'
-        },
-        {
-          title: '末日寒冬',
-          value: '3-3',
-          key: '3-3'
-        }
-      ]
-    },
-    {
-      title: '蔬菜',
-      value: '4',
-      key: '4'
+    if (formData !== undefined) {
+      getChart(formData)
     }
-  ]
+  }, [formData])
+
+  const getChart = async (id: undefined) => {
+    const chart: any = await resourceMap({ factoryId: id })
+    const arr = cloneDeep(chart.data)
+    if (chart.code === 200) {
+      dateFormat(arr)
+    }
+  }
+
+  //处理Gantt时间格式
+  const dateFormat = (data: any) => {
+    const arr = cloneDeep(data)
+    arr.map(
+      (item: {
+        start_date: string | null
+        startDate: moment.MomentInput
+        end_date: string | null
+        endDate: moment.MomentInput
+      }) => {
+        item.start_date = item.startDate
+          ? moment(item.startDate).format('YYYY-MM-DD HH:mm')
+          : null
+        item.end_date = item.endDate
+          ? moment(item.endDate).format('YYYY-MM-DD HH:mm')
+          : null
+      }
+    )
+    setGunterData(arr) //图
+  }
+  // 线数据
+  useEffect(() => {
+    if (select !== undefined) {
+      getLineData(select)
+    }
+  }, [select])
+
+  const getLineData = async (id) => {
+    const line: any = await getLine({ id }) //线
+    if (line.code === 200) {
+      setLine(line.data === null ? [] : line.data)
+    }
+  }
+
+  // 设置图 线数据
+  useEffect(() => {
+    if (!isEmpty(gunterData)) {
+      setChart(gunterData)
+    }
+    setLine([]) //线 //初始的时候传空
+  }, [gunterData])
+
+  // 合并图线
+  useEffect(() => {
+    if (chart !== undefined && line !== undefined) {
+      setSubjectData({
+        data: chart,
+        links: line
+      })
+      console.log('点击是否进项改变', {
+        data: chart,
+        links: line
+      })
+    }
+  }, [chart, line])
+
   const leftData = async (e: any) => {
-    console.log(e)
+    setSelect(e)
+    console.log('leftData', e)
   }
   // 更新
   const updateList = (e: any) => {
@@ -152,12 +105,15 @@ const SchedulingResults = () => {
   const rightData = (e: any) => {
     console.log('右键', e)
   }
+  const FormData = (e: any) => {
+    setFormData(e)
+  }
   return (
     <div className={styles.qualification}>
       <div>
-        <Title title={'班组甘特图'} />
+        <Title title={'资源甘特图'} />
       </div>
-      <Forms FormData={FormData} treeData={treeData}></Forms>
+      <Forms FormData={FormData}></Forms>
       <div id="c1"></div>
 
       <div className={styles.ganttContent}>
@@ -168,7 +124,7 @@ const SchedulingResults = () => {
           tasks={subjectData}
           zoom={currentZoom}
           updateList={updateList}
-          restDate={restDate}
+          // restDate={restDate}
         />
       </div>
 

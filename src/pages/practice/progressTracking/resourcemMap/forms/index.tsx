@@ -1,19 +1,40 @@
-import { Col, Form, Input, Row, TreeSelect } from 'antd'
+/*
+ * @Author: your name
+ * @Date: 2022-04-13 15:47:01
+ * @LastEditTime: 2022-05-05 09:34:53
+ * @LastEditors: your name
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: \jack-aps\src\pages\practice\progressTracking\resourcemMap\forms\index.tsx
+ */
+import { Form, Select } from 'antd'
 import { debounce } from 'lodash'
+import React, { useEffect, useState } from 'react'
 
-import { getChild } from '@/components/getChild/index'
-const layout = {
-  labelCol: {
-    span: 5
-  },
-  wrapperCol: {
-    span: 24
+import { practice } from '@/recoil/apis'
+
+const { Option } = Select
+
+const HeaderForm = (props: { FormData: any }) => {
+  const { FormData } = props
+  const { factoryList } = practice
+  const [list, setList] = useState<any>([])
+  const [theDefault, setTheDefault] = useState<any>() //默认展示
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+    if (res.code === 200) {
+      //  默认展示第2条数据
+      setTheDefault(arr[2])
+      FormData && FormData(arr[2].id)
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setList(arr)
+    }
   }
-}
-
-const HeaderForm = (props: { FormData: any; treeData: any }) => {
-  const { FormData, treeData } = props
-  const { SHOW_PARENT } = TreeSelect
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
@@ -21,55 +42,54 @@ const HeaderForm = (props: { FormData: any; treeData: any }) => {
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
-    FormData && FormData(values)
+    FormData && FormData(values.keyword)
   }, 500)
 
   const getValueFromEvent = (event: any, type = 'text') => {
     setTimeout(async () => {
       await handleSubmit()
     })
-    if (type === 'input') {
-      return event.target.value
-    }
-    if (type === 'treeSelect') {
-      return getChild(event, treeData)
+    if (type === 'select') {
+      return event
     }
   }
-  const tProps = {
-    treeData,
-    treeCheckable: true,
-    showCheckedStrategy: SHOW_PARENT,
-    placeholder: '请选择车间'
-  }
+
   return (
     <div>
       <Form form={form}>
-        <Row>
-          <Col span={6}>
-            <Form.Item
-              {...layout}
-              name="name"
-              label="选择工厂"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
-              }
+        <Form.Item
+          name="keyword"
+          label="选择工厂"
+          getValueFromEvent={(event: InputEvent) =>
+            getValueFromEvent(event, 'select')
+          }
+        >
+          {theDefault ? (
+            <Select
+              allowClear
+              defaultValue={theDefault.deptName}
+              style={{ width: 300 }}
+              // onChange={handleChange}
             >
-              <Input placeholder="请选择工厂" allowClear />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item
-              {...layout}
-              name="teams"
-              label="选择车间"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'treeSelect')
-              }
-            >
-              <TreeSelect {...tProps} />
-            </Form.Item>
-          </Col>
-        </Row>
+              {list.map(
+                (item: {
+                  id: React.Key | null | undefined
+                  name:
+                    | boolean
+                    | React.ReactChild
+                    | React.ReactFragment
+                    | React.ReactPortal
+                    | null
+                    | undefined
+                }) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                )
+              )}
+            </Select>
+          ) : null}
+        </Form.Item>
       </Form>
     </div>
   )

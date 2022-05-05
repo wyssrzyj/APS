@@ -27,7 +27,6 @@ const Dhx = (props: {
     formData,
     gunterType
   } = props
-
   const { getLine, calculateEndTimeAfterMove } = practice
   const [FactoryData, setFactoryData] = useRecoilState(
     dockingData.globalFactoryData
@@ -64,12 +63,18 @@ const Dhx = (props: {
         data: chart,
         links: line
       })
+      console.log('合并树', {
+        data: chart,
+        links: line
+      })
     }
   }, [chart, line, gunterType])
 
   useEffect(() => {
     // 线
-    getLineData()
+    if (!isEmpty(select)) {
+      getLineData(select)
+    }
 
     // 获取对应的不可用时间
     if (type === '0') {
@@ -101,10 +106,10 @@ const Dhx = (props: {
     }
   }, [select, type])
 
-  const getLineData = async () => {
-    const line: any = await getLine({ id: '1508975275202707458' }) //线
+  const getLineData = async (id: any) => {
+    const line: any = await getLine({ id }) //线
     if (line.code === 200) {
-      setLine(line.data)
+      setLine(line.data === null ? [] : line.data)
     }
   }
 
