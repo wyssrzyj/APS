@@ -45,7 +45,7 @@ const Index = () => {
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
-  // const value = useRecoilValue(practices.lyj)
+  //. const value = useRecoilValue(practices.lyj)
   useEffect(() => {
     api(params)
   }, [params])

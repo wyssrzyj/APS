@@ -158,7 +158,7 @@ export const menus = [
   {
     label: '生产实绩',
     key: 'actualProduction',
-    icon: 'jack-shengchan',
+    icon: 'jack-shengchanpicishiji',
     url: '/actualProduction'
   }
 ]
