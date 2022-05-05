@@ -81,7 +81,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
   ) => {
     //编辑
 
-    //时间的处理
+    //时间的处理.
     if (values.date) {
       const arr = moment().format('YYYY-MM-DD')
       console.log(arr)
