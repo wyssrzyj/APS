@@ -35,7 +35,7 @@ export const menus = [
   {
     label: '基础数据',
     key: 'basicData',
-    icon: 'jack-qiyeyewu',
+    icon: 'jack-jichushuju',
     url: '/',
     children: [
       {
