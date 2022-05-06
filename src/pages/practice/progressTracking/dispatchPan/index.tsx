@@ -12,7 +12,6 @@ import useTableChange from '@/utils/useTableChange'
 import { formItemConfig, searchConfigs, tableColumns } from './conifgs'
 import Details from './details/index'
 import styles from './index.module.less'
-import ViewModal from './viewModal'
 
 const {
   productList,
@@ -140,12 +139,10 @@ function ProductionPlan() {
 
   const handleDetailInfo = async (rowInfo: any) => {
     try {
-      toggleModalVisible(true)
-      console.log('dangqianhang ', rowInfo)
-
       const res = await productDetail({ id: rowInfo.id })
       if (res) {
         setRowInfo(res)
+        toggleModalVisible(true)
       }
     } catch (err) {}
   }

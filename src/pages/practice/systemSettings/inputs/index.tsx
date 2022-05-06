@@ -40,17 +40,14 @@ const Inputs = (props: { onChange: any; list: any; item: any }) => {
   return (
     <div>
       <Row>
-        <Col span={4}>
+        <Col span={9}>
           <InputNumber
-            style={{ width: 140 }}
+            style={{ width: 140, marginRight: '20px' }}
             value={data.delay}
             onChange={(e) => {
               weight(e, 0)
             }}
           />
-        </Col>
-
-        <Col span={12}>
           <Select
             value={arr}
             style={{ width: 60 }}
@@ -63,6 +60,9 @@ const Inputs = (props: { onChange: any; list: any; item: any }) => {
             <Option value="3">月</Option>
           </Select>
         </Col>
+
+        {/* <Col span={12}>
+        </Col> */}
       </Row>
     </div>
   )

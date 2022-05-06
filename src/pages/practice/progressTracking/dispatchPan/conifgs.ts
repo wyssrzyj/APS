@@ -122,6 +122,7 @@ export const tableColumns: Array<Partial<Column>> = [
     title: '操作',
     align: 'center',
     dataIndex: 'operate',
+    width: 200,
     fixed: 'right'
   }
 ]
@@ -146,7 +147,8 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     name: 'externalProduceOrderNum',
     field: 'externalProduceOrderNum',
     value: '',
-    type: 'text',
+    type: 'input',
+    disabled: true,
     required: true,
     placeholder: '请输入模板名称',
     allowClear: true,
@@ -159,7 +161,8 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     value: '',
     required: true,
     placeholder: '请选择工厂名称',
-    type: 'text',
+    type: 'input',
+    disabled: true,
     span: 12
     // options: []
   },
@@ -168,7 +171,8 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     name: 'shopName',
     field: 'shopName',
     value: '',
-    type: 'text',
+    type: 'input',
+    disabled: true,
     // options: [],
     required: true,
     placeholder: '请选择车间名称',
@@ -179,7 +183,8 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     name: 'teamName',
     field: 'teamName',
     value: '',
-    type: 'text',
+    type: 'input',
+    disabled: true,
     // options: [],
     required: true,
     placeholder: '请选择班组名称',
@@ -190,7 +195,8 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     name: 'productName',
     field: 'productName',
     value: '',
-    type: 'text',
+    type: 'input',
+    disabled: true,
     placeholder: '请输入产品名称',
     allowClear: true,
     span: 12
@@ -200,7 +206,8 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     name: 'productNum',
     field: 'productNum',
     value: '',
-    type: 'text',
+    type: 'input',
+    disabled: true,
     placeholder: '请输入产品款号',
     allowClear: true,
     span: 12
@@ -210,7 +217,8 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     name: 'productionAmount',
     field: 'productionAmount',
     value: '',
-    type: 'text',
+    type: 'input',
+    disabled: true,
     placeholder: '请输入生产量',
     allowClear: true,
     span: 12
@@ -220,7 +228,8 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     name: 'section',
     field: 'section',
     value: '',
-    type: 'text',
+    type: 'input',
+    disabled: true,
     placeholder: '请输入工段名称',
     allowClear: true,
     span: 12
@@ -230,7 +239,8 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     name: 'planStartTime',
     field: 'planStartTime',
     value: '',
-    type: 'text',
+    type: 'datePicker',
+    disabled: true,
     placeholder: '请选择计划开始时间',
     allowClear: true,
     span: 12
@@ -240,7 +250,8 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     name: 'planEndTime',
     field: 'planEndTime',
     value: '',
-    type: 'text',
+    type: 'datePicker',
+    disabled: true,
     placeholder: '请选择计划结束时间',
     allowClear: true,
     span: 12
@@ -250,9 +261,10 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     name: 'remark',
     field: 'remark',
     value: '',
-    type: 'text',
+    type: 'textarea',
+    disabled: true,
     placeholder: '请输入备注',
     allowClear: true,
-    span: 12
+    span: 24
   }
 ]

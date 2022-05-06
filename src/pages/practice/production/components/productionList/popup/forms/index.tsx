@@ -97,7 +97,14 @@ function Forms(props: { FormData: any; data: any; types: any; list: any }) {
       span: 15
     }
   }
-
+  const layout1 = {
+    labelCol: {
+      span: 5
+    },
+    wrapperCol: {
+      span: 20
+    }
+  }
   const onFinish = (values: any) => {
     if (values.workTeam) {
       values.workTeam = getChild(values.workTeam, treeData) //下拉多选的处理
@@ -220,7 +227,7 @@ function Forms(props: { FormData: any; data: any; types: any; list: any }) {
           </Col>
           <Col span={8}>
             <Form.Item
-              label="前工序完成量"
+              label="前工段完成量"
               name="beforeFinishAmount"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
@@ -233,7 +240,7 @@ function Forms(props: { FormData: any; data: any; types: any; list: any }) {
         <Row>
           <Col span={8}>
             <Form.Item
-              label="前工序间隔时间"
+              label="前工段间隔时间"
               name="beforeWaitTime"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
@@ -246,8 +253,8 @@ function Forms(props: { FormData: any; data: any; types: any; list: any }) {
               />
             </Form.Item>
           </Col>
-          <Col span={8}>
-            <Form.Item label="工艺说明" name="note">
+          <Col span={16}>
+            <Form.Item label="工艺说明" name="note" {...layout1}>
               <TextArea rows={4} placeholder="请输入工艺说明" disabled={true} />
             </Form.Item>
           </Col>

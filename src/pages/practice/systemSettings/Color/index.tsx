@@ -93,7 +93,7 @@ function WorkingHours(props: { onChange: any; list: any }) {
                   className={styles.color}
                   style={{ background: `${item.color}` }}
                 >
-                  {item.color}
+                  {/* {item.color} */}
                 </div>
               </Popover>
               <div className={styles.executionMethod}>

@@ -54,18 +54,19 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
     }
   }, [data])
   return (
-    <div>
-      <Row className={styles.NoExtended}>
-        <Col span={6}>
-          未延期:　
-          <InputNumber
-            value={data[0].delay}
-            style={{ width: 60 }}
-            onChange={(e) => {
-              inpout(e, 0)
-            }}
-          />
-          　
+    <div className={styles.NoExtended}>
+      <Row className={styles.firstRow}>
+        <Col span={9} className={styles.container}>
+          <div className={styles.innerContainer}>
+            <span className={styles.labelText}>未延期:</span>
+            <InputNumber
+              value={data[0].delay}
+              style={{ width: 60 }}
+              onChange={(e) => {
+                inpout(e, 0)
+              }}
+            />
+          </div>
           <Select
             value={arr}
             style={{ width: 60 }}
@@ -78,8 +79,9 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
             <Option value="3">月</Option>
           </Select>
         </Col>
-        <Col span={5} className={styles.NoExtended}>
-          权重:　-　
+        <Col span={5}>
+          权重:
+          <span className={styles.operationIcon}>-</span>
           <InputNumber
             value={data[0].weight}
             onChange={(e) => {
@@ -88,17 +90,18 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
           />
         </Col>
       </Row>
-      <Row className={styles.NoExtended}>
-        <Col span={6}>
-          已延期:　
-          <InputNumber
-            value={data[1].delay}
-            style={{ width: 60 }}
-            onChange={(e) => {
-              inpout(e, 1)
-            }}
-          />
-          　
+      <Row>
+        <Col span={9} className={styles.container}>
+          <div className={styles.innerContainer}>
+            <span className={styles.labelText}> 已延期:</span>
+            <InputNumber
+              value={data[1].delay}
+              style={{ width: 60 }}
+              onChange={(e) => {
+                inpout(e, 1)
+              }}
+            />
+          </div>
           <Select
             value={delayArr}
             style={{ width: 60 }}
@@ -111,8 +114,9 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
             <Option value="3">月</Option>
           </Select>
         </Col>
-        <Col span={5} className={styles.NoExtended}>
-          权重:　+　
+        <Col span={5}>
+          权重:
+          <span className={styles.operationIcon}>+</span>
           <InputNumber
             value={data[1].weight}
             onChange={(e) => {
