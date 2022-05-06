@@ -14,7 +14,7 @@ function Forms(props: { FormData: any; data: any; types: any }) {
   const { validateFields } = form
   useEffect(() => {
     if (!isEmpty(data)) {
-      // form.setFieldsValue(data)
+      form.setFieldsValue(data)
     }
   }, [types, data])
 
@@ -130,16 +130,6 @@ function Forms(props: { FormData: any; data: any; types: any }) {
     return event
   }
 
-  const tProps = {
-    treeData,
-    value: value,
-    treeCheckable: true,
-    showCheckedStrategy: SHOW_PARENT,
-    placeholder: '请选择工作班组',
-    style: {
-      width: '100%'
-    }
-  }
   return (
     <div className={styles.relative}>
       <Form

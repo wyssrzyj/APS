@@ -20,6 +20,7 @@ function Popup(props: { content: any }) {
   const { content } = props
   const {
     isModalVisible,
+    setGetDetailsId,
     setIsModalVisible,
     types,
     getDetailsId,
@@ -55,7 +56,8 @@ function Popup(props: { content: any }) {
   //   }
   // }, [list])
   useEffect(() => {
-    if (getDetailsId !== undefined) {
+    if (getDetailsId !== undefined && getDetailsId !== null) {
+      // console.log('是否法神改变', getDetailsId)
       setParams({ ...params, externalProduceOrderId: getDetailsId })
     }
   }, [getDetailsId])
@@ -136,6 +138,7 @@ function Popup(props: { content: any }) {
 
   const handleCancel = () => {
     setIsModalVisible(false)
+    setGetDetailsId(null)
   }
   const preservation = (e: any) => {
     setOutgoing(e)
@@ -149,6 +152,7 @@ function Popup(props: { content: any }) {
     <div>
       <Modal
         width={1000}
+        destroyOnClose={true}
         visible={isModalVisible}
         maskClosable={false}
         onOk={handleOk}

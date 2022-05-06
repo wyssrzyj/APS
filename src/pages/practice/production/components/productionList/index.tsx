@@ -209,6 +209,7 @@ function Production() {
     console.log('删除逻辑')
   }
   const content = {
+    setGetDetailsId,
     isModalVisible,
     setIsModalVisible,
     types,
