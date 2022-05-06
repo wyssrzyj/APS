@@ -157,9 +157,7 @@ const FormTable = (props: any) => {
                     }}
                   />
                 </>
-              ) : (
-                <Icon type="jack-icon-test" className={styles.previous} />
-              )
+              ) : null
             ) : null}
           </Space>
         )

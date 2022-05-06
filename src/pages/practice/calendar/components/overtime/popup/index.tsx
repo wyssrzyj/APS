@@ -84,14 +84,11 @@ function Popup(props: { content: any; newlyAdded: any }) {
     //时间的处理.
     if (values.date) {
       const arr = moment().format('YYYY-MM-DD')
-      console.log(arr)
-
       values.date = moment(values.date).valueOf()
     }
     //工作时间
     const format: any = moment(new Date()).format('YYYY-MM-DD')
     const time = moment(format).valueOf()
-    console.log(time)
 
     if (!isEmpty(values.timeList)) {
       values.timeList.map((item: any) => {
@@ -103,7 +100,6 @@ function Popup(props: { content: any; newlyAdded: any }) {
     if (values.createTime) {
       values.createTime = moment(values.createTime).valueOf()
     }
-    console.log('提交的值', values)
 
     const list: any = type === 1 ? values : { ...values, id: edit.id }
 
@@ -114,8 +110,6 @@ function Popup(props: { content: any; newlyAdded: any }) {
     })
 
     if (arr.success === true) {
-      console.log('/班组为false才执行', list)
-
       const res = await overtimeAddition(list)
       if (res === true) {
         newlyAdded()
@@ -143,7 +137,6 @@ function Popup(props: { content: any; newlyAdded: any }) {
   }
   const onChange = (e: moment.MomentInput) => {
     const arr = moment(e).format('YYYY-MM-DD')
-    console.log(moment(arr).valueOf())
     settime(moment(arr).valueOf())
   }
   const getFactoryName = (e: any) => {
@@ -156,6 +149,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
         title={type === 1 ? '新增加班' : type === 2 ? '编辑加班' : '查看加班'}
         visible={isModalVisible}
         onOk={handleOk}
+        maskClosable={false}
         onCancel={handleCancel}
         centered={true}
       >
@@ -199,9 +193,9 @@ function Popup(props: { content: any; newlyAdded: any }) {
             </Select>
           </Form.Item>
           <Form.Item
-            label="加班名称"
+            label="班组名称"
             name="teamIds"
-            rules={[{ required: true, message: '请先选择加班名称!' }]}
+            rules={[{ required: true, message: '请先选择班组名称!' }]}
           >
             <TreeSelect {...tProps} disabled={type === 3 ? true : false} />
           </Form.Item>

@@ -15,16 +15,20 @@ import Material from './material'
 function Materials() {
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [total] = useState<number>(0)
+  const [total, setTotal] = useState<number>(0)
+  const [params, setParams] = useState<any>({
+    pageNum: 1,
+    pageSize: pageSize
+  })
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [type, setType] = useState(false) //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState<boolean>(false) //删除弹窗
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
   const [materialList, setMaterialList] = useState<any>() //物料齐套数据
-  const [list, setList] = useState<any>() //物料齐套数据
-  const [queryData, setQueryData] = useState<any>({}) //物料齐套数据
+  const [list, setList] = useState<any>()
+  const [queryData, setQueryData] = useState<any>({})
 
-  const { materialListApi, completeInspectionReport, exportShortageReport } =
+  const { productionList, completeInspectionReport, exportShortageReport } =
     practice
 
   const map = new Map()
@@ -37,11 +41,11 @@ function Materials() {
       align: 'center',
       dataIndex: 'externalProduceOrderNum'
     },
-    {
-      title: '销售单号',
-      align: 'center',
-      dataIndex: 'orderNum'
-    },
+    // {
+    //   title: '销售单号',
+    //   align: 'center',
+    //   dataIndex: 'orderNum'
+    // },
     {
       title: '工厂名称',
       align: 'center',
@@ -90,13 +94,18 @@ function Materials() {
       }
     }
   ]
+  useEffect(() => {
+    setParams({ ...params, pageNum, pageSize, queryData })
+  }, [pageNum, pageSize, queryData])
   //获取列表数据
   useEffect(() => {
-    formApi(queryData)
-  }, [queryData])
+    formApi(params)
+  }, [params])
   const formApi = async (v: any) => {
-    const res = await materialListApi(v)
-    if (isEmpty(!res.records)) {
+    const res = await productionList(v)
+    setTotal(res.total)
+
+    if (!isEmpty(res.records)) {
       res.records.map(
         (item: {
           id: any
@@ -110,7 +119,6 @@ function Materials() {
           item.name = `生产单：${item.externalProduceOrderNum}`
         }
       )
-
       setList(res.records)
     }
   }

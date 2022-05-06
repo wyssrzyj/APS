@@ -1,4 +1,5 @@
 import { Table } from 'antd'
+import { isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
@@ -21,7 +22,7 @@ function Production() {
 
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [total] = useState<number>(0)
+  const [total, setTotal] = useState<number>(0)
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [types, setType] = useState(false) //编辑或者查看
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
@@ -52,18 +53,22 @@ function Production() {
     }
   }
   useEffect(() => {
+    setParams({ ...params, pageNum: pageNum, pageSize: pageSize })
+  }, [pageNum, pageSize])
+
+  useEffect(() => {
     api(params)
   }, [params])
 
   const api = async (item: any) => {
     const arr: any = await productionList(item)
-    console.log(arr)
-    if (arr.code === 200) {
+    if (!isEmpty(arr.records)) {
+      setTotal(arr.total)
       setLoading(false)
-      arr.data.records.map((item: any) => {
+      arr.records.map((item: any) => {
         item.id = `${item.productId + Math.random()}` //后端没有成成id 这里自己做处理 防止key值重复
       })
-      setList(arr.data.records)
+      setList(arr.records)
     }
   }
 
@@ -72,8 +77,8 @@ function Production() {
     {
       title: '生产单号',
       align: 'center',
-      key: 'productOrderNum',
-      dataIndex: 'productOrderNum'
+      key: 'externalProduceOrderNum',
+      dataIndex: 'externalProduceOrderNum'
     },
     {
       title: '销售单号',
@@ -178,7 +183,7 @@ function Production() {
 
   //头部form的数据
   const FormData = (e: any) => {
-    setParams({ ...params, ...e })
+    setParams({ ...params, ...e, pageNum: 1 })
   }
   const onPaginationChange = (
     page: React.SetStateAction<number>,
@@ -188,7 +193,7 @@ function Production() {
     setPageSize(pageSize)
   }
   const editUser = (type: boolean, row: any) => {
-    setGetDetailsId(row.productId)
+    setGetDetailsId(row.externalProduceOrderId)
     setExternalProduceOrderId(row.externalProduceOrderId)
     if (type === true) {
       setType(false)

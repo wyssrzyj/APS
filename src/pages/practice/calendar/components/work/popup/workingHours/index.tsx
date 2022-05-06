@@ -37,7 +37,6 @@ function WorkingHours(props: {
 
   useEffect(() => {
     if (!isEmpty(data)) {
-      console.log('增加是否更改', data)
       //传递给外部
       const initial = data.every((item: any) => {
         return (
@@ -47,14 +46,16 @@ function WorkingHours(props: {
       const remove = data.every((item: any) => {
         return !isNaN(item.startDateTime) && !isNaN(item.endDateTime)
       })
-      console.log('删除测试', remove)
       //全部不为空的时候才进行传递
       if (initial === true && remove === true) {
         onChange && onChange([...data])
       } else {
-        onChange && onChange(null)
+        if (data[0].startDateTime !== undefined) {
+          onChange && onChange(null)
+        }
       }
     }
+    console.log('是否确认', confirm)
   }, [data])
 
   const executionMethod = (type: string, index: number) => {

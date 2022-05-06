@@ -135,8 +135,8 @@ function Material(props: {
     const type: any = meetConditions(modifyData)
     if (type === true) {
       //确认保存
-      current.tableContent = modifyData //添加
-      current.externalProduceOrderId = '1503965241543753729' //添加
+      current.tableContent = modifyData
+      // const externalProduceOrderId = materialList.externalProduceOrderId //添加
 
       const res = await materialSaved(current)
       if (res) {
@@ -217,6 +217,7 @@ function Material(props: {
         visible={materialModal}
         centered={true}
         footer={null}
+        maskClosable={false}
         onCancel={onCancel}
       >
         <Tabs onChange={callback} type="card" activeKey={activeKey}>

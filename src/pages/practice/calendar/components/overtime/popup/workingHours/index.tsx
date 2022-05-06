@@ -36,7 +36,6 @@ function WorkingHours(props: {
   }
 
   useEffect(() => {
-    console.log('增加是否更改', data)
     if (!isEmpty(data)) {
       //传递给外部
       const initial = data.every((item: any) => {
@@ -52,7 +51,9 @@ function WorkingHours(props: {
       if (initial === true && remove === true) {
         onChange && onChange([...data])
       } else {
-        onChange && onChange(null)
+        if (data[0].startDateTime !== undefined) {
+          onChange && onChange(null)
+        }
       }
     }
   }, [data])

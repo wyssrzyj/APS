@@ -128,6 +128,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
     <div>
       <Modal
         width={700}
+        maskClosable={false}
         title={
           type === 1
             ? '新增工作模式'
@@ -183,6 +184,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
             rules={[{ required: true, message: '请选择工厂名称!' }]}
           >
             <Select
+              disabled={type === 3 ? true : false}
               onChange={getFactoryName}
               placeholder="请选择工厂名称"
               allowClear

@@ -35,7 +35,7 @@ function Overtime() {
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
-      title: '加班名称',
+      title: '班组名称',
       align: 'center',
       dataIndex: 'teamName',
       render: (value: string, row: any) => {
@@ -261,10 +261,8 @@ function Overtime() {
       title: '确认删除选中项?',
       icon: <ExclamationCircleOutlined />,
       content: '是否删除',
-      okText: 'Yes',
       okType: 'danger',
       centered: true,
-      cancelText: 'No',
       onOk() {
         movApi()
       },

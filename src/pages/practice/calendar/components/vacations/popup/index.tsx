@@ -145,6 +145,7 @@ function Popup(props: any) {
           type === 1 ? '新增节假日' : type === 2 ? '编辑节假日' : '查看节假日'
         }
         visible={isModalVisible}
+        maskClosable={false}
         onOk={handleOk}
         onCancel={handleCancel}
         centered={true}

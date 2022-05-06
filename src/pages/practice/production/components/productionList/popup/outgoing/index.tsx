@@ -268,7 +268,7 @@ const Outgoing = (props: any) => {
           onChange: onPaginationChange //获取当前页码是一个function
         }}
       />
-      <div>
+      <div className={styles.outgoing}>
         <Button
           onClick={showModal}
           className={styles.showModal}

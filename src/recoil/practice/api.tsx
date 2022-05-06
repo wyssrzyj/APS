@@ -438,14 +438,14 @@ export const systemParameters = async (params: any) => {
 export const productionList = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
-      `/aps/product-order/list`,
+      `/aps/check-product/list`,
       params
     )
     if (res.code !== 200) {
       message.error(res.msg)
     }
     if (res) {
-      return res || []
+      return res.data || []
     }
     return []
   } catch (e) {
@@ -897,24 +897,6 @@ export const forDetail = async (params: any) => {
   try {
     const res: ResponseProps = await axios.get(
       ` /aps/produce-assignment-detail/get-detail-by-id`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-//生产单-列表
-export const materialListApi = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/product-order/list`,
       params
     )
     if (res.code !== 200) {

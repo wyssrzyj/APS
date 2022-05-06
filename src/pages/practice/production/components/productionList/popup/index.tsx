@@ -33,7 +33,7 @@ function Popup(props: { content: any }) {
   const [params, setParams] = useState<any>({
     pageNum: 1,
     pageSize: defaultPageSize,
-    productId: getDetailsId
+    externalProduceOrderId: getDetailsId
   })
 
   const [localData, setLocalData] = useState<any>([]) //工艺数据
@@ -41,18 +41,19 @@ function Popup(props: { content: any }) {
 
   useEffect(() => {
     if (getDetailsId !== undefined) {
-      setParams({ ...params, productId: getDetailsId })
+      setParams({ ...params, externalProduceOrderId: getDetailsId })
     }
   }, [getDetailsId])
 
   useEffect(() => {
-    if (params.productId !== undefined) {
+    if (params.externalProduceOrderId !== undefined) {
       getDetails(params)
     }
   }, [params])
 
   const getDetails = async (params: any) => {
     const res: any = await workingProcedure(params)
+
     setUsedList(res.records)
   }
 
@@ -132,6 +133,7 @@ function Popup(props: { content: any }) {
       <Modal
         width={1000}
         visible={isModalVisible}
+        maskClosable={false}
         onOk={handleOk}
         okText={types ? '确认' : '保存'}
         onCancel={handleCancel}
