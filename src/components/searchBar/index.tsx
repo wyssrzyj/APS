@@ -1,3 +1,11 @@
+/*
+ * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @Date: 2022-04-20 14:54:47
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @LastEditTime: 2022-05-06 09:02:09
+ * @FilePath: \jack-aps\src\components\searchBar\index.tsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { Col, Row } from 'antd'
 import { cloneDeep, debounce } from 'lodash'
 import React, { useEffect, useMemo, useRef } from 'react'
@@ -19,7 +27,7 @@ const SearchBar = (props: Record<string, any>) => {
     const nParams = cloneDeep(paramsRef.current)
     nParams[field] = value
     callback && callback(nParams)
-  }, 200)
+  }, 500)
 
   const Search = useMemo(() => {
     return configs.map((item: any, idx: number) => {

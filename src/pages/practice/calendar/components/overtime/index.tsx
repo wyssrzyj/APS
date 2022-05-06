@@ -1,4 +1,5 @@
-import { Button, message, Table, Tag } from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { Button, message, Modal, Table, Tag } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
@@ -9,8 +10,9 @@ import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
 import Popup from './popup'
-
 function Overtime() {
+  const { confirm } = Modal
+
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total, setTotal] = useState<number>(20)
@@ -228,7 +230,8 @@ function Overtime() {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
-      setMovIsModalVisible(true)
+      showDeleteConfirm()
+      // setMovIsModalVisible(true)
     }
   }
   const movApi = async () => {
@@ -251,6 +254,24 @@ function Overtime() {
   const executionMethod = () => {
     setIsModalVisible(true)
     setType(1)
+  }
+
+  const showDeleteConfirm = () => {
+    confirm({
+      title: '确认删除选中项?',
+      icon: <ExclamationCircleOutlined />,
+      content: '是否删除',
+      okText: 'Yes',
+      okType: 'danger',
+      centered: true,
+      cancelText: 'No',
+      onOk() {
+        movApi()
+      },
+      onCancel() {
+        console.log('Cancel')
+      }
+    })
   }
   const content = { isModalVisible, setIsModalVisible, type, edit, factoryData }
   return (
@@ -292,12 +313,13 @@ function Overtime() {
           <Popup content={content} newlyAdded={newlyAdded} />
         </div>
       </div>
-      <MovPopup
+
+      {/* <MovPopup
         type="mov"
         movIsModalVisible={movIsModalVisible}
         setMovIsModalVisible={setMovIsModalVisible}
         movApi={movApi}
-      />
+      /> */}
     </div>
   )
 }
