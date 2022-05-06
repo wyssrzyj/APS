@@ -46,16 +46,18 @@ function Material(props: {
     //  未检查
     if (data.checkStatus === 2) {
       const resData = await materialData({
-        externalProduceOrderId: data.externalProduceOrderId
+        externalProduceOrderId: data.externalProduceOrderId,
+        produceOrderNum: data.externalProduceOrderNum
       })
 
-      setTableList(resData.splice(17))
+      setTableList(resData)
     }
     //  已检查.
 
     if (data.checkStatus === 1) {
       const resData = await checked({
-        externalProduceOrderId: data.externalProduceOrderId
+        externalProduceOrderId: data.externalProduceOrderId,
+        produceOrderNum: data.externalProduceOrderNum
       })
       setTableList(resData.tableContent)
     }
@@ -64,7 +66,8 @@ function Material(props: {
       //已检查
       if (data.type === 1) {
         const resData = await checked({
-          externalProduceOrderId: data.externalProduceOrderId
+          externalProduceOrderId: data.externalProduceOrderId,
+          produceOrderNum: data.externalProduceOrderNum
         })
 
         setTableList(resData.tableContent)
@@ -72,7 +75,8 @@ function Material(props: {
       if (data.type === 2) {
         //重新检查
         const resData = await materialData({
-          externalProduceOrderId: data.externalProduceOrderId
+          externalProduceOrderId: data.externalProduceOrderId,
+          produceOrderNum: data.externalProduceOrderNum
         })
         setTableList(resData)
       }

@@ -29,21 +29,6 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
 
-  //工厂名称
-  // useEffect(() => {
-  //   getData()
-  // }, [])
-  // const getData = async () => {
-  //   const res: any = await factoryList()
-  //   const arr: any = res.data
-  //   console.log('form工厂', arr)
-  //   if (res.code === 200) {
-  //     arr.map((item: { name: any; deptName: any }) => {
-  //       item.name = item.deptName
-  //     })
-  //     setList(arr)
-  //   }
-  // }
   //加班班组
   useEffect(() => {
     if (!isEmpty(listID)) {
@@ -97,7 +82,11 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
                 getValueFromEvent(event, 'select')
               }
             >
-              <Select onChange={getFactoryName} placeholder="请选择工厂名称">
+              <Select
+                onChange={getFactoryName}
+                placeholder="请选择工厂名称"
+                allowClear
+              >
                 {factoryData != undefined
                   ? factoryData.map(
                       (item: {
@@ -123,13 +112,17 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
           <Col span={6}>
             <Form.Item
               {...layout}
-              name="teams"
+              name="teamId"
               label="班组名称"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'treeSelect')
               }
             >
-              <Select onChange={getFactoryName} placeholder="请选择班组名称">
+              <Select
+                onChange={getFactoryName}
+                placeholder="请选择班组名称"
+                allowClear
+              >
                 {!isEmpty(treeData)
                   ? treeData.map(
                       (item: {
@@ -154,7 +147,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
           <Col span={6}>
             <Form.Item
               {...layout}
-              name="name"
+              name="workModeName"
               label="工作模式"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')

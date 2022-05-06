@@ -15,8 +15,6 @@ const Gantt = (props: any) => {
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   const dataDome = ['2020-04-07', '2020-04-08']
-  console.log('生产1008611')
-
   useEffect(() => {
     if (!isEmpty(restDate)) {
       setRest(restDate)
@@ -28,7 +26,9 @@ const Gantt = (props: any) => {
   }, [zoom])
 
   useEffect(() => {
-    ganttShow(tasks)
+    if (!isEmpty(tasks.data)) {
+      ganttShow(tasks)
+    }
   }, [tasks])
   // 静态方法
   const setZoom = (value: any) => {
@@ -63,6 +63,7 @@ const Gantt = (props: any) => {
     gantt.config.drag_resize = false //控制大小
     // gantt.config.show_links = false //控制两端的线是否可以拖动
     gantt.config.details_on_dblclick = false //双击出弹窗
+    gantt.config.show_errors = false //发生异常时，允许弹出警告到UI界面
 
     // 指定日期不可拖动
 

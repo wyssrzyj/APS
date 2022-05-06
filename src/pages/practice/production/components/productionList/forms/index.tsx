@@ -1,7 +1,7 @@
-import { Col, DatePicker, Form, Input, Row } from 'antd'
+import { Col, DatePicker, Form, Input, Row, Select } from 'antd'
 import { debounce } from 'lodash' //防抖
 import moment from 'moment'
-import React from 'react'
+import React, { useState } from 'react'
 const { RangePicker } = DatePicker
 const layout = {
   labelCol: {
@@ -12,11 +12,13 @@ const layout = {
   }
 }
 
-const HeaderForm = (props: { FormData: any }) => {
-  const { FormData } = props
+const HeaderForm = (props: { FormData: any; factoryData: any }) => {
+  const { FormData, factoryData } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const { validateFields } = form
+  const { Option } = Select
+  const [listID, setListID] = useState<any>() //工厂ID
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
@@ -37,11 +39,44 @@ const HeaderForm = (props: { FormData: any }) => {
     }
     return event
   }
-
+  const getFactoryName = (e: any) => {
+    setListID(e)
+  }
   return (
     <div>
       <Form form={form}>
         <Row>
+          <Col span={8}>
+            <Form.Item
+              {...layout}
+              name="factoryId"
+              label="工厂名称"
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'select')
+              }
+            >
+              <Select onChange={getFactoryName} placeholder="请选择工厂名称">
+                {factoryData != undefined
+                  ? factoryData.map(
+                      (item: {
+                        id: React.Key | null | undefined
+                        name:
+                          | boolean
+                          | React.ReactChild
+                          | React.ReactFragment
+                          | React.ReactPortal
+                          | null
+                          | undefined
+                      }) => (
+                        <Option key={item.id} value={item.id}>
+                          {item.name}
+                        </Option>
+                      )
+                    )
+                  : null}
+              </Select>
+            </Form.Item>
+          </Col>
           <Col span={8}>
             <Form.Item
               {...layout}
@@ -52,18 +87,6 @@ const HeaderForm = (props: { FormData: any }) => {
               }
             >
               <Input placeholder="请输入生产单号" allowClear />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              {...layout}
-              name="sales"
-              label="销售单号"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
-              }
-            >
-              <Input placeholder="请输入销售单号" allowClear />
             </Form.Item>
           </Col>
           <Col span={8}>

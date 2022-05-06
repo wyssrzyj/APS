@@ -1,4 +1,5 @@
-import { Button, message, Table, Tag } from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { Button, message, Modal, Table, Tag } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
@@ -9,8 +10,9 @@ import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
 import Popup from './popup'
-
 function Overtime() {
+  const { confirm } = Modal
+
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total, setTotal] = useState<number>(20)
@@ -33,16 +35,40 @@ function Overtime() {
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
-      title: '加班班组',
+      title: '加班名称',
       align: 'center',
-      dataIndex: 'remark'
+      dataIndex: 'teamName',
+      render: (value: string, row: any) => {
+        const chars = value !== null ? value.split(',') : []
+        return (
+          <div>
+            {chars.map(
+              (
+                item:
+                  | boolean
+                  | React.ReactChild
+                  | React.ReactFragment
+                  | React.ReactPortal
+                  | null
+                  | undefined,
+                index: any | null | undefined
+              ) => (
+                // eslint-disable-next-line react/jsx-key
+                <Tag key={index}>{item}</Tag>
+              )
+            )}
+          </div>
+        )
+      }
     },
     {
       title: '加班日期',
       align: 'center',
       dataIndex: 'date',
       render: (value: string, row: any) => {
-        const chars = value.split(',')
+        // const chars = value.split(',')
+        const chars = value !== null ? value.split(',') : []
+
         return (
           <div>
             {chars.map(
@@ -204,7 +230,8 @@ function Overtime() {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
-      setMovIsModalVisible(true)
+      showDeleteConfirm()
+      // setMovIsModalVisible(true)
     }
   }
   const movApi = async () => {
@@ -227,6 +254,24 @@ function Overtime() {
   const executionMethod = () => {
     setIsModalVisible(true)
     setType(1)
+  }
+
+  const showDeleteConfirm = () => {
+    confirm({
+      title: '确认删除选中项?',
+      icon: <ExclamationCircleOutlined />,
+      content: '是否删除',
+      okText: 'Yes',
+      okType: 'danger',
+      centered: true,
+      cancelText: 'No',
+      onOk() {
+        movApi()
+      },
+      onCancel() {
+        console.log('Cancel')
+      }
+    })
   }
   const content = { isModalVisible, setIsModalVisible, type, edit, factoryData }
   return (
@@ -268,12 +313,13 @@ function Overtime() {
           <Popup content={content} newlyAdded={newlyAdded} />
         </div>
       </div>
-      <MovPopup
+
+      {/* <MovPopup
         type="mov"
         movIsModalVisible={movIsModalVisible}
         setMovIsModalVisible={setMovIsModalVisible}
         movApi={movApi}
-      />
+      /> */}
     </div>
   )
 }

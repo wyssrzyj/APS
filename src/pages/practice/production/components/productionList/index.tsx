@@ -12,7 +12,7 @@ import MovPopup from './movPopup'
 import Popup from './popup'
 
 function Production() {
-  const { productionList } = practice
+  const { productionList, factoryList } = practice
   const map = new Map()
   map.set(1, '待计划')
   map.set(2, '待生产')
@@ -33,9 +33,24 @@ function Production() {
   })
   const [getDetailsId, setGetDetailsId] = useState() //工艺需要的id
   const [externalProduceOrderId, setExternalProduceOrderId] = useState() //外发需要的id
-
   const [list, setList] = useState([])
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
+  //工厂名称
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setFactoryData(arr)
+    }
+  }
   useEffect(() => {
     api(params)
   }, [params])
@@ -163,7 +178,7 @@ function Production() {
 
   //头部form的数据
   const FormData = (e: any) => {
-    console.log(e)
+    setParams({ ...params, ...e })
   }
   const onPaginationChange = (
     page: React.SetStateAction<number>,
@@ -203,7 +218,7 @@ function Production() {
       <div></div>
       <div>
         <div className={styles.content}>
-          <Forms FormData={FormData}></Forms>
+          <Forms factoryData={factoryData} FormData={FormData}></Forms>
           <Table
             className={styles.table}
             columns={columns}

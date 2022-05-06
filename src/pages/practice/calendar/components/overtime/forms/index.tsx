@@ -17,7 +17,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
 
   const layout = {
     labelCol: {
-      span: 6
+      span: 7
     },
     wrapperCol: {
       span: 24
@@ -66,15 +66,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
     }
     return event
   }
-  const tProps = {
-    treeData,
-    treeCheckable: true,
-    showCheckedStrategy: SHOW_PARENT,
-    placeholder: '请先选择工厂名称',
-    style: {
-      width: '100%'
-    }
-  }
+
   return (
     <div>
       <Form form={form}>
@@ -124,7 +116,30 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
                 getValueFromEvent(event, 'treeSelect')
               }
             >
-              <TreeSelect {...tProps} />
+              <Select
+                onChange={getFactoryName}
+                placeholder="请选择班组名称"
+                allowClear
+              >
+                {treeData !== undefined
+                  ? treeData.map(
+                      (item: {
+                        id: React.Key | null | undefined
+                        name:
+                          | boolean
+                          | React.ReactChild
+                          | React.ReactFragment
+                          | React.ReactPortal
+                          | null
+                          | undefined
+                      }) => (
+                        <Option key={item.id} value={item.id}>
+                          {item.name}
+                        </Option>
+                      )
+                    )
+                  : null}
+              </Select>
             </Form.Item>
           </Col>
         </Row>

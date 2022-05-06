@@ -1,4 +1,5 @@
 import { Button, message, Table, Tag } from 'antd'
+import { isEmpty } from 'lodash'
 import {
   Key,
   ReactChild,
@@ -45,7 +46,7 @@ const Index = () => {
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
-  // const value = useRecoilValue(practices.lyj)
+  //. const value = useRecoilValue(practices.lyj)
   useEffect(() => {
     api(params)
   }, [params])
@@ -84,21 +85,23 @@ const Index = () => {
         const chars = value.split(',')
         return (
           <div>
-            {chars.map(
-              (
-                item:
-                  | boolean
-                  | ReactChild
-                  | ReactFragment
-                  | ReactPortal
-                  | null
-                  | undefined,
-                index: Key | null | undefined
-              ) => (
-                // eslint-disable-next-line react/jsx-key
-                <Tag key={index}>{item}</Tag>
-              )
-            )}
+            {!isEmpty(chars)
+              ? chars.map(
+                  (
+                    item:
+                      | boolean
+                      | ReactChild
+                      | ReactFragment
+                      | ReactPortal
+                      | null
+                      | undefined,
+                    index: Key | null | undefined
+                  ) => (
+                    // eslint-disable-next-line react/jsx-key
+                    <Tag key={index}>{item}</Tag>
+                  )
+                )
+              : null}
           </div>
         )
       }
@@ -137,7 +140,7 @@ const Index = () => {
       align: 'center',
       dataIndex: 'teams',
       render: (value: any, row: { [x: string]: Key | null | undefined }) => {
-        const chars = value.split(',')
+        const chars = value !== null ? value.split(',') : []
         return (
           <div>
             {chars.map(

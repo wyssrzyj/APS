@@ -1,58 +1,69 @@
+/* eslint-disable use-isnan */
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, TimePicker } from 'antd'
+import { Button, DatePicker, TimePicker } from 'antd'
+import { isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
-function WorkingHours(props: any) {
+function WorkingHours(props: {
+  onChange?: (params?: any) => void
+  type: any
+  edit: any
+}) {
   const format = 'HH:mm'
-  const { onChange, type, edit, time } = props
+  const { onChange, type, edit } = props
   const [data, setData] = useState<any>([])
 
   //新增就是空数据，编辑和查看使用接口数据
   useEffect(() => {
-    const nyr = moment(Date.now()).format('YYYY-MM-DD ')
-    const sf = moment(Date.now()).format('YYYY-MM-DD HH:mm')
-    const sum = moment(sf).valueOf() - moment(nyr).valueOf()
     type === 1
       ? setData([
-          {
-            name: '1',
-            startDateTime: time ? sum + time : Date.now(),
-            endDateTime: time ? sum + time : Date.now()
-          }
+          { name: '1', startDateTime: undefined, endDateTime: undefined }
         ])
       : setData(edit.timeList)
-  }, [type, edit, time])
-  const onTime = (e: any, index: any) => {
-    // 开始时间
-    const arr =
-      Number(moment(e[0]).format('x')) -
-      moment(moment(e[0]).format('YYYY-MM-DD')).valueOf()
-    // 结束时间
-    const arrno =
-      Number(moment(e[1]).format('x')) -
-      moment(moment(e[1]).format('YYYY-MM-DD')).valueOf()
+  }, [type, edit])
 
-    data[index].startDateTime = time + arr
-    data[index].endDateTime = time + arrno
+  const start = (index: string | number, e: moment.MomentInput) => {
+    data[index].startDateTime = moment(e).valueOf()
+    console.log(moment(e).valueOf())
+
+    setData([...data])
+  }
+  const end = (index: string | number, e: moment.MomentInput) => {
+    data[index].endDateTime = moment(e).valueOf()
+    setData([...data])
   }
 
   useEffect(() => {
-    //传递给外部
-    onChange && onChange([...data])
+    console.log('增加是否更改', data)
+    if (!isEmpty(data)) {
+      //传递给外部
+      const initial = data.every((item: any) => {
+        return (
+          item.startDateTime !== undefined && item.endDateTime !== undefined
+        )
+      })
+      const remove = data.every((item: any) => {
+        return !isNaN(item.startDateTime) && !isNaN(item.endDateTime)
+      })
+      console.log('删除测试', remove)
+      //全部不为空的时候才进行传递
+      if (initial === true && remove === true) {
+        onChange && onChange([...data])
+      } else {
+        onChange && onChange(null)
+      }
+    }
   }, [data])
+
   const executionMethod = (type: string, index: number) => {
     if (type === 'push') {
-      const nyr = moment(Date.now()).format('YYYY-MM-DD ')
-      const sf = moment(Date.now()).format('YYYY-MM-DD HH:mm')
-      const sum = moment(sf).valueOf() - moment(nyr).valueOf()
       data.push({
         name: index + new Date().valueOf() * Math.random(),
-        startDateTime: time ? sum + time : Date.now(),
-        endDateTime: time ? sum + time : Date.now()
+        startDateTime: undefined,
+        endDateTime: undefined
       })
-
       setData([...data])
     } else {
       data.splice(index, 1)
@@ -61,51 +72,65 @@ function WorkingHours(props: any) {
   }
   return (
     <div>
-      {data.map(
-        (
-          item: {
-            startDateTime: React.Key | null | undefined
-            endDateTime: moment.MomentInput
-          },
-          index: number
-        ) => (
-          <div className={styles.timePicker} key={item.startDateTime}>
-            <TimePicker.RangePicker
-              key={index}
-              disabled={type === 3 ? true : false}
-              defaultValue={[
-                moment(item.startDateTime),
-                moment(item.endDateTime)
-              ]}
-              // defaultValue={moment('12:08:23', 'HH:mm:ss')}
-              format=" HH:mm"
-              onChange={(e, index) => {
-                onTime(e, index)
-              }}
-            />
-
-            <div className={styles.executionMethod} key={index + 1}>
-              {index === 0 ? (
-                <Button
-                  key={index + 1}
+      {console.log(data)}
+      {!isEmpty(data)
+        ? data.map(
+            (
+              item: {
+                startDateTime: React.Key | null | undefined
+                endDateTime: moment.MomentInput
+              },
+              index: number
+            ) => (
+              <div className={styles.timePicker} key={item.startDateTime}>
+                <TimePicker
+                  defaultValue={
+                    item.startDateTime === undefined
+                      ? null
+                      : moment(item.startDateTime)
+                  }
                   disabled={type === 3 ? true : false}
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={() => executionMethod('push', index)}
+                  defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
+                  format={format}
+                  onChange={(e) => {
+                    start(index, e)
+                  }}
                 />
-              ) : (
-                <Button
-                  key={index + 1}
+                ~
+                <TimePicker
+                  defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
+                  defaultValue={
+                    item.startDateTime === undefined
+                      ? null
+                      : moment(item.endDateTime)
+                  }
                   disabled={type === 3 ? true : false}
-                  type="primary"
-                  icon={<MinusOutlined />}
-                  onClick={() => executionMethod('mov', index)}
+                  format={format}
+                  onChange={(e) => {
+                    end(index, e)
+                  }}
                 />
-              )}
-            </div>
-          </div>
-        )
-      )}
+                <div className={styles.executionMethod}>
+                  {index === 0 ? (
+                    <Button
+                      disabled={type === 3 ? true : false}
+                      type="primary"
+                      icon={<PlusOutlined />}
+                      onClick={() => executionMethod('push', index)}
+                    />
+                  ) : (
+                    <Button
+                      disabled={type === 3 ? true : false}
+                      type="primary"
+                      icon={<MinusOutlined />}
+                      onClick={() => executionMethod('mov', index)}
+                    />
+                  )}
+                </div>
+              </div>
+            )
+          )
+        : null}
     </div>
   )
 }

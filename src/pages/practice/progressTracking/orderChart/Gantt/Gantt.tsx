@@ -6,12 +6,8 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 const Gantt = (props: any) => {
-  console.log('资源图')
-
   const { zoom, tasks, updateList, leftData, restDate, name } = props
-
   const chartDom = document.getElementById(name) //获取id
-
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   const dataDome = ['2020-04-07', '2020-04-08']
 
@@ -58,7 +54,7 @@ const Gantt = (props: any) => {
     gantt.config.drag_resize = false //控制大小
     // gantt.config.show_links = false //控制两端的线是否可以拖动
     gantt.config.details_on_dblclick = false //双击出弹窗
-
+    gantt.config.show_errors = false //发生异常时，允许弹出警告到UI界面
     // 指定日期不可拖动
 
     //表头
@@ -268,10 +264,8 @@ const Gantt = (props: any) => {
     })
   }
   const ganttShow = async (list: any) => {
-    console.log('我是沙', list)
-
-    gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.clearAll() //缓存问题 先清楚后添加
+    gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
     initGanttDataProcessor()
     gantt.parse(list) //渲染数据
