@@ -8,6 +8,13 @@ import Forms from './forms/index'
 import styles from './index.module.less'
 import Outgoing from './outgoing/index'
 import Tables from './tables/index'
+const map = new Map()
+map.set('1', '裁剪')
+map.set('2', '缝制')
+map.set('3', '后整')
+map.set('4', '包装')
+map.set('5', '外发')
+map.set('6', '缝制线外组')
 
 function Popup(props: { content: any }) {
   const { content } = props
@@ -39,6 +46,14 @@ function Popup(props: { content: any }) {
   const [localData, setLocalData] = useState<any>([]) //工艺数据
   const [outgoing, setOutgoing] = useState<any>([]) //外发数据
 
+  // useEffect(() => {
+  //   if (!isEmpty(list)) {
+  //     list.map((item) => {
+  //       item.section = map.get(item.section)
+  //     })
+  //     console.log('处理后的数据', list)
+  //   }
+  // }, [list])
   useEffect(() => {
     if (getDetailsId !== undefined) {
       setParams({ ...params, externalProduceOrderId: getDetailsId })
@@ -53,7 +68,9 @@ function Popup(props: { content: any }) {
 
   const getDetails = async (params: any) => {
     const res: any = await workingProcedure(params)
-
+    res.records.map((item) => {
+      item.section = map.get(item.section)
+    })
     setUsedList(res.records)
   }
 
@@ -148,12 +165,7 @@ function Popup(props: { content: any }) {
               paging={paging}
             />
             <div className={styles.forms}>
-              <Forms
-                FormData={FormData}
-                list={list}
-                data={data}
-                types={types}
-              ></Forms>
+              <Forms FormData={FormData} data={data} types={types}></Forms>
             </div>
           </TabPane>
           <TabPane tab="外发管理" key="2">

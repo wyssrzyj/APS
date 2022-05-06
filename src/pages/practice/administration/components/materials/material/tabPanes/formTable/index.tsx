@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { DatePicker, InputNumber, Space, Switch, Table } from 'antd'
+import { DatePicker, Input, InputNumber, Space, Table } from 'antd'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { memo, useEffect, useState } from 'react'
@@ -97,13 +97,13 @@ const FormTable = (props: any) => {
         render: (_item: any, v: any) =>
           isEmpty(v.children) ? (
             <>
-              <InputNumber
-                // key={v.unit}
+              <Input
+                type="number"
                 disabled={select.type === 1}
                 min={0}
                 defaultValue={_item}
-                onChange={(e) => {
-                  quantity(e, v)
+                onBlur={(e) => {
+                  quantity(e.target.value, v)
                 }}
               />
             </>
@@ -234,13 +234,10 @@ const FormTable = (props: any) => {
     processingData(data, moment(e).valueOf(), currentValue, 'time')
   }
 
-  let timeout: NodeJS.Timeout
+  // let timeout: NodeJS.Timeout
 
   const quantity = (e: any, currentValue: any) => {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => {
-      processingData(data, e, currentValue, 'number')
-    }, 1000)
+    processingData(data, e, currentValue, 'number')
   }
   //**处理数据**
   const processingData = (

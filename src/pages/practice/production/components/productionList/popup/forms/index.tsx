@@ -7,32 +7,14 @@ import { getChild } from '@/components/getChild'
 
 import styles from './index.module.less'
 
-const map = new Map()
-map.set('1', '裁剪')
-map.set('2', '缝制')
-map.set('3', '后整')
-map.set('4', '包装')
-map.set('5', '外发')
-map.set('6', '缝制线外组')
-function Forms(props: { FormData: any; data: any; types: any; list: any }) {
-  const { FormData, data, types, list } = props
-  const [tableData, setTableData] = useState()
+function Forms(props: { FormData: any; data: any; types: any }) {
+  const { FormData, data, types } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const { validateFields } = form
-
-  useEffect(() => {
-    console.log(list)
-
-    if (!isEmpty(list)) {
-      list.map((item) => {
-        item.section = map.get(item.section)
-      })
-    }
-  }, [list])
   useEffect(() => {
     if (!isEmpty(data)) {
-      form.setFieldsValue(data)
+      // form.setFieldsValue(data)
     }
   }, [types, data])
 
@@ -164,41 +146,29 @@ function Forms(props: { FormData: any; data: any; types: any; list: any }) {
         <Row>
           <Col span={8}>
             <Form.Item label="序号" name="idx">
-              <Input maxLength={100} placeholder="请输入序号" disabled={true} />
+              <Input placeholder="请输入序号" disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="工序名称" name="productName">
-              <Input
-                maxLength={100}
-                placeholder="请输入工序名称"
-                disabled={true}
-              />
+              <Input placeholder="请输入工序名称" disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="工序代码" name="productCode">
-              <Input
-                maxLength={100}
-                placeholder="请选择工序代码"
-                disabled={true}
-              />
+              <Input placeholder="请选择工序代码" disabled={true} />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={8}>
-            <Form.Item label="所属工段123" name="section">
-              <Input
-                maxLength={100}
-                placeholder="请选择所属工段"
-                disabled={true}
-              />
+            <Form.Item label="所属工段" name="section">
+              <Input placeholder="请选择所属工段" disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="工序耗时" name="secondPlan">
-              <InputNumber addonAfter="S" disabled={true} defaultValue={100} />
+              <InputNumber addonAfter="S" disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -209,11 +179,7 @@ function Forms(props: { FormData: any; data: any; types: any; list: any }) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <InputNumber
-                addonAfter="天"
-                disabled={types}
-                defaultValue={100}
-              />
+              <InputNumber addonAfter="天" disabled={types} />
             </Form.Item>
           </Col>
         </Row>
@@ -226,7 +192,7 @@ function Forms(props: { FormData: any; data: any; types: any; list: any }) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <InputNumber addonAfter="S" disabled={types} defaultValue={100} />
+              <InputNumber addonAfter="S" disabled={types} />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -237,7 +203,7 @@ function Forms(props: { FormData: any; data: any; types: any; list: any }) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <InputNumber addonAfter="S" disabled={types} defaultValue={100} />
+              <InputNumber addonAfter="S" disabled={types} />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -248,7 +214,7 @@ function Forms(props: { FormData: any; data: any; types: any; list: any }) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <InputNumber addonAfter="" disabled={types} defaultValue={100} />
+              <InputNumber addonAfter="" disabled={types} />
             </Form.Item>
           </Col>
         </Row>
@@ -261,11 +227,7 @@ function Forms(props: { FormData: any; data: any; types: any; list: any }) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <InputNumber
-                addonAfter="天"
-                disabled={types}
-                defaultValue={100}
-              />
+              <InputNumber addonAfter="天" disabled={types} />
             </Form.Item>
           </Col>
           <Col span={8}>
