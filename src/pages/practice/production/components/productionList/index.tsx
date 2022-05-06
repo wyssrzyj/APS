@@ -178,7 +178,7 @@ function Production() {
 
   //头部form的数据
   const FormData = (e: any) => {
-    console.log(e)
+    setParams({ ...params, ...e })
   }
   const onPaginationChange = (
     page: React.SetStateAction<number>,
