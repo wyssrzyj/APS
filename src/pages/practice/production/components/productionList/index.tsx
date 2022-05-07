@@ -4,7 +4,7 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
-import { practice } from '@/recoil/apis'
+import { productionSingleApis } from '@/recoil/apis'
 
 import Dome from './dome'
 import Forms from './forms'
@@ -13,7 +13,7 @@ import MovPopup from './movPopup'
 import Popup from './popup'
 
 function Production() {
-  const { productionList, factoryList } = practice
+  const { productionList, factoryList } = productionSingleApis
   const map = new Map()
   map.set(1, '待计划')
   map.set(2, '待生产')
@@ -80,12 +80,12 @@ function Production() {
       key: 'externalProduceOrderNum',
       dataIndex: 'externalProduceOrderNum'
     },
-    {
-      title: '销售单号',
-      key: 'orderNum',
-      align: 'center',
-      dataIndex: 'orderNum'
-    },
+    // {
+    //   title: '销售单号',
+    //   key: 'orderNum',
+    //   align: 'center',
+    //   dataIndex: 'orderNum'
+    // },
     {
       title: '接单工厂',
       key: 'factoryName',

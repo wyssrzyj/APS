@@ -4,7 +4,7 @@ import Item from 'antd/lib/list/Item'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
-import { practice } from '@/recoil/apis'
+import { materialSetApis } from '@/recoil/apis'
 import login from '@/recoil/login'
 
 import styles from './index.module.less'
@@ -16,7 +16,7 @@ function Material(props: {
   materialList: any
 }) {
   const { materialModal, setMaterialModal, materialList } = props
-  const { getTheSize, materialData, materialSaved, checked } = practice
+  const { getTheSize, materialData, materialSaved, checked } = materialSetApis
   const [list, setList] = useState<any>() //处理后的数据
   const [tableList, setTableList] = useState<any>() //table的数据
   const [sizeList, setSizeList] = useState<any>() //table的尺码

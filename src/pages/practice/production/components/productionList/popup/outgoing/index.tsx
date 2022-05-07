@@ -11,7 +11,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
-import { practice } from '@/recoil/apis'
+import { productionSingleApis } from '@/recoil/apis'
 
 // import Excl from '@/components/excel/Import/index'
 import styles from './index.module.less'
@@ -19,7 +19,7 @@ import Popup from './Popup/index'
 
 const Outgoing = (props: any) => {
   const { types, externalProduceOrderId, preservation } = props
-  const { processOutsourcing, wholeOrder } = practice
+  const { processOutsourcing, wholeOrder } = productionSingleApis
 
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)

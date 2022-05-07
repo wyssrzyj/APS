@@ -6,7 +6,7 @@ import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { CusDragTable, SearchBar, Title } from '@/components'
-import { practice } from '@/recoil/apis'
+import { efficiencyTemplateApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
 import AddModal from './addModal'
@@ -19,7 +19,7 @@ const {
   factoryList,
   teamList,
   deleteEfficiencyInfo
-} = practice
+} = efficiencyTemplateApis
 
 function Rule() {
   tableColumns[tableColumns.length - 1].render = (

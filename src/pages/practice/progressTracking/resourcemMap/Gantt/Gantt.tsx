@@ -6,9 +6,7 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 const Gantt = (props: any) => {
-  console.log('资源图')
   const { zoom, tasks, updateList, leftData, restDate, name } = props
-
   const chartDom = document.getElementById(name) //获取id
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期

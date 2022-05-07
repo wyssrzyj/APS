@@ -4,7 +4,7 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
-import { practice } from '@/recoil/apis'
+import { workOvertimeApis } from '@/recoil/apis'
 
 import Forms from './forms'
 import styles from './index.module.less'
@@ -30,7 +30,7 @@ function Overtime() {
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
   const { overtimedisplay, workOvertimeMov, overtimeDetails, factoryList } =
-    practice
+    workOvertimeApis
 
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
@@ -271,6 +271,7 @@ function Overtime() {
       }
     })
   }
+
   const content = { isModalVisible, setIsModalVisible, type, edit, factoryData }
   return (
     <div className={styles.qualification}>

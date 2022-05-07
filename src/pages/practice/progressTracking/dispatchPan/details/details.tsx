@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2022-04-29 11:22:59
- * @LastEditTime: 2022-04-29 11:23:00
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-05-07 10:20:13
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \jack-aps\src\pages\practice\progressTracking\dispatchPan\details\index copy.tsx
  */
@@ -11,7 +11,7 @@ import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
-import { practice } from '@/recoil/apis'
+import { productionPlanApis } from '@/recoil/apis'
 import { ResponseProps } from '@/recoil/types'
 
 type Column = {
@@ -30,8 +30,7 @@ function Details(props: {
   update: any
 }) {
   const { setDetailsPopup, detailsPopup, editData, update } = props
-  const { detailsSewingPlan, getSKU, updateSewingPlan, detailsSewing } =
-    practice
+  const { getSKU, updateSewingPlan, detailsSewing } = productionPlanApis
   const [list, setList] = useState<any>() //table处理后的格式
 
   const [sku, setSku] = useState<any>() //后台的sku

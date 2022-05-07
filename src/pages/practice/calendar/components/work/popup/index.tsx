@@ -3,7 +3,7 @@ import { isElement, isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 
 import { getChild } from '@/components/getChild/index'
-import { dockingDataApis, practice } from '@/recoil/apis'
+import { dockingDataApis, workingModeApis } from '@/recoil/apis'
 
 import WorkingHours from './workingHours/index'
 function Popup(props: { content: any; newlyAdded: any }) {
@@ -13,7 +13,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
   const [form] = Form.useForm()
   const { Option } = Select
   const { teamList } = dockingDataApis
-  const { operatingModeDetails, teamId } = practice
+  const { operatingModeDetails, teamId } = workingModeApis
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
 

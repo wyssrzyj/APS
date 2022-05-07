@@ -4,7 +4,7 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
-import { practice } from '@/recoil/apis'
+import { schedulingApis } from '@/recoil/apis'
 
 import Dome from './Dome/index'
 import Forms from './forms'
@@ -33,7 +33,7 @@ function Index() {
   const [checkIDs, setCheckIDs] = useState<any[]>([]) //校验id
   const [promptList, setPromptList] = useState<any[]>([]) //提示数据
 
-  const { figureData, productionView, workingDate } = practice
+  const { figureData, productionView, workingDate } = schedulingApis
 
   const data = []
   for (let i = 0; i < 5; i++) {

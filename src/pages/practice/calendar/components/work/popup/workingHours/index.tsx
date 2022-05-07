@@ -55,7 +55,6 @@ function WorkingHours(props: {
         }
       }
     }
-    console.log('是否确认', confirm)
   }, [data])
 
   const executionMethod = (type: string, index: number) => {
@@ -81,7 +80,7 @@ function WorkingHours(props: {
           },
           index: number
         ) => (
-          <div className={styles.timePicker} key={item.startDateTime}>
+          <div key={index} className={styles.timePicker}>
             <TimePicker
               defaultValue={
                 item.startDateTime === undefined

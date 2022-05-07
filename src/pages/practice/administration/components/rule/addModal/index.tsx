@@ -4,11 +4,11 @@ import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import FormNode from '@/components/FormNode'
-import { practice } from '@/recoil/apis'
+import { efficiencyTemplateApis } from '@/recoil/apis'
 
 import { formItemConfig as originFormItemConfig } from '../conifgs'
 import EfficiencyTable from './efficiencyTable/index'
-const { teamList, updateEfficiencyInfo } = practice
+const { teamList, updateEfficiencyInfo } = efficiencyTemplateApis
 const FormItem = Form.Item
 const layout = {
   labelCol: { span: 4 },

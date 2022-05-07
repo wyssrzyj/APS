@@ -6,7 +6,7 @@ import moment, { Moment } from 'moment'
 import React, { SetStateAction, useCallback, useEffect, useState } from 'react'
 
 import { CusDragTable, CustomModal, SearchBar, Title } from '@/components'
-import { practice } from '@/recoil/apis'
+import { productionPlanApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
 import { formItemConfig, searchConfigs, tableColumns } from './conifgs'
@@ -19,7 +19,7 @@ const {
   productDetail,
   factoryList,
   getWorkshopSectionList
-} = practice
+} = productionPlanApis
 
 const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
 const map = new Map()

@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-03-10 15:20:21
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-06 10:43:39
+ * @LastEditTime: 2022-05-07 10:14:36
  * @FilePath: \jack-aps\src\pages\practice\production\components\productionList\popup\outgoing\Popup\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -10,7 +10,7 @@ import { DatePicker, Form, Input, Modal, Radio, Space } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
-import { practice } from '@/recoil/apis'
+import { productionSingleApis } from '@/recoil/apis'
 const Popup = (props: any) => {
   const {
     isModalVisible,
@@ -19,7 +19,7 @@ const Popup = (props: any) => {
     outgoing,
     editHandle
   } = props
-  const { outboundSave } = practice
+  const { outboundSave } = productionSingleApis
   const [value, setValue] = useState<any>(1)
   const onChange = (e: any) => {
     setValue(e.target.value)

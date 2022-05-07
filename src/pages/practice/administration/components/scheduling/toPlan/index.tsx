@@ -2,7 +2,7 @@ import { Popover, Tabs, Tag, Tree } from 'antd'
 import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
-import { dockingDataApis, practice } from '@/recoil/apis'
+import { dockingDataApis, schedulingApis } from '@/recoil/apis'
 
 import BreakUp from './breakUp/index'
 import styles from './index.module.less'
@@ -19,7 +19,7 @@ function ToPlan(props: {
 }) {
   const { remind, formData, updateMethod, checkSchedule } = props
   const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
-    practice
+    schedulingApis
   const { workshopList, teamList, capacityList } = dockingDataApis
   const [list, setList] = useState<any>([]) //总
   const [editWindow, setEditWindow] = useState(false) //编辑窗

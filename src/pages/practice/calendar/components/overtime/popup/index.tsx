@@ -3,14 +3,14 @@ import { isElement, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
-import { dockingDataApis, practice } from '@/recoil/apis'
+import { dockingDataApis, workOvertimeApis } from '@/recoil/apis'
 
 import WorkingHours from './workingHours/index'
 function Popup(props: { content: any; newlyAdded: any }) {
   const { content, newlyAdded } = props
   const { isModalVisible, setIsModalVisible, type, edit, factoryData } = content
   const { teamList } = dockingDataApis
-  const { overtimeAddition, teamId, factoryList } = practice
+  const { overtimeAddition, teamId } = workOvertimeApis
   const { SHOW_PARENT } = TreeSelect
   const { RangePicker } = DatePicker
   const { Option } = Select

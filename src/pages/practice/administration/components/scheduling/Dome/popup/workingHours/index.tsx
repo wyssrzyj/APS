@@ -70,7 +70,7 @@ function WorkingHours(props: any) {
           },
           index: number
         ) => (
-          <div className={styles.timePicker} key={item.startDateTime}>
+          <div className={styles.timePicker} key={index}>
             <TimePicker.RangePicker
               disabled={type === 3 ? true : false}
               defaultValue={[

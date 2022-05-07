@@ -3,7 +3,7 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
-import { practice } from '@/recoil/apis'
+import { resourcesApis } from '@/recoil/apis'
 
 import Forms from './forms'
 import Gantt from './Gantt/index'
@@ -21,7 +21,7 @@ const SchedulingResults = () => {
   const [select, setSelect] = useState<any>() //用于展示 线和不可用时间、给树传递id判断
   const [chart, setChart] = useState<any>([]) //图
   const [line, setLine] = useState<any>([]) //线
-  const { resourceMap, getLine } = practice
+  const { resourceMap, getLine } = resourcesApis
 
   // 甘特图数据
   useEffect(() => {
@@ -84,10 +84,6 @@ const SchedulingResults = () => {
   useEffect(() => {
     if (chart !== undefined && line !== undefined) {
       setSubjectData({
-        data: chart,
-        links: line
-      })
-      console.log('点击是否进项改变', {
         data: chart,
         links: line
       })

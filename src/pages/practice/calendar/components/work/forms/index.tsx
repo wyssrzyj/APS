@@ -3,12 +3,10 @@ import { debounce, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { getChild } from '@/components/getChild/index'
-import { dockingDataApis, practice } from '@/recoil/apis'
+import { dockingDataApis } from '@/recoil/apis'
 
 const HeaderForm = (props: { FormData: any; factoryData: any }) => {
   const { FormData, factoryData } = props
-
-  const { operatingModeDetails, teamId, factoryList } = practice
   const { teamList } = dockingDataApis
   const { Option } = Select
 

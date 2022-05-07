@@ -14,7 +14,7 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 
 import { Title } from '@/components'
 import { commonState } from '@/recoil'
-import { practice } from '@/recoil/apis'
+import { systemParametersApis } from '@/recoil/apis'
 
 import Color from './Color/index'
 import DeliveryWeight from './deliveryWeight'
@@ -35,7 +35,7 @@ function Vacations() {
   const [list, setlist] = useState([]) //接口数据
 
   const [form] = Form.useForm()
-  const { systemParameter, systemParameters } = practice
+  const { systemParameter, systemParameters } = systemParametersApis
 
   const { Option } = Select
   const layout = {

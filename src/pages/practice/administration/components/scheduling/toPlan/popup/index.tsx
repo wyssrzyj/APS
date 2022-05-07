@@ -15,7 +15,7 @@ import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { commonState, dockingData } from '@/recoil'
-import { dockingDataApis, practice } from '@/recoil/apis'
+import { dockingDataApis, schedulingApis } from '@/recoil/apis'
 function Popup(props: { content: any }) {
   const { content } = props
   const {
@@ -28,8 +28,7 @@ function Popup(props: { content: any }) {
     teamName
   } = content
   const { Option } = Select
-  const { workshopList, teamList } = dockingDataApis
-  const { getIndividualDetails, factoryList, editingTasks } = practice
+  const { getIndividualDetails, factoryList, editingTasks } = schedulingApis
   const [form] = Form.useForm()
   const [list, setList] = useState<any>()
   const [type, setType] = useState<any>()

@@ -3,7 +3,7 @@ import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
-import { practice } from '@/recoil/apis'
+import { productionPlanApis } from '@/recoil/apis'
 import { ResponseProps } from '@/recoil/types'
 
 type Column = {
@@ -22,8 +22,7 @@ function Details(props: {
   update: any
 }) {
   const { setDetailsPopup, detailsPopup, editData, update } = props
-  const { detailsSewingPlan, getSKU, updateSewingPlan, detailsSewing } =
-    practice
+  const { getSKU, updateSewingPlan, detailsSewing } = productionPlanApis
   const [list, setList] = useState<any>() //table处理后的格式
 
   const [sku, setSku] = useState<any>() //后台的sku

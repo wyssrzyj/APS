@@ -15,7 +15,7 @@ import { cloneDeep, isElement, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
-import { dockingDataApis, practice } from '@/recoil/apis'
+import { dockingDataApis, schedulingApis } from '@/recoil/apis'
 
 // import Details from './details/index'
 import styles from './index.module.less'
@@ -30,8 +30,7 @@ const BreakUp = (props: any) => {
     teamName
   } = props
   const { workshopList, teamList } = dockingDataApis
-
-  const { splitMethod, breakQuery } = practice
+  const { splitMethod, breakQuery } = schedulingApis
 
   const { Option } = Select
   const [pageNum, setPageNum] = useState<number>(1)

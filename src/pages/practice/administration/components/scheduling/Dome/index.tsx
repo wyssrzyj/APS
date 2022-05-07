@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { dockingData } from '@/recoil'
-import { practice } from '@/recoil/apis'
+import { schedulingApis } from '@/recoil/apis'
 
 // import GanttS from './Gantt copy'
 import Gantt from './Gantt/index'
@@ -27,7 +27,7 @@ const Dhx = (props: {
     formData,
     gunterType
   } = props
-  const { getLine, calculateEndTimeAfterMove } = practice
+  const { getLine, calculateEndTimeAfterMove } = schedulingApis
   const [FactoryData, setFactoryData] = useRecoilState(
     dockingData.globalFactoryData
   )

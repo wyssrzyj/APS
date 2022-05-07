@@ -5,8 +5,7 @@ import { any } from 'prop-types'
 import { memo, SetStateAction, useEffect, useState } from 'react'
 
 import { Title } from '@/components'
-import { practice } from '@/recoil/apis'
-import { completeInspectionReport } from '@/recoil/practice/api'
+import { materialSetApis } from '@/recoil/apis'
 
 import Forms from './forms'
 import styles from './index.module.less'
@@ -29,7 +28,7 @@ function Materials() {
   const [queryData, setQueryData] = useState<any>({})
 
   const { productionList, completeInspectionReport, exportShortageReport } =
-    practice
+    materialSetApis
 
   const map = new Map()
   map.set(1, '已检查')

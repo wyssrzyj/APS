@@ -3,9 +3,10 @@ import classNames from 'classnames'
 import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
-import { practice } from '@/recoil/apis'
-const { checkSchedule, releaseSchedule } = practice
+import { schedulingApis } from '@/recoil/apis'
+
 import styles from './index.module.less'
+const { checkSchedule } = schedulingApis
 const list = [
   { key: '延期生产单:', value: 'delayOrderProductList', list: [] },
   {

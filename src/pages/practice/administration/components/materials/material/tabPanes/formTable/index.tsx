@@ -171,7 +171,6 @@ const FormTable = (props: any) => {
     )
 
     if (sizeList !== undefined) {
-      console.log(sizeList)
       columns.splice(index + 1, 0, sizeList)
       setList(columns.flat(Infinity))
     }

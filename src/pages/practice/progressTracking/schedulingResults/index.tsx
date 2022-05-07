@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-03-10 15:20:21
- * @LastEditTime: 2022-05-06 10:35:59
+ * @LastEditTime: 2022-05-07 10:00:57
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \jack-aps\src\pages\practice\progressTracking\schedulingResults\index.tsx
@@ -10,7 +10,7 @@ import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
-import { practice } from '@/recoil/apis'
+import { loadFigureApis } from '@/recoil/apis'
 
 import Custom from './custom/index'
 import Dhx from './dhx/index'
@@ -28,7 +28,7 @@ const SchedulingResults = () => {
   const [params, setParams] = useState<any>({})
   const [list, setList] = useState<any>([])
 
-  const { teamLoadDiagram } = practice
+  const { teamLoadDiagram } = loadFigureApis
 
   //头部form的数据
   const FormData = (e: any) => {

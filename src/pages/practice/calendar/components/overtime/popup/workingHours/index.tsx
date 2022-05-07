@@ -26,8 +26,6 @@ function WorkingHours(props: {
 
   const start = (index: string | number, e: moment.MomentInput) => {
     data[index].startDateTime = moment(e).valueOf()
-    console.log(moment(e).valueOf())
-
     setData([...data])
   }
   const end = (index: string | number, e: moment.MomentInput) => {
@@ -46,7 +44,6 @@ function WorkingHours(props: {
       const remove = data.every((item: any) => {
         return !isNaN(item.startDateTime) && !isNaN(item.endDateTime)
       })
-      console.log('删除测试', remove)
       //全部不为空的时候才进行传递
       if (initial === true && remove === true) {
         onChange && onChange([...data])
@@ -73,7 +70,6 @@ function WorkingHours(props: {
   }
   return (
     <div>
-      {console.log(data)}
       {!isEmpty(data)
         ? data.map(
             (
@@ -83,7 +79,7 @@ function WorkingHours(props: {
               },
               index: number
             ) => (
-              <div className={styles.timePicker} key={item.startDateTime}>
+              <div className={styles.timePicker} key={index}>
                 <TimePicker
                   defaultValue={
                     item.startDateTime === undefined

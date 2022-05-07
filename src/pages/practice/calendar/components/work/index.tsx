@@ -12,7 +12,7 @@ import {
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 import { Title } from '@/components'
-import { practice } from '@/recoil/apis'
+import { workingModeApis } from '@/recoil/apis'
 import { practices } from '@/recoil/index'
 
 import Forms from './forms'
@@ -35,7 +35,7 @@ const Index = () => {
     factoryList,
     listSorkingModesDelete,
     operatingModeDetailsData
-  } = practice
+  } = workingModeApis
 
   const [total] = useState<number>(0)
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
@@ -260,7 +260,6 @@ const Index = () => {
       <div>
         <div className={styles.content}>
           <Forms factoryData={factoryData} FormData={FormData}></Forms>
-
           <Button
             className={styles.executionMethod}
             type="primary"

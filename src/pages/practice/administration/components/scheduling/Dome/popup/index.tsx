@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { dockingData } from '@/recoil'
-import { dockingDataApis, practice } from '@/recoil/apis'
+import { dockingDataApis, workOvertimeApis } from '@/recoil/apis'
 const { teamList } = dockingDataApis
 
 import WorkingHours from './workingHours/index'
@@ -12,7 +12,7 @@ function Popup(props: { content: any }) {
   const { content } = props
   const { isModalVisible, setIsModalVisible, formData } = content
 
-  const { overtimeAddition, teamId } = practice
+  const { overtimeAddition, teamId } = workOvertimeApis
   const { SHOW_PARENT } = TreeSelect
   const { RangePicker } = DatePicker
   // eslint-disable-next-line react-hooks/rules-of-hooks

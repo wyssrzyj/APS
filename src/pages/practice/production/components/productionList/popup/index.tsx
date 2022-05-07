@@ -2,7 +2,7 @@ import { Form, message, Modal, Tabs } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
-import { practice } from '@/recoil/apis'
+import { productionSingleApis } from '@/recoil/apis'
 
 import Forms from './forms/index'
 import styles from './index.module.less'
@@ -27,7 +27,7 @@ function Popup(props: { content: any }) {
     externalProduceOrderId
   } = content
 
-  const { workingProcedure, popupPreservation } = practice
+  const { workingProcedure, popupPreservation } = productionSingleApis
 
   const { TabPane } = Tabs
   // eslint-disable-next-line react-hooks/rules-of-hooks

@@ -2,13 +2,13 @@ import { Form, Input, Modal } from 'antd'
 import React, { useEffect } from 'react'
 
 import { getChild } from '@/components/getChild'
-import { practice } from '@/recoil/apis'
+import { holidaySeasonApis } from '@/recoil/apis'
 
 import WorkingHours from './workingHours/index'
 function Popup(props: any) {
   const { content, newlyAdded } = props
   const { isModalVisible, setIsModalVisible, type, edit } = content
-  const { holidayAddition } = practice
+  const { holidayAddition } = holidaySeasonApis
   const [form] = Form.useForm()
   //回显
   useEffect(() => {
