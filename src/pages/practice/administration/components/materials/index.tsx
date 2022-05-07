@@ -100,6 +100,9 @@ function Materials() {
   useEffect(() => {
     formApi(params)
   }, [params])
+  const update = () => {
+    formApi(params)
+  }
   const formApi = async (v: any) => {
     const res = await productionList(v)
     setTotal(res.total)
@@ -312,6 +315,7 @@ function Materials() {
       </div>
       {/* 物料齐套检查弹窗 */}
       <Material
+        update={update}
         materialList={materialList}
         materialModal={materialModal}
         setMaterialModal={setMaterialModal}

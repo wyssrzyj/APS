@@ -23,10 +23,10 @@ function Overtime() {
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
-  const [type, setType] = useState(1) //编辑或者新增
+  const [type, setType] = useState<any>() //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [list, setList] = useState([])
-  const [edit, setEdit] = useState([]) //编辑数据
+  const [edit, setEdit] = useState({}) //编辑数据
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
   const { overtimedisplay, workOvertimeMov, overtimeDetails, factoryList } =
@@ -220,10 +220,11 @@ function Overtime() {
     setEdit(arr)
     if (type === true) {
       setType(2)
+      setIsModalVisible(true)
     } else {
       setType(3)
+      setIsModalVisible(true)
     }
-    setIsModalVisible(true)
   }
   //删除
   const start = () => {
@@ -252,8 +253,8 @@ function Overtime() {
     onChange: onSelectChange
   }
   const executionMethod = () => {
-    setIsModalVisible(true)
     setType(1)
+    setIsModalVisible(true)
   }
 
   const showDeleteConfirm = () => {
@@ -272,7 +273,14 @@ function Overtime() {
     })
   }
 
-  const content = { isModalVisible, setIsModalVisible, type, edit, factoryData }
+  const content = {
+    isModalVisible,
+    setIsModalVisible,
+    type,
+    edit,
+    factoryData,
+    setEdit
+  }
   return (
     <div className={styles.qualification}>
       <div>

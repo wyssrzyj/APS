@@ -1,5 +1,5 @@
 import { DatePicker, Form, Input, Modal, Select, TreeSelect } from 'antd'
-import { isElement, isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
@@ -16,10 +16,8 @@ function Popup(props: { content: any; newlyAdded: any }) {
   const { Option } = Select
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
-  const [time, settime] = useState<any>()
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
-
   //加班班组
   useEffect(() => {
     if (!isEmpty(listID)) {
@@ -39,15 +37,16 @@ function Popup(props: { content: any; newlyAdded: any }) {
   }
 
   useEffect(() => {
-    if (type !== 1) {
-      // endDate
-      edit.date = moment(edit.timeList[0].endDate)
-      form.setFieldsValue(edit) //回显.
+    if (!isEmpty(edit)) {
+      if (type !== 1) {
+        edit.date = moment(edit.timeList[0].endDate)
+        form.setFieldsValue(edit) //回显.
+      }
+      if (type === 1) {
+        form.resetFields()
+      }
+      setListID(edit.factoryId)
     }
-    if (type === 1) {
-      form.resetFields()
-    }
-    setListID(edit.factoryId)
   }, [edit, type])
 
   const value = ['0-0-0']
@@ -66,10 +65,13 @@ function Popup(props: { content: any; newlyAdded: any }) {
   }
 
   const handleCancel = () => {
-    form.resetFields()
+    // form.resetFields()
     setIsModalVisible(false)
   }
-
+  const times = (item: any, e: any) => {
+    const timeStamp = item.concat(e)
+    return moment(timeStamp).valueOf()
+  }
   const onOk = async (
     values: {
       teamIds: any[]
@@ -83,26 +85,21 @@ function Popup(props: { content: any; newlyAdded: any }) {
 
     //时间的处理.
     if (values.date) {
-      const arr = moment().format('YYYY-MM-DD')
-      values.date = moment(values.date).valueOf()
+      const arr = moment(values.date).format('YYYY-MM-DD')
+      values.date = arr
     }
     //工作时间
-    const format: any = moment(new Date()).format('YYYY-MM-DD')
-    const time = moment(format).valueOf()
-
     if (!isEmpty(values.timeList)) {
       values.timeList.map((item: any) => {
-        item.startDateTime = item.startDateTime - time + values.date
-        item.startDateTime = item.startDateTime - time + values.date
+        item.startDateTime = times(values.date, item.startDateTime)
+        item.endDateTime = times(values.date, item.endDateTime)
       })
     }
 
     if (values.createTime) {
       values.createTime = moment(values.createTime).valueOf()
     }
-
     const list: any = type === 1 ? values : { ...values, id: edit.id }
-
     //班组为false才执行
     const arr: any = await teamId({
       teamIds: values.teamIds,
@@ -134,10 +131,6 @@ function Popup(props: { content: any; newlyAdded: any }) {
     style: {
       width: '100%'
     }
-  }
-  const onChange = (e: moment.MomentInput) => {
-    const arr = moment(e).format('YYYY-MM-DD')
-    settime(moment(arr).valueOf())
   }
   const getFactoryName = (e: any) => {
     setListID(e)
@@ -224,12 +217,6 @@ function Popup(props: { content: any; newlyAdded: any }) {
               placeholder="请输入备注"
             />
           </Form.Item>
-          {/* <Form.Item label="创建人" name="createBy">
-            <Input disabled={true} maxLength={100} placeholder="请输入创建人" />
-          </Form.Item> */}
-          {/* <Form.Item label="创建时间" name="createTime">
-            <Input disabled={true} maxLength={100} />
-          </Form.Item> */}
         </Form>
       </Modal>
     </div>

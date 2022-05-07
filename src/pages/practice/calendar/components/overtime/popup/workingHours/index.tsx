@@ -1,7 +1,8 @@
 /* eslint-disable use-isnan */
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons'
+import { Log } from '@antv/scale'
 import { Button, DatePicker, TimePicker } from 'antd'
-import { isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
@@ -14,8 +15,6 @@ function WorkingHours(props: {
   const format = 'HH:mm'
   const { onChange, type, edit } = props
   const [data, setData] = useState<any>([])
-
-  //新增就是空数据，编辑和查看使用接口数据
   useEffect(() => {
     type === 1
       ? setData([
@@ -23,6 +22,11 @@ function WorkingHours(props: {
         ])
       : setData(edit.timeList)
   }, [type, edit])
+  //获取时分秒
+  const times = (e) => {
+    const allDay = moment(e).format('YYYY-MM-DD HH:mm')
+    return allDay.substring(10)
+  }
 
   const start = (index: string | number, e: moment.MomentInput) => {
     data[index].startDateTime = moment(e).valueOf()
@@ -35,20 +39,29 @@ function WorkingHours(props: {
 
   useEffect(() => {
     if (!isEmpty(data)) {
+      const cloneData = cloneDeep(data)
+
       //传递给外部
-      const initial = data.every((item: any) => {
+      const initial = cloneData.every((item: any) => {
         return (
           item.startDateTime !== undefined && item.endDateTime !== undefined
         )
       })
-      const remove = data.every((item: any) => {
+      const remove = cloneData.every((item: any) => {
         return !isNaN(item.startDateTime) && !isNaN(item.endDateTime)
       })
       //全部不为空的时候才进行传递
       if (initial === true && remove === true) {
-        onChange && onChange([...data])
+        if (!isEmpty(cloneData)) {
+          cloneData.map((item: any) => {
+            item.startDateTime = times(item.startDateTime)
+            item.endDateTime = times(item.endDateTime)
+          })
+        }
+
+        onChange && onChange([...cloneData])
       } else {
-        if (data[0].startDateTime !== undefined) {
+        if (cloneData[0].startDateTime !== undefined) {
           onChange && onChange(null)
         }
       }
@@ -70,17 +83,15 @@ function WorkingHours(props: {
   }
   return (
     <div>
-      {!isEmpty(data)
-        ? data.map(
-            (
-              item: {
-                startDateTime: React.Key | null | undefined
-                endDateTime: moment.MomentInput
-              },
-              index: number
-            ) => (
+      {!isEmpty(data) ? (
+        <>
+          {/* <>{console.log('我执行了鸡翅', data)}</> */}
+          <>
+            {data.map((item, index) => (
+              // eslint-disable-next-line react/jsx-key
               <div className={styles.timePicker} key={index}>
                 <TimePicker
+                  key={index + 1}
                   defaultValue={
                     item.startDateTime === undefined
                       ? null
@@ -95,6 +106,7 @@ function WorkingHours(props: {
                 />
                 ~
                 <TimePicker
+                  key={index + 2}
                   defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}
                   defaultValue={
                     item.startDateTime === undefined
@@ -125,9 +137,10 @@ function WorkingHours(props: {
                   )}
                 </div>
               </div>
-            )
-          )
-        : null}
+            ))}
+          </>
+        </>
+      ) : null}
     </div>
   )
 }

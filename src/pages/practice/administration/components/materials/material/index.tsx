@@ -14,8 +14,9 @@ function Material(props: {
   materialModal: any
   setMaterialModal: any
   materialList: any
+  update: any
 }) {
-  const { materialModal, setMaterialModal, materialList } = props
+  const { materialModal, setMaterialModal, materialList, update } = props
   const { getTheSize, materialData, materialSaved, checked } = materialSetApis
   const [list, setList] = useState<any>() //处理后的数据
   const [tableList, setTableList] = useState<any>() //table的数据
@@ -142,6 +143,7 @@ function Material(props: {
       if (res) {
         if (methods === '确认') {
           setMaterialModal(false)
+          update()
         }
         if (methods === '切换') {
           setActiveKey(key)

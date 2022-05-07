@@ -134,7 +134,7 @@ const Outgoing = (props: any) => {
     {
       title: '工序名称',
       align: 'center',
-      dataIndex: 'productName'
+      dataIndex: 'processName'
     },
     {
       title: '所属工段',

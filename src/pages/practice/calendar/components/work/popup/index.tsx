@@ -19,7 +19,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
 
   //加班班组
   useEffect(() => {
-    if (!isEmpty(listID)) {
+    if (listID !== undefined) {
       dataDictionary(listID)
     }
   }, [listID])
@@ -38,6 +38,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
   useEffect(() => {
     if (type !== 1) {
       form.setFieldsValue(edit) //回显
+      setListID(edit.factoryId)
     }
     if (type === 1) {
       form.resetFields()
