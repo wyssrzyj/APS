@@ -46,18 +46,8 @@ function Popup(props: { content: any }) {
 
   const [localData, setLocalData] = useState<any>([]) //工艺数据
   const [outgoing, setOutgoing] = useState<any>([]) //外发数据
-
-  // useEffect(() => {
-  //   if (!isEmpty(list)) {
-  //     list.map((item) => {
-  //       item.section = map.get(item.section)
-  //     })
-  //     console.log('处理后的数据', list)
-  //   }
-  // }, [list])
   useEffect(() => {
     if (getDetailsId !== undefined && getDetailsId !== null) {
-      // console.log('是否法神改变', getDetailsId)
       setParams({ ...params, externalProduceOrderId: getDetailsId })
     }
   }, [getDetailsId])
