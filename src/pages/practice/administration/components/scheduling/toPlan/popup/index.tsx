@@ -68,6 +68,8 @@ function Popup(props: { content: any }) {
   }
 
   useEffect(() => {
+    console.log('是否更新')
+
     if (!isEmpty(editWindowList)) {
       interfaceData(editWindowList.id)
       setList(editWindowList)

@@ -1,5 +1,5 @@
 import { Popover, Tabs, Tag, Tree } from 'antd'
-import { isEmpty } from 'lodash'
+import { divide, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { dockingDataApis, schedulingApis } from '@/recoil/apis'
@@ -164,6 +164,8 @@ function ToPlan(props: {
     return data
   }
   const dataAcquisition = async (id: any) => {
+    console.log('知否执行')
+
     //已计划假数据
     // 0未计划  1已计划
     const notPlan = await listProductionOrders({
@@ -171,11 +173,12 @@ function ToPlan(props: {
       isPlanned: 0
     })
     console.log('未计划', notPlan)
-
     const planned = await listProductionOrders({
       factoryId: id,
       isPlanned: 1
     })
+    console.log('已经计划', planned)
+
     if (!isEmpty(planned)) {
       const plannedData = planned.map((item: any) => {
         return item.externalProduceOrderId
@@ -184,15 +187,18 @@ function ToPlan(props: {
     }
     //添加字段
     const sum = [fieldChanges(notPlan), fieldChanges(planned)]
+
     setList(sum)
     getData(sum[Number(current)], current) //初始展示
   }
+
   //Tabs 状态切换
   useEffect(() => {
     getData(list[Number(current)], current)
   }, [current])
   //处理数据
   const getData = (data: any, type: string) => {
+    console.log('处理数据', data)
     if (!isEmpty(data)) {
       data.map((i: any) => {
         i.key = i.externalProduceOrderId //用于校验排程
@@ -223,6 +229,12 @@ function ToPlan(props: {
             }
           })
       })
+      if (type === '0') {
+        setTreeData(data)
+      } else {
+        setWaitingTreeData(data)
+      }
+    } else {
       if (type === '0') {
         setTreeData(data)
       } else {
@@ -279,7 +291,7 @@ function ToPlan(props: {
   }
   //编辑工作
   const theEditor = (data: any) => {
-    setEditWindowList(data)
+    setEditWindowList({ ...data })
     setEditWindow(true)
   }
   //编辑提交

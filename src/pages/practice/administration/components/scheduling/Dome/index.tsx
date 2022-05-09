@@ -39,7 +39,7 @@ const Dhx = (props: {
   const [chart, setChart] = useState<any>([]) //图
   const [line, setLine] = useState<any>([]) //线
 
-  const [notWorking, setNotWorking] = useState<any>([]) //不可工作时间
+  const [notWorking, setNotWorking] = useState<any>([]) //所有不可工作时间
 
   //初始拖动
   const [InitialDrag, setInitialDrag] = useState<any>([]) //初始拖动数据
@@ -54,7 +54,7 @@ const Dhx = (props: {
       setChart(gunterData)
     }
     setLine([]) //线 //初始的时候传空
-    setNotWorking(notWork)
+    setNotWorking(notWork) //不可工作时间
   }, [gunterData, notWork, gunterType])
 
   useEffect(() => {
@@ -80,21 +80,27 @@ const Dhx = (props: {
     if (type === '0') {
       //点击
       if (!isEmpty(chart)) {
+        console.log('chart', chart)
+        console.log('select', select)
+
         const teamId = chart.filter(
           (item: { id: any }) => item.id === select
         )[0].teamId
+
         if (teamId !== null) {
           const unavailable: any = notWorking.filter(
             (item: { id: any }) => item.id === teamId
           )
           if (unavailable !== undefined && !isEmpty(unavailable)) {
-            console.log('不可用时间测试...', unavailable[0].time)
-
             setRestDate(unavailable[0].time)
           }
+        } else {
+          console.log('置空')
+          setRestDate(['2000-06-06'])
         }
       }
     }
+
     if (type === '1') {
       //移动
       const unavailable: any = notWorking.filter(
