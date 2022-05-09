@@ -200,7 +200,6 @@ function Production() {
       setIsModalVisible(true)
     } else {
       setType(true)
-      console.log('查看')
       setIsModalVisible(true)
     }
   }

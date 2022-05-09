@@ -26,9 +26,14 @@ function Materials() {
   const [materialList, setMaterialList] = useState<any>() //物料齐套数据
   const [list, setList] = useState<any>()
   const [queryData, setQueryData] = useState<any>({})
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
-  const { productionList, completeInspectionReport, exportShortageReport } =
-    materialSetApis
+  const {
+    productionList,
+    completeInspectionReport,
+    exportShortageReport,
+    factoryList
+  } = materialSetApis
 
   const map = new Map()
   map.set(1, '已检查')
@@ -93,8 +98,23 @@ function Materials() {
       }
     }
   ]
+  //工厂名称
   useEffect(() => {
-    setParams({ ...params, pageNum, pageSize, queryData })
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setFactoryData(arr)
+    }
+  }
+  useEffect(() => {
+    setParams({ pageNum, pageSize, ...queryData })
   }, [pageNum, pageSize, queryData])
   //获取列表数据
   useEffect(() => {
@@ -277,7 +297,8 @@ function Materials() {
       </div>
       <div>
         <div className={styles.content}>
-          <Forms FormData={FormData}></Forms>
+          <Forms factoryData={factoryData} FormData={FormData}></Forms>
+
           <Button
             className={styles.executionMethod}
             type="primary"

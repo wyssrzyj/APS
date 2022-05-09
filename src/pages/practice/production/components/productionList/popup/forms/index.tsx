@@ -147,12 +147,12 @@ function Forms(props: { FormData: any; data: any; types: any }) {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="工序名称" name="productName">
+            <Form.Item label="工序名称" name="processName">
               <Input placeholder="请输入工序名称" disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="工序代码" name="productCode">
+            <Form.Item label="工序代码" name="processCode">
               <Input placeholder="请选择工序代码" disabled={true} />
             </Form.Item>
           </Col>

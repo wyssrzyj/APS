@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-03-10 15:20:21
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-06 15:47:54
+ * @LastEditTime: 2022-05-09 09:37:07
  * @FilePath: \jack-aps\src\pages\practice\production\components\productionList\popup\tables\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -30,7 +30,7 @@ function Tables(props: any) {
     {
       title: '工序代码',
       align: 'center',
-      dataIndex: 'externalProcessId'
+      dataIndex: 'processCode'
     },
     {
       title: '所属工段',
@@ -54,10 +54,12 @@ function Tables(props: any) {
         return (
           <div className={styles.flex}>
             <div
-              className={
-                !types ? styles.operation_item : styles.operation_itemNo
-              }
-              onClick={() => (!types ? getFormData(_row) : null)}
+              // className={
+              //   !types ? styles.operation_item : styles.operation_itemNo
+              // }
+              className={styles.operation_item}
+              // onClick={() => (!types ? getFormData(_row) : null)}
+              onClick={() => getFormData(_row)}
             >
               编辑
             </div>
@@ -81,7 +83,7 @@ function Tables(props: any) {
         dataSource={list || []}
         rowKey={'idx'}
         pagination={{
-          disabled: types,
+          // disabled: types,
           size: 'small',
           //分页
           showSizeChanger: true,

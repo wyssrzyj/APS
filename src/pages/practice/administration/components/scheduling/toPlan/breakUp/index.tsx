@@ -610,6 +610,7 @@ const BreakUp = (props: any) => {
         destroyOnClose={true}
         onCancel={handleCancel}
       >
+        <div className={styles.title}>缝制任务拆分</div>
         <Table
           className={styles.table}
           bordered

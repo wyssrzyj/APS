@@ -91,16 +91,21 @@ function Rule() {
   }
 
   const paramsChange = (values: Record<string, any>) => {
+    const oldParams = cloneDeep(params)
     if (params.factoryId && values.factoryId !== params.factoryId) {
       values.teamId = undefined
     }
 
+    // 判断工厂id是否变更，再重置配置项信息
+    if (oldParams.factoryId !== values.factoryId) {
+      changeTeamConfig(values.factoryId)
+    }
     setParams(values)
   }
 
-  useEffect(() => {
-    changeTeamConfig(params.factoryId)
-  }, [params])
+  // useEffect(() => {
+  // changeTeamConfig(params.factoryId)
+  // }, [params.factoryId])
 
   //删除
   const deleteInfo = () => {

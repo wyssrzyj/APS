@@ -27,6 +27,8 @@ function Material(props: {
 
   useEffect(() => {
     if (materialList && !isEmpty(materialList)) {
+      console.log('选中项', materialList)
+
       setActiveKey(materialList[0].id)
       tableData(materialList[0])
       setSelect(materialList[0])
@@ -134,26 +136,43 @@ function Material(props: {
   //保存
   const added = async (current: any, methods: any, key: any) => {
     const type: any = meetConditions(modifyData)
-    if (type === true) {
-      //确认保存
-      current.tableContent = modifyData
-      // const externalProduceOrderId = materialList.externalProduceOrderId //添加
+    //已检查只需要展示数据就可以
+    if (current.checkStatus !== 1) {
+      console.log('我是未检查 重新检查')
 
-      const res = await materialSaved(current)
-      if (res) {
-        if (methods === '确认') {
-          setMaterialModal(false)
-          update()
-        }
-        if (methods === '切换') {
-          setActiveKey(key)
-          tableData(current)
+      if (type === true) {
+        //确认保存
+        current.tableContent = modifyData
+        // const externalProduceOrderId = materialList.externalProduceOrderId //添加
+        const res = await materialSaved(current)
+        if (res) {
+          if (methods === '确认') {
+            setMaterialModal(false)
+            update()
+          }
+          if (methods === '切换') {
+            setActiveKey(key)
+            tableData(current)
 
-          //给数据
+            //给数据
+          }
         }
+      } else {
+        message.error('数据未添加完毕')
       }
     } else {
-      message.error('数据未添加完毕')
+      console.log('我是已检查')
+
+      if (methods === '确认') {
+        setMaterialModal(false)
+        update()
+      }
+      if (methods === '切换') {
+        setActiveKey(key)
+        tableData(current)
+
+        //给数据
+      }
     }
   }
 
@@ -172,8 +191,6 @@ function Material(props: {
       const current = materialList.filter(
         (item: { id: any }) => item.id === key
       )[0]
-      console.log('过滤出来的数据', key)
-      console.log('过滤出来的数据', current)
 
       if (current !== undefined) {
         setSelect(current)
@@ -186,6 +203,7 @@ function Material(props: {
         setActiveKey(key)
         tableData(current)
       } else {
+        //已检查不需要进行切换保存
         added(current, '切换', key)
       }
     }

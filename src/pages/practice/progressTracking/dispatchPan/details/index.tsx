@@ -1,4 +1,4 @@
-import { InputNumber, message, Modal, Table } from 'antd'
+import { Input, InputNumber, message, Modal, Table } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -101,6 +101,7 @@ function Details(props: {
       }
       // auditStatus
       tableData(editData)
+      console.log('是否执行', editData)
     }
   }, [editData])
   const tableData = async (v: any) => {
@@ -258,15 +259,16 @@ function Details(props: {
         return (
           <div>
             {_row.type ? (
-              <InputNumber
-                disabled={disabled}
-                key={_row.id}
-                max={maximum(_row, item.title)}
-                // max={20}
-                min={0}
-                defaultValue={_value === undefined ? 0 : _value}
-                onChange={(e) => onBreakUp(e, _row, item.title, resSize)}
-              />
+              <>
+                <InputNumber
+                  disabled={disabled}
+                  placeholder={`最大:${maximum(_row, item.title)} `}
+                  key={_row.id}
+                  max={maximum(_row, item.title)}
+                  min={0}
+                  onChange={(e) => onBreakUp(e, _row, item.title, resSize)}
+                />
+              </>
             ) : null}
           </div>
         )

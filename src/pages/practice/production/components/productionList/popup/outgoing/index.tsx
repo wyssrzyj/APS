@@ -22,7 +22,7 @@ const Outgoing = (props: any) => {
   const { processOutsourcing, wholeOrder } = productionSingleApis
 
   const [pageNum, setPageNum] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
+  const [pageSize, setPageSize] = useState<number>(5)
 
   const [params, setParams] = useState<any>({
     pageNum: 1,
@@ -250,7 +250,6 @@ const Outgoing = (props: any) => {
   return (
     <div className={styles.table}>
       <div className={styles.top}>生产单外发管理</div>
-
       <Table
         rowKey={'idx'}
         scroll={{ y: 'calc(100vh - 500px)' }}
@@ -264,14 +263,14 @@ const Outgoing = (props: any) => {
           pageSize, //每页条数
           current: pageNum, //	当前页数
           total, //数据总数
-          pageSizeOptions: ['10', '20', '50'],
+          pageSizeOptions: ['5', '10', '20', '50'],
           onChange: onPaginationChange //获取当前页码是一个function
         }}
       />
       <div className={styles.outgoing}>
         <Button
           onClick={showModal}
-          className={styles.showModal}
+          className={data.length > 0 ? styles.translate : styles.showModal}
           type="primary"
           disabled={types}
         >

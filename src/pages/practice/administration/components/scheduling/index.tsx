@@ -233,7 +233,7 @@ function Index() {
                   班组甘特图
                 </Option>
                 <Option key={'1'} value="1">
-                  生产甘特图
+                  生产单甘特图
                 </Option>
               </Select>
               <Dome

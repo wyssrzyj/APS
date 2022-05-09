@@ -24,6 +24,9 @@ const FormTable = (props: any) => {
   useEffect(() => {
     saveData && saveData(data)
   }, [data])
+  useEffect(() => {
+    console.log('ceshi ', select)
+  }, [select])
 
   useEffect(() => {
     const columns: any = [
@@ -99,7 +102,7 @@ const FormTable = (props: any) => {
             <>
               <Input
                 type="number"
-                disabled={select.type === 1}
+                disabled={select.checkStatus === 1 ? true : false}
                 min={0}
                 defaultValue={_item}
                 onBlur={(e) => {
@@ -149,7 +152,7 @@ const FormTable = (props: any) => {
               !v.enoughFlag ? (
                 <>
                   <DatePicker
-                    disabled={select.type === 1}
+                    disabled={select.checkStatus === 1 ? true : false}
                     allowClear={false}
                     defaultValue={_item ? moment(Number(_item)) : undefined}
                     onChange={(e) => {

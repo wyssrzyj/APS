@@ -39,9 +39,12 @@ function ProductionPlan() {
         <Button type="link" onClick={() => handleDetailInfo(record)}>
           查看
         </Button>
-        <Button type="link" onClick={() => showSewing(record)}>
-          {map.get(record.auditStatus)}
-        </Button>
+
+        {record.section === '缝制' ? (
+          <Button type="link" onClick={() => showSewing(record)}>
+            {map.get(record.auditStatus)}
+          </Button>
+        ) : null}
       </div>
     )
   }
@@ -163,7 +166,7 @@ function ProductionPlan() {
     }
   }
   const showSewing = (v: any) => {
-    setEditData(v)
+    setEditData({ ...v })
     setDetailsPopup(true)
   }
   const update = async () => {

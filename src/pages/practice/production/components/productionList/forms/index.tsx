@@ -22,7 +22,9 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
-    FormData && FormData(values)
+    //处理时间格式
+    const timeFormat = { ...values, ...values.planEndDate }
+    FormData && FormData(timeFormat)
   }, 500)
 
   const getValueFromEvent = (event: any, type = 'text') => {
@@ -33,10 +35,11 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
       return event.target.value
     }
     if (type === 'picker') {
-      event.startTime = moment(event[0]).format('x')
-      event.endTime = moment(event[1]).format('x')
+      event.startPlanEndDate = moment(event[0]).valueOf()
+      event.endPlanEndDate = moment(event[1]).valueOf()
       return event
     }
+
     return event
   }
   const getFactoryName = (e: any) => {
@@ -80,7 +83,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
           <Col span={8}>
             <Form.Item
               {...layout}
-              name="production"
+              name="productOrderNum"
               label="生产单号"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
@@ -106,7 +109,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
           <Col span={8}>
             <Form.Item
               {...layout}
-              name="number"
+              name="productNum"
               label="产品款号"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
@@ -118,7 +121,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
           <Col span={8}>
             <Form.Item
               {...layout}
-              name="customer"
+              name="productClientNum"
               label="客户款号"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
@@ -130,7 +133,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
           <Col span={8}>
             <Form.Item
               {...layout}
-              name="completionTime"
+              name="planEndDate"
               label="计划完成日期"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'picker')

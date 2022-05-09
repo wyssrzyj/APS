@@ -1,4 +1,4 @@
-import { Form, message, Modal, Tabs } from 'antd'
+import { Button, Form, message, Modal, Tabs } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
@@ -139,14 +139,24 @@ function Popup(props: { content: any }) {
   }
 
   return (
-    <div>
+    <div className={styles.mainBody}>
       <Modal
         width={1000}
+        footer={
+          types === true ? null : (
+            <>
+              <Button type="primary" onClick={handleOk}>
+                保存
+              </Button>
+              <Button onClick={handleCancel}>取消</Button>
+            </>
+          )
+        }
         destroyOnClose={true}
         visible={isModalVisible}
         maskClosable={false}
         onOk={handleOk}
-        okText={types ? '确认' : '保存'}
+        // okText={types ? '确认' : '保存'}
         onCancel={handleCancel}
         centered={true}
       >
@@ -170,7 +180,6 @@ function Popup(props: { content: any }) {
             />
           </TabPane>
         </Tabs>
-        ,
       </Modal>
     </div>
   )
