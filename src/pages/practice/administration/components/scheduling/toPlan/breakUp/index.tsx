@@ -25,11 +25,9 @@ const BreakUp = (props: any) => {
     isModalVisible,
     workSplitList,
     breakSave,
-    formData,
-    capacityData,
-    teamName
+    formData
   } = props
-  const { workshopList, teamList } = dockingDataApis
+  const { workshopList, teamList, capacityListID } = dockingDataApis
   const { splitMethod, breakQuery } = schedulingApis
 
   const { Option } = Select
@@ -37,20 +35,21 @@ const BreakUp = (props: any) => {
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
   const [data, setData] = useState<any>([])
-  // const [detailsPopup, setDetailsPopup] = useState<any>(true) //编辑详情
+  const [initialTeamList, setInitialTeamList] = useState<any>([]) //处理初始班组
 
   const [factoryName, setFactoryName] = useState<any>([]) //车间
+  // const [capacityData, setCapacityData] = useState<any>([]) //效率模板
 
   useEffect(() => {
     if (formData !== undefined) {
       dataAcquisition(formData)
     }
   }, [formData])
+
   // 车间
   const dataAcquisition = async (e: any) => {
     //车间
     const res = await workshopList({ factoryId: e })
-
     if (res) {
       res.map((item: { name: any; shopName: any }) => {
         item.name = item.shopName
@@ -58,29 +57,94 @@ const BreakUp = (props: any) => {
       setFactoryName(res)
     }
   }
-
   useEffect(() => {
     if (!isElement(workSplitList) && workSplitList !== undefined) {
       getInterfaceData(workSplitList)
     }
   }, [workSplitList])
 
-  const getInterfaceData = async (data: any) => {
-    const res = await breakQuery({ assignmentId: data.id })
-    if (!isEmpty(res)) {
-      res.map((item: any) => {
-        item.isLocked = item.isLocked === 1 ? true : false
-        item.orderSum = data.orderSum
-        item.ids = item.id //用于时间更改时的判断条件
-        item.key = item.id //用于时间更改时的判断条件
-      })
-      setData(res)
-    } else {
-      delete data.id //防止 id和父级一样
-      delete data.children
-      setData([data])
+  //*** 下拉处理***
+  const handleChange = async (type: number, e: any, record: any) => {
+    const sum = cloneDeep(data)
+    //工作车间
+    if (type === 1) {
+      record.shopId = e
+      record.teamType = true
+      //班组是独立的
+      const team = await teamList({ factoryId: formData, shopMannagerId: e })
+      if (team) {
+        team.map((item: { name: any; teamName: any; key: any; id: any }) => {
+          item.name = item.teamName
+          item.key = item.id
+        })
+        record.teamList = team
+
+        updateData(record, sum)
+      }
+    }
+    //工作班组
+    if (type === 2) {
+      //工作班组不可重复
+      record.teamId = e
+      //效率是独立的
+      const capacity = await capacityListID({ teamId: e })
+      if (capacity) {
+        capacity.map((item: any) => {
+          item.name = item.templateName
+          item.key = item.templateId
+        })
+      }
+      record.efficiency = capacity
+      updateData(record, sum)
+    }
+    //效率模板
+    if (type === 3) {
+      record.templateId = e
+      updateData(record, sum)
     }
   }
+
+  const getInterfaceData = async (data: any) => {
+    const res = await breakQuery({ assignmentId: data.id })
+    console.log('res', res)
+    if (!isEmpty(res)) {
+      res.map(async (item: any, index) => {
+        item.isLocked = item.isLocked === 1 ? true : false
+        //拆分数量
+        // item.productionAmount = item.productionAmount ? 0 : 0
+        item.orderSum = data.orderSum
+        item.ids = index + 1 //用于时间更改时的判断条件
+        item.key = index + 1
+      })
+      console.log('初始数据', res)
+      //这个时候先不能渲染 这里的会慢一步
+      setData([...res])
+      //先渲染后处理
+      console.log('是否执行')
+
+      setInitialTeamList([...res])
+    } else {
+      //初始空数组 添加key防止报错
+      // delete data.id //防止 id和父级一样
+      const res = cloneDeep(data)
+      res.children = []
+      res.id = 1
+      res.key = 2
+      res.productionAmount = 0
+      res.completedAmount = 0
+      setData([res])
+    }
+  }
+  //处理班组初始值问题
+  useEffect(() => {
+    if (!isEmpty(initialTeamList)) {
+      initialTeamList.map(async (item: any) => {
+        handleChange(1, item.shopId, item) //班组
+        // handleChange(2, item.templateId, item) //效率模板
+      })
+    }
+  }, [initialTeamList])
+
   const showModal = () => {
     setIsModalVisible(true)
   }
@@ -110,10 +174,15 @@ const BreakUp = (props: any) => {
      * list 老数据
      */
     const sum = cloneDeep(list)
+
     const subscript = sum.findIndex((item: any) => item.ids === record.ids)
     if (subscript !== -1) {
       sum.splice(subscript, 1, record)
-      setData(sum)
+      console.log('替换数据')
+
+      setData([...sum])
+    } else {
+      console.log('没有执行')
     }
   }
   //单选的处理
@@ -131,49 +200,11 @@ const BreakUp = (props: any) => {
     }
   ) => {
     const sum = cloneDeep(data)
+
     record.isLocked = e.target.checked
     updateData(record, sum)
   }
-  // 下拉处理
-  const handleChange = async (
-    type: number,
-    e: any,
-    record: {
-      shopId: any
-      id: any
-      teamId: any
-      templateId: any
-      teamType: any
-      teamList: any
-    }
-  ) => {
-    const sum = cloneDeep(data)
-    //工作车间
-    if (type === 1) {
-      record.shopId = e
-      record.teamType = true
-      //班组是独立的
-      const team = await teamList({ factoryId: formData, shopMannagerId: e })
-      if (team) {
-        team.map((item: { name: any; teamName: any }) => {
-          item.name = item.teamName
-        })
-        record.teamList = team
-        updateData(record, sum)
-      }
-    }
-    //工作班组
-    if (type === 2) {
-      //工作班组不可重复
-      record.teamId = e
-      updateData(record, sum)
-    }
-    //效率模板
-    if (type === 3) {
-      record.templateId = e
-      updateData(record, sum)
-    }
-  }
+
   //数字输入框的处理
   let timeout: NodeJS.Timeout
   const onBreakUp = (
@@ -246,7 +277,7 @@ const BreakUp = (props: any) => {
       message.success('拆分数量以到达最大值')
     } else {
       arr.push({
-        // key: Date.now(),
+        key: Date.now(),
         ids: Date.now() * Math.random(),
         productionAmount: value,
         // shopId: arr[0].shopId,
@@ -383,24 +414,23 @@ const BreakUp = (props: any) => {
       dataIndex: 'teamId',
       render: (_value: any, _row: any) => {
         return (
-          <div>
-            <Select
-              disabled={_row.teamType === true ? false : true}
-              placeholder="请选择工作车间"
-              // defaultValue={_value}
-              style={{ width: 120 }}
-              onChange={(e) => handleChange(2, e, _row)}
-            >
-              {!isElement(_row.teamList) && _row.teamList !== undefined
-                ? _row.teamList.map((item: any) => (
-                    // eslint-disable-next-line react/jsx-key
-                    <Option key={item.id} value={item.id}>
-                      {item.name}
-                    </Option>
-                  ))
-                : null}
-            </Select>
-          </div>
+          <Select
+            disabled={_row.shopId ? false : true}
+            placeholder="请选择工作班组"
+            key={_value}
+            defaultValue={_value}
+            style={{ width: 120 }}
+            onChange={(e) => handleChange(2, e, _row)}
+          >
+            {!isEmpty(_row.teamList)
+              ? _row.teamList.map((item: any) => (
+                  // eslint-disable-next-line react/jsx-key
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                ))
+              : null}
+          </Select>
         )
       }
     },
@@ -466,12 +496,14 @@ const BreakUp = (props: any) => {
               style={{ width: 120 }}
               onChange={(e) => handleChange(3, e, _row)}
             >
-              {capacityData.map((item: any) => (
-                // eslint-disable-next-line react/jsx-key
-                <Option key={item.id} value={item.id}>
-                  {item.name}
-                </Option>
-              ))}
+              {!isEmpty(_row.efficiency)
+                ? _row.efficiency.map((item: any) => (
+                    // eslint-disable-next-line react/jsx-key
+                    <Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Option>
+                  ))
+                : null}
             </Select>
           </div>
         )
@@ -522,6 +554,7 @@ const BreakUp = (props: any) => {
       }
     }
   ]
+
   // 保存事件
   const handleOk = async () => {
     const arr = cloneDeep(data)
@@ -578,15 +611,15 @@ const BreakUp = (props: any) => {
       state.number === true &&
       state.teamType === true
     ) {
-      console.log('数据处理完毕，传给后台', arr)
       arr.map((item: any) => {
         item.isLocked = item.isLocked === true ? 1 : 0
       })
-
+      console.log(workSplitList)
       const sum = await splitMethod({
         assignmentId: workSplitList.id,
         data: arr
       })
+
       if (sum) {
         breakSave && breakSave()
       }
@@ -600,7 +633,9 @@ const BreakUp = (props: any) => {
     setPageNum(page)
     setPageSize(pageSize)
   }
-
+  useEffect(() => {
+    console.log('总数据', data)
+  }, [data])
   return (
     <div className={styles.popup}>
       <Modal
@@ -611,25 +646,27 @@ const BreakUp = (props: any) => {
         onCancel={handleCancel}
       >
         <div className={styles.title}>缝制任务拆分</div>
-        <Table
-          className={styles.table}
-          bordered
-          columns={columns}
-          scroll={{ x: 1500, y: 500 }}
-          dataSource={data}
-          rowKey={'id'}
-          pagination={{
-            //分页
-            showSizeChanger: true,
-            // showQuickJumper: true, //是否快速查找
-            pageSize, //每页条数
-            current: pageNum, //	当前页数
-            total, //数据总数
-            // position: ['bottomCenter'], //居中
-            pageSizeOptions: ['10', '20', '50'],
-            onChange: onPaginationChange //获取当前页码是一个function
-          }}
-        />
+        {!isEmpty(data) ? (
+          <Table
+            className={styles.table}
+            bordered
+            columns={columns}
+            scroll={{ x: 1500, y: 500 }}
+            dataSource={data}
+            rowKey={'id'}
+            pagination={{
+              //分页
+              showSizeChanger: true,
+              // showQuickJumper: true, //是否快速查找
+              pageSize, //每页条数
+              current: pageNum, //	当前页数
+              total, //数据总数
+              // position: ['bottomCenter'], //居中
+              pageSizeOptions: ['10', '20', '50'],
+              onChange: onPaginationChange //获取当前页码是一个function
+            }}
+          />
+        ) : null}
       </Modal>
       {/* <Details setDetailsPopup={setDetailsPopup} detailsPopup={detailsPopup} /> */}
     </div>

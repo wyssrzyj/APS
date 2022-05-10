@@ -24,17 +24,26 @@ function Popup(props: { content: any }) {
     editWindowList,
     editSubmission,
     formData,
-    factoryName,
-    teamName
+    factoryName
   } = content
   const { Option } = Select
-  const { getIndividualDetails, factoryList, editingTasks } = schedulingApis
+  const {
+    getIndividualDetails,
+    factoryList,
+    editingTasks,
+    calculateCompletionTime
+  } = schedulingApis
+  const { teamList } = dockingDataApis
+
   const [form] = Form.useForm()
-  const [list, setList] = useState<any>()
+  const [list, setList] = useState<any>() //总数据
   const [type, setType] = useState<any>()
   const [largestNumber, setLargestNumber] = useState<any>(0)
 
   const [factoryData, setFactoryData] = useState<any>([])
+  const [shopName, setShopName] = useState<any>() ///车间名称
+  const [teamName, setTeamName] = useState<any>([]) ///班组
+  const [endTimeData, setEndTimeData] = useState<any>() //接口算的结束时间
 
   const map = new Map()
   map.set('1', '裁剪工段')
@@ -66,19 +75,35 @@ function Popup(props: { content: any }) {
       setFactoryData(arr)
     }
   }
+  // 选择车间 获取班组数据
+  useEffect(() => {
+    workshopTeam(shopName)
+  }, [shopName])
+  const workshopTeam = async (e: any) => {
+    const team = await teamList({ shopMannagerId: e })
+    if (team) {
+      team.map((item: { name: any; teamName: any }) => {
+        item.name = item.teamName
+      })
+      setTeamName(team)
+    }
+  }
 
   useEffect(() => {
-    console.log('是否更新')
-
     if (!isEmpty(editWindowList)) {
       interfaceData(editWindowList.id)
       setList(editWindowList)
     }
   }, [editWindowList])
+  //获取数据
   const interfaceData = async (id: any) => {
     const arr = await getIndividualDetails({ id })
+    setShopName(arr.shopName)
+    // setTeamID(arr.teamId)
+
     setList(arr)
   }
+  //渲染数据
   useEffect(() => {
     if (!isEmpty(list)) {
       list.planStartTime =
@@ -109,12 +134,17 @@ function Popup(props: { content: any }) {
   const onFinish = async (values: any) => {
     values.planEndTime = moment(values.planEndTime).valueOf()
     values.planStartTime = moment(values.planStartTime).valueOf()
+
     values.isLocked = type === false ? 0 : 1
     values.id = editWindowList.id
+    values.additionalTime = moment(values.planEndTime).valueOf() - endTimeData
+    // 结束时间 手动-接口
+    console.log(values)
     delete values.section
     const res = await editingTasks(values)
     form.resetFields()
     editSubmission()
+    setEndTimeData(0) //接口算的结束时间清空
   }
   let timeout: NodeJS.Timeout
   const onChange = (e: any) => {
@@ -127,6 +157,46 @@ function Popup(props: { content: any }) {
   }
   function onCheckbox(e: { target: { checked: any } }) {
     setType(e.target.checked)
+  }
+  //获取结束时间
+  const endTime = async (e) => {
+    const assignmentId = list.assignmentId
+    const orderNum = list.productionAmount - list.completedAmount
+    const startDate = moment(e).format('YYYY-MM-DD HH:mm:ss')
+    const teamId = list.teamName //班组id
+    const additionalTime = Number(list.additionalTime)
+    const capacityId = list.templateId
+    //算
+    const arr = await calculateCompletionTime({
+      assignmentId,
+      orderNum,
+      startDate,
+      teamId,
+      additionalTime,
+      capacityId
+    })
+    if (arr.code === 200) {
+      const cloneLis = cloneDeep(list)
+      const time = moment(arr.data)
+      // 用于保存
+      setEndTimeData(moment(arr.data).valueOf())
+      cloneLis.planStartTime = moment(e)
+      cloneLis.planEndTime = time
+      setList({ ...cloneLis })
+    }
+  }
+  //车间
+  const handleChange = (value) => {
+    const cloneList = cloneDeep(list)
+    cloneList.shopName = value
+    setList({ ...cloneList })
+    setShopName(value)
+  }
+  //班组
+  const team = (e) => {
+    const cloneList = cloneDeep(list)
+    cloneList.teamName = e
+    setList({ ...cloneList })
   }
   return (
     <div>
@@ -252,7 +322,7 @@ function Popup(props: { content: any }) {
                 name="shopName"
                 rules={[{ required: true, message: '请输入工作班组' }]}
               >
-                <Select placeholder="请选择所属工段">
+                <Select placeholder="请选择所属工段" onChange={handleChange}>
                   {factoryName.map((item: any) => (
                     // eslint-disable-next-line react/jsx-key
                     <Option key={item.id} value={item.id}>
@@ -268,10 +338,8 @@ function Popup(props: { content: any }) {
                 name="teamName"
                 rules={[{ required: true, message: '请输入工作班组' }]}
               >
-                <Select placeholder="请选择工作班组">
+                <Select placeholder="请选择工作班组" onChange={team}>
                   {teamName.map((item: any) => (
-                    // eslint-disable-next-line react/jsx-key
-                    // eslint-disable-next-line react/jsx-key
                     <Option key={item.id} value={item.id}>
                       {item.name}
                     </Option>
@@ -288,6 +356,7 @@ function Popup(props: { content: any }) {
                 rules={[{ required: true, message: '请选择计划开始时间' }]}
               >
                 <DatePicker
+                  onChange={endTime}
                   style={{ width: '100%' }}
                   // disabledDate={disabledDate}.
                 />

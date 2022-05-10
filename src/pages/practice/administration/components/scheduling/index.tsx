@@ -128,6 +128,8 @@ function Index() {
 
   //  图刷新
   const updateMethod = () => {
+    console.log('图刷新', formData, gunterType)
+
     getChart(formData, gunterType)
   }
 

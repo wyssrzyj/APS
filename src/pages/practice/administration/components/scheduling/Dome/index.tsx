@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { dockingData } from '@/recoil'
-import { schedulingApis } from '@/recoil/apis'
+import { schedulingApis, workOvertimeApis } from '@/recoil/apis'
 
 // import GanttS from './Gantt copy'
 import Gantt from './Gantt/index'
@@ -28,9 +28,7 @@ const Dhx = (props: {
     gunterType
   } = props
   const { getLine, calculateEndTimeAfterMove } = schedulingApis
-  const [FactoryData, setFactoryData] = useRecoilState(
-    dockingData.globalFactoryData
-  )
+  const { factoryList } = workOvertimeApis
 
   const [currentZoom, setCurrentZoom] = useState<any>('Days') //缩放的状态  Days
 
@@ -48,6 +46,22 @@ const Dhx = (props: {
   const [select, setSelect] = useState<any>([]) //用于展示 线和不可用时间、给树传递id判断
   const [type, setType] = useState<any>() //判断是点击还是移动
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
+
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setFactoryData(arr)
+    }
+  }
 
   useEffect(() => {
     if (!isEmpty(gunterData) && !isEmpty(notWork)) {
@@ -233,8 +247,13 @@ const Dhx = (props: {
       }
     }
   }, [select, chart])
-  const content = { formData, isModalVisible, setIsModalVisible }
-
+  const content = {
+    updateMethod,
+    isModalVisible,
+    setIsModalVisible,
+    factoryData
+    // setEdit
+  }
   return (
     <div>
       <div>

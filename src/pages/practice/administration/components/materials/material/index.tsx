@@ -28,7 +28,6 @@ function Material(props: {
   useEffect(() => {
     if (materialList && !isEmpty(materialList)) {
       console.log('选中项', materialList)
-
       setActiveKey(materialList[0].id)
       tableData(materialList[0])
       setSelect(materialList[0])
@@ -72,6 +71,7 @@ function Material(props: {
           externalProduceOrderId: data.externalProduceOrderId,
           produceOrderNum: data.externalProduceOrderNum
         })
+        console.log('我是重新-已检查', resData.tableContent)
 
         setTableList(resData.tableContent)
       }
@@ -81,6 +81,8 @@ function Material(props: {
           externalProduceOrderId: data.externalProduceOrderId,
           produceOrderNum: data.externalProduceOrderNum
         })
+        console.log('我是重新-重新检查', resData)
+
         setTableList(resData)
       }
     }
