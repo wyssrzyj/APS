@@ -1,5 +1,5 @@
 import { Button, Dropdown, Menu, message, Space, Table } from 'antd'
-import { isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import { any } from 'prop-types'
 import { memo, SetStateAction, useEffect, useState } from 'react'
@@ -19,7 +19,7 @@ function Materials() {
     pageNum: 1,
     pageSize: pageSize
   })
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
+  const [selected, setSelected] = useState([]) //选中的值
   const [type, setType] = useState(false) //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState<boolean>(false) //删除弹窗
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
@@ -142,6 +142,8 @@ function Materials() {
         }
       )
       setList(res.records)
+    } else {
+      setList([])
     }
   }
 
@@ -182,11 +184,11 @@ function Materials() {
 
   // 选中的状态
   const materials = async (type: string | boolean) => {
-    if (selectedRowKeys[0] === undefined) {
+    if (selected[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
       //获取选中的数据
-      const selectedValue = selectedList(selectedRowKeys, list)
+      const selectedValue = selectedList(selected, list)
 
       //判断选中的状态是否一样
       const stateConsistent = selectedValue.every(
@@ -239,11 +241,11 @@ function Materials() {
   const start = async (type: any) => {
     // 导出elsx表格
     if (type === '2') {
-      const res = await completeInspectionReport({ idList: selectedRowKeys })
+      const res = await completeInspectionReport({ idList: selected })
       elsxTable(res, '齐套检查报告')
     }
     if (type === '3') {
-      const res = await exportShortageReport({ idList: selectedRowKeys })
+      const res = await exportShortageReport({ idList: selected })
       elsxTable(res, '缺料报告')
     }
   }
@@ -257,15 +259,31 @@ function Materials() {
     window.URL.revokeObjectURL(download.href)
   }
 
-  const onSelectChange = (selectedRowKeys: SetStateAction<never[]>) => {
+  // 当前页面打勾，切换页面选择新数据打勾，回到之前的页面，勾的数据不见了
+  //勾选
+  const onSelectChange = (selectedRowKeys: any) => {
     //后面有数据的时候 根据id获取所有数据中对应的 然后给from
-
-    setSelectedRowKeys(selectedRowKeys)
+    const cloneSelected = cloneDeep(selected)
+    if (!isEmpty(selectedRowKeys)) {
+      selectedRowKeys.map((item) => {
+        console.log('是否包含', cloneSelected.includes(item))
+        if (cloneSelected.includes(item) === false) {
+          cloneSelected.push(item)
+          setSelected(cloneSelected)
+        }
+      })
+    } else {
+      setSelected([])
+    }
   }
+
   const rowSelection: any = {
-    selectedRowKeys,
+    selectedRowKeys: selected,
     onChange: onSelectChange
   }
+  // useEffect(() => {
+  //   console.log('选中的值', selectedRowKeys)
+  // }, [selectedRowKeys])
 
   const menu = (
     <Menu>
@@ -298,7 +316,6 @@ function Materials() {
       <div>
         <div className={styles.content}>
           <Forms factoryData={factoryData} FormData={FormData}></Forms>
-
           <Button
             className={styles.executionMethod}
             type="primary"

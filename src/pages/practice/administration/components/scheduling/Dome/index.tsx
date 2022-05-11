@@ -269,7 +269,7 @@ const Dhx = (props: {
                     tasks={subjectData}
                     zoom={currentZoom}
                     updateList={updateList}
-                    restDate={restDate}
+                    // restDate={restDate} //不可用时间
                   />
                 </div>
               </div>

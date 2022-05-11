@@ -16,11 +16,11 @@ function WorkingHours(props: {
   const { onChange, type, edit } = props
   const [data, setData] = useState<any>([])
   useEffect(() => {
-    type === 1
-      ? setData([
-          { name: '1', startDateTime: undefined, endDateTime: undefined }
-        ])
-      : setData(edit.timeList)
+    if (type === 1) {
+      setData([{ name: '1', startDateTime: undefined, endDateTime: undefined }])
+    } else {
+      setData(edit.timeList)
+    }
   }, [type, edit])
   //获取时分秒
   const times = (e) => {
@@ -85,7 +85,6 @@ function WorkingHours(props: {
     <div>
       {!isEmpty(data) ? (
         <>
-          {/* <>{console.log('我执行了鸡翅', data)}</> */}
           <>
             {data.map((item, index) => (
               // eslint-disable-next-line react/jsx-key

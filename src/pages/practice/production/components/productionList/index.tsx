@@ -16,7 +16,7 @@ function Production() {
   const { productionList, factoryList } = productionSingleApis
   const map = new Map()
   map.set(1, '待计划')
-  map.set(2, '待生产')
+  map.set(2, '已计划')
   map.set(3, '成产中')
   map.set(4, '成产完成')
 
@@ -68,7 +68,9 @@ function Production() {
       arr.records.map((item: any) => {
         item.id = `${item.productId + Math.random()}` //后端没有成成id 这里自己做处理 防止key值重复
       })
-      setList(arr.records)
+      setList([...arr.records])
+    } else {
+      setList([])
     }
   }
 

@@ -12,9 +12,7 @@ import {
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { useRecoilState } from 'recoil'
 
-import { commonState, dockingData } from '@/recoil'
 import { dockingDataApis, schedulingApis } from '@/recoil/apis'
 function Popup(props: { content: any }) {
   const { content } = props
@@ -44,6 +42,7 @@ function Popup(props: { content: any }) {
   const [shopName, setShopName] = useState<any>() ///车间名称
   const [teamName, setTeamName] = useState<any>([]) ///班组
   const [endTimeData, setEndTimeData] = useState<any>() //接口算的结束时间
+  const [sectionType, setSectionType] = useState<any>(true) //外发 车间、班组非必填
 
   const map = new Map()
   map.set('1', '裁剪工段')
@@ -91,14 +90,22 @@ function Popup(props: { content: any }) {
 
   useEffect(() => {
     if (!isEmpty(editWindowList)) {
-      interfaceData(editWindowList.id)
-      setList(editWindowList)
+      //外发车间班组不是必填
+      if (editWindowList.section === '5') {
+        setSectionType(false)
+      } else {
+        setSectionType(true)
+      }
+      const cloneList = cloneDeep(editWindowList)
+      interfaceData(cloneList.id)
+      setList(cloneList)
     }
   }, [editWindowList])
   //获取数据
   const interfaceData = async (id: any) => {
     const arr = await getIndividualDetails({ id })
-    setShopName(arr.shopName)
+
+    setShopName(arr.shopId)
     // setTeamID(arr.teamId)
 
     setList(arr)
@@ -130,6 +137,23 @@ function Popup(props: { content: any }) {
     form.resetFields()
     setEditWindow(false)
   }
+  //获取名字
+  const getName = (type, id) => {
+    if (type === '1') {
+      if (!isEmpty(factoryName)) {
+        return factoryName.filter((item) => item.id === id)[0].name
+      } else {
+        return '防止报错页面消失'
+      }
+    }
+    if (type === '2') {
+      if (!isEmpty(teamName)) {
+        return teamName.filter((item) => item.id === id)[0].name
+      } else {
+        return '防止报错页面消失'
+      }
+    }
+  }
 
   const onFinish = async (values: any) => {
     values.planEndTime = moment(values.planEndTime).valueOf()
@@ -138,6 +162,8 @@ function Popup(props: { content: any }) {
     values.isLocked = type === false ? 0 : 1
     values.id = editWindowList.id
     values.additionalTime = moment(values.planEndTime).valueOf() - endTimeData
+    values.shopName = getName('1', values.shopId)
+    values.teamName = getName('2', values.teamId)
     // 结束时间 手动-接口
     console.log(values)
     delete values.section
@@ -163,7 +189,7 @@ function Popup(props: { content: any }) {
     const assignmentId = list.assignmentId
     const orderNum = list.productionAmount - list.completedAmount
     const startDate = moment(e).format('YYYY-MM-DD HH:mm:ss')
-    const teamId = list.teamName //班组id
+    const teamId = list.teamId //班组id
     const additionalTime = Number(list.additionalTime)
     const capacityId = list.templateId
     //算
@@ -188,7 +214,7 @@ function Popup(props: { content: any }) {
   //车间
   const handleChange = (value) => {
     const cloneList = cloneDeep(list)
-    cloneList.shopName = value
+    cloneList.shopId = value
     setList({ ...cloneList })
     setShopName(value)
   }
@@ -198,9 +224,11 @@ function Popup(props: { content: any }) {
     cloneList.teamName = e
     setList({ ...cloneList })
   }
+
   return (
     <div>
       <Modal
+        // destroyOnClose={true}
         width={800}
         title={'编辑'}
         visible={editWindow}
@@ -260,7 +288,7 @@ function Popup(props: { content: any }) {
               <Form.Item label="所属工段" name="section">
                 <Input
                   maxLength={100}
-                  placeholder="请输入销售单号"
+                  placeholder="请输入所属工段"
                   disabled={true}
                 />
               </Form.Item>
@@ -319,8 +347,8 @@ function Popup(props: { content: any }) {
             <Col span={12}>
               <Form.Item
                 label="车间名称"
-                name="shopName"
-                rules={[{ required: true, message: '请输入工作班组' }]}
+                name="shopId"
+                rules={[{ required: sectionType, message: '请输入工作班组' }]}
               >
                 <Select placeholder="请选择所属工段" onChange={handleChange}>
                   {factoryName.map((item: any) => (
@@ -335,8 +363,8 @@ function Popup(props: { content: any }) {
             <Col span={12}>
               <Form.Item
                 label="班组名称"
-                name="teamName"
-                rules={[{ required: true, message: '请输入工作班组' }]}
+                name="teamId"
+                rules={[{ required: sectionType, message: '请输入工作班组' }]}
               >
                 <Select placeholder="请选择工作班组" onChange={team}>
                   {teamName.map((item: any) => (
@@ -356,6 +384,8 @@ function Popup(props: { content: any }) {
                 rules={[{ required: true, message: '请选择计划开始时间' }]}
               >
                 <DatePicker
+                  format="YYYY-MM-DD HH:mm"
+                  showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
                   onChange={endTime}
                   style={{ width: '100%' }}
                   // disabledDate={disabledDate}.
@@ -369,6 +399,8 @@ function Popup(props: { content: any }) {
                 rules={[{ required: true, message: '请选择计划结束时间' }]}
               >
                 <DatePicker
+                  showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
+                  format="YYYY-MM-DD HH:mm"
                   style={{ width: '100%' }}
                   // disabledDate={disabledDate}.
                 />

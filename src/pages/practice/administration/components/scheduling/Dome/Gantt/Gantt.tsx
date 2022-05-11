@@ -251,14 +251,6 @@ const Gantt = (props: any) => {
           }
         ]
       }
-
-      // gantt.attachEvent('onBeforeTaskDrag', function (id, mode, e) {
-      //   console.log(id)
-      //   console.log(mode)
-      //   console.log(e)
-      //   //any custom logic here
-      //   return true
-      // })
       gantt.ext.zoom.init(zoomConfig)
     }
   }

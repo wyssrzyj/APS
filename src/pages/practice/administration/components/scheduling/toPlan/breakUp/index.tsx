@@ -62,6 +62,61 @@ const BreakUp = (props: any) => {
       getInterfaceData(workSplitList)
     }
   }, [workSplitList])
+  //替换数据
+  const updateData = (
+    record: {
+      shopId?: any
+      ids?: any
+      teamId?: any
+      efficiency?: any
+      productionAmount?: any
+      startTime?: number
+      eddTime?: number
+    },
+    list: any
+  ) => {
+    /**
+     * record 修改后的单个值.
+     * list 老数据
+     */
+    const sum = cloneDeep(list)
+    const subscript = sum.findIndex((item: any) => item.ids === record.ids)
+    if (subscript !== -1) {
+      sum.splice(subscript, 1, record)
+      setData([...sum])
+    } else {
+      console.log('没有执行')
+    }
+  }
+  const initiaTeam = (teamData, name, ids) => {
+    //有值就赋值，没有就返回空，防止报错
+    if (!isEmpty(teamData)) {
+      teamData.map((item: { name: any; teamName: any; key: any; id: any }) => {
+        item.name = item[name]
+        item.key = item[ids]
+      })
+      return teamData
+    } else {
+      return []
+    }
+  }
+  //**处理班组 效率 初始值问题
+  const initialHandleChange = async (shopId, teamId, record) => {
+    //班组
+    const sum = cloneDeep(data)
+    record.teamType = true
+    const team = await teamList({
+      factoryId: formData,
+      shopMannagerId: shopId
+    })
+    record.teamList = initiaTeam(team, 'teamName', 'id')
+    // 效率
+    const capacity = await capacityListID({ teamId: teamId })
+    record.efficiency = initiaTeam(capacity, 'templateName', 'teamId')
+    //全部赋值完成在进行数据更新
+
+    updateData(record, sum)
+  }
 
   //*** 下拉处理***
   const handleChange = async (type: number, e: any, record: any) => {
@@ -78,13 +133,11 @@ const BreakUp = (props: any) => {
           item.key = item.id
         })
         record.teamList = team
-
         updateData(record, sum)
       }
     }
     //工作班组
     if (type === 2) {
-      //工作班组不可重复
       record.teamId = e
       //效率是独立的
       const capacity = await capacityListID({ teamId: e })
@@ -135,12 +188,12 @@ const BreakUp = (props: any) => {
       setData([res])
     }
   }
-  //处理班组初始值问题
+
+  //处理班组 效率 初始值问题
   useEffect(() => {
     if (!isEmpty(initialTeamList)) {
       initialTeamList.map(async (item: any) => {
-        handleChange(1, item.shopId, item) //班组
-        // handleChange(2, item.templateId, item) //效率模板
+        initialHandleChange(item.shopId, item.teamId, item)
       })
     }
   }, [initialTeamList])
@@ -156,35 +209,6 @@ const BreakUp = (props: any) => {
     console.log(`checked = ${e.target.checked}`)
   }
 
-  //替换数据
-  const updateData = (
-    record: {
-      shopId?: any
-      ids?: any
-      teamId?: any
-      efficiency?: any
-      productionAmount?: any
-      startTime?: number
-      eddTime?: number
-    },
-    list: any
-  ) => {
-    /**
-     * record 修改后的单个值.
-     * list 老数据
-     */
-    const sum = cloneDeep(list)
-
-    const subscript = sum.findIndex((item: any) => item.ids === record.ids)
-    if (subscript !== -1) {
-      sum.splice(subscript, 1, record)
-      console.log('替换数据')
-
-      setData([...sum])
-    } else {
-      console.log('没有执行')
-    }
-  }
   //单选的处理
   const onLock = (
     e: CheckboxChangeEvent,
@@ -633,9 +657,6 @@ const BreakUp = (props: any) => {
     setPageNum(page)
     setPageSize(pageSize)
   }
-  useEffect(() => {
-    console.log('总数据', data)
-  }, [data])
   return (
     <div className={styles.popup}>
       <Modal
