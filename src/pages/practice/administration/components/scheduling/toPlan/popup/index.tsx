@@ -74,7 +74,7 @@ function Popup(props: { content: any }) {
       setFactoryData(arr)
     }
   }
-  // 选择车间 获取班组数据
+  // 选择车间 获取班组数据.
   useEffect(() => {
     workshopTeam(shopName)
   }, [shopName])
