@@ -35,6 +35,7 @@ const BreakUp = (props: any) => {
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
   const [data, setData] = useState<any>([])
+
   const [initialTeamList, setInitialTeamList] = useState<any>([]) //处理初始班组
 
   const [factoryName, setFactoryName] = useState<any>([]) //车间
@@ -62,55 +63,18 @@ const BreakUp = (props: any) => {
       getInterfaceData(workSplitList)
     }
   }, [workSplitList])
-  //初始替换
-  const initialPeplacement = (
-    record: {
-      shopId?: any
-      ids?: any
-      teamId?: any
-      efficiency?: any
-      productionAmount?: any
-      startTime?: number
-      eddTime?: number
-    },
-    list: any
-  ) => {
-    /**
-     * record 修改后的单个值.
-     * list 老数据
-     */
-    const sum = cloneDeep(list)
-    const subscript = sum.findIndex((item: any) => item.ids === record.ids)
-    if (subscript !== -1) {
-      sum.splice(subscript, 1, record)
-      console.log('初始方法处理号的数据', sum)
-      setData([...sum])
-    } else {
-      console.log('没有执行')
-    }
-  }
   //替换数据
-  const updateData = (
-    record: {
-      shopId?: any
-      ids?: any
-      teamId?: any
-      efficiency?: any
-      productionAmount?: any
-      startTime?: number
-      eddTime?: number
-    },
-    list: any
-  ) => {
+  const updateData = (record: any, list: any) => {
     /**
      * record 修改后的单个值.
      * list 老数据
      */
-    const sum = cloneDeep(list)
-    const subscript = sum.findIndex((item: any) => item.ids === record.ids)
+    const subscript = list.findIndex((item: any) => item.ids === record.ids)
     if (subscript !== -1) {
-      sum.splice(subscript, 1, record)
-      setData([...sum])
+      list.splice(subscript, 1, record)
+      console.log('替换后的数据', list)
+
+      setData([...list])
     } else {
       console.log('没有执行')
     }
@@ -128,11 +92,10 @@ const BreakUp = (props: any) => {
     }
   }
   //**处理班组 效率 初始值问题
-  const initialHandleChange = async (shopId, teamId, record) => {
-    //班组
-    const teamLis = initialTeamList
-    // const teamLis = data
+  const initialHandleChange = async (shopId, teamId, record, teamLis) => {
+    const sum = teamLis
 
+    //班组
     record.teamType = true
     const team = await teamList({
       factoryId: formData,
@@ -142,16 +105,10 @@ const BreakUp = (props: any) => {
     // 效率
     const capacity = await capacityListID({ teamId: teamId })
     record.efficiency = initiaTeam(capacity, 'templateName', 'teamId')
+    console.log('添加完数据')
+
     //全部赋值完成在进行数据更新
-
-    updateData(record, teamLis)
-
-    // return record
-
-    // console.log('为啥是promise', record)
-
-    // return record
-    // return record
+    updateData(record, sum)
   }
 
   //*** 下拉处理***
@@ -195,7 +152,6 @@ const BreakUp = (props: any) => {
 
   const getInterfaceData = async (data: any) => {
     const res = await breakQuery({ assignmentId: data.id })
-    console.log('res', res)
     if (!isEmpty(res)) {
       res.map(async (item: any, index) => {
         item.isLocked = item.isLocked === 1 ? true : false
@@ -206,14 +162,9 @@ const BreakUp = (props: any) => {
         item.key = index + 1
       })
       //这个时候先不能渲染 这里的会慢一步
-
-      // setData([...res])
-
       //先渲染后处理
       setInitialTeamList([...res])
     } else {
-      console.log('是否执行2')
-
       //初始空数组 添加key防止报错
       // delete data.id //防止 id和父级一样
       const res = cloneDeep(data)
@@ -230,21 +181,14 @@ const BreakUp = (props: any) => {
   useEffect(() => {
     if (!isEmpty(initialTeamList)) {
       initialTeamList.map((item: any) => {
-        initialHandleChange(item.shopId, item.teamId, item)
-
-        // item = initialHandleChange(item.shopId, item.teamId, item)
-
-        // console.log(initialHandleChange(item.shopId, item.teamId, item))
-        // sum.push(initialHandleChange(item.shopId, item.teamId, item))
-        // item = initialHandleChange(item.shopId, item.teamId, item)
+        initialHandleChange(item.shopId, item.teamId, item, initialTeamList)
       })
-      console.log('initialTeamList', initialTeamList)
-
-      // setData(initialTeamList)
-
-      // console.log('处理后的', initialTeamList)
     }
+    console.log(initialTeamList)
   }, [initialTeamList])
+  useEffect(() => {
+    console.log('测试替换', data)
+  }, [data])
 
   const showModal = () => {
     setIsModalVisible(true)
@@ -487,7 +431,6 @@ const BreakUp = (props: any) => {
       render: (_value: any, _row: any) => {
         return (
           <>
-            <>{console.log('最终数据', data)}</>
             <Select
               disabled={_row.shopId ? false : true}
               placeholder="请选择工作班组"
@@ -708,7 +651,6 @@ const BreakUp = (props: any) => {
     setPageNum(page)
     setPageSize(pageSize)
   }
-
   return (
     <div className={styles.popup}>
       <Modal
