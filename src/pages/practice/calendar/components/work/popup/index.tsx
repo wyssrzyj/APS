@@ -129,6 +129,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
     <div>
       <Modal
         width={700}
+        destroyOnClose={true}
         maskClosable={false}
         title={
           type === 1

@@ -69,6 +69,10 @@ function Popup(props: { content: any; newlyAdded: any }) {
     setIsModalVisible(false)
   }
   const times = (item: any, e: any) => {
+    if (typeof e === 'number') {
+      //更新的时候 变成 时间戳了 重新处理一下
+      e = moment(e).format('YYYY-MM-DD HH:mm').substring(10)
+    }
     const timeStamp = item.concat(e)
     return moment(timeStamp).valueOf()
   }
@@ -91,10 +95,14 @@ function Popup(props: { content: any; newlyAdded: any }) {
     //工作时间
     if (!isEmpty(values.timeList)) {
       values.timeList.map((item: any) => {
+        console.log('工作时间', times(values.date, item.startDateTime))
+
         item.startDateTime = times(values.date, item.startDateTime)
         item.endDateTime = times(values.date, item.endDateTime)
       })
     }
+    console.log('提交数据-type', type)
+    console.log('提交数据', values)
 
     if (values.createTime) {
       values.createTime = moment(values.createTime).valueOf()
@@ -138,6 +146,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
   return (
     <div>
       <Modal
+        destroyOnClose={true}
         width={700}
         title={type === 1 ? '新增加班' : type === 2 ? '编辑加班' : '查看加班'}
         visible={isModalVisible}

@@ -35,9 +35,14 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
       return event.target.value
     }
     if (type === 'picker') {
-      event.startPlanEndDate = moment(event[0]).valueOf()
-      event.endPlanEndDate = moment(event[1]).valueOf()
-      return event
+      console.log(event)
+      if (event !== null) {
+        event.startPlanEndDate = moment(event[0]).valueOf()
+        event.endPlanEndDate = moment(event[1]).valueOf()
+        return event
+      } else {
+        return null
+      }
     }
 
     return event
@@ -58,7 +63,11 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
                 getValueFromEvent(event, 'select')
               }
             >
-              <Select onChange={getFactoryName} placeholder="请选择工厂名称">
+              <Select
+                allowClear={true}
+                onChange={getFactoryName}
+                placeholder="请选择工厂名称"
+              >
                 {factoryData != undefined
                   ? factoryData.map(
                       (item: {

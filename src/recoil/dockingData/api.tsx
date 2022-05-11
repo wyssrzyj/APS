@@ -115,3 +115,21 @@ export const capacityList = async () => {
     console.log(e)
   }
 }
+//产能列表-id
+export const capacityListID = async (props: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/mes/get-capacity-efficiency-list-by-id`,
+      props
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}

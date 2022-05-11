@@ -33,10 +33,12 @@ function Popup(props: { content: any }) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
 
-  const [usedList, setUsedList] = useState<any>([]) //老数据
-  const [list, setList] = useState<any>([]) //新数据
-  const [data, setData] = useState<any>() //form的单个数据
-  const [caseIds, setCaseIds] = useState<any>([]) //存放id
+  const [usedList, setUsedList] = useState([]) //老数据
+  const [list, setList] = useState([]) //新数据
+  const [data, setData] = useState() //form的单个数据
+  const [caseIds, setCaseIds] = useState([]) //存放id
+  const [total, setTotal] = useState() //存放总数
+
   const defaultPageSize = 10
   const [params, setParams] = useState<any>({
     pageNum: 1,
@@ -53,17 +55,24 @@ function Popup(props: { content: any }) {
   }, [getDetailsId])
 
   useEffect(() => {
+    console.log('传递的', params)
     if (params.externalProduceOrderId !== undefined) {
       getDetails(params)
     }
   }, [params])
+  //子项的分页数据
+  const pagingData = (e, v) => {
+    setParams({ ...params, pageNum: e, pageSize: v })
+  }
 
   const getDetails = async (params: any) => {
     const res: any = await workingProcedure(params)
     res.records.map((item) => {
       item.section = map.get(item.section)
     })
+    // total
     setUsedList(res.records)
+    setTotal(res.total)
   }
 
   //判断本地是否有值 有的就重新处理
@@ -134,10 +143,6 @@ function Popup(props: { content: any }) {
     setOutgoing(e)
   }
 
-  const paging = (e: any, v: any) => {
-    setParams({ pageNum: e, pageSize: v, productId: getDetailsId })
-  }
-
   return (
     <div className={styles.mainBody}>
       <Modal
@@ -163,10 +168,11 @@ function Popup(props: { content: any }) {
         <Tabs type="card">
           <TabPane tab="工艺路线" key="1">
             <Tables
+              total={total}
+              pagingData={pagingData}
               list={list}
               getFormData={getFormData}
               types={types}
-              paging={paging}
             />
             <div className={styles.forms}>
               <Forms FormData={FormData} data={data} types={types}></Forms>

@@ -62,7 +62,6 @@ const Index = () => {
   const getData = async () => {
     const res: any = await factoryList()
     const arr: any = res.data
-
     if (res.code === 200) {
       arr.map((item: { name: any; deptName: any }) => {
         item.name = item.deptName

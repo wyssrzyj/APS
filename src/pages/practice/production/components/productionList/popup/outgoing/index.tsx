@@ -22,13 +22,13 @@ const Outgoing = (props: any) => {
   const { processOutsourcing, wholeOrder } = productionSingleApis
 
   const [pageNum, setPageNum] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(5)
+  const [pageSize, setPageSize] = useState<number>(10)
 
   const [params, setParams] = useState<any>({
-    pageNum: 1,
-    pageSize: 10
+    pageNum: pageNum,
+    pageSize: pageSize
   })
-  const [total] = useState<number>(0)
+  const [total, setTotal] = useState<number>(0)
 
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [editType, setEditType] = useState(false)
@@ -68,13 +68,13 @@ const Outgoing = (props: any) => {
   //接口
   useEffect(() => {
     if (externalProduceOrderId !== null) {
-      getList()
+      getList(params)
     }
-  }, [params, externalProduceOrderId, pageNum, pageSize])
+  }, [params, externalProduceOrderId])
 
-  const getList = async () => {
+  const getList = async (e) => {
     const res = await processOutsourcing({
-      ...params,
+      ...e,
       externalProduceOrderId: externalProduceOrderId
     })
     if (!isEmpty(res.records)) {
@@ -85,7 +85,7 @@ const Outgoing = (props: any) => {
             item.section === '5' ? true : item.outTime !== null ? true : false
         }
       )
-
+      setTotal(res.total)
       setList(res.records)
     }
   }
@@ -155,14 +155,26 @@ const Outgoing = (props: any) => {
       dataIndex: 'need',
       render: (type: any, record: any, index: any) => {
         return (
-          <div className={styles.flex}>
-            <Checkbox
-              disabled={types}
-              //   disabled={record.needDisabled}
-              checked={type}
-              onChange={(e) => executionMethod(e, record)}
-            />
-          </div>
+          <>
+            {record.section === '5' ? (
+              <div className={styles.flex}>
+                <Checkbox
+                  disabled={types}
+                  //   disabled={record.needDisabled}
+                  checked={type}
+                />
+              </div>
+            ) : (
+              <div className={styles.flex}>
+                <Checkbox
+                  disabled={types}
+                  //   disabled={record.needDisabled}
+                  checked={type}
+                  onChange={(e) => executionMethod(e, record)}
+                />
+              </div>
+            )}
+          </>
         )
       }
     },
@@ -258,7 +270,8 @@ const Outgoing = (props: any) => {
         columns={columns}
         rowClassName="editable-row"
         pagination={{
-          disabled: types,
+          // disabled: types,
+          //分页
           showSizeChanger: true,
           pageSize, //每页条数
           current: pageNum, //	当前页数

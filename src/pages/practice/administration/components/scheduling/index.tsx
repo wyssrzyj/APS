@@ -128,6 +128,8 @@ function Index() {
 
   //  图刷新
   const updateMethod = () => {
+    console.log('图刷新', formData, gunterType)
+
     getChart(formData, gunterType)
   }
 
@@ -212,6 +214,23 @@ function Index() {
       <div>
         <div className={styles.content}>
           <Forms FormData={FormData}></Forms>
+          <div className={styles.scheduling}>
+            <Button
+              ghost
+              type="primary"
+              onClick={() => toggleRuleVisible(true)}
+            >
+              规则排程
+            </Button>
+            <Button
+              className={styles.heckSchedule}
+              type="primary"
+              onClick={() => toggleVerifyVisible(true)}
+            >
+              校验排程
+            </Button>
+          </div>
+
           <div className={styles.team}>
             <div className={styles.leftContent}>
               <ToPlan
@@ -224,18 +243,21 @@ function Index() {
             </div>
             {/* 甘特图 */}
             <div className={styles.rightContent}>
-              <Select
-                defaultValue={gunterType}
-                style={{ width: 120 }}
-                onChange={handleChange}
-              >
-                <Option key={'0'} value="0">
-                  班组甘特图
-                </Option>
-                <Option key={'1'} value="1">
-                  生产单甘特图
-                </Option>
-              </Select>
+              <div className={styles.choose}>
+                <Select
+                  defaultValue={gunterType}
+                  style={{ width: 120 }}
+                  onChange={handleChange}
+                >
+                  <Option key={'0'} value="0">
+                    班组甘特图
+                  </Option>
+                  <Option key={'1'} value="1">
+                    生产单甘特图
+                  </Option>
+                </Select>
+              </div>
+
               <Dome
                 updateMethod={updateMethod}
                 gunterData={gunterData}
@@ -247,17 +269,12 @@ function Index() {
             </div>
           </div>
 
-          <Button type="primary" danger onClick={start}>
+          {/* <Button type="primary" danger onClick={start}>
             删除
-          </Button>
+          </Button> */}
         </div>
       </div>
-      <Button type="primary" onClick={() => toggleRuleVisible(true)}>
-        规则排程
-      </Button>
-      <Button type="primary" onClick={() => toggleVerifyVisible(true)}>
-        校验排程
-      </Button>
+
       {/* //规则排程 */}
       {visibleRule && (
         <RuleScheduling
