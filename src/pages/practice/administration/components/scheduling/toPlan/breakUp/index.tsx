@@ -62,6 +62,33 @@ const BreakUp = (props: any) => {
       getInterfaceData(workSplitList)
     }
   }, [workSplitList])
+  //初始替换
+  const initialPeplacement = (
+    record: {
+      shopId?: any
+      ids?: any
+      teamId?: any
+      efficiency?: any
+      productionAmount?: any
+      startTime?: number
+      eddTime?: number
+    },
+    list: any
+  ) => {
+    /**
+     * record 修改后的单个值.
+     * list 老数据
+     */
+    const sum = cloneDeep(list)
+    const subscript = sum.findIndex((item: any) => item.ids === record.ids)
+    if (subscript !== -1) {
+      sum.splice(subscript, 1, record)
+      console.log('初始方法处理号的数据', sum)
+      setData([...sum])
+    } else {
+      console.log('没有执行')
+    }
+  }
   //替换数据
   const updateData = (
     record: {
@@ -103,7 +130,9 @@ const BreakUp = (props: any) => {
   //**处理班组 效率 初始值问题
   const initialHandleChange = async (shopId, teamId, record) => {
     //班组
-    const sum = cloneDeep(data)
+    const teamLis = initialTeamList
+    // const teamLis = data
+
     record.teamType = true
     const team = await teamList({
       factoryId: formData,
@@ -115,7 +144,14 @@ const BreakUp = (props: any) => {
     record.efficiency = initiaTeam(capacity, 'templateName', 'teamId')
     //全部赋值完成在进行数据更新
 
-    updateData(record, sum)
+    updateData(record, teamLis)
+
+    // return record
+
+    // console.log('为啥是promise', record)
+
+    // return record
+    // return record
   }
 
   //*** 下拉处理***
@@ -169,14 +205,15 @@ const BreakUp = (props: any) => {
         item.ids = index + 1 //用于时间更改时的判断条件
         item.key = index + 1
       })
-      console.log('初始数据', res)
       //这个时候先不能渲染 这里的会慢一步
-      setData([...res])
-      //先渲染后处理
-      console.log('是否执行')
 
+      // setData([...res])
+
+      //先渲染后处理
       setInitialTeamList([...res])
     } else {
+      console.log('是否执行2')
+
       //初始空数组 添加key防止报错
       // delete data.id //防止 id和父级一样
       const res = cloneDeep(data)
@@ -192,9 +229,20 @@ const BreakUp = (props: any) => {
   //处理班组 效率 初始值问题
   useEffect(() => {
     if (!isEmpty(initialTeamList)) {
-      initialTeamList.map(async (item: any) => {
+      initialTeamList.map((item: any) => {
         initialHandleChange(item.shopId, item.teamId, item)
+
+        // item = initialHandleChange(item.shopId, item.teamId, item)
+
+        // console.log(initialHandleChange(item.shopId, item.teamId, item))
+        // sum.push(initialHandleChange(item.shopId, item.teamId, item))
+        // item = initialHandleChange(item.shopId, item.teamId, item)
       })
+      console.log('initialTeamList', initialTeamList)
+
+      // setData(initialTeamList)
+
+      // console.log('处理后的', initialTeamList)
     }
   }, [initialTeamList])
 
@@ -438,23 +486,26 @@ const BreakUp = (props: any) => {
       dataIndex: 'teamId',
       render: (_value: any, _row: any) => {
         return (
-          <Select
-            disabled={_row.shopId ? false : true}
-            placeholder="请选择工作班组"
-            key={_value}
-            defaultValue={_value}
-            style={{ width: 120 }}
-            onChange={(e) => handleChange(2, e, _row)}
-          >
-            {!isEmpty(_row.teamList)
-              ? _row.teamList.map((item: any) => (
-                  // eslint-disable-next-line react/jsx-key
-                  <Option key={item.id} value={item.id}>
-                    {item.name}
-                  </Option>
-                ))
-              : null}
-          </Select>
+          <>
+            <>{console.log('最终数据', data)}</>
+            <Select
+              disabled={_row.shopId ? false : true}
+              placeholder="请选择工作班组"
+              key={_value}
+              defaultValue={_value}
+              style={{ width: 120 }}
+              onChange={(e) => handleChange(2, e, _row)}
+            >
+              {!isEmpty(_row.teamList)
+                ? _row.teamList.map((item: any) => (
+                    // eslint-disable-next-line react/jsx-key
+                    <Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Option>
+                  ))
+                : null}
+            </Select>
+          </>
         )
       }
     },
@@ -657,6 +708,7 @@ const BreakUp = (props: any) => {
     setPageNum(page)
     setPageSize(pageSize)
   }
+
   return (
     <div className={styles.popup}>
       <Modal

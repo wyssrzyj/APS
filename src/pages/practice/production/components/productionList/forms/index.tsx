@@ -35,7 +35,9 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
       return event.target.value
     }
     if (type === 'picker') {
+      //ceshi
       console.log(event)
+
       if (event !== null) {
         event.startPlanEndDate = moment(event[0]).valueOf()
         event.endPlanEndDate = moment(event[1]).valueOf()
