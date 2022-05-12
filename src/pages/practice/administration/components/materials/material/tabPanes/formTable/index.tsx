@@ -57,7 +57,6 @@ const FormTable = (props: any) => {
       {
         title: '颜色',
         dataIndex: 'proColName',
-        // dataIndex: 'proColName',
         width: 100,
         align: 'center',
         key: 'proColName'
@@ -169,6 +168,7 @@ const FormTable = (props: any) => {
     columns.map((item: { align: string }) => {
       item.align = 'center'
     })
+
     const index = columns.findIndex(
       (item: { dataIndex: string }) => item.dataIndex === 'proColName'
     )
@@ -179,6 +179,57 @@ const FormTable = (props: any) => {
     }
   }, [sizeList])
 
+  //处理建值对
+  const conversion = (data: any[]) => {
+    //data 数据
+    const obj: any = {}
+    data.map((e: { sizeCode: string | number; qtyFinal: any }) => {
+      //键名=建值
+      obj[e.sizeCode] = e.qtyFinal
+    })
+    return obj
+  }
+
+  const sizeAssignment = (e) => {
+    if (!isEmpty(e)) {
+      return { ...conversion(e.produceCheckSizeVOList), ...e }
+    }
+  }
+  //处理子项
+  const subitemProcessing = (e) => {
+    if (!isEmpty(e)) {
+      const arr = e.map((v: any) => {
+        v.deliveredQty = v.deliveredQty === null ? 0 : v.deliveredQty //测试~~~已出库数量暂无 设置0
+        v.availableStockQtyTotal =
+          v.availableStockQtyTotal === null ? 0 : v.availableStockQtyTotal //测试~~~物料库存数量暂无 设置0
+        // v.counteractNum = 0
+        v.id = v.materialCode + v.materialColCode
+        v.key = v.id
+        //物料缺少数量 计算
+        v.shortOfProductNum =
+          v.requireQuantity -
+            v.availableStockQtyTotal -
+            v.deliveredQty -
+            v.counteractNum -
+            v.deliveredQty >
+          0
+            ? v.requireQuantity -
+              v.availableStockQtyTotal -
+              v.deliveredQty -
+              v.counteractNum -
+              v.deliveredQty
+            : 0
+
+        v.enoughFlag = v.shortOfProductNum > 0 ? 0 : 1
+        v = sizeAssignment(v) //获取尺码数量
+        return v
+      })
+      return arr
+    } else {
+      return []
+    }
+  }
+
   useEffect(() => {
     // 调取接口口添加 key和 counteractNum -半成品冲销数量的字段
     if (!isEmpty(tableData)) {
@@ -188,32 +239,7 @@ const FormTable = (props: any) => {
         item.id = item.materialCode //id是 materialCode
         item.key = item.id //添加 key
         // item.counteractNum = 0 //添加初始 冲销数量
-        if (!isEmpty(item.children)) {
-          item.children.map((v: any) => {
-            v.deliveredQty = v.deliveredQty === null ? 0 : v.deliveredQty //测试~~~已出库数量暂无 设置0
-            v.availableStockQtyTotal =
-              v.availableStockQtyTotal === null ? 0 : v.availableStockQtyTotal //测试~~~物料库存数量暂无 设置0
-            // v.counteractNum = 0
-            v.id = v.materialCode + v.materialColCode
-            v.key = v.id
-            //物料缺少数量 计算
-            v.shortOfProductNum =
-              v.requireQuantity -
-                v.availableStockQtyTotal -
-                v.deliveredQty -
-                v.counteractNum -
-                v.deliveredQty >
-              0
-                ? v.requireQuantity -
-                  v.availableStockQtyTotal -
-                  v.deliveredQty -
-                  v.counteractNum -
-                  v.deliveredQty
-                : 0
-
-            v.enoughFlag = v.shortOfProductNum > 0 ? 0 : 1
-          })
-        }
+        item.children = subitemProcessing(item.children) //处理子项
         item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })

@@ -81,9 +81,11 @@ function Popup(props: { content: any }) {
   const workshopTeam = async (e: any) => {
     const team = await teamList({ shopMannagerId: e })
     if (team) {
-      team.map((item: { name: any; teamName: any }) => {
+      team.map((item: any) => {
         item.name = item.teamName
+        item.key = item.id
       })
+      console.log('测试', team)
       setTeamName(team)
     }
   }
@@ -228,7 +230,7 @@ function Popup(props: { content: any }) {
   //班组
   const team = (e) => {
     const cloneList = cloneDeep(list)
-    cloneList.teamName = e
+    cloneList.teamId = e
     setList({ ...cloneList })
   }
 

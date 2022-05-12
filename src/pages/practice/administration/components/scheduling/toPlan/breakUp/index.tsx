@@ -72,13 +72,12 @@ const BreakUp = (props: any) => {
     const subscript = list.findIndex((item: any) => item.ids === record.ids)
     if (subscript !== -1) {
       list.splice(subscript, 1, record)
-      console.log('替换后的数据', list)
-
       setData([...list])
     } else {
       console.log('没有执行')
     }
   }
+
   const initiaTeam = (teamData, name, ids) => {
     //有值就赋值，没有就返回空，防止报错
     if (!isEmpty(teamData)) {
@@ -92,8 +91,9 @@ const BreakUp = (props: any) => {
     }
   }
   //**处理班组 效率 初始值问题
-  const initialHandleChange = async (shopId, teamId, record, teamLis) => {
-    const sum = teamLis
+  const initialHandleChange = async (shopId, teamId, record, teamDate) => {
+    // const sum = cloneDeep(teamLis)
+    const sum = teamDate
 
     //班组
     record.teamType = true
@@ -105,7 +105,6 @@ const BreakUp = (props: any) => {
     // 效率
     const capacity = await capacityListID({ teamId: teamId })
     record.efficiency = initiaTeam(capacity, 'templateName', 'teamId')
-    console.log('添加完数据')
 
     //全部赋值完成在进行数据更新
     updateData(record, sum)
