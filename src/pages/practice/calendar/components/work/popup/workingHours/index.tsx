@@ -25,13 +25,13 @@ function WorkingHours(props: {
   }, [type, edit])
 
   const start = (index: string | number, e: moment.MomentInput) => {
-    console.log(moment(e).valueOf())
-
-    data[index].startDateTime = moment(e).valueOf()
+    const time = moment(e).format('YYYY-MM-DD HH:mm')
+    data[index].startDateTime = moment(time).valueOf()
     setData([...data])
   }
   const end = (index: string | number, e: moment.MomentInput) => {
-    data[index].endDateTime = moment(e).valueOf()
+    const time = moment(e).format('YYYY-MM-DD HH:mm')
+    data[index].endDateTime = moment(time).valueOf()
     setData([...data])
   }
 

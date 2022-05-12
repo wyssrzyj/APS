@@ -19,7 +19,8 @@ function Materials() {
     pageNum: 1,
     pageSize: pageSize
   })
-  const [selected, setSelected] = useState([]) //选中的值
+  const [selected, setSelected] = useState([]) //选中的id
+  const [selectedData, setSelectedData] = useState([]) //记录以获取的所有数据
   const [type, setType] = useState(false) //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState<boolean>(false) //删除弹窗
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
@@ -188,7 +189,9 @@ function Materials() {
       message.warning('请至少选择一个')
     } else {
       //获取选中的数据
-      const selectedValue = selectedList(selected, list)
+
+      const selectedValue = selectedList(selected, selectedData)
+      console.log('多页侧视', selectedValue)
 
       //判断选中的状态是否一样
       const stateConsistent = selectedValue.every(
@@ -250,6 +253,61 @@ function Materials() {
     }
   }
 
+  // 当前页面打勾，切换页面选择新数据打勾，回到之前的页面，勾的数据不见了
+  //勾选
+  const onSelectChange = (selectedRowKeys: any) => {
+    //后面有数据的时候 根据id获取所有数据中对应的 然后给from
+    const cloneSelected = cloneDeep(selected)
+
+    if (!isEmpty(selectedRowKeys)) {
+      selectedRowKeys.map((item) => {
+        if (cloneSelected.includes(item) === false) {
+          //添加
+          cloneSelected.push(item)
+          setSelected(cloneSelected)
+        } else {
+          //减少
+          setSelected(selectedRowKeys)
+        }
+      })
+    } else {
+      setSelected([])
+    }
+  }
+
+  //替换数据
+  const updateData = (record, list) => {
+    /**
+     * record 修改后的单个值
+     * list 老数据
+     */
+    const sum = cloneDeep(list)
+    const subscript = sum.findIndex((item: any) => item.id === record.id)
+    if (subscript !== -1) {
+      sum.splice(subscript, 1, record)
+      // setData(sum)
+    }
+  }
+  const rowSelection: any = {
+    selectedRowKeys: selected,
+    onChange: onSelectChange
+  }
+  useEffect(() => {
+    //获取所有的接口数据 且不能重复添加
+    if (!isEmpty(list)) {
+      const cloneSelected = cloneDeep(selectedData)
+      list.map((item) => {
+        if (cloneSelected.findIndex((v) => v.id === item.id) === -1) {
+          cloneSelected.push(item)
+        }
+      })
+      setSelectedData(cloneSelected)
+    }
+  }, [list])
+  useEffect(() => {
+    console.log('测试', selectedData)
+  }, [selectedData])
+
   const elsxTable = (res: any, title: string) => {
     const blob = new Blob([res], { type: 'application/octet-stream' })
     const download = document.createElement('a')
@@ -258,33 +316,6 @@ function Materials() {
     download.click()
     window.URL.revokeObjectURL(download.href)
   }
-
-  // 当前页面打勾，切换页面选择新数据打勾，回到之前的页面，勾的数据不见了
-  //勾选
-  const onSelectChange = (selectedRowKeys: any) => {
-    //后面有数据的时候 根据id获取所有数据中对应的 然后给from
-    const cloneSelected = cloneDeep(selected)
-    if (!isEmpty(selectedRowKeys)) {
-      selectedRowKeys.map((item) => {
-        console.log('是否包含', cloneSelected.includes(item))
-        if (cloneSelected.includes(item) === false) {
-          cloneSelected.push(item)
-          setSelected(cloneSelected)
-        }
-      })
-    } else {
-      setSelected([])
-    }
-  }
-
-  const rowSelection: any = {
-    selectedRowKeys: selected,
-    onChange: onSelectChange
-  }
-  // useEffect(() => {
-  //   console.log('选中的值', selectedRowKeys)
-  // }, [selectedRowKeys])
-
   const menu = (
     <Menu>
       <Menu.Item>

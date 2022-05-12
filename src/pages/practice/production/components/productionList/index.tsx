@@ -178,13 +178,15 @@ function Production() {
             >
               查看详情
             </div>
-            <div
-              className={styles.operation}
-              onClick={() => editUser(true, _row)}
-            >
-              <div> 工艺</div>
-              <div> 外发</div>
-            </div>
+            {_row.status !== 2 ? (
+              <div
+                className={styles.operation}
+                onClick={() => editUser(true, _row)}
+              >
+                <div> 工艺</div>
+                <div> 外发</div>
+              </div>
+            ) : null}
           </div>
         )
       }

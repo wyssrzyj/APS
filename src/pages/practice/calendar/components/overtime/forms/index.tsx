@@ -1,18 +1,13 @@
-import { Col, Form, Row, Select, TreeSelect } from 'antd'
-import { debounce, isEmpty } from 'lodash'
+import { Col, Form, Input, Row, Select, TreeSelect } from 'antd'
+import { cloneDeep, debounce, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { getChild } from '@/components/getChild/index'
-import { dockingDataApis, practice } from '@/recoil/apis'
+import { dockingDataApis } from '@/recoil/apis'
 
 const HeaderForm = (props: { FormData: any; factoryData: any }) => {
   const { FormData, factoryData } = props
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [form] = Form.useForm()
-  const { validateFields } = form
   const { teamList } = dockingDataApis
-  const { factoryList } = practice
-  const { SHOW_PARENT } = TreeSelect
   const { Option } = Select
 
   const layout = {
@@ -24,8 +19,20 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
     }
   }
 
+  const { SHOW_PARENT } = TreeSelect
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [form] = Form.useForm()
+  const { validateFields } = form
+  const [list, setList] = useState<any>({}) //总数据
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
+
+  useEffect(() => {
+    if (!isEmpty(list)) {
+      form.setFieldsValue(list)
+    }
+  }, [list])
 
   //加班班组
   useEffect(() => {
@@ -36,17 +43,13 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
   const dataDictionary = async (e: any) => {
     const teamData = await teamList({ factoryId: e }) //班组列表
     teamData.map(
-      (item: { title: any; teamName: any; value: any; id: any; key: any }) => {
-        item.title = item.teamName
+      (item: { name: any; teamName: any; value: any; id: any; key: any }) => {
+        item.name = item.teamName
         item.value = item.id
         item.key = item.id
       }
     )
     setTreeData(teamData)
-  }
-
-  const getFactoryName = (e: any) => {
-    setListID(e)
   }
 
   const handleSubmit = debounce(async () => {
@@ -62,9 +65,18 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
       return event.target.value
     }
     if (type === 'treeSelect') {
-      // return getChild(event, treeData)
+      return event
     }
-    return event
+    if (type === 'select') {
+      return event
+    }
+  }
+  const getFactoryName = (e: any) => {
+    console.log(e)
+    setListID(e)
+    const cloneList = cloneDeep(list)
+    cloneList.teamId = null
+    setList({ ...cloneList })
   }
 
   return (
@@ -74,10 +86,10 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
           <Col span={6}>
             <Form.Item
               {...layout}
-              label="工厂名称"
               name="factoryId"
+              label="工厂名称"
               getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'treeSelect')
+                getValueFromEvent(event, 'select')
               }
             >
               <Select
@@ -85,7 +97,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
                 placeholder="请选择工厂名称"
                 allowClear
               >
-                {factoryData !== undefined
+                {factoryData != undefined
                   ? factoryData.map(
                       (item: {
                         id: React.Key | null | undefined
@@ -116,12 +128,8 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
                 getValueFromEvent(event, 'treeSelect')
               }
             >
-              <Select
-                onChange={getFactoryName}
-                placeholder="请选择班组名称"
-                allowClear
-              >
-                {treeData !== undefined
+              <Select placeholder="请选择班组名称" allowClear>
+                {!isEmpty(treeData)
                   ? treeData.map(
                       (item: {
                         id: React.Key | null | undefined

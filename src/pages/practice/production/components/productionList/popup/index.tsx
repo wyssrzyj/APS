@@ -55,7 +55,6 @@ function Popup(props: { content: any }) {
   }, [getDetailsId])
 
   useEffect(() => {
-    console.log('传递的', params)
     if (params.externalProduceOrderId !== undefined) {
       getDetails(params)
     }
@@ -66,6 +65,8 @@ function Popup(props: { content: any }) {
   }
 
   const getDetails = async (params: any) => {
+    console.log('传递的数据', params)
+
     const res: any = await workingProcedure(params)
     res.records.map((item) => {
       item.section = map.get(item.section)

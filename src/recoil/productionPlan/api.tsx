@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-07 09:53:04
+ * @LastEditTime: 2022-05-12 17:15:32
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -128,6 +128,22 @@ export const getWorkshopSectionList = async () => {
     }
     if (res) {
       return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+//检查是否生成过缝制计划
+export const makeSewingPlan = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail-pulished/is_sewing_task`,
+      params
+    )
+    if (res) {
+      return res
     }
     return []
   } catch (e) {
