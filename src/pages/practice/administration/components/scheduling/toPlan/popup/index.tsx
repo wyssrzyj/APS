@@ -237,7 +237,7 @@ function Popup(props: { content: any }) {
   return (
     <div>
       <Modal
-        // destroyOnClose={true}
+        // destroyOnClose={true}.
         width={800}
         title={'编辑'}
         visible={editWindow}
