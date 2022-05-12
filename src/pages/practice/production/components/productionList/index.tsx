@@ -61,6 +61,13 @@ function Production() {
   }, [params])
 
   const api = async (item: any) => {
+    //计划完成日期
+    if (item.planEndDate) {
+    } else {
+      item.endPlanEndDate = null
+      item.startPlanEndDate = null
+    }
+
     const arr: any = await productionList(item)
     if (!isEmpty(arr.records)) {
       setTotal(arr.total)
@@ -68,7 +75,8 @@ function Production() {
       arr.records.map((item: any) => {
         item.id = `${item.productId + Math.random()}` //后端没有成成id 这里自己做处理 防止key值重复
       })
-      setList([...arr.records])
+      const arrData = arr.records
+      setList([...arrData])
     } else {
       setList([])
     }

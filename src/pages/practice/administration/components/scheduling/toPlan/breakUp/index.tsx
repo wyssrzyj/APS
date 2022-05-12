@@ -35,6 +35,7 @@ const BreakUp = (props: any) => {
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
   const [data, setData] = useState<any>([])
+
   const [initialTeamList, setInitialTeamList] = useState<any>([]) //处理初始班组
 
   const [factoryName, setFactoryName] = useState<any>([]) //车间
@@ -63,31 +64,20 @@ const BreakUp = (props: any) => {
     }
   }, [workSplitList])
   //替换数据
-  const updateData = (
-    record: {
-      shopId?: any
-      ids?: any
-      teamId?: any
-      efficiency?: any
-      productionAmount?: any
-      startTime?: number
-      eddTime?: number
-    },
-    list: any
-  ) => {
+  const updateData = (record: any, list: any) => {
     /**
      * record 修改后的单个值.
      * list 老数据
      */
-    const sum = cloneDeep(list)
-    const subscript = sum.findIndex((item: any) => item.ids === record.ids)
+    const subscript = list.findIndex((item: any) => item.ids === record.ids)
     if (subscript !== -1) {
-      sum.splice(subscript, 1, record)
-      setData([...sum])
+      list.splice(subscript, 1, record)
+      setData([...list])
     } else {
       console.log('没有执行')
     }
   }
+
   const initiaTeam = (teamData, name, ids) => {
     //有值就赋值，没有就返回空，防止报错
     if (!isEmpty(teamData)) {
@@ -101,9 +91,11 @@ const BreakUp = (props: any) => {
     }
   }
   //**处理班组 效率 初始值问题
-  const initialHandleChange = async (shopId, teamId, record) => {
+  const initialHandleChange = async (shopId, teamId, record, teamDate) => {
+    // const sum = cloneDeep(teamLis)
+    const sum = teamDate
+
     //班组
-    const sum = cloneDeep(data)
     record.teamType = true
     const team = await teamList({
       factoryId: formData,
@@ -113,8 +105,8 @@ const BreakUp = (props: any) => {
     // 效率
     const capacity = await capacityListID({ teamId: teamId })
     record.efficiency = initiaTeam(capacity, 'templateName', 'teamId')
-    //全部赋值完成在进行数据更新
 
+    //全部赋值完成在进行数据更新
     updateData(record, sum)
   }
 
@@ -159,7 +151,6 @@ const BreakUp = (props: any) => {
 
   const getInterfaceData = async (data: any) => {
     const res = await breakQuery({ assignmentId: data.id })
-    console.log('res', res)
     if (!isEmpty(res)) {
       res.map(async (item: any, index) => {
         item.isLocked = item.isLocked === 1 ? true : false
@@ -169,12 +160,8 @@ const BreakUp = (props: any) => {
         item.ids = index + 1 //用于时间更改时的判断条件
         item.key = index + 1
       })
-      console.log('初始数据', res)
       //这个时候先不能渲染 这里的会慢一步
-      setData([...res])
       //先渲染后处理
-      console.log('是否执行')
-
       setInitialTeamList([...res])
     } else {
       //初始空数组 添加key防止报错
@@ -192,11 +179,15 @@ const BreakUp = (props: any) => {
   //处理班组 效率 初始值问题
   useEffect(() => {
     if (!isEmpty(initialTeamList)) {
-      initialTeamList.map(async (item: any) => {
-        initialHandleChange(item.shopId, item.teamId, item)
+      initialTeamList.map((item: any) => {
+        initialHandleChange(item.shopId, item.teamId, item, initialTeamList)
       })
     }
+    console.log(initialTeamList)
   }, [initialTeamList])
+  useEffect(() => {
+    console.log('测试替换', data)
+  }, [data])
 
   const showModal = () => {
     setIsModalVisible(true)
@@ -438,23 +429,25 @@ const BreakUp = (props: any) => {
       dataIndex: 'teamId',
       render: (_value: any, _row: any) => {
         return (
-          <Select
-            disabled={_row.shopId ? false : true}
-            placeholder="请选择工作班组"
-            key={_value}
-            defaultValue={_value}
-            style={{ width: 120 }}
-            onChange={(e) => handleChange(2, e, _row)}
-          >
-            {!isEmpty(_row.teamList)
-              ? _row.teamList.map((item: any) => (
-                  // eslint-disable-next-line react/jsx-key
-                  <Option key={item.id} value={item.id}>
-                    {item.name}
-                  </Option>
-                ))
-              : null}
-          </Select>
+          <>
+            <Select
+              disabled={_row.shopId ? false : true}
+              placeholder="请选择工作班组"
+              key={_value}
+              defaultValue={_value}
+              style={{ width: 120 }}
+              onChange={(e) => handleChange(2, e, _row)}
+            >
+              {!isEmpty(_row.teamList)
+                ? _row.teamList.map((item: any) => (
+                    // eslint-disable-next-line react/jsx-key
+                    <Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Option>
+                  ))
+                : null}
+            </Select>
+          </>
         )
       }
     },

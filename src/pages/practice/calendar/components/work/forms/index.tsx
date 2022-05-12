@@ -74,6 +74,18 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
           <Col span={6}>
             <Form.Item
               {...layout}
+              name="workModeName"
+              label="工作模式"
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'input')
+              }
+            >
+              <Input placeholder="请输入工作模式" allowClear />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item
+              {...layout}
               name="factoryId"
               label="工厂名称"
               getValueFromEvent={(event: InputEvent) =>
@@ -140,18 +152,6 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
                     )
                   : null}
               </Select>
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item
-              {...layout}
-              name="workModeName"
-              label="工作模式"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
-              }
-            >
-              <Input placeholder="请输入工作模式" allowClear />
             </Form.Item>
           </Col>
         </Row>

@@ -81,9 +81,11 @@ function Popup(props: { content: any }) {
   const workshopTeam = async (e: any) => {
     const team = await teamList({ shopMannagerId: e })
     if (team) {
-      team.map((item: { name: any; teamName: any }) => {
+      team.map((item: any) => {
         item.name = item.teamName
+        item.key = item.id
       })
+      console.log('测试', team)
       setTeamName(team)
     }
   }
@@ -96,18 +98,18 @@ function Popup(props: { content: any }) {
       } else {
         setSectionType(true)
       }
+
       const cloneList = cloneDeep(editWindowList)
+
       interfaceData(cloneList.id)
-      setList(cloneList)
     }
   }, [editWindowList])
   //获取数据
   const interfaceData = async (id: any) => {
     const arr = await getIndividualDetails({ id })
-
     setShopName(arr.shopId)
-    // setTeamID(arr.teamId)
-
+    //所属工段
+    arr.section = map.get(arr.section)
     setList(arr)
   }
   //渲染数据
@@ -119,8 +121,8 @@ function Popup(props: { content: any }) {
       list.planEndTime =
         list.planEndTime === null ? null : moment(list.planEndTime)
 
-      list.section = map.get(list.section)
       list.factoryName = formData
+
       setLargestNumber(list.productionAmount)
 
       list.remaining = list.productionAmount - list.completedAmount
@@ -162,11 +164,15 @@ function Popup(props: { content: any }) {
     values.isLocked = type === false ? 0 : 1
     values.id = editWindowList.id
     values.additionalTime = moment(values.planEndTime).valueOf() - endTimeData
-    values.shopName = getName('1', values.shopId)
-    values.teamName = getName('2', values.teamId)
+
+    //外发不需要更改
+    if (sectionType !== false) {
+      values.shopName = getName('1', values.shopId)
+      values.teamName = getName('2', values.teamId)
+    }
+
     // 结束时间 手动-接口
-    console.log(values)
-    delete values.section
+    // delete values.section
     const res = await editingTasks(values)
     form.resetFields()
     editSubmission()
@@ -189,6 +195,7 @@ function Popup(props: { content: any }) {
     const assignmentId = list.assignmentId
     const orderNum = list.productionAmount - list.completedAmount
     const startDate = moment(e).format('YYYY-MM-DD HH:mm:ss')
+    console.log('list', list)
     const teamId = list.teamId //班组id
     const additionalTime = Number(list.additionalTime)
     const capacityId = list.templateId
@@ -214,6 +221,8 @@ function Popup(props: { content: any }) {
   //车间
   const handleChange = (value) => {
     const cloneList = cloneDeep(list)
+    console.log('为啥消失', cloneList.section)
+
     cloneList.shopId = value
     setList({ ...cloneList })
     setShopName(value)
@@ -221,7 +230,7 @@ function Popup(props: { content: any }) {
   //班组
   const team = (e) => {
     const cloneList = cloneDeep(list)
-    cloneList.teamName = e
+    cloneList.teamId = e
     setList({ ...cloneList })
   }
 

@@ -9,8 +9,14 @@ import WorkingHours from './workingHours/index'
 function Popup(props: { content: any }) {
   const { content } = props
   const type = 1
-  const { isModalVisible, setIsModalVisible, edit, factoryData, updateMethod } =
-    content
+  const {
+    isModalVisible,
+    setIsModalVisible,
+    edit,
+    factoryData,
+    updateMethod,
+    formData
+  } = content
   const layout = {
     labelCol: {
       span: 4
@@ -159,6 +165,7 @@ function Popup(props: { content: any }) {
             <Select
               onChange={getFactoryName}
               placeholder="请选择工厂名称"
+              defaultValue={formData}
               allowClear
             >
               {factoryData !== undefined
