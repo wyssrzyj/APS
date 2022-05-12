@@ -11,6 +11,7 @@ import useTableChange from '@/utils/useTableChange'
 
 import AddModal from './addModal'
 import { searchConfigs, tableColumns } from './conifgs'
+import Forms from './forms'
 import styles from './index.module.less'
 const { confirm } = Modal
 const {
@@ -49,6 +50,7 @@ function Rule() {
   const [isModalVisible, setIsModalVisible] = useState(false) // 新增展示弹窗
   const [modalType, setModalType] = useState('add')
   const [rowInfo, setRowInfo] = useState()
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
   const {
     tableChange,
     dataSource,
@@ -59,6 +61,22 @@ function Rule() {
     getDataList
   } = useTableChange(params, efficiencyList)
 
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setFactoryData(arr)
+    }
+  }
+  const FormData = (e: any) => {
+    setParams({ ...params, ...e })
+  }
   useEffect(() => {
     ;(async () => {
       try {
@@ -95,7 +113,6 @@ function Rule() {
     if (params.factoryId && values.factoryId !== params.factoryId) {
       values.teamId = undefined
     }
-
     // 判断工厂id是否变更，再重置配置项信息
     if (oldParams.factoryId !== values.factoryId) {
       changeTeamConfig(values.factoryId)
@@ -185,11 +202,14 @@ function Rule() {
         <Title title={'产能效率模板'} />
       </div>
       <div>
-        <SearchBar
+        {/* <SearchBar
           configs={configs}
           params={params}
           callback={paramsChange}
         ></SearchBar>
+         */}
+        <Forms factoryData={factoryData} FormData={FormData}></Forms>
+
         <div className={styles.content}>
           <CusDragTable
             storageField={'rule'}

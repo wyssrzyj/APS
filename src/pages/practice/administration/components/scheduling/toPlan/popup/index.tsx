@@ -109,7 +109,7 @@ function Popup(props: { content: any }) {
     const arr = await getIndividualDetails({ id })
     setShopName(arr.shopId)
     //所属工段
-    arr.section = map.get(arr.section)
+    arr.sectionDome = map.get(arr.section)
     setList(arr)
   }
   //渲染数据
@@ -162,7 +162,6 @@ function Popup(props: { content: any }) {
     values.planStartTime = moment(values.planStartTime).valueOf()
 
     values.isLocked = type === false ? 0 : 1
-    values.id = editWindowList.id
     values.additionalTime = moment(values.planEndTime).valueOf() - endTimeData
 
     //外发不需要更改
@@ -171,8 +170,17 @@ function Popup(props: { content: any }) {
       values.teamName = getName('2', values.teamId)
     }
 
+    values.section = list.section
+    //缝制不穿id
+    if (values.section == '2') {
+      values.id = null
+    } else {
+      values.id = editWindowList.id
+    }
+
+    console.log('提交的数据', values)
+
     // 结束时间 手动-接口
-    // delete values.section
     const res = await editingTasks(values)
     form.resetFields()
     editSubmission()
@@ -192,38 +200,40 @@ function Popup(props: { content: any }) {
   }
   //获取结束时间
   const endTime = async (e) => {
-    const assignmentId = list.assignmentId
-    const orderNum = list.productionAmount - list.completedAmount
-    const startDate = moment(e).format('YYYY-MM-DD HH:mm:ss')
-    console.log('list', list)
-    const teamId = list.teamId //班组id
-    const additionalTime = Number(list.additionalTime)
-    const capacityId = list.templateId
-    //算
-    const arr = await calculateCompletionTime({
-      assignmentId,
-      orderNum,
-      startDate,
-      teamId,
-      additionalTime,
-      capacityId
-    })
-    if (arr.code === 200) {
-      const cloneLis = cloneDeep(list)
-      const time = moment(arr.data)
-      // 用于保存
-      setEndTimeData(moment(arr.data).valueOf())
-      cloneLis.planStartTime = moment(e)
-      cloneLis.planEndTime = time
-      setList({ ...cloneLis })
+    if (e) {
+      const assignmentId = list.assignmentId
+      const orderNum = list.productionAmount - list.completedAmount
+      const startDate = moment(e).format('YYYY-MM-DD HH:mm:ss')
+      console.log('list', list)
+      const teamId = list.teamId //班组id
+      const additionalTime = Number(list.additionalTime)
+      const capacityId = list.templateId
+      //算
+      const arr = await calculateCompletionTime({
+        assignmentId,
+        orderNum,
+        startDate,
+        teamId,
+        additionalTime,
+        capacityId
+      })
+      if (arr.code === 200) {
+        const cloneLis = cloneDeep(list)
+        const time = moment(arr.data)
+        // 用于保存
+        setEndTimeData(moment(arr.data).valueOf())
+        cloneLis.planStartTime = moment(e)
+        cloneLis.planEndTime = time
+        setList({ ...cloneLis })
+      }
     }
   }
   //车间
   const handleChange = (value) => {
     const cloneList = cloneDeep(list)
-    console.log('为啥消失', cloneList.section)
-
     cloneList.shopId = value
+    cloneList.teamId = null
+
     setList({ ...cloneList })
     setShopName(value)
   }
@@ -294,7 +304,7 @@ function Popup(props: { content: any }) {
           </Row>
           <Row>
             <Col span={12}>
-              <Form.Item label="所属工段" name="section">
+              <Form.Item label="所属工段" name="sectionDome">
                 <Input
                   maxLength={100}
                   placeholder="请输入所属工段"

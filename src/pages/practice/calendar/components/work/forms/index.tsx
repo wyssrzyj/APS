@@ -1,5 +1,5 @@
 import { Col, Form, Input, Row, Select, TreeSelect } from 'antd'
-import { debounce, isEmpty } from 'lodash'
+import { cloneDeep, debounce, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { getChild } from '@/components/getChild/index'
@@ -24,8 +24,15 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const { validateFields } = form
+  const [list, setList] = useState<any>({}) //总数据
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
+
+  useEffect(() => {
+    if (!isEmpty(list)) {
+      form.setFieldsValue(list)
+    }
+  }, [list])
 
   //加班班组
   useEffect(() => {
@@ -65,24 +72,17 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
     }
   }
   const getFactoryName = (e: any) => {
+    console.log(e)
     setListID(e)
+    const cloneList = cloneDeep(list)
+    cloneList.teamId = null
+    setList({ ...cloneList })
   }
+
   return (
     <div>
       <Form form={form}>
         <Row>
-          <Col span={6}>
-            <Form.Item
-              {...layout}
-              name="workModeName"
-              label="工作模式"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
-              }
-            >
-              <Input placeholder="请输入工作模式" allowClear />
-            </Form.Item>
-          </Col>
           <Col span={6}>
             <Form.Item
               {...layout}
@@ -128,11 +128,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
                 getValueFromEvent(event, 'treeSelect')
               }
             >
-              <Select
-                onChange={getFactoryName}
-                placeholder="请选择班组名称"
-                allowClear
-              >
+              <Select placeholder="请选择班组名称" allowClear>
                 {!isEmpty(treeData)
                   ? treeData.map(
                       (item: {
@@ -152,6 +148,18 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
                     )
                   : null}
               </Select>
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item
+              {...layout}
+              name="workModeName"
+              label="工作模式"
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'input')
+              }
+            >
+              <Input placeholder="请输入工作模式" allowClear />
             </Form.Item>
           </Col>
         </Row>

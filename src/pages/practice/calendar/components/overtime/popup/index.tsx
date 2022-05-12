@@ -1,4 +1,12 @@
-import { DatePicker, Form, Input, Modal, Select, TreeSelect } from 'antd'
+import {
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Modal,
+  Select,
+  TreeSelect
+} from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -16,6 +24,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
   const { Option } = Select
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
+  const [list, setList] = useState<any>() //总数据
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
   //加班班组
@@ -35,12 +44,17 @@ function Popup(props: { content: any; newlyAdded: any }) {
     )
     setTreeData(teamData)
   }
-
+  //渲染
+  useEffect(() => {
+    if (!isEmpty(list)) {
+      form.setFieldsValue(list)
+    }
+  }, [list])
   useEffect(() => {
     if (!isEmpty(edit)) {
       if (type !== 1) {
         edit.date = moment(edit.timeList[0].endDate)
-        form.setFieldsValue(edit) //回显.
+        setList(edit)
       }
       if (type === 1) {
         form.resetFields()
@@ -76,6 +90,26 @@ function Popup(props: { content: any; newlyAdded: any }) {
     const timeStamp = item.concat(e)
     return moment(timeStamp).valueOf()
   }
+  //时间问题的提示
+  const determineTime = (e) => {
+    if (!isEmpty(e)) {
+      //开始不能大于结束 且 不能相等
+      const type = e.every((item: any) => {
+        return (
+          item.startDateTime < item.endDateTime &&
+          item.startDateTime !== item.endDateTime
+        )
+      })
+      if (type) {
+        return true
+      } else {
+        message.warning('开始不能大于结束，且不能相等')
+        return false
+      }
+    } else {
+      return false
+    }
+  }
   const onOk = async (
     values: {
       teamIds: any[]
@@ -95,31 +129,29 @@ function Popup(props: { content: any; newlyAdded: any }) {
     //工作时间
     if (!isEmpty(values.timeList)) {
       values.timeList.map((item: any) => {
-        console.log('工作时间', times(values.date, item.startDateTime))
-
         item.startDateTime = times(values.date, item.startDateTime)
         item.endDateTime = times(values.date, item.endDateTime)
       })
     }
-    console.log('提交数据-type', type)
-    console.log('提交数据', values)
 
     if (values.createTime) {
       values.createTime = moment(values.createTime).valueOf()
     }
-    const list: any = type === 1 ? values : { ...values, id: edit.id }
-    //班组为false才执行
-    const arr: any = await teamId({
-      teamIds: values.teamIds,
-      timeList: list.timeList
-    })
-
-    if (arr.success === true) {
-      const res = await overtimeAddition(list)
-      if (res === true) {
-        newlyAdded()
-        form.resetFields()
-        setIsModalVisible(false)
+    //开始不能小于结束 且 不能相等
+    if (determineTime(values.timeList)) {
+      const list: any = type === 1 ? values : { ...values, id: edit.id }
+      //班组为false才执行
+      const arr: any = await teamId({
+        teamIds: values.teamIds,
+        timeList: list.timeList
+      })
+      if (arr.success === true) {
+        const res = await overtimeAddition(list)
+        if (res === true) {
+          newlyAdded()
+          form.resetFields()
+          setIsModalVisible(false)
+        }
       }
     }
   }
@@ -142,6 +174,9 @@ function Popup(props: { content: any; newlyAdded: any }) {
   }
   const getFactoryName = (e: any) => {
     setListID(e)
+    const cloneList = cloneDeep(list)
+    cloneList.teamIds = []
+    setList(cloneList)
   }
   return (
     <div>

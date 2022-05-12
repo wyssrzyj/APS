@@ -58,6 +58,7 @@ function ToPlan(props: {
   map.set('4', '包装工段')
   map.set('5', '外发工段')
   map.set('6', '缝制线外组')
+  map.set('20', '回厂加工')
 
   const callback = (key: any) => {
     setCurrent(key)
@@ -211,6 +212,8 @@ function ToPlan(props: {
     if (!isEmpty(data)) {
       data.map((i: any) => {
         i.key = i.externalProduceOrderId //用于校验排程
+        i.title = sewing(i, 4)
+
         !isEmpty(i.children) &&
           i.children.map((item: any) => {
             item.disableCheckbox = true
@@ -335,7 +338,9 @@ function ToPlan(props: {
   const efficiencyMethods = async (id: any) => {
     setEfficiencyID(id)
     const res = await forDetail({ id })
-    setTemplateId(res.templateId)
+    console.log('效率模板', res)
+
+    setTemplateId(res)
     setEfficiencyData(true)
   }
   const content = (data: any, type: any) => {
@@ -367,7 +372,7 @@ function ToPlan(props: {
           </div>
         ) : null}
 
-        {type !== 3 && type !== 1 ? (
+        {type !== 4 && type !== 3 && type !== 1 ? (
           <>
             <div className={styles.card}>
               <Tag
@@ -413,6 +418,18 @@ function ToPlan(props: {
           >
             <Tag className={styles.tag} color="geekblue">
               效率模板
+            </Tag>
+          </div>
+        ) : null}
+        {type === 4 ? (
+          <div
+            className={styles.card}
+            // onClick={() => {
+            //   efficiencyMethods(data.id)
+            // }}
+          >
+            <Tag className={styles.tag} color="geekblue">
+              开发中~
             </Tag>
           </div>
         ) : null}

@@ -116,6 +116,9 @@ const BreakUp = (props: any) => {
     //工作车间
     if (type === 1) {
       record.shopId = e
+      record.teamId = null
+      record.templateId = null
+
       record.teamType = true
       //班组是独立的
       const team = await teamList({ factoryId: formData, shopMannagerId: e })
@@ -131,6 +134,8 @@ const BreakUp = (props: any) => {
     //工作班组
     if (type === 2) {
       record.teamId = e
+      record.templateId = null
+
       //效率是独立的
       const capacity = await capacityListID({ teamId: e })
       if (capacity) {
@@ -185,9 +190,6 @@ const BreakUp = (props: any) => {
     }
     console.log(initialTeamList)
   }, [initialTeamList])
-  useEffect(() => {
-    console.log('测试替换', data)
-  }, [data])
 
   const showModal = () => {
     setIsModalVisible(true)
@@ -507,8 +509,10 @@ const BreakUp = (props: any) => {
       render: (_value: any, _row: any) => {
         return (
           <div>
+            <>{console.log('测试', _value)}</>
             <Select
               placeholder="请选择效率模板"
+              key={_value}
               defaultValue={_value}
               style={{ width: 120 }}
               onChange={(e) => handleChange(3, e, _row)}
@@ -650,6 +654,9 @@ const BreakUp = (props: any) => {
     setPageNum(page)
     setPageSize(pageSize)
   }
+  useEffect(() => {
+    console.log('是否更改', data)
+  }, [data])
   return (
     <div className={styles.popup}>
       <Modal

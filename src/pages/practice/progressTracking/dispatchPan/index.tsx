@@ -18,7 +18,8 @@ const {
   exportProductList,
   productDetail,
   factoryList,
-  getWorkshopSectionList
+  getWorkshopSectionList,
+  makeSewingPlan
 } = productionPlanApis
 
 const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
@@ -165,9 +166,19 @@ function ProductionPlan() {
       setSelectedRowKeys(selectedRowKeys)
     }
   }
-  const showSewing = (v: any) => {
-    setEditData({ ...v })
-    setDetailsPopup(true)
+  const showSewing = async (v: any) => {
+    const res = await makeSewingPlan({
+      produceOrderNum: v.externalProduceOrderNum,
+      teamManagerId: v.teamId
+    })
+    console.log(res)
+
+    if (res.data) {
+      message.warning(' 已生成过缝制计划')
+    } else {
+      setEditData({ ...v })
+      setDetailsPopup(true)
+    }
   }
   const update = async () => {
     const arr = await productList(params)

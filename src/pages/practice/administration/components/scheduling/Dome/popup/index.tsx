@@ -1,4 +1,12 @@
-import { DatePicker, Form, Input, Modal, Select, TreeSelect } from 'antd'
+import {
+  DatePicker,
+  Form,
+  Input,
+  message,
+  Modal,
+  Select,
+  TreeSelect
+} from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -33,6 +41,7 @@ function Popup(props: { content: any }) {
   const { Option } = Select
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
+  const [list, setList] = useState<any>() //总数据
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
   //班组
@@ -53,15 +62,25 @@ function Popup(props: { content: any }) {
     )
     setTreeData(teamData)
   }
+  useEffect(() => {
+    const arr = { factoryId: formData, teamIds: [] }
+    setList(arr)
+  }, [formData])
 
   useEffect(() => {
-    if (!isEmpty(edit)) {
+    if (!isEmpty(list)) {
+      form.setFieldsValue(list)
+    }
+  }, [list])
+
+  useEffect(() => {
+    if (formData) {
       if (type === 1) {
         form.resetFields()
       }
-      setListID(edit.factoryId)
+      setListID(formData)
     }
-  }, [edit, type])
+  }, [formData, type])
 
   const handleOk = () => {
     form.submit()
@@ -74,6 +93,27 @@ function Popup(props: { content: any }) {
   const times = (item: any, e: any) => {
     const timeStamp = item.concat(e)
     return moment(timeStamp).valueOf()
+  }
+
+  //时间问题的提示
+  const determineTime = (e) => {
+    if (!isEmpty(e)) {
+      //开始不能大于结束 且 不能相等
+      const type = e.every((item: any) => {
+        return (
+          item.startDateTime < item.endDateTime &&
+          item.startDateTime !== item.endDateTime
+        )
+      })
+      if (type) {
+        return true
+      } else {
+        message.warning('开始不能大于结束，且不能相等')
+        return false
+      }
+    } else {
+      return false
+    }
   }
   const onOk = async (
     values: {
@@ -102,21 +142,23 @@ function Popup(props: { content: any }) {
     if (values.createTime) {
       values.createTime = moment(values.createTime).valueOf()
     }
-    const list: any = type === 1 ? values : { ...values, id: edit.id }
-    //班组为false才执行
-    const arr: any = await teamId({
-      teamIds: values.teamIds,
-      timeList: list.timeList
-    })
 
-    if (arr.success === true) {
-      const res = await overtimeAddition(list)
-      if (res === true) {
-        // newlyAdded()
+    if (determineTime(values.timeList)) {
+      const list: any = type === 1 ? values : { ...values, id: edit.id }
+      //班组为false才执行
+      const arr: any = await teamId({
+        teamIds: values.teamIds,
+        timeList: list.timeList
+      })
+      if (arr.success === true) {
+        const res = await overtimeAddition(list)
+        if (res === true) {
+          // newlyAdded()
 
-        form.resetFields()
-        setIsModalVisible(false)
-        updateMethod && updateMethod()
+          form.resetFields()
+          setIsModalVisible(false)
+          updateMethod && updateMethod()
+        }
       }
     }
   }
@@ -126,6 +168,7 @@ function Popup(props: { content: any }) {
       onOk(values, 1)
     }
   }
+
   const tProps = {
     treeData,
     treeCheckable: true,
@@ -135,12 +178,17 @@ function Popup(props: { content: any }) {
       width: '100%'
     }
   }
+  //工厂
   const getFactoryName = (e: any) => {
+    const cloneList = cloneDeep(list)
     setListID(e)
+    cloneList.teamIds = []
+    setList({ ...cloneList })
   }
   return (
     <div>
       <Modal
+        destroyOnClose={true}
         width={700}
         title={type === 1 ? '新增加班' : type === 2 ? '编辑加班' : '查看加班'}
         visible={isModalVisible}
@@ -165,7 +213,6 @@ function Popup(props: { content: any }) {
             <Select
               onChange={getFactoryName}
               placeholder="请选择工厂名称"
-              defaultValue={formData}
               allowClear
             >
               {factoryData !== undefined
@@ -200,9 +247,7 @@ function Popup(props: { content: any }) {
             name="date"
             rules={[{ required: true, message: '请先选择加班日期!' }]}
           >
-            <DatePicker
-            // onChange={onChange}
-            />
+            <DatePicker />
           </Form.Item>
           <Form.Item
             label="工作时间"

@@ -236,6 +236,7 @@ function Material(props: {
     <div>
       <Modal
         width={1300}
+        closable={false}
         visible={materialModal}
         centered={true}
         footer={null}

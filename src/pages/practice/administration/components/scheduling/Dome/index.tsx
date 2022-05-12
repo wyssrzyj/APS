@@ -247,6 +247,7 @@ const Dhx = (props: {
       }
     }
   }, [select, chart])
+
   const content = {
     formData,
     updateMethod,

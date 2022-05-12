@@ -26,7 +26,7 @@ function Index() {
   const [visibleVerify, setVisibleVerify] = useState(false) //校验排程弹窗
   const [remind, setRemind] = useState() //甘特图高亮
   const [formData, setFormData] = useState() //form数据
-  const [gunterType, setGunterType] = useState('0') //班组、订单
+  const [gunterType, setGunterType] = useState('1') //班组、订单
   const [gunterData, setGunterData] = useState<any[]>([]) //甘特图数据-班组
   // const [productionData, setProductionData] = useState<any>([]) //甘特图数据-生产
   const [notWork, setNotWork] = useState<any[]>([]) //不可工作时间
