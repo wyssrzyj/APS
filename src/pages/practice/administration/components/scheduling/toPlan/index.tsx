@@ -157,7 +157,7 @@ function ToPlan(props: {
   ) => {
     !isEmpty(data) &&
       data.map((item) => {
-        item.title = `${item.externalProduceOrderNum}(${item.orderSum})件`
+        item.title = `${item.externalProduceOrderNum}(${item.orderSum}件)`
         item.children = item.assignmentVOList
         !isEmpty(item.children) &&
           item.children.map((v: any) => {
@@ -428,9 +428,8 @@ function ToPlan(props: {
             //   efficiencyMethods(data.id)
             // }}
           >
-            <Tag className={styles.tag} color="geekblue">
-              开发中~
-            </Tag>
+            <div>款名： {data.productName}</div>
+            <div>款号： {data.productNum}</div>
           </div>
         ) : null}
       </div>
