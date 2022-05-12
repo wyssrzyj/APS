@@ -438,7 +438,7 @@ function ToPlan(props: {
   }
 
   const sewing = (sewingData: any, type: any) => {
-    //1是缝制
+    //1是缝制.
     //2的时候
     if (type === 2) {
       return (
