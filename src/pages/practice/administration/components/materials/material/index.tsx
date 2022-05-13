@@ -15,10 +15,13 @@ function Material(props: {
   setMaterialModal: any
   materialList: any
   update: any
+  refreshList: any
 }) {
-  const { materialModal, setMaterialModal, materialList, update } = props
+  const { materialModal, setMaterialModal, materialList, update, refreshList } =
+    props
   const { getTheSize, materialData, materialSaved, checked } = materialSetApis
-  const [list, setList] = useState<any>() //处理后的数据
+
+  const [selectedData, setSelectedData] = useState<any>([]) //外层 选中的数据
   const [tableList, setTableList] = useState<any>() //table的数据
   const [sizeList, setSizeList] = useState<any>() //table的尺码
   const [modifyData, setModifyData] = useState<any>() //修改的值-用于保存
@@ -26,13 +29,26 @@ function Material(props: {
   const [select, setSelect] = useState<any>() //当前选中的值
 
   useEffect(() => {
+    console.log('是否发生改变', selectedData)
+  }, [selectedData])
+  useEffect(() => {
     if (materialList && !isEmpty(materialList)) {
       console.log('选中项', materialList)
+      setSelectedData(materialList)
       setActiveKey(materialList[0].id)
       tableData(materialList[0])
-      setSelect(materialList[0])
     }
   }, [materialList])
+
+  // 获取当前值
+  useEffect(() => {
+    if (!isEmpty(selectedData)) {
+      const current = selectedData.filter(
+        (item: { id: any }) => item.id === activeKey
+      )[0]
+      setSelect(current)
+    }
+  }, [activeKey, selectedData])
 
   // ***js数组对象转键值对
   const conversion = (data: any[]) => {
@@ -43,10 +59,12 @@ function Material(props: {
     return obj
   }
 
-  //获取table数据 -只需要传当前项就可以
+  //获取table接口数据 -只需要传当前项就可以
   const tableData = async (data: any) => {
     //  未检查
     if (data.checkStatus === 2) {
+      console.log('我是未检查')
+
       const resData = await materialData({
         externalProduceOrderId: data.externalProduceOrderId,
         produceOrderNum: data.externalProduceOrderNum
@@ -57,25 +75,32 @@ function Material(props: {
     //  已检查.
 
     if (data.checkStatus === 1) {
+      console.log('我是已检查')
+
       const resData = await checked({
         externalProduceOrderId: data.externalProduceOrderId,
         produceOrderNum: data.externalProduceOrderNum
       })
       setTableList(resData.tableContent)
     }
-    //  重新检查
+    //  重新检查 特殊处理-待定
+
     if (data.checkStatus === 3) {
       //已检查
       if (data.type === 1) {
+        console.log('我是重新检查-已检查')
+
         const resData = await checked({
           externalProduceOrderId: data.externalProduceOrderId,
           produceOrderNum: data.externalProduceOrderNum
         })
-        console.log('我是重新-已检查', resData.tableContent)
+        // console.log('我是重新-已检查', resData.tableContent)
 
         setTableList(resData.tableContent)
       }
       if (data.type === 2) {
+        console.log('我是重新检查-未检查')
+
         //重新检查
         const resData = await materialData({
           externalProduceOrderId: data.externalProduceOrderId,
@@ -113,6 +138,7 @@ function Material(props: {
   const { TabPane } = Tabs
   const onCancel = () => {
     setMaterialModal(false)
+    refreshList && refreshList()
   }
   const handleCancel = () => {
     setMaterialModal(false)
@@ -122,9 +148,6 @@ function Material(props: {
     setMaterialModal(false)
   }
 
-  const dataReset = (e: any) => {
-    setList(e)
-  }
   //确认
   const confirm = () => {
     save('2', activeKey)
@@ -134,47 +157,44 @@ function Material(props: {
   const callback = async (key: any) => {
     save('1', key)
   }
+  //未检查修改为已检查
+  const uncheckedModification = () => {
+    const cloneSelectedData = cloneDeep(selectedData)
+
+    cloneSelectedData.map((item) => {
+      if (item.id === activeKey) {
+        item.checkStatus = 1
+      }
+    })
+    setSelectedData(cloneSelectedData)
+  }
 
   //保存
-  const added = async (current: any, methods: any, key: any) => {
-    const type: any = meetConditions(modifyData)
-    //已检查只需要展示数据就可以
-    if (current.checkStatus !== 1) {
-      console.log('我是未检查 重新检查')
+  const added = async (current: any, next: any, methods: any, key: any) => {
+    const type: any = meetConditions(modifyData) //判断当前是否全部填写
 
-      if (type === true) {
-        //确认保存
-        current.tableContent = modifyData
-        // const externalProduceOrderId = materialList.externalProduceOrderId //添加
-        const res = await materialSaved(current)
-        if (res) {
-          if (methods === '确认') {
-            setMaterialModal(false)
-            update()
-          }
-          if (methods === '切换') {
-            setActiveKey(key)
-            tableData(current)
+    if (type === true) {
+      //确认保存
+      current.tableContent = modifyData
+      // const externalProduceOrderId = materialList.externalProduceOrderId //添加
+      const res = await materialSaved(current)
 
-            //给数据
-          }
+      if (res) {
+        //更改数据
+        uncheckedModification()
+        if (methods === '确认') {
+          //先刷新在关闭
+          refreshList && refreshList()
+          setMaterialModal(false)
+          update()
         }
-      } else {
-        message.error('数据未添加完毕')
+        if (methods === '切换') {
+          setActiveKey(key)
+          tableData(next)
+        }
       }
     } else {
-      console.log('我是已检查')
-
-      if (methods === '确认') {
-        setMaterialModal(false)
-        update()
-      }
-      if (methods === '切换') {
-        setActiveKey(key)
-        tableData(current)
-
-        //给数据
-      }
+      message.error('数据未添加完毕')
     }
   }
 
@@ -182,31 +202,38 @@ function Material(props: {
     //   确认
     if (state === '2') {
       // 确认 满足才走接口
-      const current = materialList.filter(
+      const current = selectedData.filter(
         (item: { externalProduceOrderId: any }) =>
           item.externalProduceOrderId === key
       )[0]
+
       added(current, '确认', key)
     }
     //切换
     if (state === '1') {
-      const current = materialList.filter(
+      //当前
+      const current = selectedData.filter(
+        (item: { id: any }) => item.id === activeKey
+      )[0]
+
+      // 下一个
+      const next = selectedData.filter(
         (item: { id: any }) => item.id === key
       )[0]
 
-      if (current !== undefined) {
-        setSelect(current)
-      } else {
-        setSelect(materialList[0])
-      }
+      //重新检查
+      if (selectedData[0].review) {
+        if (next.name === '重新检查') {
+          // 切换值重新不需要走保存
+          setActiveKey(key)
+          tableData(next)
+        } else {
+          // 切换回已检查需要保存
 
-      if (activeKey === '1314520') {
-        //重新计划的已减产 不需要判断是否填写
-        setActiveKey(key)
-        tableData(current)
+          added(current, next, '切换', key)
+        }
       } else {
-        //已检查不需要进行切换保存
-        added(current, '切换', key)
+        added(current, next, '切换', key)
       }
     }
   }
@@ -222,7 +249,6 @@ function Material(props: {
       }
     })
     const allMeet = data.every((item) => item.save === true)
-
     return allMeet
   }
 
@@ -244,17 +270,17 @@ function Material(props: {
         onCancel={onCancel}
       >
         <Tabs onChange={callback} type="card" activeKey={activeKey}>
-          {materialList &&
-            materialList.map((item: any, index: any) => (
+          {selectedData &&
+            selectedData.map((item: any, index: any) => (
               <TabPane tab={item.name} key={item.id}>
                 <TabPanes
                   select={select}
                   switchSave={switchSave}
                   index={index}
-                  materialList={materialList}
+                  materialList={selectedData}
                   analogData={tableList}
                   sizeList={sizeList}
-                  dataReset={dataReset}
+                  // dataReset={dataReset}
                 />
               </TabPane>
             ))}

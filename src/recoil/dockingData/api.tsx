@@ -83,6 +83,21 @@ export const teamList = async (props: any) => {
     console.log(e)
   }
 }
+
+export const sectionLists = async () => {
+  try {
+    const res: ResponseProps = await axios.get(`/aps/mes/get-section-list`)
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
 //班组树
 export const shiftTree = async () => {
   try {

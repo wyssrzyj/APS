@@ -25,23 +25,21 @@ function VerifyModal(props: Record<string, any>) {
   const { visibleVerify, onCancel, checkIDs } = props
   const [checkList, setCheckList] = useState<Record<string, any>>(list)
   const verifyInfo = async (id: string) => {
-    console.log('处理后的数据', id)
-
     const data = cloneDeep(checkList)
     // ['15042722699443200022']
-    const res = await checkSchedule(['1504272269944320002'])
+    const res = await checkSchedule(id)
     data.forEach((item: Record<string, any>) => {
       item.list = res[item.value]
     })
     setCheckList(data)
   }
   useEffect(() => {
-    console.log('测试,', checkIDs)
+    console.log('测试', checkIDs)
 
     verifyInfo(checkIDs)
   }, [checkIDs])
   const release = async () => {
-    await checkSchedule(['1504272269944320002'])
+    await checkSchedule(checkIDs)
     onCancel()
   }
   return (

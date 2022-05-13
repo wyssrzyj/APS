@@ -8,15 +8,7 @@ import { Icon } from '@/components'
 
 import styles from './index.module.less'
 const FormTable = (props: any) => {
-  const {
-    tableData,
-    materialList,
-    index,
-    dataProcessing,
-    sizeList,
-    saveData,
-    select
-  } = props
+  const { tableData, materialList, index, sizeList, saveData, select } = props
   const [expandedRowKeys, setExpandedRowKeys] = useState<any>([])
   const [data, setData] = useState<any>([]) //table 数据  防止为空
   const [list, setList] = useState<any>([]) //table处理后的格式
@@ -24,160 +16,172 @@ const FormTable = (props: any) => {
   useEffect(() => {
     saveData && saveData(data)
   }, [data])
-  useEffect(() => {
-    console.log('ceshi ', select)
-  }, [select])
 
-  useEffect(() => {
-    const columns: any = [
-      {
-        title: '物料代码',
-        dataIndex: 'materialCode',
-        width: 150,
-        align: 'center',
-        fixed: 'left',
-        key: 'material'
-      },
-      {
-        title: '物料名称',
-        width: 100,
-        dataIndex: 'materialName',
-        fixed: 'left',
+  //已检查且已计划 才不可用
+  const whetherAvailable = (e) => {
+    if (e.checkStatus === 1 && e.status === 2) {
+      console.log('我满足条件', e)
 
-        align: 'center',
-        key: 'materialName'
-      },
-      {
-        title: '物料颜色代码',
-        dataIndex: 'skuCode',
-        width: 100,
-        align: 'center',
-        key: 'materialColCode'
-      },
-      {
-        title: '颜色',
-        dataIndex: 'proColName',
-        width: 100,
-        align: 'center',
-        key: 'proColName'
-      },
-      {
-        title: '物料需求数量',
-        width: 100,
-        dataIndex: 'requireQuantity',
-        align: 'center',
-        key: 'requireQuantity'
-      },
-      {
-        title: '单位',
-        width: 100,
-        dataIndex: 'unit',
-        align: 'center',
-        key: 'unit'
-      },
-      {
-        title: '物料库存数量',
-        width: 100,
-        dataIndex: 'availableStockQtyTotal',
-        align: 'center',
-        key: 'availableStockQtyTotal'
-      },
-      {
-        title: '已出库数量',
-        width: 100,
-        dataIndex: 'deliveredQty',
-        align: 'center',
-        key: 'deliveredQty'
-      },
-      {
-        title: '半成品冲销数量',
-        dataIndex: 'counteractNum',
-        align: 'center',
-        fixed: 'right',
-        width: 150,
-        key: 'counteractNum',
-        render: (_item: any, v: any) =>
-          isEmpty(v.children) ? (
-            <>
-              <Input
-                type="number"
-                disabled={select.checkStatus === 1 ? true : false}
-                min={0}
-                defaultValue={_item}
-                onBlur={(e) => {
-                  quantity(e.target.value, v)
-                }}
-              />
-            </>
-          ) : (
-            _item
-          )
-      },
-      {
-        title: '物料缺少数量',
-        dataIndex: 'shortOfProductNum',
-        align: 'center',
-        fixed: 'right',
-        width: 150,
-        key: 'shortOfProductNum'
-      },
-      {
-        title: '是否充足',
-        dataIndex: 'enoughFlag',
-        width: 150,
-        align: 'center',
-        key: 'enoughFlag',
-        fixed: 'right',
-        render: (_item: any) => (
-          <Space size="middle">
-            {_item === 1 ? (
-              <Icon type="jack-icon-test" className={styles.previous} />
-            ) : (
-              <Icon type="jack-cuowu" className={styles.previous} />
-            )}
-          </Space>
-        )
-      },
-      {
-        title: '齐套日期',
-        dataIndex: 'prepareTime',
-        fixed: 'right',
-        align: 'center',
-        width: 150,
-        key: 'prepareTime',
-        render: (_item: any, v: any) => (
-          <Space size="middle">
-            {isEmpty(v.children) ? (
-              !v.enoughFlag ? (
+      return true
+    } else {
+      return false
+    }
+  }
+  useEffect(() => {
+    if (!isEmpty(data)) {
+      if (select !== undefined) {
+        const columns: any = [
+          {
+            title: '物料代码',
+            dataIndex: 'materialCode',
+            width: 150,
+            align: 'center',
+            fixed: 'left',
+            key: 'material'
+          },
+          {
+            title: '物料名称',
+            width: 100,
+            dataIndex: 'materialName',
+            fixed: 'left',
+
+            align: 'center',
+            key: 'materialName'
+          },
+          {
+            title: '物料颜色代码',
+            dataIndex: 'skuCode',
+            width: 100,
+            align: 'center',
+            key: 'materialColCode'
+          },
+          {
+            title: '颜色',
+            dataIndex: 'proColName',
+            width: 100,
+            align: 'center',
+            key: 'proColName'
+          },
+          {
+            title: '物料需求数量',
+            width: 100,
+            dataIndex: 'requireQuantity',
+            align: 'center',
+            key: 'requireQuantity'
+          },
+          {
+            title: '单位',
+            width: 100,
+            dataIndex: 'unit',
+            align: 'center',
+            key: 'unit'
+          },
+          {
+            title: '物料库存数量',
+            width: 100,
+            dataIndex: 'availableStockQtyTotal',
+            align: 'center',
+            key: 'availableStockQtyTotal'
+          },
+          {
+            title: '已出库数量',
+            width: 100,
+            dataIndex: 'deliveredQty',
+            align: 'center',
+            key: 'deliveredQty'
+          },
+          {
+            title: '半成品冲销数量',
+            dataIndex: 'counteractNum',
+            align: 'center',
+            fixed: 'right',
+            width: 150,
+            key: 'counteractNum',
+            render: (_item: any, v: any) =>
+              isEmpty(v.children) ? (
                 <>
-                  <DatePicker
-                    disabled={select.checkStatus === 1 ? true : false}
-                    allowClear={false}
-                    defaultValue={_item ? moment(Number(_item)) : undefined}
-                    onChange={(e) => {
-                      onChange(e, v)
+                  <Input
+                    type="number"
+                    // disabled={whetherAvailable(data)}
+                    disabled={whetherAvailable(select)}
+                    min={0}
+                    defaultValue={_item}
+                    onBlur={(e) => {
+                      quantity(e.target.value, v)
                     }}
                   />
                 </>
-              ) : null
-            ) : null}
-          </Space>
+              ) : (
+                _item
+              )
+          },
+          {
+            title: '物料缺少数量',
+            dataIndex: 'shortOfProductNum',
+            align: 'center',
+            fixed: 'right',
+            width: 150,
+            key: 'shortOfProductNum'
+          },
+          {
+            title: '是否充足',
+            dataIndex: 'enoughFlag',
+            width: 150,
+            align: 'center',
+            key: 'enoughFlag',
+            fixed: 'right',
+            render: (_item: any) => (
+              <Space size="middle">
+                {_item === 1 ? (
+                  <Icon type="jack-icon-test" className={styles.previous} />
+                ) : (
+                  <Icon type="jack-cuowu" className={styles.previous} />
+                )}
+              </Space>
+            )
+          },
+          {
+            title: '齐套日期',
+            dataIndex: 'prepareTime',
+            fixed: 'right',
+            align: 'center',
+            width: 150,
+            key: 'prepareTime',
+            render: (_item: any, v: any) => (
+              <Space size="middle">
+                {isEmpty(v.children) ? (
+                  !v.enoughFlag ? (
+                    <>
+                      <DatePicker
+                        disabled={whetherAvailable(select)}
+                        allowClear={false}
+                        defaultValue={_item ? moment(Number(_item)) : undefined}
+                        onChange={(e) => {
+                          onChange(e, v)
+                        }}
+                      />
+                    </>
+                  ) : null
+                ) : null}
+              </Space>
+            )
+          }
+        ]
+        columns.map((item: { align: string }) => {
+          item.align = 'center'
+        })
+
+        const index = columns.findIndex(
+          (item: { dataIndex: string }) => item.dataIndex === 'proColName'
         )
+
+        if (sizeList !== undefined) {
+          columns.splice(index + 1, 0, sizeList)
+          setList(columns.flat(Infinity))
+        }
       }
-    ]
-    columns.map((item: { align: string }) => {
-      item.align = 'center'
-    })
-
-    const index = columns.findIndex(
-      (item: { dataIndex: string }) => item.dataIndex === 'proColName'
-    )
-
-    if (sizeList !== undefined) {
-      columns.splice(index + 1, 0, sizeList)
-      setList(columns.flat(Infinity))
     }
-  }, [sizeList])
+  }, [data, select, sizeList])
 
   //处理建值对
   const conversion = (data: any[]) => {
@@ -311,18 +315,9 @@ const FormTable = (props: any) => {
         }
       })
       setData([...current])
-      //
     }
   }
-  useEffect(() => {
-    //判断子项是否全部满足
-    function checkAdult(data: any) {
-      return data.enoughFlag === 1
-    }
-    // 给当前页的数据添加 一个状态 用于判断当前页是否全部打钩
-    materialList[index].satisfy = data.every(checkAdult)
-    dataProcessing(materialList) //暴露出去
-  }, [data])
+
   const onExpandedRowsChange = (e: any) => {
     setExpandedRowKeys(e)
   }

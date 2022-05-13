@@ -40,17 +40,19 @@ function Materials() {
   map.set(1, '已检查')
   map.set(2, '未检查')
   map.set(3, '重新检查')
+
+  const production = new Map()
+  production.set(1, '待计划')
+  production.set(2, '已计划')
+  production.set(3, '生产中')
+  production.set(4, '生产完成')
   const columns: any = [
     {
       title: '生产单号',
       align: 'center',
       dataIndex: 'externalProduceOrderNum'
     },
-    // {
-    //   title: '销售单号',
-    //   align: 'center',
-    //   dataIndex: 'orderNum'
-    // },
+
     {
       title: '工厂名称',
       align: 'center',
@@ -91,6 +93,15 @@ function Materials() {
       dataIndex: 'produceWeight'
     },
     {
+      title: '生产单状态',
+      key: 'status',
+      align: 'center',
+      dataIndex: 'status',
+      render: (v: any) => {
+        return <div>{production.get(v)}</div>
+      }
+    },
+    {
       title: '物料齐套状态',
       align: 'center',
       dataIndex: 'checkStatus', //生产单状态（1、已检查 2 未检查 3 重新检查）
@@ -115,12 +126,18 @@ function Materials() {
     }
   }
   useEffect(() => {
-    setParams({ pageNum, pageSize, ...queryData })
-  }, [pageNum, pageSize, queryData])
+    setParams({ pageNum, pageSize })
+  }, [pageNum, pageSize])
+
+  useEffect(() => {
+    setParams({ pageNum: 1, pageSize, ...queryData })
+  }, [queryData])
+
   //获取列表数据
   useEffect(() => {
     formApi(params)
   }, [params])
+
   const update = () => {
     formApi(params)
   }
@@ -208,12 +225,14 @@ function Materials() {
             const checked = {
               ...selectedValue[0],
               id: '1314520',
+              review: true, //重新检查判断条件
               type: 1,
               name: '已检查'
             }
             const unchecked = {
               ...selectedValue[0],
               type: 2,
+              review: true, //重新检查判断条件
               name: '重新检查'
             }
             const sum = [checked, unchecked]
@@ -316,6 +335,11 @@ function Materials() {
     download.click()
     window.URL.revokeObjectURL(download.href)
   }
+  //刷新列表
+  const refreshList = () => {
+    formApi(params)
+    // setSelected([])//是否清空勾选
+  }
   const menu = (
     <Menu>
       <Menu.Item>
@@ -384,6 +408,7 @@ function Materials() {
       </div>
       {/* 物料齐套检查弹窗 */}
       <Material
+        refreshList={refreshList}
         update={update}
         materialList={materialList}
         materialModal={materialModal}
