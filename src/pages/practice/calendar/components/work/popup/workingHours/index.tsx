@@ -22,6 +22,8 @@ function WorkingHours(props: {
           { name: '1', startDateTime: undefined, endDateTime: undefined }
         ])
       : setData(edit.times)
+
+    console.log('状态', type)
   }, [type, edit])
 
   const start = (index: string | number, e: moment.MomentInput) => {
@@ -98,7 +100,7 @@ function WorkingHours(props: {
               defaultValue={
                 item.startDateTime === undefined
                   ? null
-                  : moment(item.startDateTime)
+                  : moment(item.endDateTime)
               }
               disabled={type === 3 ? true : false}
               format={format}

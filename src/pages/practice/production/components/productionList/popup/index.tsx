@@ -24,7 +24,9 @@ function Popup(props: { content: any }) {
     setIsModalVisible,
     types,
     getDetailsId,
-    externalProduceOrderId
+    externalProduceOrderId,
+    whetherEditor,
+    refreshData
   } = content
 
   const { workingProcedure, popupPreservation } = productionSingleApis
@@ -39,7 +41,7 @@ function Popup(props: { content: any }) {
   const [caseIds, setCaseIds] = useState([]) //存放id
   const [total, setTotal] = useState() //存放总数
 
-  const defaultPageSize = 10
+  const defaultPageSize = 5
   const [params, setParams] = useState<any>({
     pageNum: 1,
     pageSize: defaultPageSize,
@@ -48,9 +50,15 @@ function Popup(props: { content: any }) {
 
   const [localData, setLocalData] = useState<any>([]) //工艺数据
   const [outgoing, setOutgoing] = useState<any>([]) //外发数据
+  const [processedData, setProcessedData] = useState<any>([]) //外发全部数据
+
   useEffect(() => {
     if (getDetailsId !== undefined && getDetailsId !== null) {
-      setParams({ ...params, externalProduceOrderId: getDetailsId })
+      getDetails({
+        pageNum: 1,
+        pageSize: defaultPageSize,
+        externalProduceOrderId: getDetailsId
+      })
     }
   }, [getDetailsId])
 
@@ -61,17 +69,15 @@ function Popup(props: { content: any }) {
   }, [params])
   //子项的分页数据
   const pagingData = (e, v) => {
-    setParams({ ...params, pageNum: e, pageSize: v })
+    setParams({ externalProduceOrderId: getDetailsId, pageNum: e, pageSize: v })
   }
 
   const getDetails = async (params: any) => {
-    console.log('传递的数据', params)
-
     const res: any = await workingProcedure(params)
     res.records.map((item) => {
       item.section = map.get(item.section)
     })
-    // total
+
     setUsedList(res.records)
     setTotal(res.total)
   }
@@ -121,15 +127,43 @@ function Popup(props: { content: any }) {
 
   const handleOk = async () => {
     if (!types) {
-      const arr = await popupPreservation({
-        productId: getDetailsId,
-        externalProduceOrderId: externalProduceOrderId,
-        outsourceProcessDTOList: outgoing,
-        processDTOList: localData
-      })
-      if (arr) {
-        message.success('保存成功')
-        handleCancel()
+      // 判断外发管理的外发时间是否为空
+      let outgoingJudge = false
+      if (!isEmpty(outgoing)) {
+        const outTimeType = outgoing.every((item: any) => {
+          return item.outTime !== null && item.outTime !== ''
+        })
+        outgoingJudge = outTimeType
+      } else {
+        outgoingJudge = true
+      }
+
+      //全部数据不为空才=true
+      let allData = false
+      if (!isEmpty(processedData)) {
+        const outTimeType = processedData.every((item: any) => {
+          return item.outTime !== null && item.outTime !== ''
+        })
+        allData = outTimeType
+      } else {
+        allData = true
+      }
+
+      if (outgoingJudge && allData) {
+        const arr = await popupPreservation({
+          productId: getDetailsId,
+          externalProduceOrderId: externalProduceOrderId,
+          outsourceProcessDTOList: processedData,
+          processDTOList: localData
+        })
+
+        if (arr) {
+          message.success('保存成功')
+          refreshData && refreshData()
+          handleCancel()
+        }
+      } else {
+        message.error('外发管理的外发时间不能为空')
       }
     } else {
       handleCancel()
@@ -138,12 +172,16 @@ function Popup(props: { content: any }) {
 
   const handleCancel = () => {
     setIsModalVisible(false)
+
     setGetDetailsId(null)
   }
   const preservation = (e: any) => {
     setOutgoing(e)
   }
-
+  //全部数据
+  const AllData = (e: any) => {
+    setProcessedData(e)
+  }
   return (
     <div className={styles.mainBody}>
       <Modal
@@ -151,10 +189,11 @@ function Popup(props: { content: any }) {
         footer={
           types === true ? null : (
             <>
+              <Button onClick={handleCancel}>取消</Button>
+
               <Button type="primary" onClick={handleOk}>
                 保存
               </Button>
-              <Button onClick={handleCancel}>取消</Button>
             </>
           )
         }
@@ -181,7 +220,9 @@ function Popup(props: { content: any }) {
           </TabPane>
           <TabPane tab="外发管理" key="2">
             <Outgoing
+              whetherEditor={whetherEditor}
               types={types}
+              AllData={AllData}
               preservation={preservation}
               externalProduceOrderId={externalProduceOrderId}
             />

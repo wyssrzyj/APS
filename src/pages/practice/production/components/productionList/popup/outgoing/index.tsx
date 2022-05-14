@@ -13,12 +13,19 @@ import React, { useEffect, useState } from 'react'
 
 import { productionSingleApis } from '@/recoil/apis'
 
+import Forms from './forms'
 // import Excl from '@/components/excel/Import/index'
 import styles from './index.module.less'
 import Popup from './Popup/index'
 
 const Outgoing = (props: any) => {
-  const { types, externalProduceOrderId, preservation } = props
+  const {
+    AllData,
+    types,
+    externalProduceOrderId,
+    preservation,
+    whetherEditor
+  } = props
   const { processOutsourcing, wholeOrder } = productionSingleApis
 
   const [pageNum, setPageNum] = useState<number>(1)
@@ -28,13 +35,19 @@ const Outgoing = (props: any) => {
     pageNum: pageNum,
     pageSize: pageSize
   })
+
   const [total, setTotal] = useState<number>(0)
 
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [editType, setEditType] = useState(false)
   const [outgoing, setOutgoing] = useState<any>()
   const [localData, setLocalData] = useState<any>([]) //本地数据
-  const [localDataTrue, setLocalDataTrue] = useState<any>([]) //**本地数据-值为true 用于保存**
+  const [localDataTrue, setLocalDataTrue] = useState<any>([]) //**本地数据 用于保存**
+  const [list, setList] = useState<any>([]) //初始数据
+  const [data, setData] = useState<any>([]) //处理后的数据
+  const [factoryData, setFactoryData] = useState<any>([]) //筛选条件
+  const [allData, setAllData] = useState<any>([]) //全部数据
+  const [processedData, setProcessedData] = useState<any>([]) //处理后的数据
 
   interface Item {
     key: string
@@ -52,17 +65,16 @@ const Outgoing = (props: any) => {
   map.set('6', '缝制线外组')
 
   const [form] = Form.useForm()
-  const [list, setList] = useState<any>([])
-  const [data, setData] = useState<any>([])
+
   useEffect(() => {
     setParams({ pageNum: pageNum, pageSize: pageSize })
   }, [pageNum, pageSize])
 
+  //只保存选中的
   useEffect(() => {
-    const needType = localData.filter(
-      (item: { need: boolean }) => item.need === true
-    )
-    setLocalDataTrue(needType)
+    setLocalDataTrue(localData)
+    // 传递出去
+    preservation && preservation(localData)
   }, [localData])
 
   //接口
@@ -77,6 +89,7 @@ const Outgoing = (props: any) => {
       ...e,
       externalProduceOrderId: externalProduceOrderId
     })
+
     if (!isEmpty(res.records)) {
       // 添加 状态判断是否选中
       res.records.map(
@@ -86,10 +99,42 @@ const Outgoing = (props: any) => {
         }
       )
       setTotal(res.total)
-      setList(res.records)
+      setList([...res.records])
+    }
+  }
+  useEffect(() => {
+    getAllData()
+  }, [])
+  //获取所有的数据
+  const getAllData = async () => {
+    const res = await processOutsourcing({
+      pageNum: 1,
+      pageSize: 1000,
+      externalProduceOrderId: externalProduceOrderId
+    })
+    if (!isEmpty(res.records)) {
+      // 添加 状态判断是否选中
+      res.records.map(
+        (item: { need: boolean; section: string; outTime: null }) => {
+          item.need =
+            item.section === '5' ? true : item.outTime !== null ? true : false
+        }
+      )
+      setAllData(res.records)
     }
   }
 
+  //  **判断接口数据中  是否有本地数据  有则替换 反之则 传递接口原始的**
+  const oldAndNewFilter = (v: { idx: any }, total: any) => {
+    const saveIndex = total.findIndex((item: any) => item.idx === v.idx)
+    //替换
+    if (saveIndex !== -1) {
+      total.splice(saveIndex, 1, v)
+      setData([...total])
+    } else {
+      setData([...total])
+    }
+  }
   useEffect(() => {
     if (!isEmpty(localDataTrue)) {
       localDataTrue.map((item: any) => {
@@ -99,19 +144,37 @@ const Outgoing = (props: any) => {
       setData([...list])
     }
   }, [list, localDataTrue])
-  //传递给父级
-  useEffect(() => {
-    preservation && preservation(localDataTrue)
-  }, [localDataTrue])
 
-  //  **判断接口数据中  是否有本地数据  有则替换**
-  const oldAndNewFilter = (v: { idx: any }, total: any) => {
+  //保存数据需要的是 全部数据中为true 的值
+  //全部数据的处理 ------开始---
+  const processedOldAndNewFilter = (v: { idx: any }, total: any) => {
     const saveIndex = total.findIndex((item: any) => item.idx === v.idx)
+    //替换
     if (saveIndex !== -1) {
       total.splice(saveIndex, 1, v)
-      setData([...total]) //处理后的数据
-    } //处理后的数据
+      setProcessedData([...total])
+    } else {
+      setProcessedData([...total])
+    }
   }
+
+  useEffect(() => {
+    if (!isEmpty(localDataTrue)) {
+      localDataTrue.map((item: any) => {
+        processedOldAndNewFilter(item, allData)
+      })
+    } else {
+      setProcessedData([...allData])
+    }
+    //判断接口数据中是否有本地 有替换
+  }, [allData, localDataTrue])
+  useEffect(() => {
+    const needType = processedData.filter(
+      (item: { need: boolean }) => item.need === true
+    )
+    AllData && AllData(needType)
+  }, [processedData])
+  //全部数据的处理 ------结束---
 
   const columns: any = [
     {
@@ -189,6 +252,7 @@ const Outgoing = (props: any) => {
           <div className={styles.flex}>
             {!record.need ? null : (
               <Input
+                addonAfter="天"
                 disabled={types}
                 defaultValue={type}
                 onChange={(e) => {
@@ -229,13 +293,25 @@ const Outgoing = (props: any) => {
 
   // *** 判断本地数组是否有 有添加反之且替换**
   const localDataHandle = (data: any) => {
+    // 操作过的数据存起来且不能重复-》用于保存
+    // 查看当前页的数据 是否有操作过的  有则替换
+    // 存起来 提交的时候判断是否填写时间
+
     // 单条数据
-    const saveIndex = localData.findIndex((item: any) => item.idx === data.idx) //找下表
+    const cloneLocalData = cloneDeep(localData)
+
+    const saveIndex = cloneLocalData.findIndex(
+      (item: any) => item.idx === data.idx
+    ) //找下表
+
     if (saveIndex === -1) {
-      setLocalData([...localData, data])
+      //添加
+      cloneLocalData.push(data)
+      setLocalData([...cloneLocalData])
     } else {
-      localData.splice(saveIndex, 1, data) //处理后的数据
-      setLocalData([...localData])
+      //替换
+      cloneLocalData.splice(saveIndex, 1, data) //处理后的数据
+      setLocalData([...cloneLocalData])
     }
   }
 
@@ -259,9 +335,16 @@ const Outgoing = (props: any) => {
     setPageNum(page)
     setPageSize(pageSize)
   }
+  //头部form的数据
+  const FormData = (e: any) => {
+    setParams({ ...params, ...e })
+  }
   return (
     <div className={styles.table}>
       <div className={styles.top}>生产单外发管理</div>
+
+      <Forms factoryData={factoryData} FormData={FormData}></Forms>
+
       <Table
         rowKey={'idx'}
         scroll={{ y: 'calc(100vh - 500px)' }}
@@ -289,7 +372,7 @@ const Outgoing = (props: any) => {
         >
           整单外发
         </Button>
-        {editType === true ? <div className={styles.edit}>已编辑</div> : null}
+        {whetherEditor === 2 ? <div className={styles.edit}>已编辑</div> : null}
       </div>
       {/* 弹窗 */}
       <Popup

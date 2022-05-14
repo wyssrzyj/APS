@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-12 16:36:38
+ * @LastEditTime: 2022-05-14 12:26:59
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -301,6 +301,25 @@ export const calculateCompletionTime = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
       `/aps/produce-assignment-detail/finish-time`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+//保存发布生产单和历史记录
+export const releaseSchedule = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail/save-detail-pulished`,
       params
     )
     if (res.code !== 200) {

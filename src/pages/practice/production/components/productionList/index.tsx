@@ -17,8 +17,8 @@ function Production() {
   const map = new Map()
   map.set(1, '待计划')
   map.set(2, '已计划')
-  map.set(3, '成产中')
-  map.set(4, '成产完成')
+  map.set(3, '生产中')
+  map.set(4, '生产完成')
 
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
@@ -27,20 +27,23 @@ function Production() {
   const [types, setType] = useState(false) //编辑或者查看
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [loading, setLoading] = useState(true) //删除弹窗
-  const defaultPageSize = 10
+  const defaultPageSize = 5
   const [params, setParams] = useState<any>({
     pageNum: 1,
     pageSize: defaultPageSize
   })
+
   const [getDetailsId, setGetDetailsId] = useState() //工艺需要的id
   const [externalProduceOrderId, setExternalProduceOrderId] = useState() //外发需要的id
   const [list, setList] = useState([])
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
+  const [whetherEditor, setWhetherEditor] = useState<any>([])
 
   //工厂名称
   useEffect(() => {
     getData()
   }, [])
+
   const getData = async () => {
     const res: any = await factoryList()
     const arr: any = res.data
@@ -59,6 +62,10 @@ function Production() {
   useEffect(() => {
     api(params)
   }, [params])
+
+  const refreshData = () => {
+    api(params)
+  }
 
   const api = async (item: any) => {
     //计划完成日期
@@ -176,7 +183,7 @@ function Production() {
               className={styles.operation_item}
               onClick={() => editUser(false, _row)}
             >
-              查看详情
+              查看
             </div>
             {_row.status !== 2 ? (
               <div
@@ -195,7 +202,11 @@ function Production() {
 
   //头部form的数据
   const FormData = (e: any) => {
-    setParams({ ...params, ...e, pageNum: 1 })
+    if (e.factoryId !== undefined) {
+      setParams({ pageNum: 1, pageSize, ...e })
+    } else {
+      setParams({ pageNum, pageSize, ...e })
+    }
   }
   const onPaginationChange = (
     page: React.SetStateAction<number>,
@@ -205,6 +216,8 @@ function Production() {
     setPageSize(pageSize)
   }
   const editUser = (type: boolean, row: any) => {
+    setWhetherEditor(row.outsourceType)
+
     setGetDetailsId(row.externalProduceOrderId)
     setExternalProduceOrderId(row.externalProduceOrderId)
     if (type === true) {
@@ -220,9 +233,11 @@ function Production() {
     console.log('删除逻辑')
   }
   const content = {
+    whetherEditor,
     setGetDetailsId,
     isModalVisible,
     setIsModalVisible,
+    refreshData,
     types,
     getDetailsId,
     externalProduceOrderId

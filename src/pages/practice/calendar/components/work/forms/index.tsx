@@ -72,10 +72,11 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
     }
   }
   const getFactoryName = (e: any) => {
-    console.log(e)
     setListID(e)
+    //工厂更新 裙带关系重置
     const cloneList = cloneDeep(list)
     cloneList.teamId = null
+    setTreeData([])
     setList({ ...cloneList })
   }
 

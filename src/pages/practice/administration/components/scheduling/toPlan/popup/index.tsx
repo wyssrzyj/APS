@@ -233,6 +233,7 @@ function Popup(props: { content: any }) {
     const cloneList = cloneDeep(list)
     cloneList.shopId = value
     cloneList.teamId = null
+    setTeamName([])
 
     setList({ ...cloneList })
     setShopName(value)
@@ -369,7 +370,11 @@ function Popup(props: { content: any }) {
                 name="shopId"
                 rules={[{ required: sectionType, message: '请输入工作班组' }]}
               >
-                <Select placeholder="请选择所属工段" onChange={handleChange}>
+                <Select
+                  allowClear
+                  placeholder="请选择所属工段"
+                  onChange={handleChange}
+                >
                   {factoryName.map((item: any) => (
                     // eslint-disable-next-line react/jsx-key
                     <Option key={item.id} value={item.id}>
@@ -385,7 +390,7 @@ function Popup(props: { content: any }) {
                 name="teamId"
                 rules={[{ required: sectionType, message: '请输入工作班组' }]}
               >
-                <Select placeholder="请选择工作班组" onChange={team}>
+                <Select allowClear placeholder="请选择工作班组" onChange={team}>
                   {teamName.map((item: any) => (
                     <Option key={item.id} value={item.id}>
                       {item.name}

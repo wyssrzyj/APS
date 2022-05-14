@@ -1,5 +1,5 @@
 import { Button, message, Select } from 'antd'
-import { cloneDeep, isError, keys } from 'lodash'
+import { cloneDeep, isEmpty, isError, keys } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
@@ -32,6 +32,7 @@ function Index() {
   const [notWork, setNotWork] = useState<any[]>([]) //不可工作时间
   const [checkIDs, setCheckIDs] = useState<any[]>([]) //校验id
   const [promptList, setPromptList] = useState<any[]>([]) //提示数据
+  const [release, setRelease] = useState<any[]>() //发布
 
   const { figureData, productionView, workingDate } = schedulingApis
 
@@ -129,7 +130,6 @@ function Index() {
   //  图刷新
   const updateMethod = () => {
     console.log('图刷新', formData, gunterType)
-
     getChart(formData, gunterType)
   }
 
@@ -145,39 +145,48 @@ function Index() {
   const materials = () => {
     setMaterialModal(true)
   }
-
+  //判断任务是否分派
   const toggleRuleVisible = (visible: boolean) => {
     setVisibleRule(visible)
   }
+
   const toggleVerifyVisible = (visible: boolean) => {
     const arr: any[] = []
-    promptList.map((item: { title: any }) => {
-      arr.push(item.title)
+    // checkIDs
+
+    promptList.map((item: { externalProduceOrderNum: any }) => {
+      arr.push(item.externalProduceOrderNum)
     })
+
+    //选中里有不满足的就进行提示
     if (visible === true && arr.length > 0) {
-      message.warning(`${arr.join('、')}不可用，请取消选中`)
+      message.warning(`生产单${arr.join('、')}任务未分派`)
     }
-    if (arr.length <= 0) {
-      setVisibleVerify(visible)
+
+    if (!isEmpty(checkIDs)) {
+      if (arr.length <= 0) {
+        setVisibleVerify(visible)
+      }
+    } else {
+      message.warning(`暂无已计划数据`)
     }
   }
-  // 校验排程需要的数据=
+  // 校验排程需要的数据
   const checkSchedule = (plannedID: any, toPlanID: any, stateAdd: any) => {
     if (!isError(stateAdd)) {
-      //可用
-      const available = stateAdd.filter(
-        (item: { type: boolean }) => item.type === true
-      )
-      //不可用
+      //判断选中里是否有不满足的
       const doNotUse = stateAdd.filter(
         (item: { type: boolean }) => item.type === false
       )
-      // 提示 判断选中的中是否有不可用的
-      // plannedID
       const prompt = plannedID.map((item: any) => {
         return filterPrompt(item, doNotUse)
       })
       setPromptList(prompt.flat(Infinity))
+
+      //可用
+      const available = stateAdd.filter(
+        (item: { type: boolean }) => item.type === true
+      )
 
       //待计划数据
       const waiting = available
@@ -185,7 +194,8 @@ function Index() {
           return filterList(plannedID, item)
         })
         .flat(Infinity)
-      setCheckIDs(waiting.concat(toPlanID))
+
+      setCheckIDs(waiting.concat(toPlanID)) //把选中里可用的和已计划传递出去
     }
   }
   const filterList = (data: any[], v: { externalProduceOrderId: any }) => {
@@ -205,6 +215,10 @@ function Index() {
   }
   function handleChange(value: any) {
     setGunterType(value)
+  }
+  const update = () => {
+    console.log('点击发布')
+    setRelease(formData)
   }
   return (
     <div className={styles.qualification}>
@@ -239,6 +253,7 @@ function Index() {
                 gunterType={gunterType}
                 formData={formData}
                 remind={remind}
+                release={release}
               />
             </div>
             {/* 甘特图 */}
@@ -284,6 +299,7 @@ function Index() {
       )}
       {visibleVerify && (
         <Verification
+          update={update}
           checkIDs={checkIDs}
           visibleVerify={visibleVerify}
           onCancel={() => toggleVerifyVisible(false)}

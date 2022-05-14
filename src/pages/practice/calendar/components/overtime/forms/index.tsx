@@ -76,6 +76,8 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
     setListID(e)
     const cloneList = cloneDeep(list)
     cloneList.teamId = null
+    setTreeData([])
+
     setList({ ...cloneList })
   }
 

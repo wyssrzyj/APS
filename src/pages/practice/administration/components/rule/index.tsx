@@ -75,7 +75,11 @@ function Rule() {
     }
   }
   const FormData = (e: any) => {
-    setParams({ ...params, ...e })
+    if (e.factoryId !== undefined) {
+      setParams({ pageNum: 1, pageSize, ...e })
+    } else {
+      setParams({ pageNum, pageSize, ...e })
+    }
   }
   useEffect(() => {
     ;(async () => {
