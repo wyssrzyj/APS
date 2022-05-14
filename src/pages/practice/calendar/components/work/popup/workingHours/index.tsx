@@ -23,7 +23,7 @@ function WorkingHours(props: {
         ])
       : setData(edit.times)
 
-    console.log('工作时间', edit.times)
+    console.log('状态', type)
   }, [type, edit])
 
   const start = (index: string | number, e: moment.MomentInput) => {

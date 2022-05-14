@@ -16,8 +16,9 @@ function ToPlan(props: {
   gunterType: any
   updateMethod: any
   checkSchedule: any
+  release: any
 }) {
-  const { remind, formData, updateMethod, checkSchedule } = props
+  const { remind, formData, updateMethod, checkSchedule, release } = props
   const {
     listProductionOrders,
     unlockWork,
@@ -42,7 +43,8 @@ function ToPlan(props: {
   const [currentItem, setCurrentItem] = useState<any>() //点击的值.
   const [toPlanID, setToPlanID] = useState<any>([]) //待计划选中的id
   const [plannedID, setPlannedID] = useState<any>([]) //已计划的id
-  const [stateAdd, setStateAdd] = useState<any>([]) //状态添加版本
+
+  const [stateAdd, setStateAdd] = useState<any>([])
 
   const [factoryName, setFactoryName] = useState<any>([]) //车间
   const [teamName, setTeamName] = useState<any>([]) ///班组
@@ -74,6 +76,13 @@ function ToPlan(props: {
       workshopTeam(formData)
     }
   }, [formData])
+
+  useEffect(() => {
+    if (release !== undefined) {
+      dataAcquisition(release)
+    }
+  }, [release])
+
   //效率模板
   useEffect(() => {
     efficiency()
@@ -110,15 +119,16 @@ function ToPlan(props: {
     }
   }
 
+  //给待计划所有数据添加状态 判断是否可用于校验排程
   useEffect(() => {
     if (!isEmpty(treeData)) {
       treeData.map((item: any) => {
         item.type = judgeTeamId(item.children)
       })
-
       setStateAdd(treeData)
     }
   }, [treeData])
+
   // 校验排程 判断条件 detailList teamId 时间
   const judgeTeamId = (data: any) => {
     if (!isEmpty(data)) {
@@ -132,14 +142,20 @@ function ToPlan(props: {
           sum.push(v.detailList)
         })
         const flat = sum.flat(Infinity)
-        return flat.every(
-          (s) =>
-            s.planEndTime !== null &&
-            s.planStartTime !== null &&
-            s.teamId !== null
-        )
+        //先判断时间 是否全部满足
+        if (
+          flat.every((s) => s.planEndTime !== null && s.planStartTime !== null)
+        ) {
+          // 在判断  teamId是否为空 或者 section=5 (外发工段)
+          if (flat.every((s) => s.teamId !== null || s.section === '5')) {
+            return true //现在选中的状态为type了
+          } else {
+            return false
+          }
+        } else {
+          return false
+        }
       } else {
-        //判断 detailList 全部有值
         return false
       }
     }
@@ -157,7 +173,7 @@ function ToPlan(props: {
   ) => {
     !isEmpty(data) &&
       data.map((item) => {
-        item.title = `${item.externalProduceOrderNum}(${item.orderSum})件`
+        item.title = `${item.externalProduceOrderNum}`
         item.children = item.assignmentVOList
         !isEmpty(item.children) &&
           item.children.map((v: any) => {
@@ -296,6 +312,7 @@ function ToPlan(props: {
     setEqual(remind)
     setKeys([remind])
   }, [list, remind])
+
   // 数据刷新
   const dataUpdate = () => {
     dataAcquisition(formData) //树刷新
@@ -422,15 +439,10 @@ function ToPlan(props: {
           </div>
         ) : null}
         {type === 4 ? (
-          <div
-            className={styles.card}
-            // onClick={() => {
-            //   efficiencyMethods(data.id)
-            // }}
-          >
-            <Tag className={styles.tag} color="geekblue">
-              开发中~
-            </Tag>
+          <div className={styles.card}>
+            <div>款名：{data.productName}</div>
+            <div>款号: {data.productNum}</div>
+            <div>数量: {data.orderSum}</div>
           </div>
         ) : null}
       </div>

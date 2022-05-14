@@ -44,7 +44,6 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
       item.value = item.dictValue
       item.id = item.dictValue
     })
-    console.log('~~~~~~~~~~~~', teamData)
 
     setTreeData(teamData)
   }

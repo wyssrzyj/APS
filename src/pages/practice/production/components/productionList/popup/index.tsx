@@ -25,7 +25,8 @@ function Popup(props: { content: any }) {
     types,
     getDetailsId,
     externalProduceOrderId,
-    whetherEditor
+    whetherEditor,
+    refreshData
   } = content
 
   const { workingProcedure, popupPreservation } = productionSingleApis
@@ -40,7 +41,7 @@ function Popup(props: { content: any }) {
   const [caseIds, setCaseIds] = useState([]) //存放id
   const [total, setTotal] = useState() //存放总数
 
-  const defaultPageSize = 10
+  const defaultPageSize = 5
   const [params, setParams] = useState<any>({
     pageNum: 1,
     pageSize: defaultPageSize,
@@ -53,7 +54,11 @@ function Popup(props: { content: any }) {
 
   useEffect(() => {
     if (getDetailsId !== undefined && getDetailsId !== null) {
-      setParams({ ...params, externalProduceOrderId: getDetailsId })
+      getDetails({
+        pageNum: 1,
+        pageSize: defaultPageSize,
+        externalProduceOrderId: getDetailsId
+      })
     }
   }, [getDetailsId])
 
@@ -64,7 +69,7 @@ function Popup(props: { content: any }) {
   }, [params])
   //子项的分页数据
   const pagingData = (e, v) => {
-    setParams({ ...params, pageNum: e, pageSize: v })
+    setParams({ externalProduceOrderId: getDetailsId, pageNum: e, pageSize: v })
   }
 
   const getDetails = async (params: any) => {
@@ -72,7 +77,7 @@ function Popup(props: { content: any }) {
     res.records.map((item) => {
       item.section = map.get(item.section)
     })
-    // total
+
     setUsedList(res.records)
     setTotal(res.total)
   }
@@ -132,11 +137,10 @@ function Popup(props: { content: any }) {
       } else {
         outgoingJudge = true
       }
+
       //全部数据不为空才=true
       let allData = false
       if (!isEmpty(processedData)) {
-        console.log('全部数据', processedData)
-
         const outTimeType = processedData.every((item: any) => {
           return item.outTime !== null && item.outTime !== ''
         })
@@ -149,12 +153,13 @@ function Popup(props: { content: any }) {
         const arr = await popupPreservation({
           productId: getDetailsId,
           externalProduceOrderId: externalProduceOrderId,
-          outsourceProcessDTOList: outgoing,
+          outsourceProcessDTOList: processedData,
           processDTOList: localData
         })
 
         if (arr) {
           message.success('保存成功')
+          refreshData && refreshData()
           handleCancel()
         }
       } else {
@@ -167,6 +172,7 @@ function Popup(props: { content: any }) {
 
   const handleCancel = () => {
     setIsModalVisible(false)
+
     setGetDetailsId(null)
   }
   const preservation = (e: any) => {
@@ -183,10 +189,11 @@ function Popup(props: { content: any }) {
         footer={
           types === true ? null : (
             <>
+              <Button onClick={handleCancel}>取消</Button>
+
               <Button type="primary" onClick={handleOk}>
                 保存
               </Button>
-              <Button onClick={handleCancel}>取消</Button>
             </>
           )
         }

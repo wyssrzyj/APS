@@ -196,7 +196,11 @@ const Index = () => {
   //头部form的数据
   const FormData = (e: any) => {
     console.log(e)
-    setParams({ ...params, ...e })
+    if (e.factoryId !== undefined) {
+      setParams({ pageNum: 1, pageSize, ...e })
+    } else {
+      setParams({ pageNum, pageSize, ...e })
+    }
   }
   const onPaginationChange = (
     page: SetStateAction<number>,

@@ -23,14 +23,10 @@ function Material(props: {
 
   const [selectedData, setSelectedData] = useState<any>([]) //外层 选中的数据
   const [tableList, setTableList] = useState<any>() //table的数据
-  const [sizeList, setSizeList] = useState<any>() //table的尺码
+  const [sizeList, setSizeList] = useState<any>([]) //table的尺码
   const [modifyData, setModifyData] = useState<any>() //修改的值-用于保存
   const [activeKey, setActiveKey] = useState<any>() //当前激活的key
   const [select, setSelect] = useState<any>() //当前选中的值
-
-  useEffect(() => {
-    console.log('是否发生改变', selectedData)
-  }, [selectedData])
   useEffect(() => {
     if (materialList && !isEmpty(materialList)) {
       console.log('选中项', materialList)
@@ -132,12 +128,13 @@ function Material(props: {
         width: 50
       })
     })
-    setSizeList(goodsSize)
+    setSizeList([...goodsSize])
   }
 
   const { TabPane } = Tabs
   const onCancel = () => {
     setMaterialModal(false)
+    setSizeList([])
     refreshList && refreshList()
   }
   const handleCancel = () => {
@@ -187,6 +184,7 @@ function Material(props: {
           refreshList && refreshList()
           setMaterialModal(false)
           update()
+          setSizeList([])
         }
         if (methods === '切换') {
           setActiveKey(key)
@@ -203,11 +201,13 @@ function Material(props: {
     if (state === '2') {
       // 确认 满足才走接口
       const current = selectedData.filter(
-        (item: { externalProduceOrderId: any }) =>
-          item.externalProduceOrderId === key
+        (item: { id: any }) => item.id === activeKey
       )[0]
-
-      added(current, '确认', key)
+      // 下一个
+      const next = selectedData.filter(
+        (item: { id: any }) => item.id === key
+      )[0]
+      added(current, next, '确认', key)
     }
     //切换
     if (state === '1') {
@@ -266,6 +266,7 @@ function Material(props: {
         visible={materialModal}
         centered={true}
         footer={null}
+        destroyOnClose={true}
         maskClosable={false}
         onCancel={onCancel}
       >

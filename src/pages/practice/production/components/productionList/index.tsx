@@ -27,11 +27,12 @@ function Production() {
   const [types, setType] = useState(false) //编辑或者查看
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [loading, setLoading] = useState(true) //删除弹窗
-  const defaultPageSize = 10
+  const defaultPageSize = 5
   const [params, setParams] = useState<any>({
     pageNum: 1,
     pageSize: defaultPageSize
   })
+
   const [getDetailsId, setGetDetailsId] = useState() //工艺需要的id
   const [externalProduceOrderId, setExternalProduceOrderId] = useState() //外发需要的id
   const [list, setList] = useState([])
@@ -42,6 +43,7 @@ function Production() {
   useEffect(() => {
     getData()
   }, [])
+
   const getData = async () => {
     const res: any = await factoryList()
     const arr: any = res.data
@@ -60,6 +62,10 @@ function Production() {
   useEffect(() => {
     api(params)
   }, [params])
+
+  const refreshData = () => {
+    api(params)
+  }
 
   const api = async (item: any) => {
     //计划完成日期
@@ -196,7 +202,11 @@ function Production() {
 
   //头部form的数据
   const FormData = (e: any) => {
-    setParams({ ...params, ...e, pageNum: 1 })
+    if (e.factoryId !== undefined) {
+      setParams({ pageNum: 1, pageSize, ...e })
+    } else {
+      setParams({ pageNum, pageSize, ...e })
+    }
   }
   const onPaginationChange = (
     page: React.SetStateAction<number>,
@@ -227,6 +237,7 @@ function Production() {
     setGetDetailsId,
     isModalVisible,
     setIsModalVisible,
+    refreshData,
     types,
     getDetailsId,
     externalProduceOrderId

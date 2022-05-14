@@ -634,8 +634,8 @@ const BreakUp = (props: any) => {
     ) {
       arr.map((item: any) => {
         item.isLocked = item.isLocked === true ? 1 : 0
+        item.id = null
       })
-      console.log(workSplitList)
       const sum = await splitMethod({
         assignmentId: workSplitList.id,
         data: arr

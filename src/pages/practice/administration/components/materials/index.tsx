@@ -16,7 +16,7 @@ function Materials() {
   const [pageSize, setPageSize] = useState<number>(10)
   const [total, setTotal] = useState<number>(0)
   const [params, setParams] = useState<any>({
-    pageNum: 1,
+    pageNum: pageNum,
     pageSize: pageSize
   })
   const [selected, setSelected] = useState([]) //选中的id
@@ -130,7 +130,11 @@ function Materials() {
   }, [pageNum, pageSize])
 
   useEffect(() => {
-    setParams({ pageNum: 1, pageSize, ...queryData })
+    if (queryData.factoryId !== undefined) {
+      setParams({ pageNum: 1, pageSize, ...queryData })
+    } else {
+      setParams({ pageNum, pageSize, ...queryData })
+    }
   }, [queryData])
 
   //获取列表数据

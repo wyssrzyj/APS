@@ -42,7 +42,7 @@ const Outgoing = (props: any) => {
   const [editType, setEditType] = useState(false)
   const [outgoing, setOutgoing] = useState<any>()
   const [localData, setLocalData] = useState<any>([]) //本地数据
-  const [localDataTrue, setLocalDataTrue] = useState<any>([]) //**本地数据-值为true 用于保存**
+  const [localDataTrue, setLocalDataTrue] = useState<any>([]) //**本地数据 用于保存**
   const [list, setList] = useState<any>([]) //初始数据
   const [data, setData] = useState<any>([]) //处理后的数据
   const [factoryData, setFactoryData] = useState<any>([]) //筛选条件
@@ -72,10 +72,9 @@ const Outgoing = (props: any) => {
 
   //只保存选中的
   useEffect(() => {
-    const needType = localData.filter(
-      (item: { need: boolean }) => item.need === true
-    )
-    setLocalDataTrue(needType)
+    setLocalDataTrue(localData)
+    // 传递出去
+    preservation && preservation(localData)
   }, [localData])
 
   //接口
@@ -144,14 +143,9 @@ const Outgoing = (props: any) => {
     } else {
       setData([...list])
     }
-    //判断接口数据中是否有本地 有替换
-    // setData([...list])
   }, [list, localDataTrue])
-  //传递给父级
-  useEffect(() => {
-    preservation && preservation(localDataTrue)
-  }, [localDataTrue])
 
+  //保存数据需要的是 全部数据中为true 的值
   //全部数据的处理 ------开始---
   const processedOldAndNewFilter = (v: { idx: any }, total: any) => {
     const saveIndex = total.findIndex((item: any) => item.idx === v.idx)
@@ -258,6 +252,7 @@ const Outgoing = (props: any) => {
           <div className={styles.flex}>
             {!record.need ? null : (
               <Input
+                addonAfter="天"
                 disabled={types}
                 defaultValue={type}
                 onChange={(e) => {
@@ -275,7 +270,6 @@ const Outgoing = (props: any) => {
   //单选处理
   const executionMethod = (e: CheckboxChangeEvent, record: any) => {
     record.need = e.target.checked
-
     const sum = cloneDeep(data)
     const subscript = sum.findIndex((item: any) => item.idx === record.idx)
     sum.splice(subscript, 1, record)
