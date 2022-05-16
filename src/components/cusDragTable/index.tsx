@@ -79,6 +79,7 @@ type CusTableProps = {
   /* 表格缓存的字段名 */
   storageField: string
   [key: string]: any
+  noNeedDropdown?: boolean
 }
 
 /**
@@ -99,6 +100,7 @@ const CusDragTable = (props: CusTableProps) => {
     cusBarLeft,
     cusBarRight,
     storageField,
+    noNeedDropdown,
     ...rest
   } = props
 
@@ -288,22 +290,24 @@ const CusDragTable = (props: CusTableProps) => {
         </div>
         <div className={styles.tableBtnBoxRight}>
           {cusBarRight && cusBarRight()}
-          <Dropdown
-            visible={display}
-            onVisibleChange={onVisibleChange}
-            overlay={() => (
-              <DropContent
-                initData={cusColumns}
-                callback={callback}
-              ></DropContent>
-            )}
-            arrow
-            trigger={['click']}
-          >
-            <Button onClick={onHeadChange} icon={<FunnelPlotOutlined />}>
-              自定义表头
-            </Button>
-          </Dropdown>
+          {!noNeedDropdown && (
+            <Dropdown
+              visible={display}
+              onVisibleChange={onVisibleChange}
+              overlay={() => (
+                <DropContent
+                  initData={cusColumns}
+                  callback={callback}
+                ></DropContent>
+              )}
+              arrow
+              trigger={['click']}
+            >
+              <Button onClick={onHeadChange} icon={<FunnelPlotOutlined />}>
+                自定义表头
+              </Button>
+            </Dropdown>
+          )}
         </div>
       </div>
 

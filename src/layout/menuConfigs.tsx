@@ -10,13 +10,13 @@ export const menus = [
         key: 'systemSettingsWork',
         icon: 'jack-yonghu3',
         url: '/systemSettingsWork'
+      },
+      {
+        label: '用户管理',
+        key: 'userManage',
+        icon: 'jack-yonghu3',
+        url: '/userManage'
       }
-      // {
-      //   label: '用户管理',
-      //   key: 'user',
-      //   icon: 'jack-yonghu3',
-      //   url: '/userManage'
-      // },
 
       // {
       //   label: '部门管理',
@@ -159,5 +159,51 @@ export const menus = [
         url: '/actualProduction'
       }
     ]
+  }
+]
+
+type viewFormConfig = {
+  label: string
+  name: string
+  field: string
+  value: any
+  type: string
+  treeData: any
+  required: boolean
+  treeCheckable: boolean
+  placeholder: string
+  disabled: boolean
+  allowClear: boolean
+  options: any
+  span: number
+}
+
+export const editPwdModalConfig: Array<Partial<viewFormConfig>> = [
+  {
+    label: '原密码',
+    name: 'oldPassword',
+    field: 'oldPassword',
+    value: '',
+    type: 'passwordInput',
+    required: true,
+    placeholder: '请输入原密码'
+  },
+  {
+    label: '新密码',
+    name: 'newPassword',
+    field: 'newPassword',
+    value: '',
+    type: 'passwordInput',
+    required: true,
+    placeholder: '请输入新密码'
+  },
+  {
+    label: '确认新密码',
+    name: 'confirmPassword',
+    field: 'confirmPassword',
+    value: '',
+    type: 'passwordInput',
+    required: true,
+    placeholder: '请输入新密码'
   }
 ]

@@ -97,7 +97,7 @@ function Rule() {
 
   useEffect(() => {
     const nConfigs: any[] = cloneDeep(configs)
-    nConfigs[1]['options'] = facList
+    nConfigs[0]['options'] = facList
     setConfigs(nConfigs)
   }, [facList])
 
@@ -108,7 +108,7 @@ function Rule() {
       item.label = item.teamName
       item.value = item.id
     })
-    nConfigs[2]['options'] = list
+    nConfigs[1]['options'] = list
     setConfigs(nConfigs)
   }
 

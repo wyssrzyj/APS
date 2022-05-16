@@ -1,3 +1,10 @@
+/*
+ * @Author: zjr
+ * @Date: 2022-04-26 16:43:54
+ * @LastEditTime: 2022-05-13 18:29:23
+ * @Description:
+ * @LastEditors: zjr
+ */
 import { message } from 'antd'
 
 import axios from '@/utils/axios'
@@ -34,7 +41,6 @@ export const teamList = async (params: any) => {
     if (res) {
       return res.data || []
     }
-    return []
   } catch (e) {
     console.log(e)
   }
@@ -49,7 +55,6 @@ export const factoryList = async () => {
     if (res) {
       return res || []
     }
-    return []
   } catch (e) {
     console.log(e)
   }

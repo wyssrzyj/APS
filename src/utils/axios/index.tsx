@@ -20,7 +20,7 @@ customAxios.interceptors.request.use(
     const aToken = getToken()
     const rToken = getRefresh()
     // 更新token
-    request.headers.authorization = aToken
+    request.headers.Authorization = aToken
     request.headers.refresh_token = rToken
     return request
   },
@@ -36,9 +36,15 @@ customAxios.interceptors.response.use(
     const { code } = data
     const { expire } = getCurrentUser()
     const flag = expire - Date.now() < 1000
-    const noTokenList = ['/user/login']
+    const noTokenList = ['/login']
     const pathFlag = !noTokenList.includes(location.pathname)
 
+    if (pathFlag && !getToken()) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('systemUuid')
+      localStorage.removeItem('currentUser')
+      location.replace('/login')
+    }
     if (pathFlag && (flag || code === 40101)) {
       // if (!isRefreshing) {
       //   dealRefresh()
@@ -50,9 +56,9 @@ customAxios.interceptors.response.use(
       })
       return retryOriginalRequest
     }
-    if (location.pathname !== '/user/login' && code === 401) {
+    if (location.pathname !== '/login' && code === 401) {
       // token失效
-      location.replace('/user/login')
+      location.replace('/login')
     }
 
     return response.data
@@ -83,7 +89,7 @@ const apiAxios = async (
     '/api/sms/send-code',
     '/api/user/register',
     '/api/user/getUserByMobilePhone',
-    '/api/user/login'
+    '/aps/sys/user/login'
   ]
   const outFlag = url.includes('export') || url.includes('download')
 
@@ -129,7 +135,7 @@ const apiAxios = async (
       responseData.code !== 40101 &&
         responseData.msg &&
         message.error(responseData.msg)
-      // responseData.code === 40101 && location.replace('/user/login')
+      // responseData.code === 40101 && location.replace('/login')
       return Promise.reject(responseData)
     }
   } catch (error) {

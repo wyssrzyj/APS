@@ -42,6 +42,7 @@ export type FormNodeProps = {
     | 'checkbox'
     | 'tree'
     | 'input'
+    | 'passwordInput'
     | 'switch'
     | 'textarea'
     | 'multipleSelect'
@@ -314,6 +315,17 @@ const FormNode = (props: FormNodeProps) => {
               ))}
           </Space>
         </Group>
+      )
+    case 'passwordInput':
+      return (
+        <Input.Password
+          onChange={valueChange}
+          value={nodeValue}
+          disabled={disabled}
+          placeholder={placeholder}
+          suffix={suffix}
+          {...other}
+        />
       )
     case 'input':
       return (

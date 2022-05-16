@@ -234,7 +234,7 @@ function Vacations() {
               pageSize, //每页条数
               current: pageNum, //	当前页数
               total, //数据总数
-              // position: ['bottomCenter'], //居中..
+              // position: ['bottomCenter'], //居中
               pageSizeOptions: ['10', '20', '50'],
               onChange: onPaginationChange //获取当前页码是一个function
             }}

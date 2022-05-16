@@ -1,51 +1,53 @@
-// import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
-// import 'dhtmlx-gantt/codebase/locale/locale_cn' // 本地化
+/*
+ * @Author: zjr
+ * @Date: 2022-04-21 09:24:10
+ * @LastEditTime: 2022-05-13 17:39:52
+ * @Description:
+ * @LastEditors: zjr
+ */
+import { Col, Divider, Row, Space } from 'antd'
 
-import { Button } from 'antd'
-//----------------
-import { useEffect, useState } from 'react'
-import { useRecoilState } from 'recoil'
+import { Title } from '@/components'
 
-import { commonState, dockingData } from '@/recoil'
-import { dockingDataApis } from '@/recoil/apis'
-
+import DynamicContent from './components/dynamicContent'
+import DynamicTable from './components/dynamicTable'
 import styles from './index.module.less'
-
 const Home = () => {
-  //设置可读可写
-  const [value, setValue] = useRecoilState(commonState.textState)
-  const [name, setName] = useRecoilState(commonState.lyj)
-
-  //Mes数据
-  const [FactoryData, setFactoryData] = useRecoilState(
-    dockingData.globalFactoryData
-  ) //工厂列表
-
-  const executionMethod = () => {
-    setName('练习传递显示')
-  }
-  const { factoryList, workshopList, teamList, shiftTree } = dockingDataApis
-  useEffect(() => {
-    dataDictionary()
-  }, [])
-  const dataDictionary = async () => {
-    // setName('初始值')
-    const factoryData = await factoryList() //工厂列表
-    setFactoryData(factoryData)
-    console.log('工厂列表', factoryData)
-  }
   return (
-    // 多个样式处理方法classNames 可使用三元.
-    <div>
-      <input
-        value={'练习传递显示'}
-        onChange={(e) => setValue(e.target.value)}
-      />
-      <button onClick={executionMethod}>存全局的数据</button>
-      {/* 获取全局数据 */}
-      <div>lyj8848：{name}</div>
-      <br />
-      {/* <div>全局 【字典数据测试】{text}</div> */}
+    <div className={styles.outContainer}>
+      {/* <Title title={'首页'}></Title> */}
+      <Row gutter={24}>
+        <Col span={12}>
+          <DynamicContent
+            key="manufactureOrder"
+            title="生产单动态"
+            type="manufactureOrder"
+          />
+        </Col>
+        <Col span={12}>
+          <DynamicContent
+            key="manufactureTask"
+            title="生产任务动态"
+            type="manufactureTask"
+          />
+        </Col>
+      </Row>
+      <div className={styles.dynamicTableContainer}>
+        <div>
+          <DynamicTable
+            title="生产延期查询"
+            isDelay={true}
+            key="productDelayTable"
+          />
+        </div>
+        <div className={styles.deliverLine}></div>
+        <div>
+          <DynamicTable
+            title="齐套生产单库存变动查询"
+            key="productChangeTable"
+          />
+        </div>
+      </div>
     </div>
   )
 }
