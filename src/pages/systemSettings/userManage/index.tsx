@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 14:52:29
- * @LastEditTime: 2022-05-16 09:54:06
+ * @LastEditTime: 2022-05-16 13:19:59
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  */
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, message, Modal, Switch } from 'antd'
@@ -33,7 +33,7 @@ const UserManage = () => {
   const [facList, setFacList] = useState([])
   const [configs, setConfigs] = useState(searchConfig)
   const [modalConfig, setModalConfig] = useState(modalFormConfig)
-  const [rowInfo, setRowInfo] = useState({})
+  const [rowInfo, setRowInfo] = useState<any>({})
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [isSystemModalVisible, setIsSystemModalVisible] = useState(false)
   const [params, setParams] = useState<Record<string, any>>({
