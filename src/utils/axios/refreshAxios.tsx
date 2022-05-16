@@ -1,3 +1,10 @@
+/*
+ * @Author: zjr
+ * @Date: 2022-04-21 09:21:10
+ * @LastEditTime: 2022-05-13 17:55:46
+ * @Description:
+ * @LastEditors: zjr
+ */
 import axios from 'axios'
 
 import { getRefresh, getToken } from '../tool'
@@ -6,7 +13,7 @@ const rToken = ''
 
 const refreshAxios = axios.create({
   headers: {
-    authorization: getToken(),
+    Authorization: getToken(),
     refresh_token: getRefresh()
   }
 } as any)
@@ -29,7 +36,7 @@ const refreshAxios = axios.create({
 //     const { status } = response
 //     if (status === 401) {
 //       // 401 跳登录页
-//       location.replace('/user/login')
+//       location.replace('/login')
 //     }
 //   }
 // }
@@ -53,7 +60,7 @@ const refreshAxios = axios.create({
 //     const { status } = response
 //     if (status === 401) {
 //       // 401 跳登录页
-//       location.replace('/user/login')
+//       location.replace('/login')
 //     }
 //   }
 // }

@@ -4,13 +4,6 @@ const { SHOW_PARENT } = TreeSelect
 
 export const searchConfigs = [
   {
-    label: '模板名称',
-    field: 'templateName',
-    type: 'input',
-    allowClear: true,
-    placeholder: '请输入模板名称'
-  },
-  {
     label: '工厂名称',
     field: 'factoryId',
     type: 'select',
@@ -25,6 +18,13 @@ export const searchConfigs = [
     placeholder: '请选择工作班组',
     type: 'select',
     options: []
+  },
+  {
+    label: '模板名称',
+    field: 'templateName',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入模板名称'
   }
 ]
 

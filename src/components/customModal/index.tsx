@@ -31,8 +31,7 @@ const CustomModal = (props: Record<string, any>) => {
     try {
       if (validateFields) {
         const values = await validateFields()
-        callback && (await callback(values))
-        cancel && cancel()
+        callback && callback(values, initialValues)
       }
     } catch (err) {
       console.log(err, 'error')

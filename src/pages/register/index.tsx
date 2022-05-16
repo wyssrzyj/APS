@@ -91,7 +91,7 @@ const Register = () => {
       }
       const registerRes = await register(params)
       if (registerRes && registerRes.success) {
-        navigate('/user/login')
+        navigate('/login')
         localStorage.setItem('currentUser', JSON.stringify({}))
       }
     } catch (err) {
@@ -183,7 +183,7 @@ const Register = () => {
   }
 
   const toLogin = () => {
-    navigate('/user/login')
+    navigate('/login')
   }
 
   return (

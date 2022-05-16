@@ -1,3 +1,10 @@
+/*
+ * @Author: zjr
+ * @Date: 2022-04-07 11:22:20
+ * @LastEditTime: 2022-05-13 18:10:33
+ * @Description:
+ * @LastEditors: zjr
+ */
 import axios, { Method } from 'axios'
 
 import { getRefresh, getToken } from '../tool'
@@ -19,7 +26,7 @@ const refreshToken = async () => {
     withCredentials: true,
     headers: {
       common: {
-        authorization: getToken(),
+        Authorization: getToken(),
         refresh_token: getRefresh()
       }
     }

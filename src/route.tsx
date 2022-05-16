@@ -6,12 +6,9 @@ const Home = React.lazy(() => import('@/pages/home'))
 const Note = React.lazy(() => import('@/pages/note'))
 
 // 登录注册页
-const LoginAndRegister = React.lazy(() => import('@/pages/login'))
-const LoginContent = React.lazy(() => import('@/pages/login/content'))
+const Login = React.lazy(() => import('@/pages/login'))
 const Register = React.lazy(() => import('@/pages/register'))
 const Reset = React.lazy(() => import('@/pages/login/reset'))
-// 用户管理
-const UserManage = React.lazy(() => import('@/pages/user'))
 // 部门管理
 const DepartmentManage = React.lazy(() => import('@/pages/department'))
 // 角色管理
@@ -19,8 +16,10 @@ const RoleManage = React.lazy(() => import('@/pages/role'))
 const Demo = React.lazy(() => import('@/pages/demo'))
 //系统参数设置
 const SystemSettingsWork = React.lazy(
-  () => import('@/pages/practice/systemSettings/index')
+  () => import('@/pages/systemSettings/paramsConfig')
 )
+// 用户管理
+const UserManage = React.lazy(() => import('@/pages/systemSettings/userManage'))
 //-------基础数据 开始
 // 工作
 const Work = React.lazy(
@@ -86,16 +85,14 @@ const RouteList = () => {
       <Route path="home/:id" element={<Home />} />
       <Route path="demo" element={<Demo />} />
       <Route path="note" element={<Note />} />
-      <Route path="userManage" element={<UserManage />} />
       <Route path="departmentManage" element={<DepartmentManage />} />
       <Route path="roleManage" element={<RoleManage />} />
-      <Route path="user" element={<LoginAndRegister />}>
-        <Route path="login" element={<LoginContent />} />
-        <Route path="register" element={<Register />} />
-        <Route path="reset" element={<Reset />} />
-      </Route>
+      <Route path="login" element={<Login />} />
+      {/* <Route path="register" element={<Register />} />
+        <Route path="reset" element={<Reset />} /> */}
       {/* 系统参数设置 */}
       <Route path="/systemSettingsWork" element={<SystemSettingsWork />} />
+      <Route path="/userManage" element={<UserManage />} />
       {/* 日历-工作 */}
       <Route path="/work" element={<Work />} />
       {/* 日历-加班 */}

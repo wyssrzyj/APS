@@ -56,7 +56,7 @@ refreshAxios.interceptors.request.use(
     const aToken = getToken()
     const rToken = getRefresh()
     // 更新token
-    request.headers.authorization = aToken
+    request.headers.Authorization = aToken
     request.headers.refresh_token = rToken
     return request
   },
@@ -94,7 +94,7 @@ refreshAxios.interceptors.request.use(
 //       if (+code === 401) {
 //         // 401 跳登录页
 //         const { pathname } = location
-//         pathname !== '/user/login' && location.replace('/user/login')
+//         pathname !== '/login' && location.replace('/login')
 //       }
 //     })
 // }

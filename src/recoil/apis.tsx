@@ -1,8 +1,8 @@
 /*
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-03-02 15:41:46
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-07 10:03:35
+ * @LastEditors: zjr
+ * @LastEditTime: 2022-05-13 09:18:12
  * @FilePath: \jack-aps\src\recoil\apis.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -25,6 +25,7 @@ export * as resourcesApis from './resources/api' //资源甘特图
 export * as roleApis from './role/api'
 export * as schedulingApis from './scheduling/api' //生产单排程
 export * as systemParametersApis from './systemParameters/api' //系统参数设置
+export * as systemSettingsApis from './systemSettings/api' // 系统管理
 export * as userApis from './user/api'
 export * as workingModeApis from './workingMode/api' //工作模式
 export * as workOvertimeApis from './workOvertime/api' //加班管理

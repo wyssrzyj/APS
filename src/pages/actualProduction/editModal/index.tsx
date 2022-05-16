@@ -31,19 +31,21 @@ function EditActualProduction(props: Record<string, any>) {
 
   const handleOk = async () => {
     const confirmData: any = cloneDeep(dataSource)
-    confirmData.forEach((item: any) => {
-      item.realityStartTime &&
-        (item.realityStartTime = moment(item.realityStartTime).format(
-          FORMAT_DATE
-        ))
-      item.realityEndTime &&
-        (item.realityEndTime = moment(item.realityEndTime).format(FORMAT_DATE))
-      item.isFinished = item.isFinished ? 1 : 0
-    })
-    const res: any = await saveEfficiency(confirmData)
-    if (res.success) {
-      message.success('操作成功')
-      callback(false, true)
+    if (
+      confirmData.every((item) => item.realityStartTime && item.realityEndTime)
+    ) {
+      confirmData.forEach((item: any) => {
+        item.realityStartTime = moment(item.realityStartTime).valueOf()
+        item.realityEndTime = moment(item.realityEndTime).valueOf()
+        item.isFinished = item.isFinished ? 1 : 0
+      })
+      const res: any = await saveEfficiency(confirmData)
+      if (res.success) {
+        message.success('操作成功')
+        callback(false, true)
+      }
+    } else {
+      message.warning('实际开始时间与实际结束时间必填')
     }
   }
 
