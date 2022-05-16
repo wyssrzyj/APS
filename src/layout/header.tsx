@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-05-13 16:42:27
+ * @LastEditTime: 2022-05-16 15:04:00
  * @Description:
  * @LastEditors: zjr
  */
@@ -54,6 +54,8 @@ const Header = () => {
       message.success(res.msg)
       setIsEditPwdVisible(false)
       localStorage.removeItem('currentUser')
+      localStorage.removeItem('token')
+      localStorage.removeItem('systemUuid')
       navigate('/login')
     } else {
       message.warning(res.msg)
@@ -71,7 +73,10 @@ const Header = () => {
       </div>
       <div className={styles.headerR}>
         <div className={styles.userInfo}>
-          <div className={styles.user}>用户</div>
+          <div className={styles.user}>
+            {JSON.parse(localStorage.getItem('currentUser')) &&
+              JSON.parse(localStorage.getItem('currentUser')).user.username}
+          </div>
           <div className={styles.infoModal}>
             {infos.map((item, idx) => {
               if (idx === infos.length - 1) {
