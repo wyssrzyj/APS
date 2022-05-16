@@ -172,7 +172,7 @@ function Popup(props: { content: any }) {
 
   const handleOk = async () => {
     if (!types) {
-      // 判断外发管理的外发时间是否为空
+      // 判断外发管理的外发时间是否为空.
 
       //全部数据不为空才=true
       if (!isEmpty(processedData)) {
