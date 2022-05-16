@@ -182,7 +182,7 @@ function Popup(props: { content: any }) {
         })
 
         if (outTimeType) {
-          //保存的时候工艺和外发 都需要传全部数据
+          //保存的时候工艺和外发 都需要传全部数据.
           const arr = await popupPreservation({
             productId: getDetailsId,
             externalProduceOrderId: externalProduceOrderId,
