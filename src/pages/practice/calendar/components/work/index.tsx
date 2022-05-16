@@ -62,7 +62,6 @@ const Index = () => {
   const getData = async () => {
     const res: any = await factoryList()
     const arr: any = res.data
-
     if (res.code === 200) {
       arr.map((item: { name: any; deptName: any }) => {
         item.name = item.deptName
@@ -197,7 +196,11 @@ const Index = () => {
   //头部form的数据
   const FormData = (e: any) => {
     console.log(e)
-    setParams({ ...params, ...e })
+    if (e.factoryId !== undefined) {
+      setParams({ pageNum: 1, pageSize, ...e })
+    } else {
+      setParams({ pageNum, pageSize, ...e })
+    }
   }
   const onPaginationChange = (
     page: SetStateAction<number>,

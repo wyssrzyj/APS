@@ -132,7 +132,11 @@ function Vacations() {
   }
   //头部form的数据
   const FormData = (e: any) => {
-    setParams({ ...params, ...e })
+    if (e.factoryId !== undefined) {
+      setParams({ pageNum: 1, pageSize, ...e })
+    } else {
+      setParams({ pageNum, pageSize, ...e })
+    }
   }
   const onPaginationChange = (
     page: React.SetStateAction<number>,
@@ -230,7 +234,7 @@ function Vacations() {
               pageSize, //每页条数
               current: pageNum, //	当前页数
               total, //数据总数
-              // position: ['bottomCenter'], //居中.
+              // position: ['bottomCenter'], //居中
               pageSizeOptions: ['10', '20', '50'],
               onChange: onPaginationChange //获取当前页码是一个function
             }}

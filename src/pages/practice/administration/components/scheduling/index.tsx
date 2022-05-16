@@ -1,5 +1,5 @@
 import { Button, message, Select } from 'antd'
-import { cloneDeep, isError, keys } from 'lodash'
+import { cloneDeep, isEmpty, isError, keys } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
@@ -26,12 +26,13 @@ function Index() {
   const [visibleVerify, setVisibleVerify] = useState(false) //校验排程弹窗
   const [remind, setRemind] = useState() //甘特图高亮
   const [formData, setFormData] = useState() //form数据
-  const [gunterType, setGunterType] = useState('0') //班组、订单
+  const [gunterType, setGunterType] = useState('1') //班组、订单
   const [gunterData, setGunterData] = useState<any[]>([]) //甘特图数据-班组
   // const [productionData, setProductionData] = useState<any>([]) //甘特图数据-生产
   const [notWork, setNotWork] = useState<any[]>([]) //不可工作时间
   const [checkIDs, setCheckIDs] = useState<any[]>([]) //校验id
   const [promptList, setPromptList] = useState<any[]>([]) //提示数据
+  const [release, setRelease] = useState<any[]>() //发布
 
   const { figureData, productionView, workingDate } = schedulingApis
 
@@ -128,6 +129,7 @@ function Index() {
 
   //  图刷新
   const updateMethod = () => {
+    console.log('图刷新', formData, gunterType)
     getChart(formData, gunterType)
   }
 
@@ -143,39 +145,48 @@ function Index() {
   const materials = () => {
     setMaterialModal(true)
   }
-
+  //判断任务是否分派
   const toggleRuleVisible = (visible: boolean) => {
     setVisibleRule(visible)
   }
+
   const toggleVerifyVisible = (visible: boolean) => {
     const arr: any[] = []
-    promptList.map((item: { title: any }) => {
-      arr.push(item.title)
+    // checkIDs
+
+    promptList.map((item: { externalProduceOrderNum: any }) => {
+      arr.push(item.externalProduceOrderNum)
     })
+
+    //选中里有不满足的就进行提示
     if (visible === true && arr.length > 0) {
-      message.warning(`${arr.join('、')}不可用，请取消选中`)
+      message.warning(`生产单${arr.join('、')}任务未分派`)
     }
-    if (arr.length <= 0) {
-      setVisibleVerify(visible)
+
+    if (!isEmpty(checkIDs)) {
+      if (arr.length <= 0) {
+        setVisibleVerify(visible)
+      }
+    } else {
+      message.warning(`暂无已计划数据`)
     }
   }
-  // 校验排程需要的数据=
+  // 校验排程需要的数据
   const checkSchedule = (plannedID: any, toPlanID: any, stateAdd: any) => {
     if (!isError(stateAdd)) {
-      //可用
-      const available = stateAdd.filter(
-        (item: { type: boolean }) => item.type === true
-      )
-      //不可用
+      //判断选中里是否有不满足的
       const doNotUse = stateAdd.filter(
         (item: { type: boolean }) => item.type === false
       )
-      // 提示 判断选中的中是否有不可用的
-      // plannedID
       const prompt = plannedID.map((item: any) => {
         return filterPrompt(item, doNotUse)
       })
       setPromptList(prompt.flat(Infinity))
+
+      //可用
+      const available = stateAdd.filter(
+        (item: { type: boolean }) => item.type === true
+      )
 
       //待计划数据
       const waiting = available
@@ -183,7 +194,8 @@ function Index() {
           return filterList(plannedID, item)
         })
         .flat(Infinity)
-      setCheckIDs(waiting.concat(toPlanID))
+
+      setCheckIDs(waiting.concat(toPlanID)) //把选中里可用的和已计划传递出去
     }
   }
   const filterList = (data: any[], v: { externalProduceOrderId: any }) => {
@@ -204,6 +216,10 @@ function Index() {
   function handleChange(value: any) {
     setGunterType(value)
   }
+  const update = () => {
+    console.log('点击发布')
+    setRelease(formData)
+  }
   return (
     <div className={styles.qualification}>
       <div>
@@ -212,6 +228,23 @@ function Index() {
       <div>
         <div className={styles.content}>
           <Forms FormData={FormData}></Forms>
+          <div className={styles.scheduling}>
+            <Button
+              ghost
+              type="primary"
+              onClick={() => toggleRuleVisible(true)}
+            >
+              规则排程
+            </Button>
+            <Button
+              className={styles.heckSchedule}
+              type="primary"
+              onClick={() => toggleVerifyVisible(true)}
+            >
+              校验排程
+            </Button>
+          </div>
+
           <div className={styles.team}>
             <div className={styles.leftContent}>
               <ToPlan
@@ -220,22 +253,26 @@ function Index() {
                 gunterType={gunterType}
                 formData={formData}
                 remind={remind}
+                release={release}
               />
             </div>
             {/* 甘特图 */}
             <div className={styles.rightContent}>
-              <Select
-                defaultValue={gunterType}
-                style={{ width: 120 }}
-                onChange={handleChange}
-              >
-                <Option key={'0'} value="0">
-                  班组甘特图
-                </Option>
-                <Option key={'1'} value="1">
-                  生产单甘特图
-                </Option>
-              </Select>
+              <div className={styles.choose}>
+                <Select
+                  defaultValue={gunterType}
+                  style={{ width: 120 }}
+                  onChange={handleChange}
+                >
+                  <Option key={'0'} value="0">
+                    班组甘特图
+                  </Option>
+                  <Option key={'1'} value="1">
+                    生产单甘特图
+                  </Option>
+                </Select>
+              </div>
+
               <Dome
                 updateMethod={updateMethod}
                 gunterData={gunterData}
@@ -247,17 +284,12 @@ function Index() {
             </div>
           </div>
 
-          <Button type="primary" danger onClick={start}>
+          {/* <Button type="primary" danger onClick={start}>
             删除
-          </Button>
+          </Button> */}
         </div>
       </div>
-      <Button type="primary" onClick={() => toggleRuleVisible(true)}>
-        规则排程
-      </Button>
-      <Button type="primary" onClick={() => toggleVerifyVisible(true)}>
-        校验排程
-      </Button>
+
       {/* //规则排程 */}
       {visibleRule && (
         <RuleScheduling
@@ -267,6 +299,7 @@ function Index() {
       )}
       {visibleVerify && (
         <Verification
+          update={update}
           checkIDs={checkIDs}
           visibleVerify={visibleVerify}
           onCancel={() => toggleVerifyVisible(false)}

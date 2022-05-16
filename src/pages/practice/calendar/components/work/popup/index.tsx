@@ -71,6 +71,26 @@ function Popup(props: { content: any; newlyAdded: any }) {
   const handleCancel = () => {
     setIsModalVisible(false)
   }
+
+  const determineTime = (e) => {
+    if (!isEmpty(e)) {
+      //开始不能大于结束 且 不能相等
+      const type = e.every((item: any) => {
+        return (
+          item.startDateTime < item.endDateTime &&
+          item.startDateTime !== item.endDateTime
+        )
+      })
+      if (type) {
+        return true
+      } else {
+        message.warning('开始不能大于结束，且不能相等')
+        return false
+      }
+    } else {
+      return false
+    }
+  }
   const onOk = async (
     values: {
       teamIds: any[]
@@ -86,19 +106,21 @@ function Popup(props: { content: any; newlyAdded: any }) {
       return lyj.push({ week: item, dayTimeList: values.times })
     })
     values.workModes = lyj
-    const list = type === 1 ? values : { ...values, id: edit.id }
-    //班组为false才执行
-    const arr: any = await teamId({
-      teamIds: values.teamIds,
-      workModes: list.workModes
-    })
 
-    if (arr.success === true) {
-      const res = await operatingModeDetails(list)
-      if (res === true) {
-        newlyAdded()
-        form.resetFields()
-        setIsModalVisible(false)
+    if (determineTime(values.workModes[0].dayTimeList)) {
+      const list = type === 1 ? values : { ...values, id: edit.id }
+      //班组为false才执行
+      const arr: any = await teamId({
+        teamIds: values.teamIds,
+        workModes: list.workModes
+      })
+      if (arr.success === true) {
+        const res = await operatingModeDetails(list)
+        if (res === true) {
+          newlyAdded()
+          form.resetFields()
+          setIsModalVisible(false)
+        }
       }
     }
   }
@@ -129,6 +151,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
     <div>
       <Modal
         width={700}
+        destroyOnClose={true}
         maskClosable={false}
         title={
           type === 1

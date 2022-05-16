@@ -1,5 +1,5 @@
 import { Popover, Tabs, Tag, Tree } from 'antd'
-import { isEmpty } from 'lodash'
+import { divide, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { dockingDataApis, schedulingApis } from '@/recoil/apis'
@@ -16,10 +16,16 @@ function ToPlan(props: {
   gunterType: any
   updateMethod: any
   checkSchedule: any
+  release: any
 }) {
-  const { remind, formData, updateMethod, checkSchedule } = props
-  const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
-    schedulingApis
+  const { remind, formData, updateMethod, checkSchedule, release } = props
+  const {
+    listProductionOrders,
+    unlockWork,
+    releaseFromAssignment,
+    forDetail,
+    factoryList
+  } = schedulingApis
   const { workshopList, teamList, capacityList } = dockingDataApis
   const [list, setList] = useState<any>([]) //总
   const [editWindow, setEditWindow] = useState(false) //编辑窗
@@ -37,13 +43,15 @@ function ToPlan(props: {
   const [currentItem, setCurrentItem] = useState<any>() //点击的值.
   const [toPlanID, setToPlanID] = useState<any>([]) //待计划选中的id
   const [plannedID, setPlannedID] = useState<any>([]) //已计划的id
-  const [stateAdd, setStateAdd] = useState<any>([]) //状态添加版本
 
-  const [factoryName, setFactoryName] = useState<any>([])
+  const [stateAdd, setStateAdd] = useState<any>([])
+
+  const [factoryName, setFactoryName] = useState<any>([]) //车间
   const [teamName, setTeamName] = useState<any>([]) ///班组
   const [capacityData, setCapacityData] = useState<any>([]) //效率模板
   const [efficiencyID, setEfficiencyID] = useState<any>()
   const [templateId, setTemplateId] = useState<any>() //效率模板数据
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
   const map = new Map()
   map.set('1', '裁剪工段')
@@ -52,6 +60,8 @@ function ToPlan(props: {
   map.set('4', '包装工段')
   map.set('5', '外发工段')
   map.set('6', '缝制线外组')
+  map.set('20', '回厂加工')
+
   const callback = (key: any) => {
     setCurrent(key)
   }
@@ -66,6 +76,13 @@ function ToPlan(props: {
       workshopTeam(formData)
     }
   }, [formData])
+
+  useEffect(() => {
+    if (release !== undefined) {
+      dataAcquisition(release)
+    }
+  }, [release])
+
   //效率模板
   useEffect(() => {
     efficiency()
@@ -96,19 +113,22 @@ function ToPlan(props: {
       team.map((item: { name: any; teamName: any }) => {
         item.name = item.teamName
       })
+      console.log('team', team)
+
       setTeamName(team)
     }
   }
 
+  //给待计划所有数据添加状态 判断是否可用于校验排程
   useEffect(() => {
     if (!isEmpty(treeData)) {
       treeData.map((item: any) => {
         item.type = judgeTeamId(item.children)
       })
-
       setStateAdd(treeData)
     }
   }, [treeData])
+
   // 校验排程 判断条件 detailList teamId 时间
   const judgeTeamId = (data: any) => {
     if (!isEmpty(data)) {
@@ -122,14 +142,20 @@ function ToPlan(props: {
           sum.push(v.detailList)
         })
         const flat = sum.flat(Infinity)
-        return flat.every(
-          (s) =>
-            s.planEndTime !== null &&
-            s.planStartTime !== null &&
-            s.teamId !== null
-        )
+        //先判断时间 是否全部满足
+        if (
+          flat.every((s) => s.planEndTime !== null && s.planStartTime !== null)
+        ) {
+          // 在判断  teamId是否为空 或者 section=5 (外发工段)
+          if (flat.every((s) => s.teamId !== null || s.section === '5')) {
+            return true //现在选中的状态为type了
+          } else {
+            return false
+          }
+        } else {
+          return false
+        }
       } else {
-        //判断 detailList 全部有值
         return false
       }
     }
@@ -147,7 +173,7 @@ function ToPlan(props: {
   ) => {
     !isEmpty(data) &&
       data.map((item) => {
-        item.title = `${item.externalProduceOrderNum}(${item.orderSum})件`
+        item.title = `${item.externalProduceOrderNum}`
         item.children = item.assignmentVOList
         !isEmpty(item.children) &&
           item.children.map((v: any) => {
@@ -164,6 +190,8 @@ function ToPlan(props: {
     return data
   }
   const dataAcquisition = async (id: any) => {
+    console.log('知否执行')
+
     //已计划假数据
     // 0未计划  1已计划
     const notPlan = await listProductionOrders({
@@ -171,11 +199,12 @@ function ToPlan(props: {
       isPlanned: 0
     })
     console.log('未计划', notPlan)
-
     const planned = await listProductionOrders({
       factoryId: id,
       isPlanned: 1
     })
+    console.log('已经计划', planned)
+
     if (!isEmpty(planned)) {
       const plannedData = planned.map((item: any) => {
         return item.externalProduceOrderId
@@ -184,18 +213,23 @@ function ToPlan(props: {
     }
     //添加字段
     const sum = [fieldChanges(notPlan), fieldChanges(planned)]
+
     setList(sum)
     getData(sum[Number(current)], current) //初始展示
   }
+
   //Tabs 状态切换
   useEffect(() => {
     getData(list[Number(current)], current)
   }, [current])
   //处理数据
   const getData = (data: any, type: string) => {
+    console.log('处理数据', data)
     if (!isEmpty(data)) {
       data.map((i: any) => {
         i.key = i.externalProduceOrderId //用于校验排程
+        i.title = sewing(i, 4)
+
         !isEmpty(i.children) &&
           i.children.map((item: any) => {
             item.disableCheckbox = true
@@ -228,10 +262,16 @@ function ToPlan(props: {
       } else {
         setWaitingTreeData(data)
       }
+    } else {
+      if (type === '0') {
+        setTreeData(data)
+      } else {
+        setWaitingTreeData(data)
+      }
     }
   }
   const getCurrentTabs = (data: any[], i: any) => {
-    // 待计划
+    // 待计划.
     const stayData = data[0]
     const waitDor: any[] = []
     stayData.map((item: { children: any }) => {
@@ -272,6 +312,7 @@ function ToPlan(props: {
     setEqual(remind)
     setKeys([remind])
   }, [list, remind])
+
   // 数据刷新
   const dataUpdate = () => {
     dataAcquisition(formData) //树刷新
@@ -279,7 +320,7 @@ function ToPlan(props: {
   }
   //编辑工作
   const theEditor = (data: any) => {
-    setEditWindowList(data)
+    setEditWindowList({ ...data })
     setEditWindow(true)
   }
   //编辑提交
@@ -314,7 +355,9 @@ function ToPlan(props: {
   const efficiencyMethods = async (id: any) => {
     setEfficiencyID(id)
     const res = await forDetail({ id })
-    setTemplateId(res.templateId)
+    console.log('效率模板', res)
+
+    setTemplateId(res)
     setEfficiencyData(true)
   }
   const content = (data: any, type: any) => {
@@ -346,7 +389,7 @@ function ToPlan(props: {
           </div>
         ) : null}
 
-        {type !== 3 && type !== 1 ? (
+        {type !== 4 && type !== 3 && type !== 1 ? (
           <>
             <div className={styles.card}>
               <Tag
@@ -395,12 +438,19 @@ function ToPlan(props: {
             </Tag>
           </div>
         ) : null}
+        {type === 4 ? (
+          <div className={styles.card}>
+            <div>款名：{data.productName}</div>
+            <div>款号: {data.productNum}</div>
+            <div>数量: {data.orderSum}</div>
+          </div>
+        ) : null}
       </div>
     )
   }
 
   const sewing = (sewingData: any, type: any) => {
-    //1是缝制
+    //1是缝制.
     //2的时候
     if (type === 2) {
       return (
@@ -444,7 +494,6 @@ function ToPlan(props: {
   }
   const contents = {
     factoryName,
-    teamName,
     formData,
     editSubmission,
     editWindow,

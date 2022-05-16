@@ -1,5 +1,5 @@
 import { Col, Form, Input, Row, Select, TreeSelect } from 'antd'
-import { debounce, isEmpty } from 'lodash'
+import { cloneDeep, debounce, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { getChild } from '@/components/getChild/index'
@@ -24,8 +24,15 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const { validateFields } = form
+  const [list, setList] = useState<any>({}) //总数据
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
+
+  useEffect(() => {
+    if (!isEmpty(list)) {
+      form.setFieldsValue(list)
+    }
+  }, [list])
 
   //加班班组
   useEffect(() => {
@@ -66,7 +73,13 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
   }
   const getFactoryName = (e: any) => {
     setListID(e)
+    //工厂更新 裙带关系重置
+    const cloneList = cloneDeep(list)
+    cloneList.teamId = null
+    setTreeData([])
+    setList({ ...cloneList })
   }
+
   return (
     <div>
       <Form form={form}>
@@ -116,11 +129,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
                 getValueFromEvent(event, 'treeSelect')
               }
             >
-              <Select
-                onChange={getFactoryName}
-                placeholder="请选择班组名称"
-                allowClear
-              >
+              <Select placeholder="请选择班组名称" allowClear>
                 {!isEmpty(treeData)
                   ? treeData.map(
                       (item: {

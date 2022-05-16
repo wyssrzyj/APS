@@ -25,74 +25,6 @@ function Popup(props: any) {
     form.resetFields()
   }, [])
 
-  const treeData = [
-    {
-      title: '工厂',
-      value: '1',
-      key: '1',
-      children: [
-        {
-          title: '工厂1',
-          value: '1-1',
-          key: '1-1'
-        },
-        {
-          title: '工厂2',
-          value: '1-2',
-          key: '1-2'
-        }
-      ]
-    },
-    {
-      title: '原料',
-      value: '2',
-      key: '2',
-      children: [
-        {
-          title: '大米',
-          value: '2-1',
-          key: '2-1'
-        },
-        {
-          title: '土豆',
-          value: '2-2',
-          key: '2-2'
-        },
-        {
-          title: '菠萝',
-          value: '2-3',
-          key: '2-3'
-        }
-      ]
-    },
-    {
-      title: '玩具',
-      value: '3',
-      key: '3',
-      children: [
-        {
-          title: '金铲铲的冠冕',
-          value: '3-1',
-          key: '3-1'
-        },
-        {
-          title: '残暴之力',
-          value: '3-2',
-          key: '3-2'
-        },
-        {
-          title: '末日寒冬',
-          value: '3-3',
-          key: '3-3'
-        }
-      ]
-    },
-    {
-      title: '蔬菜',
-      value: '4',
-      key: '4'
-    }
-  ]
   const layout = {
     labelCol: {
       span: 4
@@ -120,7 +52,6 @@ function Popup(props: any) {
     type: number
   ) => {
     const list = type === 1 ? values : { ...values, id: edit.id }
-    console.log('传递的数据', values)
 
     const res = await holidayAddition(list)
     if (res === true) {

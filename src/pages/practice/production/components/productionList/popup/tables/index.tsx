@@ -2,20 +2,20 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-03-10 15:20:21
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-09 09:37:07
+ * @LastEditTime: 2022-05-12 14:16:39
  * @FilePath: \jack-aps\src\pages\practice\production\components\productionList\popup\tables\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import { Table } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
 function Tables(props: any) {
-  const { getFormData, list, paging, types } = props
+  const { getFormData, list, pagingData, total } = props
 
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(5)
-  const [total] = useState<number>(0)
+
   const columns: any = [
     {
       title: '序号',
@@ -61,7 +61,7 @@ function Tables(props: any) {
               // onClick={() => (!types ? getFormData(_row) : null)}
               onClick={() => getFormData(_row)}
             >
-              编辑
+              查看
             </div>
           </div>
         )
@@ -74,7 +74,7 @@ function Tables(props: any) {
   ) => {
     setPageNum(page)
     setPageSize(pageSize)
-    paging && paging(page, pageSize)
+    pagingData && pagingData(page, pageSize)
   }
   return (
     <div className={styles.table}>
@@ -84,7 +84,6 @@ function Tables(props: any) {
         rowKey={'idx'}
         pagination={{
           // disabled: types,
-          size: 'small',
           //分页
           showSizeChanger: true,
           pageSize, //每页条数

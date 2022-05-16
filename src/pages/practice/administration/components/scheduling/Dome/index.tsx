@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { dockingData } from '@/recoil'
-import { schedulingApis } from '@/recoil/apis'
+import { schedulingApis, workOvertimeApis } from '@/recoil/apis'
 
 // import GanttS from './Gantt copy'
 import Gantt from './Gantt/index'
@@ -28,9 +28,7 @@ const Dhx = (props: {
     gunterType
   } = props
   const { getLine, calculateEndTimeAfterMove } = schedulingApis
-  const [FactoryData, setFactoryData] = useRecoilState(
-    dockingData.globalFactoryData
-  )
+  const { factoryList } = workOvertimeApis
 
   const [currentZoom, setCurrentZoom] = useState<any>('Days') //缩放的状态  Days
 
@@ -39,7 +37,7 @@ const Dhx = (props: {
   const [chart, setChart] = useState<any>([]) //图
   const [line, setLine] = useState<any>([]) //线
 
-  const [notWorking, setNotWorking] = useState<any>([]) //不可工作时间
+  const [notWorking, setNotWorking] = useState<any>([]) //所有不可工作时间
 
   //初始拖动
   const [InitialDrag, setInitialDrag] = useState<any>([]) //初始拖动数据
@@ -48,13 +46,29 @@ const Dhx = (props: {
   const [select, setSelect] = useState<any>([]) //用于展示 线和不可用时间、给树传递id判断
   const [type, setType] = useState<any>() //判断是点击还是移动
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
+
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setFactoryData(arr)
+    }
+  }
 
   useEffect(() => {
     if (!isEmpty(gunterData) && !isEmpty(notWork)) {
       setChart(gunterData)
     }
     setLine([]) //线 //初始的时候传空
-    setNotWorking(notWork)
+    setNotWorking(notWork) //不可工作时间
   }, [gunterData, notWork, gunterType])
 
   useEffect(() => {
@@ -80,21 +94,27 @@ const Dhx = (props: {
     if (type === '0') {
       //点击
       if (!isEmpty(chart)) {
+        console.log('chart', chart)
+        console.log('select', select)
+
         const teamId = chart.filter(
           (item: { id: any }) => item.id === select
         )[0].teamId
+
         if (teamId !== null) {
           const unavailable: any = notWorking.filter(
             (item: { id: any }) => item.id === teamId
           )
           if (unavailable !== undefined && !isEmpty(unavailable)) {
-            console.log('不可用时间测试...', unavailable[0].time)
-
             setRestDate(unavailable[0].time)
           }
+        } else {
+          console.log('置空')
+          setRestDate(['2000-06-06'])
         }
       }
     }
+
     if (type === '1') {
       //移动
       const unavailable: any = notWorking.filter(
@@ -227,8 +247,15 @@ const Dhx = (props: {
       }
     }
   }, [select, chart])
-  const content = { formData, isModalVisible, setIsModalVisible }
 
+  const content = {
+    formData,
+    updateMethod,
+    isModalVisible,
+    setIsModalVisible,
+    factoryData
+    // setEdit
+  }
   return (
     <div>
       <div>
@@ -244,7 +271,7 @@ const Dhx = (props: {
                     tasks={subjectData}
                     zoom={currentZoom}
                     updateList={updateList}
-                    restDate={restDate}
+                    // restDate={restDate} //不可用时间
                   />
                 </div>
               </div>

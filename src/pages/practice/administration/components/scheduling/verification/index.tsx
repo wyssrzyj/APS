@@ -1,12 +1,12 @@
 import { Button, Modal, Space, Tag } from 'antd'
 import classNames from 'classnames'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { schedulingApis } from '@/recoil/apis'
 
 import styles from './index.module.less'
-const { checkSchedule } = schedulingApis
+const { checkSchedule, releaseSchedule } = schedulingApis
 const list = [
   { key: '延期生产单:', value: 'delayOrderProductList', list: [] },
   {
@@ -22,27 +22,26 @@ const list = [
   { key: '工作时间重叠班组:', value: 'workTimeOverlapTeamList', list: [] }
 ]
 function VerifyModal(props: Record<string, any>) {
-  const { visibleVerify, onCancel, checkIDs } = props
+  const { visibleVerify, onCancel, checkIDs, update } = props
   const [checkList, setCheckList] = useState<Record<string, any>>(list)
-  const verifyInfo = async (id: string) => {
-    console.log('处理后的数据', id)
 
+  const verifyInfo = async (id: string) => {
     const data = cloneDeep(checkList)
     // ['15042722699443200022']
-    const res = await checkSchedule(['1504272269944320002'])
+    const res = await checkSchedule(id)
     data.forEach((item: Record<string, any>) => {
       item.list = res[item.value]
     })
     setCheckList(data)
   }
-  useEffect(() => {
-    console.log('测试,', checkIDs)
 
+  useEffect(() => {
     verifyInfo(checkIDs)
   }, [checkIDs])
   const release = async () => {
-    await checkSchedule(['1504272269944320002'])
+    await releaseSchedule(checkIDs)
     onCancel()
+    update && update()
   }
   return (
     <div>
