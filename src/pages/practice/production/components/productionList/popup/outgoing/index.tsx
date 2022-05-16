@@ -1,12 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Table
-} from 'antd'
+import { Button, Checkbox, Input, Table } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -18,13 +10,22 @@ import Forms from './forms'
 import styles from './index.module.less'
 import Popup from './Popup/index'
 
+const map = new Map()
+map.set('1', '裁剪')
+map.set('2', '缝制')
+map.set('3', '后整')
+map.set('4', '包装')
+map.set('5', '外发')
+map.set('6', '缝制线外组')
+
 const Outgoing = (props: any) => {
   const {
     AllData,
     types,
     externalProduceOrderId,
-    preservation,
-    whetherEditor
+    // preservation,
+    whetherEditor,
+    allData
   } = props
   const { processOutsourcing, wholeOrder } = productionSingleApis
 
@@ -35,47 +36,20 @@ const Outgoing = (props: any) => {
     pageNum: pageNum,
     pageSize: pageSize
   })
-
   const [total, setTotal] = useState<number>(0)
 
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [editType, setEditType] = useState(false)
   const [outgoing, setOutgoing] = useState<any>()
-  const [localData, setLocalData] = useState<any>([]) //本地数据
-  const [localDataTrue, setLocalDataTrue] = useState<any>([]) //**本地数据 用于保存**
-  const [list, setList] = useState<any>([]) //初始数据
-  const [data, setData] = useState<any>([]) //处理后的数据
-  const [factoryData, setFactoryData] = useState<any>([]) //筛选条件
-  const [allData, setAllData] = useState<any>([]) //全部数据
-  const [processedData, setProcessedData] = useState<any>([]) //处理后的数据
 
-  interface Item {
-    key: string
-    name: string
-    age: number
-    address: string
-  }
-
-  const map = new Map()
-  map.set('1', '裁剪')
-  map.set('2', '缝制')
-  map.set('3', '后整')
-  map.set('4', '包装')
-  map.set('5', '外发')
-  map.set('6', '缝制线外组')
-
-  const [form] = Form.useForm()
+  const [localData, setLocalData] = useState<any>([]) //存修改过的数据
+  const [list, setList] = useState<any>([]) //api初始数据
+  const [data, setData] = useState<any>([]) //处理后的展示数据
+  const [processedData, setProcessedData] = useState<any>([]) //全部数据-用于保存
 
   useEffect(() => {
     setParams({ pageNum: pageNum, pageSize: pageSize })
   }, [pageNum, pageSize])
-
-  //只保存选中的
-  useEffect(() => {
-    setLocalDataTrue(localData)
-    // 传递出去
-    preservation && preservation(localData)
-  }, [localData])
 
   //接口
   useEffect(() => {
@@ -102,79 +76,58 @@ const Outgoing = (props: any) => {
       setList([...res.records])
     }
   }
-  useEffect(() => {
-    getAllData()
-  }, [])
-  //获取所有的数据
-  const getAllData = async () => {
-    const res = await processOutsourcing({
-      pageNum: 1,
-      pageSize: 1000,
-      externalProduceOrderId: externalProduceOrderId
-    })
-    if (!isEmpty(res.records)) {
-      // 添加 状态判断是否选中
-      res.records.map(
-        (item: { need: boolean; section: string; outTime: null }) => {
-          item.need =
-            item.section === '5' ? true : item.outTime !== null ? true : false
-        }
-      )
-      setAllData(res.records)
-    }
-  }
 
-  //  **判断接口数据中  是否有本地数据  有则替换 反之则 传递接口原始的**
-  const oldAndNewFilter = (v: { idx: any }, total: any) => {
+  //  **判断接口数据中  是否有本地数据  有则替换 **
+  const oldAndNewFilter = (type, v: { idx: any }, total: any) => {
+    /**
+     * type 1:展示数据 2：全部数据
+     */
     const saveIndex = total.findIndex((item: any) => item.idx === v.idx)
     //替换
     if (saveIndex !== -1) {
       total.splice(saveIndex, 1, v)
-      setData([...total])
+      if (type === '1') {
+        setData([...total])
+      }
+      if (type === '2') {
+        setProcessedData([...total])
+      }
     } else {
-      setData([...total])
+      if (type === '1') {
+        setData([...total])
+      }
+      if (type === '2') {
+        setProcessedData([...total])
+      }
     }
   }
+
+  // 展示
   useEffect(() => {
-    if (!isEmpty(localDataTrue)) {
-      localDataTrue.map((item: any) => {
-        oldAndNewFilter(item, list)
+    if (!isEmpty(localData)) {
+      localData.map((item: any) => {
+        oldAndNewFilter('1', item, list)
       })
     } else {
       setData([...list])
     }
-  }, [list, localDataTrue])
+  }, [list, localData])
 
-  //保存数据需要的是 全部数据中为true 的值
-  //全部数据的处理 ------开始---
-  const processedOldAndNewFilter = (v: { idx: any }, total: any) => {
-    const saveIndex = total.findIndex((item: any) => item.idx === v.idx)
-    //替换
-    if (saveIndex !== -1) {
-      total.splice(saveIndex, 1, v)
-      setProcessedData([...total])
-    } else {
-      setProcessedData([...total])
-    }
-  }
-
+  // 全部-保存
   useEffect(() => {
-    if (!isEmpty(localDataTrue)) {
-      localDataTrue.map((item: any) => {
-        processedOldAndNewFilter(item, allData)
+    if (!isEmpty(localData)) {
+      localData.map((item: any) => {
+        oldAndNewFilter('2', item, allData)
       })
     } else {
       setProcessedData([...allData])
     }
-    //判断接口数据中是否有本地 有替换
-  }, [allData, localDataTrue])
+  }, [allData, localData])
+
+  // 传递出去用于保存
   useEffect(() => {
-    const needType = processedData.filter(
-      (item: { need: boolean }) => item.need === true
-    )
-    AllData && AllData(needType)
+    AllData && AllData(processedData)
   }, [processedData])
-  //全部数据的处理 ------结束---
 
   const columns: any = [
     {
@@ -246,19 +199,20 @@ const Outgoing = (props: any) => {
       align: 'center',
       dataIndex: 'outTime',
       editable: true,
-      width: 200,
+      width: 150,
       render: (type: any, record: any, index: any) => {
         return (
           <div className={styles.flex}>
             {!record.need ? null : (
               <Input
+                type="number"
                 addonAfter="天"
                 disabled={types}
                 defaultValue={type}
-                onChange={(e) => {
+                onBlur={(e) => {
                   timeOutgoing(e, record)
                 }}
-                style={{ width: '50%' }}
+                style={{ width: '100%' }}
               />
             )}
           </div>
@@ -277,40 +231,28 @@ const Outgoing = (props: any) => {
     localDataHandle(record)
   }
 
-  let timer: NodeJS.Timeout
   //输入框处理
   const timeOutgoing = (e: any, record: any) => {
     record.outTime = e.target.value
     const sum = cloneDeep(data)
     const subscript = sum.findIndex((item: any) => item.idx === record.idx)
     sum.splice(subscript, 1, record)
-    clearTimeout(timer)
-    timer = setTimeout(() => {
-      setData([...sum])
-      localDataHandle(record)
-    }, 500)
+    setData([...sum])
+    localDataHandle(record)
   }
 
   // *** 判断本地数组是否有 有添加反之且替换**
   const localDataHandle = (data: any) => {
-    // 操作过的数据存起来且不能重复-》用于保存
-    // 查看当前页的数据 是否有操作过的  有则替换
-    // 存起来 提交的时候判断是否填写时间
-
-    // 单条数据
     const cloneLocalData = cloneDeep(localData)
-
     const saveIndex = cloneLocalData.findIndex(
       (item: any) => item.idx === data.idx
-    ) //找下表
-
+    )
     if (saveIndex === -1) {
-      //添加
       cloneLocalData.push(data)
       setLocalData([...cloneLocalData])
     } else {
       //替换
-      cloneLocalData.splice(saveIndex, 1, data) //处理后的数据
+      cloneLocalData.splice(saveIndex, 1, data)
       setLocalData([...cloneLocalData])
     }
   }
@@ -319,9 +261,7 @@ const Outgoing = (props: any) => {
     const res = await wholeOrder({
       externalProduceOrderId: externalProduceOrderId
     })
-
     setOutgoing(res)
-
     setIsModalVisible(true)
   }
   const editHandle = () => {
@@ -343,7 +283,7 @@ const Outgoing = (props: any) => {
     <div className={styles.table}>
       <div className={styles.top}>生产单外发管理</div>
 
-      <Forms factoryData={factoryData} FormData={FormData}></Forms>
+      <Forms FormData={FormData}></Forms>
 
       <Table
         rowKey={'idx'}

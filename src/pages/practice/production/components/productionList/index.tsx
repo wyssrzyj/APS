@@ -27,7 +27,7 @@ function Production() {
   const [types, setType] = useState(false) //编辑或者查看
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [loading, setLoading] = useState(true) //删除弹窗
-  const defaultPageSize = 5
+  const defaultPageSize = 10
   const [params, setParams] = useState<any>({
     pageNum: 1,
     pageSize: defaultPageSize
@@ -55,9 +55,6 @@ function Production() {
       setFactoryData(arr)
     }
   }
-  useEffect(() => {
-    setParams({ ...params, pageNum: pageNum, pageSize: pageSize })
-  }, [pageNum, pageSize])
 
   useEffect(() => {
     api(params)
@@ -214,6 +211,7 @@ function Production() {
   ) => {
     setPageNum(page)
     setPageSize(pageSize)
+    setParams({ ...params, pageNum: page, pageSize: pageSize })
   }
   const editUser = (type: boolean, row: any) => {
     setWhetherEditor(row.outsourceType)
