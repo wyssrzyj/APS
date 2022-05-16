@@ -150,21 +150,21 @@ function Vacations() {
   const sum = [
     { label: '重新排程时锁定', name: 'lockTime', unit: 'lockTimeUnit' },
     {
-      label: '资源负荷图默认显示时间区间',
+      label: '班组负荷图默认显示时间区间',
       name: 'stockLoadTime',
       unit: 'stockLoadTimeUnit'
-    },
-
-    {
-      label: '生产单甘特图默认显示时间区间',
-      name: 'orderGanttTime',
-      unit: 'orderGanttTimeUnit'
-    },
-    {
-      label: '班组甘特图默认显示时间区间',
-      name: 'resourceTime',
-      unit: 'resourceTimeUnit'
     }
+
+    // {
+    //   label: '生产单甘特图默认显示时间区间',
+    //   name: 'orderGanttTime',
+    //   unit: 'orderGanttTimeUnit'
+    // },
+    // {
+    //   label: '班组甘特图默认显示时间区间',
+    //   name: 'resourceTime',
+    //   unit: 'resourceTimeUnit'
+    // }
   ]
   const preservation = () => {
     form.submit()

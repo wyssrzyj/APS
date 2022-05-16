@@ -188,7 +188,6 @@ const BreakUp = (props: any) => {
         initialHandleChange(item.shopId, item.teamId, item, initialTeamList)
       })
     }
-    console.log(initialTeamList)
   }, [initialTeamList])
 
   const showModal = () => {
@@ -642,7 +641,10 @@ const BreakUp = (props: any) => {
       })
 
       if (sum) {
+        message.success('保存成功')
         breakSave && breakSave()
+      } else {
+        message.error('保存失败')
       }
     }
   }
@@ -654,9 +656,6 @@ const BreakUp = (props: any) => {
     setPageNum(page)
     setPageSize(pageSize)
   }
-  useEffect(() => {
-    console.log('是否更改', data)
-  }, [data])
   return (
     <div className={styles.popup}>
       <Modal

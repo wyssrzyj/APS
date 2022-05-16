@@ -13,6 +13,7 @@ import Material from './material'
 
 function Materials() {
   const [pageNum, setPageNum] = useState<number>(1)
+  const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total, setTotal] = useState<number>(0)
   const [params, setParams] = useState<any>({
@@ -127,15 +128,17 @@ function Materials() {
   }
   useEffect(() => {
     setParams({ pageNum, pageSize })
-  }, [pageNum, pageSize])
+  }, [pageNum, pageSize, queryData])
 
-  useEffect(() => {
-    if (queryData.factoryId !== undefined) {
-      setParams({ pageNum: 1, pageSize, ...queryData })
-    } else {
-      setParams({ pageNum, pageSize, ...queryData })
-    }
-  }, [queryData])
+  const objectValueAllEmpty = (object) => {
+    let isEmpty = true
+    Object.keys(object).forEach(function (x) {
+      if (object[x] != null && object[x] != '') {
+        isEmpty = false
+      }
+    })
+    return isEmpty
+  }
 
   //获取列表数据
   useEffect(() => {
@@ -172,12 +175,16 @@ function Materials() {
   //头部form的数据
   const FormData = (e: any) => {
     setQueryData(e)
+    setPage(1)
+    setParams({ pageNum: 1, pageSize: 10, ...e })
+    setSelected([])
   }
   const onPaginationChange = (
     page: SetStateAction<number>,
     pageSize: SetStateAction<number>
   ) => {
     setPageNum(page)
+    setPage(page)
     setPageSize(pageSize)
   }
 
@@ -401,7 +408,7 @@ function Materials() {
               showSizeChanger: true,
               // showQuickJumper: true, //是否快速查找
               pageSize, //每页条数
-              current: pageNum, //	当前页数
+              current: page, //	当前页数
               total, //数据总数
               // position: ['bottomCenter'], //居中
               pageSizeOptions: ['10', '20', '50'],

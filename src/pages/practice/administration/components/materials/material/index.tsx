@@ -192,7 +192,7 @@ function Material(props: {
         }
       }
     } else {
-      message.error('数据未添加完毕')
+      message.error('物料齐料日期未录入')
     }
   }
 

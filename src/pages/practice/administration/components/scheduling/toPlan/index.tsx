@@ -1,4 +1,4 @@
-import { Popover, Tabs, Tag, Tree } from 'antd'
+import { message, Popover, Tabs, Tag, Tree } from 'antd'
 import { divide, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
@@ -113,7 +113,6 @@ function ToPlan(props: {
       team.map((item: { name: any; teamName: any }) => {
         item.name = item.teamName
       })
-      console.log('team', team)
 
       setTeamName(team)
     }
@@ -190,20 +189,16 @@ function ToPlan(props: {
     return data
   }
   const dataAcquisition = async (id: any) => {
-    console.log('知否执行')
-
     //已计划假数据
     // 0未计划  1已计划
     const notPlan = await listProductionOrders({
       factoryId: id,
       isPlanned: 0
     })
-    console.log('未计划', notPlan)
     const planned = await listProductionOrders({
       factoryId: id,
       isPlanned: 1
     })
-    console.log('已经计划', planned)
 
     if (!isEmpty(planned)) {
       const plannedData = planned.map((item: any) => {
@@ -224,7 +219,6 @@ function ToPlan(props: {
   }, [current])
   //处理数据
   const getData = (data: any, type: string) => {
-    console.log('处理数据', data)
     if (!isEmpty(data)) {
       data.map((i: any) => {
         i.key = i.externalProduceOrderId //用于校验排程
@@ -334,11 +328,14 @@ function ToPlan(props: {
       isLocked: type,
       id: id
     })
+    message.success('操作成功')
+
     dataUpdate() //数据刷新
   }
 
   const removeDispatch = async (id: any) => {
     const res = await releaseFromAssignment({ idList: [id] })
+    message.success('操作成功')
     dataUpdate() //数据刷新
   }
   //工作拆分
@@ -509,7 +506,7 @@ function ToPlan(props: {
               <div>
                 <Tree
                   checkable
-                  height={500}
+                  // height={500}
                   selectedKeys={keys}
                   defaultExpandAll={true}
                   onSelect={onSelect}
@@ -523,7 +520,7 @@ function ToPlan(props: {
             {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
               <div>
                 <Tree
-                  height={200}
+                  // height={200}
                   selectedKeys={keys}
                   defaultExpandAll={true}
                   onSelect={onSelect}

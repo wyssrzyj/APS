@@ -73,14 +73,14 @@ const Dhx = (props: {
 
   useEffect(() => {
     if (chart !== undefined && line !== undefined) {
-      setSubjectData({
-        data: chart,
-        links: line
-      })
-      console.log('合并树', {
-        data: chart,
-        links: line
-      })
+      if (!isEmpty(chart)) {
+        console.log('图', chart)
+        console.log('线', line)
+        setSubjectData({
+          data: chart,
+          links: line
+        })
+      }
     }
   }, [chart, line, gunterType])
 
@@ -94,9 +94,6 @@ const Dhx = (props: {
     if (type === '0') {
       //点击
       if (!isEmpty(chart)) {
-        console.log('chart', chart)
-        console.log('select', select)
-
         const teamId = chart.filter(
           (item: { id: any }) => item.id === select
         )[0].teamId
@@ -154,12 +151,15 @@ const Dhx = (props: {
     return susa.includes(state)
   }
 
+  //计算
   useEffect(() => {
     if (!isEmpty(chart)) {
       if (!isEmpty(updateData)) {
         // 移动
         setType('1')
-        setSelect(updateData.teamId)
+
+        // setSelect(updateData.teamId)
+
         //判断日期是否可用
         if (judgeAvailableDate(updateData)) {
           //提示
@@ -171,12 +171,12 @@ const Dhx = (props: {
             const tips = chart.filter(
               (item: { id: any }) => item.id === updateData.parent
             )
-            message.error(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
+            message.warning(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
             updateMethod && updateMethod()
           } else {
             // 同行
             const tips = chart.filter((item: { id: any }) => item.id === tipsID)
-            message.error(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
+            message.warning(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
             updateMethod && updateMethod()
           }
         } else {
@@ -200,7 +200,10 @@ const Dhx = (props: {
       detailId,
       teamId
     })
-    updateMethod && updateMethod()
+    // console.log('更新完成')
+    message.success(`更新完成`)
+
+    // updateMethod && updateMethod()
   }
   const choose = (type: any) => {
     setCurrentZoom(type)

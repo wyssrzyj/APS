@@ -143,7 +143,8 @@ function Popup(props: { content: any; newlyAdded: any }) {
       //班组为false才执行
       const arr: any = await teamId({
         teamIds: values.teamIds,
-        timeList: list.timeList
+        timeList: list.timeList,
+        extraWorkId: type === 1 ? null : edit.id
       })
       if (arr.success === true) {
         const res = await overtimeAddition(list)
@@ -161,6 +162,9 @@ function Popup(props: { content: any; newlyAdded: any }) {
     }
     if (type === 2) {
       onOk(values, 2)
+    }
+    if (type === 3) {
+      setIsModalVisible(false)
     }
   }
   const tProps = {

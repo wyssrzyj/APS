@@ -69,15 +69,13 @@ const Gantt = (props: any) => {
 
     //表头
     gantt.config.columns = [
-      { name: 'text', label: '名称', tree: true, width: '180' },
+      { name: 'text', label: '名称', tree: true, width: '200' },
       { name: 'start_date', label: '时间', align: 'center' }
       // { name: 'duration', label: 'Duration', align: 'center' }
       // { name: 'add', label: '' },
     ]
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
-      console.log('单击事件', id)
-
       //折叠所有任务：
       // gantt.eachTask(function (task) {
       //   task.$open = true
@@ -105,7 +103,7 @@ const Gantt = (props: any) => {
       'onBeforeTaskDrag',
       function (id: any, mode: any, e: any) {
         const task = gantt.getTask(id)
-        console.log('可以通过此控制 是否可以拖动', task)
+        // console.log('可以通过此控制 是否可以拖动', task)
         if (task.type === '1') {
           return false
         } else {
@@ -271,6 +269,8 @@ const Gantt = (props: any) => {
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
     initGanttDataProcessor()
+    console.log('渲染数据', list)
+
     gantt.parse(list) //渲染数据
   }
   // "main"

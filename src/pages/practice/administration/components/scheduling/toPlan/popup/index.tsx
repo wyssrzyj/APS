@@ -5,6 +5,7 @@ import {
   Form,
   Input,
   InputNumber,
+  message,
   Modal,
   Row,
   Select
@@ -85,7 +86,6 @@ function Popup(props: { content: any }) {
         item.name = item.teamName
         item.key = item.id
       })
-      console.log('测试', team)
       setTeamName(team)
     }
   }
@@ -107,9 +107,11 @@ function Popup(props: { content: any }) {
   //获取数据
   const interfaceData = async (id: any) => {
     const arr = await getIndividualDetails({ id })
+
     setShopName(arr.shopId)
     //所属工段
     arr.sectionDome = map.get(arr.section)
+
     setList(arr)
   }
   //渲染数据
@@ -178,13 +180,16 @@ function Popup(props: { content: any }) {
       values.id = editWindowList.id
     }
 
-    console.log('提交的数据', values)
-
     // 结束时间 手动-接口
     const res = await editingTasks(values)
-    form.resetFields()
-    editSubmission()
-    setEndTimeData(0) //接口算的结束时间清空
+    if (res) {
+      form.resetFields()
+      editSubmission()
+      setEndTimeData(0) //接口算的结束时间清空
+      message.success('保存成功')
+    } else {
+      message.error('保存失败')
+    }
   }
   let timeout: NodeJS.Timeout
   const onChange = (e: any) => {
@@ -374,6 +379,7 @@ function Popup(props: { content: any }) {
                   allowClear
                   placeholder="请选择所属工段"
                   onChange={handleChange}
+                  disabled={!sectionType}
                 >
                   {factoryName.map((item: any) => (
                     // eslint-disable-next-line react/jsx-key
@@ -390,7 +396,12 @@ function Popup(props: { content: any }) {
                 name="teamId"
                 rules={[{ required: sectionType, message: '请输入工作班组' }]}
               >
-                <Select allowClear placeholder="请选择工作班组" onChange={team}>
+                <Select
+                  disabled={!sectionType}
+                  allowClear
+                  placeholder="请选择工作班组"
+                  onChange={team}
+                >
                   {teamName.map((item: any) => (
                     <Option key={item.id} value={item.id}>
                       {item.name}

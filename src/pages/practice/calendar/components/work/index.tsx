@@ -211,6 +211,7 @@ const Index = () => {
   }
   const editUser = async (type: boolean, value: any) => {
     const arr = await operatingModeDetailsData({ id: value.id })
+
     setEdit(arr)
 
     if (type === true) {

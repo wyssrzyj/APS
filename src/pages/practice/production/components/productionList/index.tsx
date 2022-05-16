@@ -182,7 +182,7 @@ function Production() {
             >
               查看
             </div>
-            {_row.status !== 2 ? (
+            {_row.status === 1 ? (
               <div
                 className={styles.operation}
                 onClick={() => editUser(true, _row)}
@@ -214,6 +214,8 @@ function Production() {
     setParams({ ...params, pageNum: page, pageSize: pageSize })
   }
   const editUser = (type: boolean, row: any) => {
+    console.log(row.outsourceType)
+
     setWhetherEditor(row.outsourceType)
 
     setGetDetailsId(row.externalProduceOrderId)

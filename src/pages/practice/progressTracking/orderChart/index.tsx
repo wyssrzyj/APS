@@ -106,9 +106,9 @@ const SchedulingResults = () => {
   }
   return (
     <div className={styles.qualification}>
-      <div>
+      {/* <div>
         <Title title={'订单甘特图'} />
-      </div>
+      </div> */}
       <Forms FormData={FormData}></Forms>
       <div id="c1"></div>
 

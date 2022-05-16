@@ -37,6 +37,8 @@ function Popup(props: { content: any; newlyAdded: any }) {
   //回显
   useEffect(() => {
     if (type !== 1) {
+      console.log('返回的树', edit.id)
+
       form.setFieldsValue(edit) //回显
       setListID(edit.factoryId)
     }
@@ -112,7 +114,8 @@ function Popup(props: { content: any; newlyAdded: any }) {
       //班组为false才执行
       const arr: any = await teamId({
         teamIds: values.teamIds,
-        workModes: list.workModes
+        workModes: list.workModes,
+        workModeId: type === 1 ? null : edit.id
       })
       if (arr.success === true) {
         const res = await operatingModeDetails(list)
@@ -131,6 +134,9 @@ function Popup(props: { content: any; newlyAdded: any }) {
     }
     if (type === 2) {
       onOk(values, 2)
+    }
+    if (type === 3) {
+      setIsModalVisible(false)
     }
   }
 

@@ -97,7 +97,7 @@ const FormTable = (props: any) => {
           dataIndex: 'counteractNum',
           align: 'center',
           fixed: 'right',
-          width: 70,
+          width: 150,
           key: 'counteractNum',
           render: (_item: any, v: any) =>
             isEmpty(v.children) ? (
@@ -211,12 +211,13 @@ const FormTable = (props: any) => {
   const subitemProcessing = (e) => {
     if (!isEmpty(e)) {
       const arr = e.map((v: any) => {
+        v.id = v.skuCode
+        v.key = v.id
+
         v.deliveredQty = v.deliveredQty === null ? 0 : v.deliveredQty //测试~~~已出库数量暂无 设置0
         v.availableStockQtyTotal =
           v.availableStockQtyTotal === null ? 0 : v.availableStockQtyTotal //测试~~~物料库存数量暂无 设置0
         // v.counteractNum = 0
-        v.id = v.materialCode + v.materialColCode
-        v.key = v.id
         //物料缺少数量 计算
         v.shortOfProductNum =
           v.requireQuantity -
@@ -254,6 +255,8 @@ const FormTable = (props: any) => {
         item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
+      console.log('处理后的', tableData)
+
       setNotData([...tableData])
     }
   }, [tableData])
@@ -344,6 +347,7 @@ const FormTable = (props: any) => {
           dataSource={data}
           scroll={{ x: 1500, y: 300 }}
           pagination={false}
+          defaultExpandAllRows={true}
         />
       </>
     )

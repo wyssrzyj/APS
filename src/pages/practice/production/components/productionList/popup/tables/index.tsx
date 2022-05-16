@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-03-10 15:20:21
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-12 14:16:39
+ * @LastEditTime: 2022-05-16 15:29:08
  * @FilePath: \jack-aps\src\pages\practice\production\components\productionList\popup\tables\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
 function Tables(props: any) {
-  const { getFormData, list, pagingData, total } = props
+  const { getFormData, list, pagingData, total, types } = props
 
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(5)
@@ -61,7 +61,7 @@ function Tables(props: any) {
               // onClick={() => (!types ? getFormData(_row) : null)}
               onClick={() => getFormData(_row)}
             >
-              查看
+              {types ? '查看' : '编辑'}
             </div>
           </div>
         )

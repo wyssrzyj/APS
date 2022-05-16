@@ -129,7 +129,6 @@ function Index() {
 
   //  图刷新
   const updateMethod = () => {
-    console.log('图刷新', formData, gunterType)
     getChart(formData, gunterType)
   }
 
@@ -261,7 +260,7 @@ function Index() {
               <div className={styles.choose}>
                 <Select
                   defaultValue={gunterType}
-                  style={{ width: 120 }}
+                  style={{ width: 130 }}
                   onChange={handleChange}
                 >
                   <Option key={'0'} value="0">

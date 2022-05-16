@@ -68,8 +68,6 @@ const Gantt = (props: any) => {
     ]
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
-      console.log('单击事件', id)
-
       //折叠所有任务：
       // gantt.eachTask(function (task) {
       //   task.$open = true
