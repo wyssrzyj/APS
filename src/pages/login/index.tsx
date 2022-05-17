@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 10:02:54
- * @LastEditTime: 2022-05-16 13:03:51
+ * @LastEditTime: 2022-05-17 09:39:59
  * @Description:
  * @LastEditors: zjr
  */
@@ -19,18 +19,21 @@ const PwdIcon = () => <Icon type="jack-yanzhengma" className={styles.icon} />
 
 const LoginContent = () => {
   const navigate = useNavigate()
-
+  const [loadings, setLoadings] = useState(false)
   const { login } = loginApis
   const [form] = Form.useForm()
   const { validateFields, resetFields } = form
 
   const submit = async () => {
     try {
+      setLoadings(true)
       const values = await validateFields()
       const res = await login(values)
 
       if (res && res.success) navigate('/home')
+      setLoadings(false)
     } catch (err) {
+      setLoadings(false)
       console.log(err)
     }
   }
@@ -55,7 +58,11 @@ const LoginContent = () => {
             label=""
             rules={[{ required: true, message: '请输入用户名' }]}
           >
-            <Input prefix={<UserIcon />} placeholder="请输入用户名" />
+            <Input
+              prefix={<UserIcon />}
+              placeholder="请输入用户名"
+              onPressEnter={submit}
+            />
           </Form.Item>
           <Form.Item
             name="password"
@@ -67,9 +74,14 @@ const LoginContent = () => {
               }
             ]}
           >
-            <Input.Password prefix={<PwdIcon />} placeholder="请输入密码" />
+            <Input.Password
+              prefix={<PwdIcon />}
+              placeholder="请输入密码"
+              onPressEnter={submit}
+            />
           </Form.Item>
           <Form.Item label="">
+            {/* <Button type={'primary'} onClick={submit} block loading={loadings}> */}
             <Button type={'primary'} onClick={submit} block>
               登录
             </Button>
