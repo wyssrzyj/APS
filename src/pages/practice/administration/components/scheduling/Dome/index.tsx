@@ -36,6 +36,7 @@ const Dhx = (props: {
   const [subjectData, setSubjectData] = useState<any>({ data: [], links: [] }) //甘特图主体数据
   const [chart, setChart] = useState<any>([]) //图
   const [line, setLine] = useState<any>([]) //线
+  // const [linek, setLinek] = useState<any>([]) //线
 
   const [notWorking, setNotWorking] = useState<any>([]) //所有不可工作时间
 
@@ -74,13 +75,76 @@ const Dhx = (props: {
   useEffect(() => {
     if (chart !== undefined && line !== undefined) {
       if (!isEmpty(chart)) {
-        console.log('图', chart)
-        console.log('线', line)
         setSubjectData({
           data: chart,
           links: line
         })
       }
+
+      // const data = [
+      //   {
+      //     //父亲
+      //     id: 1,
+      //     type: true, //判断是否可以移动
+      //     text: '裁剪车间—裁剪班组', //名称
+      //     // duration: 6, //天数
+      //     // progress: 1, //控制完成百分比 范围0-1
+      //     color: 'red', //控制颜色
+      //     open: true
+      //   },
+      //   {
+      //     //儿子
+      //     id: 11,
+      //     text: '-生产单号10086',
+      //     // start_date: '2020-04-07',
+      //     // duration: 2,
+      //     progress: 0.6,
+      //     parent: 1,
+      //     color: '', //控制颜色
+      //     render: 'split', //添加同一行
+      //     open: true
+      //   },
+      //   {
+      //     //孙子
+      //     id: 111,
+      //     text: '卢英杰的子1',
+      //     start_date: '', //开始时间
+      //     end_date: '2020-04-7 ', //结束时间
+      //     duration: 1,
+      //     progress: 0.6,
+      //     parent: 11,
+      //     color: 'red', //控制颜色
+      //     open: true
+      //   },
+      //   {
+      //     id: 112,
+      //     text: '卢英杰的子2',
+      //     start_date: '2020-04-10',
+      //     duration: 2,
+      //     progress: 0.6,
+      //     parent: 11,
+      //     open: true
+      //   },
+      //   {
+      //     id: 113,
+      //     text: '卢英杰号的子3',
+      //     start_date: '2020-04-12',
+      //     duration: 2,
+      //     progress: 0.6,
+      //     parent: 11,
+      //     open: true
+      //   }
+      // ]
+
+      // const links = [
+      //   { id: 1, source: 111, target: 112, type: 0 },
+      //   { id: 3, source: 2, target: 3, type: 0 }
+      // ]
+      //假数据
+      // setSubjectData({
+      //   data: data,
+      //   links: links
+      // })
     }
   }, [chart, line, gunterType])
 

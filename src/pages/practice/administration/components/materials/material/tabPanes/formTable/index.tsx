@@ -8,23 +8,31 @@ import { Icon } from '@/components'
 
 import styles from './index.module.less'
 const FormTable = (props: any) => {
-  const { tableData, materialList, index, sizeList, saveData, select } = props
+  const {
+    tableData,
+    materialList,
+    index,
+    sizeList,
+    saveData,
+    select,
+    recheckData
+  } = props
   const [expandedRowKeys, setExpandedRowKeys] = useState<any>([])
-  const [notData, setNotData] = useState<any>([])
+  const [notData, setNotData] = useState<any>([]) //接口数据
   const [list, setList] = useState<any>([]) //格式
   const [data, setData] = useState<any>([]) //table 数据  防止为空
   const [loading, setLoading] = useState<any>(true) //加载
   const [renderData, setRenderData] = useState<any>()
-  const [type, setType] = useState<any>(false)
 
+  const [cloneData, setCloneData] = useState<any>([]) //修改存取来
   useEffect(() => {
     saveData && saveData(data)
+    //给后台传递的数据
   }, [data])
 
   //已检查且已计划 才不可用
   const whetherAvailable = (e) => {
-    if (e.checkStatus === 1 && e.status === 2) {
-      console.log('我满足条件', e)
+    if ((e.checkStatus === 1 && e.status === 2) || e.name === '已检查') {
       return true
     } else {
       return false
@@ -183,13 +191,22 @@ const FormTable = (props: any) => {
   //渲染最终数据
   useEffect(() => {
     setList(renderData) //先渲染结构 后渲染数据 ，不然输入框不能操作
-    setData(notData)
     //数据量过多数据空白问题
-    // setLoading(false)
-    // if (type) {
 
-    // }
-  }, [renderData, notData])
+    //重新检查 走 缓存数据
+    if (select !== undefined) {
+      if (select.name === '重新检查') {
+        if (!isEmpty(cloneData)) {
+          setData(cloneData)
+          recheckData && recheckData(cloneData)
+        } else {
+          setData(notData)
+        }
+      } else {
+        setData(notData)
+      }
+    }
+  }, [renderData, notData, cloneData, select])
 
   //处理建值对
   const conversion = (data: any[]) => {
@@ -249,14 +266,14 @@ const FormTable = (props: any) => {
       tableData.map((item: any) => {
         item.deliveredQty = item.deliveredQty === null ? 0 : item.deliveredQty //测试~~~已出库数量暂无 设置0
         item.id = item.materialCode //id是 materialCode
-        item.key = item.id //添加 key
+        // item.key = `${item.materialCode}8848` //添加 key
+        item.key = item.materialCode //添加 key
+
         // item.counteractNum = 0 //添加初始 冲销数量
         item.children = subitemProcessing(item.children) //处理子项
         item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
-      console.log('处理后的', tableData)
-
       setNotData([...tableData])
     }
   }, [tableData])
@@ -325,6 +342,7 @@ const FormTable = (props: any) => {
         }
       })
       setData([...current])
+      setCloneData([...current])
     }
   }
 
@@ -335,8 +353,22 @@ const FormTable = (props: any) => {
     if (!isEmpty(data)) {
       setLoading(false)
     }
-    console.log(data)
   }, [data])
+  const show = (e, v) => {
+    //e 是接口数据
+    //v 重新数据
+    if (select !== undefined) {
+      if (select.name === '重新检查') {
+        if (v.length >= 1) {
+          return v
+        } else {
+          return e
+        }
+      } else {
+        return e
+      }
+    }
+  }
 
   function TreeData() {
     return (

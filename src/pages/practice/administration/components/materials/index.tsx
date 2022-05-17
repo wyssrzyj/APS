@@ -11,6 +11,16 @@ import Forms from './forms'
 import styles from './index.module.less'
 import Material from './material'
 
+const map = new Map()
+map.set(1, '已检查')
+map.set(2, '未检查')
+map.set(3, '重新检查')
+
+const production = new Map()
+production.set(1, '待计划')
+production.set(2, '已计划')
+production.set(3, '生产中')
+production.set(4, '生产完成')
 function Materials() {
   const [pageNum, setPageNum] = useState<number>(1)
   const [page, setPage] = useState<number>(1)
@@ -37,16 +47,6 @@ function Materials() {
     factoryList
   } = materialSetApis
 
-  const map = new Map()
-  map.set(1, '已检查')
-  map.set(2, '未检查')
-  map.set(3, '重新检查')
-
-  const production = new Map()
-  production.set(1, '待计划')
-  production.set(2, '已计划')
-  production.set(3, '生产中')
-  production.set(4, '生产完成')
   const columns: any = [
     {
       title: '生产单号',
@@ -147,11 +147,12 @@ function Materials() {
 
   const update = () => {
     formApi(params)
+    setSelected([])
+    setSelectedData([])
   }
   const formApi = async (v: any) => {
     const res = await productionList(v)
     setTotal(res.total)
-
     if (!isEmpty(res.records)) {
       res.records.map(
         (item: {
@@ -174,7 +175,6 @@ function Materials() {
 
   //头部form的数据
   const FormData = (e: any) => {
-    setQueryData(e)
     setPage(1)
     setParams({ pageNum: 1, pageSize: 10, ...e })
     setSelected([])
@@ -217,10 +217,7 @@ function Materials() {
       message.warning('请至少选择一个')
     } else {
       //获取选中的数据
-
       const selectedValue = selectedList(selected, selectedData)
-      console.log('多页侧视', selectedValue)
-
       //判断选中的状态是否一样
       const stateConsistent = selectedValue.every(
         (item) => item.checkStatus === selectedValue[0].checkStatus
@@ -256,6 +253,7 @@ function Materials() {
             message.warning('重新检查只能选择一个')
           }
         } else {
+          console.log('准备传递', selectedValue)
           setMaterialList(selectedValue)
         }
 
@@ -334,9 +332,6 @@ function Materials() {
       setSelectedData(cloneSelected)
     }
   }, [list])
-  useEffect(() => {
-    console.log('测试', selectedData)
-  }, [selectedData])
 
   const elsxTable = (res: any, title: string) => {
     const blob = new Blob([res], { type: 'application/octet-stream' })

@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-14 12:26:59
+ * @LastEditTime: 2022-05-17 17:10:45
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -98,10 +98,28 @@ export const editingTasks = async (params: any) => {
   }
 }
 //获取甘特图不可工作日期
+// export const workingDate = async (params: any) => {
+//   try {
+//     const res: ResponseProps = await axios.get(
+//       `/aps/produce-assignment/get-non-work-time`,
+//       params
+//     )
+//     if (res.code !== 200) {
+//       message.error(res.msg)
+//     }
+//     if (res) {
+//       return res.data || []
+//     }
+//     return []
+//   } catch (e) {
+//     console.log(e)
+//   }
+// }
+//获取甘特图不可工作日期
 export const workingDate = async (params: any) => {
   try {
-    const res: ResponseProps = await axios.get(
-      `/aps/produce-assignment/get-non-work-time`,
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment/get-team-non-work-tiem`,
       params
     )
     if (res.code !== 200) {
@@ -115,6 +133,7 @@ export const workingDate = async (params: any) => {
     console.log(e)
   }
 }
+
 // getTeamView
 export const getLine = async (params: any) => {
   try {
