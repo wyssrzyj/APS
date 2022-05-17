@@ -49,7 +49,7 @@ const Gantt = (props: any) => {
     // gantt.config.readonly = true//只读
     gantt.config.autoscroll = true //如果线超出屏幕可以x滚动
     gantt.config.order_branch = false // 左侧可以拖动
-    gantt.config.sort = true //左侧点击表头排序
+    gantt.config.sort = false //左侧点击表头排序
     gantt.config.drag_move = true //是否可以移动
     gantt.config.drag_progress = false //拖放进度
     gantt.config.drag_resize = false //控制大小

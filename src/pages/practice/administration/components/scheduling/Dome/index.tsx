@@ -81,7 +81,7 @@ const Dhx = (props: {
         })
       }
 
-      // const data = [
+      // const dataqq = [
       //   {
       //     //父亲
       //     id: 1,
@@ -136,14 +136,14 @@ const Dhx = (props: {
       //   }
       // ]
 
-      // const links = [
-      //   { id: 1, source: 111, target: 112, type: 0 },
+      // const linksqq = [
+      //   // { id: 1, source: 111, target: 112, type: 0 },
       //   { id: 3, source: 2, target: 3, type: 0 }
       // ]
-      //假数据
+      // 假数据
       // setSubjectData({
-      //   data: data,
-      //   links: links
+      //   data: dataqq,
+      //   links: linksqq
       // })
     }
   }, [chart, line, gunterType])

@@ -127,7 +127,7 @@ function Materials() {
     }
   }
   useEffect(() => {
-    setParams({ pageNum, pageSize })
+    setParams({ pageNum, pageSize, ...queryData })
   }, [pageNum, pageSize, queryData])
 
   const objectValueAllEmpty = (object) => {
@@ -175,6 +175,7 @@ function Materials() {
 
   //头部form的数据
   const FormData = (e: any) => {
+    setQueryData(e)
     setPage(1)
     setParams({ pageNum: 1, pageSize: 10, ...e })
     setSelected([])

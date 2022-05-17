@@ -115,8 +115,6 @@ function Index() {
       }
       return item
     })
-    console.log(start)
-    console.log(end)
     const time = {
       startDate: start.sort()[0],
       endDate: end.sort()[start.length - 1]
@@ -129,7 +127,6 @@ function Index() {
   }
   useEffect(() => {
     if (time.startDate !== undefined) {
-      console.log(time)
       unavailableTime()
     }
   }, [time])
@@ -232,7 +229,6 @@ function Index() {
     setGunterType(value)
   }
   const update = () => {
-    console.log('点击发布')
     setRelease(formData)
   }
   return (

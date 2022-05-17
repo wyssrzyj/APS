@@ -44,17 +44,7 @@ const Gantt = (props: any) => {
     if (!gantt.$initialized) {
       color()
     }
-
-    // gantt.clearAll() //缓存问题 先清楚后添加
-    // console.log('执行动态')
-    // gantt.addLink({
-    //   id: 2,
-    //   source: 112,
-    //   target: 113,
-    //   type: 0
-    // })
-    // gantt.refreshData()
-    //缩放-不可修该 勿动
+    gantt.clearAll() //缓存问题 先清楚后添加
     gantt.ext.zoom.setLevel(zoom)
   }, [rest, zoom])
 
