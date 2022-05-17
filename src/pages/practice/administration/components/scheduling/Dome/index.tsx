@@ -36,7 +36,7 @@ const Dhx = (props: {
   const [subjectData, setSubjectData] = useState<any>({ data: [], links: [] }) //甘特图主体数据
   const [chart, setChart] = useState<any>([]) //图
   const [line, setLine] = useState<any>([]) //线
-  // const [linek, setLinek] = useState<any>([]) //线.
+  // const [linek, setLinek] = useState<any>([]) //线
 
   const [notWorking, setNotWorking] = useState<any>([]) //所有不可工作时间
 
