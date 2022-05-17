@@ -5,8 +5,8 @@ import React, { useEffect, useState } from 'react'
 import { getChild } from '@/components/getChild/index'
 import { dockingDataApis } from '@/recoil/apis'
 
-const HeaderForm = (props: { FormData: any; factoryData: any }) => {
-  const { FormData, factoryData } = props
+const HeaderForm = (props: { FormData: any }) => {
+  const { FormData } = props
   const { sectionLists } = dockingDataApis
   const { Option } = Select
 
