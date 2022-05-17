@@ -130,7 +130,7 @@ export const resetModalConfig: Array<Partial<viewFormConfig>> = [
     name: 'password',
     field: 'password',
     value: '',
-    type: 'input',
+    type: 'passwordInput',
     required: true,
     placeholder: '请输入系统密码'
   }

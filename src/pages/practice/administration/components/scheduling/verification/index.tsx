@@ -1,4 +1,4 @@
-import { Button, Modal, Space, Tag } from 'antd'
+import { Button, Modal, Result, Space, Tag } from 'antd'
 import classNames from 'classnames'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -25,14 +25,20 @@ function VerifyModal(props: Record<string, any>) {
   const { visibleVerify, onCancel, checkIDs, update } = props
   const [checkList, setCheckList] = useState<Record<string, any>>(list)
 
+  const [checkPass, setCheckPass] = useState('')
   const verifyInfo = async (id: string) => {
     const data = cloneDeep(checkList)
     // ['15042722699443200022']
     const res = await checkSchedule(id)
-    data.forEach((item: Record<string, any>) => {
-      item.list = res[item.value]
-    })
-    setCheckList(data)
+    if (res && !Object.keys(res).some((i) => res[i].length > 0)) {
+      setCheckPass('success')
+    } else {
+      data.forEach((item: Record<string, any>) => {
+        item.list = res[item.value]
+      })
+      setCheckPass('fail')
+      setCheckList(data)
+    }
   }
 
   useEffect(() => {
@@ -53,44 +59,48 @@ function VerifyModal(props: Record<string, any>) {
         maskClosable={false}
         width={700}
       >
-        <section>
-          {checkList.map((item: any) => {
-            return (
-              <div
-                key={item.value}
-                className={classNames(styles.mb10, styles.listContainer)}
-              >
-                <div>
-                  <Tag
-                    color={
-                      [
-                        'delayOrderProductList',
-                        'workTimeOverlapTeamList'
-                      ].includes(item.value)
-                        ? 'red'
-                        : 'orange'
-                    }
-                  >
-                    {item.key}
-                  </Tag>
+        <section className={styles.checkContainer}>
+          {checkPass === 'success' && (
+            <Result status="success" title="校验通过" />
+          )}
+          {checkPass === 'fail' &&
+            checkList.map((item: any) => {
+              return (
+                <div
+                  key={item.value}
+                  className={classNames(styles.mb10, styles.listContainer)}
+                >
+                  <div>
+                    <Tag
+                      color={
+                        [
+                          'delayOrderProductList',
+                          'workTimeOverlapTeamList'
+                        ].includes(item.value)
+                          ? 'red'
+                          : 'orange'
+                      }
+                    >
+                      {item.key}
+                    </Tag>
+                  </div>
+                  <div>
+                    {item.list.map((i: string, index: number) => {
+                      return (
+                        <div
+                          key={index}
+                          className={
+                            index === item.list.length - 1 ? '' : styles.mb10
+                          }
+                        >
+                          {i}
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
-                <div>
-                  {item.list.map((i: string, index: number) => {
-                    return (
-                      <div
-                        key={index}
-                        className={
-                          index === item.list.length - 1 ? '' : styles.mb10
-                        }
-                      >
-                        {i}
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )
-          })}
+              )
+            })}
         </section>
         <footer>
           <Space>

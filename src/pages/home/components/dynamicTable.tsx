@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-12 13:03:02
- * @LastEditTime: 2022-05-16 10:38:28
+ * @LastEditTime: 2022-05-17 08:50:25
  * @Description:
  * @LastEditors: zjr
  */
@@ -63,9 +63,9 @@ const DynamicTable = (props: Record<string, any>) => {
         </Form.Item>
         <Form.Item name="day" label="最近">
           <Select placeholder="请选择" style={{ width: '100px' }} allowClear>
-            <Option value={7}>7</Option>
-            <Option value={14}>14</Option>
-            <Option value={30}>30</Option>
+            <Option value={7}>7天</Option>
+            <Option value={14}>14天</Option>
+            <Option value={30}>30天</Option>
           </Select>
         </Form.Item>
       </Form>

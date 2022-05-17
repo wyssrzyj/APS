@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-05-13 16:42:27
+ * @LastEditTime: 2022-05-17 09:44:27
  * @Description:
  * @LastEditors: zjr
  */
@@ -31,7 +31,7 @@ const Header = () => {
   }
 
   const infos = [
-    { label: '个人中心', icon: UserIcon, key: 'user' },
+    // { label: '个人中心', icon: UserIcon, key: 'user' },
     { label: '修改密码', icon: KeyIcon, key: 'change' },
     { label: '退出登录', icon: ExitIcon, key: 'exit', onClick: exitToLogin }
   ]
@@ -51,12 +51,14 @@ const Header = () => {
         .loginAccount
     })
     if (res.success) {
-      message.success(res.msg)
+      message.success(res.msg || '修改密码成功，请重新登录')
       setIsEditPwdVisible(false)
       localStorage.removeItem('currentUser')
+      localStorage.removeItem('token')
+      localStorage.removeItem('systemUuid')
       navigate('/login')
     } else {
-      message.warning(res.msg)
+      message.warning(res.msg || '操作失败，请稍后重试')
     }
   }
 
@@ -71,7 +73,10 @@ const Header = () => {
       </div>
       <div className={styles.headerR}>
         <div className={styles.userInfo}>
-          <div className={styles.user}>用户</div>
+          <div className={styles.user}>
+            {JSON.parse(localStorage.getItem('currentUser')) &&
+              JSON.parse(localStorage.getItem('currentUser')).user.username}
+          </div>
           <div className={styles.infoModal}>
             {infos.map((item, idx) => {
               if (idx === infos.length - 1) {
