@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-04-13 15:47:01
- * @LastEditTime: 2022-05-06 10:36:49
+ * @LastEditTime: 2022-05-17 22:36:48
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \jack-aps\src\pages\practice\progressTracking\schedulingResults\tbale\index.tsx
@@ -60,7 +60,24 @@ function Edition(props) {
                   </div>
                 </div>
               ) : (
-                <div>暂无</div>
+                <div key={index} className={styles.histogram}>
+                  {/* 内容 */}
+                  <div
+                    className={styles.sonx}
+                    style={{ height: `${100 - _item}px` }}
+                  ></div>
+
+                  <div
+                    className={styles.son}
+                    style={{
+                      height: `${_item < 100 ? _item : 100}px`,
+                      lineHeight: `${_item < 100 ? _item : 100}px`,
+                      background: _item == 100 ? ' red' : 'rgb(250, 249, 249)' //颜色控制
+                    }}
+                  >
+                    {0}%
+                  </div>
+                </div>
               )}
             </>
           )

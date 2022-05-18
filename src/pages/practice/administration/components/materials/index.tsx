@@ -11,8 +11,19 @@ import Forms from './forms'
 import styles from './index.module.less'
 import Material from './material'
 
+const map = new Map()
+map.set(1, '已检查')
+map.set(2, '未检查')
+map.set(3, '重新检查')
+
+const production = new Map()
+production.set(1, '待计划')
+production.set(2, '已计划')
+production.set(3, '生产中')
+production.set(4, '生产完成')
 function Materials() {
   const [pageNum, setPageNum] = useState<number>(1)
+  const [page, setPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total, setTotal] = useState<number>(0)
   const [params, setParams] = useState<any>({
@@ -36,16 +47,6 @@ function Materials() {
     factoryList
   } = materialSetApis
 
-  const map = new Map()
-  map.set(1, '已检查')
-  map.set(2, '未检查')
-  map.set(3, '重新检查')
-
-  const production = new Map()
-  production.set(1, '待计划')
-  production.set(2, '已计划')
-  production.set(3, '生产中')
-  production.set(4, '生产完成')
   const columns: any = [
     {
       title: '生产单号',
@@ -126,16 +127,18 @@ function Materials() {
     }
   }
   useEffect(() => {
-    setParams({ pageNum, pageSize })
-  }, [pageNum, pageSize])
+    setParams({ pageNum, pageSize, ...queryData })
+  }, [pageNum, pageSize, queryData])
 
-  useEffect(() => {
-    if (queryData.factoryId !== undefined) {
-      setParams({ pageNum: 1, pageSize, ...queryData })
-    } else {
-      setParams({ pageNum, pageSize, ...queryData })
-    }
-  }, [queryData])
+  const objectValueAllEmpty = (object) => {
+    let isEmpty = true
+    Object.keys(object).forEach(function (x) {
+      if (object[x] != null && object[x] != '') {
+        isEmpty = false
+      }
+    })
+    return isEmpty
+  }
 
   //获取列表数据
   useEffect(() => {
@@ -144,11 +147,12 @@ function Materials() {
 
   const update = () => {
     formApi(params)
+    setSelected([])
+    setSelectedData([])
   }
   const formApi = async (v: any) => {
     const res = await productionList(v)
     setTotal(res.total)
-
     if (!isEmpty(res.records)) {
       res.records.map(
         (item: {
@@ -172,12 +176,16 @@ function Materials() {
   //头部form的数据
   const FormData = (e: any) => {
     setQueryData(e)
+    setPage(1)
+    setParams({ pageNum: 1, pageSize: 10, ...e })
+    setSelected([])
   }
   const onPaginationChange = (
     page: SetStateAction<number>,
     pageSize: SetStateAction<number>
   ) => {
     setPageNum(page)
+    setPage(page)
     setPageSize(pageSize)
   }
 
@@ -210,10 +218,7 @@ function Materials() {
       message.warning('请至少选择一个')
     } else {
       //获取选中的数据
-
       const selectedValue = selectedList(selected, selectedData)
-      console.log('多页侧视', selectedValue)
-
       //判断选中的状态是否一样
       const stateConsistent = selectedValue.every(
         (item) => item.checkStatus === selectedValue[0].checkStatus
@@ -249,6 +254,7 @@ function Materials() {
             message.warning('重新检查只能选择一个')
           }
         } else {
+          console.log('准备传递', selectedValue)
           setMaterialList(selectedValue)
         }
 
@@ -327,9 +333,6 @@ function Materials() {
       setSelectedData(cloneSelected)
     }
   }, [list])
-  useEffect(() => {
-    console.log('测试', selectedData)
-  }, [selectedData])
 
   const elsxTable = (res: any, title: string) => {
     const blob = new Blob([res], { type: 'application/octet-stream' })
@@ -401,7 +404,7 @@ function Materials() {
               showSizeChanger: true,
               // showQuickJumper: true, //是否快速查找
               pageSize, //每页条数
-              current: pageNum, //	当前页数
+              current: page, //	当前页数
               total, //数据总数
               // position: ['bottomCenter'], //居中
               pageSizeOptions: ['10', '20', '50'],

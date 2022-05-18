@@ -46,6 +46,7 @@ const Outgoing = (props: any) => {
   const [list, setList] = useState<any>([]) //api初始数据
   const [data, setData] = useState<any>([]) //处理后的展示数据
   const [processedData, setProcessedData] = useState<any>([]) //全部数据-用于保存
+  const [edited, setEdited] = useState<any>(false) //已编辑
 
   useEffect(() => {
     setParams({ pageNum: pageNum, pageSize: pageSize })
@@ -279,6 +280,11 @@ const Outgoing = (props: any) => {
   const FormData = (e: any) => {
     setParams({ ...params, ...e })
   }
+  useEffect(() => {
+    if (whetherEditor === 2) {
+      setEdited(true)
+    }
+  }, [whetherEditor])
   return (
     <div className={styles.table}>
       <div className={styles.top}>生产单外发管理</div>
@@ -312,7 +318,7 @@ const Outgoing = (props: any) => {
         >
           整单外发
         </Button>
-        {whetherEditor === 2 ? <div className={styles.edit}>已编辑</div> : null}
+        {edited ? <div className={styles.edit}>已编辑</div> : null}
       </div>
       {/* 弹窗 */}
       <Popup
@@ -321,6 +327,7 @@ const Outgoing = (props: any) => {
         outgoing={outgoing}
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}
+        setEdited={setEdited}
       />
     </div>
   )

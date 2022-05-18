@@ -36,6 +36,7 @@ const Dhx = (props: {
   const [subjectData, setSubjectData] = useState<any>({ data: [], links: [] }) //甘特图主体数据
   const [chart, setChart] = useState<any>([]) //图
   const [line, setLine] = useState<any>([]) //线
+  // const [linek, setLinek] = useState<any>([]) //线
 
   const [notWorking, setNotWorking] = useState<any>([]) //所有不可工作时间
 
@@ -44,7 +45,7 @@ const Dhx = (props: {
   const [restDate, setRestDate] = useState<any>() //单个班组的不可用日期
 
   const [select, setSelect] = useState<any>([]) //用于展示 线和不可用时间、给树传递id判断
-  const [type, setType] = useState<any>() //判断是点击还是移动
+  // const [type, setType] = useState<any>() //判断是点击还是移动
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
@@ -73,17 +74,82 @@ const Dhx = (props: {
 
   useEffect(() => {
     if (chart !== undefined && line !== undefined) {
-      setSubjectData({
-        data: chart,
-        links: line
-      })
-      console.log('合并树', {
-        data: chart,
-        links: line
-      })
+      if (!isEmpty(chart)) {
+        setSubjectData({
+          data: chart,
+          links: line
+        })
+      }
+      console.log('线更新', line)
+
+      // const dataqq = [
+      //   {
+      //     //父亲
+      //     id: 1,
+      //     type: true, //判断是否可以移动
+      //     text: '裁剪车间—裁剪班组', //名称
+      //     // duration: 6, //天数
+      //     // progress: 1, //控制完成百分比 范围0-1
+      //     color: '#52c41a', //控制颜色
+      //     open: true
+      //   },
+      //   {
+      //     //儿子
+      //     id: 11,
+      //     text: '-生产单号10086',
+      //     // start_date: '2020-04-07',
+      //     // duration: 2,
+      //     progress: 0.6,
+      //     parent: 1,
+      //     color: '', //控制颜色
+      //     render: 'split', //添加同一行
+      //     open: true
+      //   },
+      //   {
+      //     //孙子
+      //     id: 111,
+      //     text: '卢英杰的子1',
+      //     start_date: '', //开始时间
+      //     end_date: '2020-04-7 ', //结束时间
+      //     duration: 1,
+      //     progress: 0.6,
+      //     parent: 11,
+      //     color: '#52c41a', //控制颜色
+      //     open: true
+      //   },
+      //   {
+      //     id: 112,
+      //     text: '卢英杰的子2',
+      //     start_date: '2020-04-10',
+      //     duration: 2,
+      //     progress: 0.6,
+      //     parent: 11,
+      //     open: true
+      //   },
+      //   {
+      //     id: 113,
+      //     text: '卢英杰号的子3',
+      //     start_date: '2020-04-12',
+      //     duration: 2,
+      //     progress: 0.6,
+      //     parent: 11,
+      //     open: true
+      //   }
+      // ]
+
+      // const linksqq = [
+      //   { id: 1, source: 111, target: 112, type: 0 },
+      //   { id: 3, source: 2, target: 3, type: 0 }
+      // ]
+      // // 假数据
+      // setSubjectData({
+      //   data: dataqq,
+      //   links: linksqq
+      // })
     }
   }, [chart, line, gunterType])
 
+  //点击
   useEffect(() => {
     // 线
     if (!isEmpty(select)) {
@@ -91,41 +157,41 @@ const Dhx = (props: {
     }
 
     // 获取对应的不可用时间
-    if (type === '0') {
-      //点击
-      if (!isEmpty(chart)) {
-        console.log('chart', chart)
-        console.log('select', select)
+    // if (type === '0') {
+    //点击
+    if (!isEmpty(chart)) {
+      const teamId = chart.filter((item: { id: any }) => item.id === select)[0]
+        .teamId
 
-        const teamId = chart.filter(
-          (item: { id: any }) => item.id === select
-        )[0].teamId
-
-        if (teamId !== null) {
-          const unavailable: any = notWorking.filter(
-            (item: { id: any }) => item.id === teamId
-          )
-          if (unavailable !== undefined && !isEmpty(unavailable)) {
-            setRestDate(unavailable[0].time)
-          }
-        } else {
-          console.log('置空')
-          setRestDate(['2000-06-06'])
+      if (teamId !== null) {
+        const unavailable: any = notWorking.filter(
+          (item: { id: any }) => item.id === teamId
+        )
+        if (unavailable !== undefined && !isEmpty(unavailable)) {
+          // console.log('点击不可用时间', unavailable[0].time)
+          setRestDate(unavailable[0].time)
         }
+      } else {
+        // console.log('暂无')
+        setRestDate(['2000-06-06'])
       }
     }
+    // }
 
-    if (type === '1') {
-      //移动
-      const unavailable: any = notWorking.filter(
-        (item: { id: any }) => item.id === select
-      )
-      if (unavailable !== undefined && !isEmpty(unavailable)) {
-        setRestDate(unavailable[0].time)
-      }
-    }
-  }, [select, type])
+    // if (type === '1') {
+    //   //移动
+    //   const unavailable: any = notWorking.filter(
+    //     (item: { id: any }) => item.id === select
+    //   )
+    //   if (unavailable !== undefined && !isEmpty(unavailable)) {
+    //     setRestDate(unavailable[0].time)
+    //   } else {
+    //     console.log('空~~~~~~~~~~')
+    //   }
+    // }
+  }, [select])
 
+  //线接口
   const getLineData = async (id: any) => {
     const line: any = await getLine({ id }) //线
     if (line.code === 200) {
@@ -154,12 +220,12 @@ const Dhx = (props: {
     return susa.includes(state)
   }
 
+  //移动
   useEffect(() => {
     if (!isEmpty(chart)) {
-      if (!isEmpty(updateData)) {
-        // 移动
-        setType('1')
-        setSelect(updateData.teamId)
+      if (updateData) {
+        // setType('1')
+        // setSelect(updateData.teamId)
         //判断日期是否可用
         if (judgeAvailableDate(updateData)) {
           //提示
@@ -171,15 +237,16 @@ const Dhx = (props: {
             const tips = chart.filter(
               (item: { id: any }) => item.id === updateData.parent
             )
-            message.error(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
+            message.warning(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
             updateMethod && updateMethod()
           } else {
             // 同行
             const tips = chart.filter((item: { id: any }) => item.id === tipsID)
-            message.error(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
+            message.warning(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
             updateMethod && updateMethod()
           }
         } else {
+          // 可用走保存
           getEndTime(
             moment(updateData.start_date).valueOf(),
             updateData.id,
@@ -190,6 +257,7 @@ const Dhx = (props: {
     }
   }, [updateData])
 
+  //移动更新保存
   const getEndTime = async (
     planStartTime: number,
     detailId: any,
@@ -200,16 +268,25 @@ const Dhx = (props: {
       detailId,
       teamId
     })
-    updateMethod && updateMethod()
+    message.success(`更新完成`)
   }
+
   const choose = (type: any) => {
     setCurrentZoom(type)
+  }
+  //** 点击事件 点击父节点 传递 不可用时间
+  const leftData = async (e: any) => {
+    setSelect(e)
+    // setType('0')
   }
   // 更新
   const updateList = (e: any) => {
     setUpdateData(e)
   }
 
+  const rightData = (e: any) => {
+    console.log('右键', e)
+  }
   const rightClick = (
     <Menu>
       <Menu.Item key="1">
@@ -225,14 +302,6 @@ const Dhx = (props: {
     </Menu>
   )
 
-  const rightData = (e: any) => {
-    console.log('右键', e)
-  }
-  //** 点击事件 点击父节点 传递 不可用时间
-  const leftData = async (e: any) => {
-    setSelect(e)
-    setType('0')
-  }
   // 图和树联动-判断传递的id
   useEffect(() => {
     if (!isEmpty(chart)) {

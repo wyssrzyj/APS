@@ -115,20 +115,42 @@ function Vacations() {
     setIsModalVisible(true)
     setType(true)
   }
+  //判断是否重复
+  const repeat = (item) => {
+    const sum = []
+    item.map((v) => {
+      sum.push(v.expireTime)
+    })
+    const nary = sum.sort(function (a, b) {
+      return a - b
+    })
+
+    for (let i = 0; i < nary.length; i++) {
+      if (nary[i] === nary[i + 1]) {
+        return true
+      }
+    }
+  }
+
   const onFinish = async (values: any) => {
     const arr: any = {}
     //重新排程时锁定
-    arr.lockTime = values.lockTime.delay
-    arr.lockTimeUnit = values.lockTime.day
+    // arr.lockTime = values.lockTime.delay
+    // arr.lockTimeUnit = values.lockTime.day
     //库存负荷图默认显示时间区间
     arr.stockLoadTime = values.stockLoadTime.delay
     arr.stockLoadTimeUnit = values.stockLoadTime.day
+
     // 订单甘特图默认显示时间区间
-    arr.orderGanttTime = values.orderGanttTime.delay
-    arr.orderGanttTimeUnit = values.orderGanttTime.day
+    // arr.orderGanttTime = values.orderGanttTime.delay
+    // arr.orderGanttTimeUnit = values.orderGanttTime.day
+    arr.orderGanttTime = 30
+    arr.orderGanttTimeUnit = '1'
     //资源甘特图默认显示时间区间
-    arr.resourceTime = values.resourceTime.delay
-    arr.resourceTimeUnit = values.resourceTime.day
+    // arr.resourceTime = values.resourceTime.delay
+    // arr.resourceTimeUnit = values.resourceTime.day
+    arr.resourceTime = 30
+    arr.resourceTimeUnit = '1'
     //交期权重
     //  未延期
     arr.unExpireTime = values.deliveryWeight[0].delay
@@ -139,32 +161,36 @@ function Vacations() {
     arr.expireTimeUnit = values.deliveryWeight[1].day
     arr.expireWeight = values.deliveryWeight[1].weight
     arr.expireColorConfigs = values.expireColorConfigs
-    const res = await systemParameters(arr)
-    if (res === true) {
-      message.success('保存成功')
-    }
-    api()
 
-    // 处理数据
+    if (repeat(arr.expireColorConfigs) !== true) {
+      const res = await systemParameters(arr)
+      if (res === true) {
+        message.success('保存成功')
+      }
+      api()
+    } else {
+      message.warning('时间不能重复')
+    }
   }
   const sum = [
-    { label: '重新排程时锁定', name: 'lockTime', unit: 'lockTimeUnit' },
+    // { label: '重新排程时锁定', name: 'lockTime', unit: 'lockTimeUnit' },
     {
-      label: '资源负荷图默认显示时间区间',
+      label: '班组负荷图默认显示时间区间',
       name: 'stockLoadTime',
-      unit: 'stockLoadTimeUnit'
-    },
-
-    {
-      label: '生产单甘特图默认显示时间区间',
-      name: 'orderGanttTime',
-      unit: 'orderGanttTimeUnit'
-    },
-    {
-      label: '班组甘特图默认显示时间区间',
-      name: 'resourceTime',
-      unit: 'resourceTimeUnit'
+      unit: 'stockLoadTimeUnit',
+      width: 180
     }
+
+    // {
+    //   label: '生产单甘特图默认显示时间区间',
+    //   name: 'orderGanttTime',
+    //   unit: 'orderGanttTimeUnit'
+    // },
+    // {
+    //   label: '班组甘特图默认显示时间区间',
+    //   name: 'resourceTime',
+    //   unit: 'resourceTimeUnit'
+    // }
   ]
   const preservation = () => {
     form.submit()
@@ -182,13 +208,6 @@ function Vacations() {
           onFinish={onFinish}
           autoComplete="off"
         >
-          {sum.map((item) => (
-            // eslint-disable-next-line react/jsx-key
-            <Form.Item key={item.name} label={item.label} name={item.name}>
-              <Inputs onChange={undefined} list={list} item={item} />
-            </Form.Item>
-          ))}
-
           <Form.Item
             label="交期权重"
             name="deliveryWeight"
@@ -196,6 +215,14 @@ function Vacations() {
           >
             <DeliveryWeight onChange={undefined} list={list} />
           </Form.Item>
+
+          {sum.map((item) => (
+            // eslint-disable-next-line react/jsx-key
+            <Form.Item key={item.name} label={item.label} name={item.name}>
+              <Inputs onChange={undefined} list={list} item={item} />
+            </Form.Item>
+          ))}
+
           <Form.Item label="延期显示颜色" name="expireColorConfigs">
             {/* 颜色 */}
             <Color onChange={undefined} list={list}></Color>

@@ -27,6 +27,10 @@ const Gantt = (props: any) => {
 
   useEffect(() => {
     if (!isEmpty(tasks.data)) {
+      console.log('数据更新了')
+
+      // gantt.refreshData()
+      gantt.clearAll() //缓存问题 先清楚后添加
       ganttShow(tasks)
     }
   }, [tasks])
@@ -38,13 +42,12 @@ const Gantt = (props: any) => {
     //缩放-不可修该 勿动
     gantt.ext.zoom.setLevel(value)
   }
+
   // **需用和动态数据交互的方法
   useEffect(() => {
     if (!gantt.$initialized) {
       color()
     }
-
-    //缩放-不可修该 勿动
     gantt.ext.zoom.setLevel(zoom)
   }, [rest, zoom])
 
@@ -64,26 +67,39 @@ const Gantt = (props: any) => {
     // gantt.config.show_links = false //控制两端的线是否可以拖动
     gantt.config.details_on_dblclick = false //双击出弹窗
     gantt.config.show_errors = false //发生异常时，允许弹出警告到UI界面
+    // open = true  图数据中设置 open = true 默认展开树
+
+    // 重置皮肤
+    // function changeSkin(name) {
+    //   const file = name != 'terrace' ? '_' + name : ''
+    //   const link = document.createElement('link')
+    //   link.onload = function () {
+    //     gantt.resetSkin()
+    //   }
+
+    //   link.rel = 'stylesheet'
+    //   link.type = 'text/css'
+    //   link.id = 'skin'
+    //   link.href = '../../codebase/dhtmlxgantt' + file + '.css'
+    //   document.head.replaceChild(link, document.querySelector('#skin'))
+    // }
+
+    // gantt.eachTask(function (task) {
+    //   task.$open = true
+    // })
+    // gantt.render()
 
     // 指定日期不可拖动
 
     //表头
     gantt.config.columns = [
-      { name: 'text', label: '名称', tree: true, width: '180' },
+      { name: 'text', label: '名称', tree: true, width: '200' },
       { name: 'start_date', label: '时间', align: 'center' }
       // { name: 'duration', label: 'Duration', align: 'center' }
       // { name: 'add', label: '' },
     ]
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
-      console.log('单击事件', id)
-
-      //折叠所有任务：
-      // gantt.eachTask(function (task) {
-      //   task.$open = true
-      // })
-      // gantt.render()
-      // gantt.render()
       leftData && leftData(id)
     })
     //单击右键
@@ -105,7 +121,7 @@ const Gantt = (props: any) => {
       'onBeforeTaskDrag',
       function (id: any, mode: any, e: any) {
         const task = gantt.getTask(id)
-        console.log('可以通过此控制 是否可以拖动', task)
+        // console.log('可以通过此控制 是否可以拖动', task)
         if (task.type === '1') {
           return false
         } else {
@@ -181,6 +197,10 @@ const Gantt = (props: any) => {
 
   //  颜色 top名字的设置
   const color = () => {
+    // const task = gantt.getLink(1)
+    // task.type = 2
+    // gantt.refreshLink(1)
+
     // 控制颜色
     if (!isEmpty(rest)) {
       // 控制颜色 头
@@ -266,11 +286,10 @@ const Gantt = (props: any) => {
     })
   }
   const ganttShow = async (list: any) => {
-    gantt.clearAll() //缓存问题 先清楚后添加
-
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
     initGanttDataProcessor()
+
     gantt.parse(list) //渲染数据
   }
   // "main"

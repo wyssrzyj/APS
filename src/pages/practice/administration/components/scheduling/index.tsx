@@ -33,6 +33,7 @@ function Index() {
   const [checkIDs, setCheckIDs] = useState<any[]>([]) //校验id
   const [promptList, setPromptList] = useState<any[]>([]) //提示数据
   const [release, setRelease] = useState<any[]>() //发布
+  const [time, setTime] = useState<any>({}) //最大时间 最小时间
 
   const { figureData, productionView, workingDate } = schedulingApis
 
@@ -83,53 +84,64 @@ function Index() {
         dateFormat(arr, type)
       }
     }
+
     //班组不可工作时间
-    const notAvailable = await workingDate({ type: type })
+  }
+
+  //处理Gantt时间格式
+  const dateFormat = (data: any, type: any) => {
+    const start = []
+    const end = []
+
+    const arr = data.map((item: any, index) => {
+      if (item.startDate !== null || item.endDate !== null) {
+        start.push(item.startDate)
+        end.push(item.endDate)
+      }
+
+      if (item.startDate !== null) {
+        item.start_date = moment(item.startDate).format('YYYY-MM-DD HH:mm')
+      } else {
+        if (item.parent !== null && item.isHead === null) {
+          item.start_date = '2000-04-01'
+        }
+      }
+      if (item.endDate !== null) {
+        item.end_date = moment(item.endDate).format('YYYY-MM-DD HH:mm')
+      } else {
+        if (item.parent !== null && item.isHead === null) {
+          item.end_date = '2000-04-01'
+        }
+      }
+      return item
+    })
+    const time = {
+      startDate: start.sort()[0],
+      endDate: end.sort()[start.length - 1]
+    }
+    setTime(time)
+
+    const cloneArr = cloneDeep(arr)
+
+    setGunterData(cloneArr) //图
+  }
+  useEffect(() => {
+    if (time.startDate !== undefined) {
+      unavailableTime()
+    }
+  }, [time])
+
+  //不可用时间
+  const unavailableTime = async () => {
+    const notAvailable = await workingDate(time)
     const sum = keys(notAvailable).map((item) => {
       return { time: notAvailable[item], id: item }
     })
     setNotWork(sum)
   }
-  //处理Gantt时间格式
-  const dateFormat = (data: any, type: any) => {
-    const arr = data.map(
-      (
-        item: {
-          start_date: string | null
-          startDate: moment.MomentInput
-          end_date: string | null
-          endDate: moment.MomentInput
-          delete: boolean
-        },
-        index
-      ) => {
-        if (item.startDate !== null) {
-          item.start_date = moment(item.startDate).format('YYYY-MM-DD HH:mm')
-        } else {
-          item.delete = true
-        }
-        if (item.endDate !== null) {
-          item.end_date = moment(item.endDate).format('YYYY-MM-DD HH:mm')
-        } else {
-          item.delete = true
-        }
-        if (item.delete === true) {
-          delete item.startDate
-          delete item.endDate
-          delete item.start_date
-          delete item.end_date
-        }
-
-        return item
-      }
-    )
-    const cloneArr = cloneDeep(arr)
-    setGunterData(cloneArr) //图
-  }
 
   //  图刷新
   const updateMethod = () => {
-    console.log('图刷新', formData, gunterType)
     getChart(formData, gunterType)
   }
 
@@ -234,7 +246,6 @@ function Index() {
     setGunterType(value)
   }
   const update = () => {
-    console.log('点击发布')
     setRelease(formData)
   }
   return (
@@ -253,7 +264,9 @@ function Index() {
             >
               规则排程
             </Button>
+            　
             <Button
+              ghost
               className={styles.heckSchedule}
               type="primary"
               onClick={() => toggleVerifyVisible(true)}
@@ -278,7 +291,7 @@ function Index() {
               <div className={styles.choose}>
                 <Select
                   defaultValue={gunterType}
-                  style={{ width: 120 }}
+                  style={{ width: 130 }}
                   onChange={handleChange}
                 >
                   <Option key={'0'} value="0">

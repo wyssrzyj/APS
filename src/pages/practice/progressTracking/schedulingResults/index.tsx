@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-03-10 15:20:21
- * @LastEditTime: 2022-05-07 10:00:57
+ * @LastEditTime: 2022-05-16 20:08:08
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \jack-aps\src\pages\practice\progressTracking\schedulingResults\index.tsx
@@ -48,9 +48,7 @@ const SchedulingResults = () => {
 
   return (
     <div className={styles.qualification}>
-      <div>
-        <Title title={'资源负荷图'} />
-      </div>
+      <div>{/* <Title title={'资源负荷图'} /> */}</div>
       <Forms FormData={FormData}></Forms>
       <div id="c1"></div>
       <Tbale load={list} />

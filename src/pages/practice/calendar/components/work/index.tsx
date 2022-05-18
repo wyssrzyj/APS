@@ -170,7 +170,7 @@ const Index = () => {
     {
       title: '操作',
       align: 'center',
-      width: 150,
+      // width: 150,
       dataIndex: 'address',
       render: (_value: any, row: any) => {
         return (
@@ -211,6 +211,7 @@ const Index = () => {
   }
   const editUser = async (type: boolean, value: any) => {
     const arr = await operatingModeDetailsData({ id: value.id })
+
     setEdit(arr)
 
     if (type === true) {

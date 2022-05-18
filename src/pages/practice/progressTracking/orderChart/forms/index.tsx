@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2022-04-13 15:47:01
- * @LastEditTime: 2022-05-07 08:53:37
+ * @LastEditTime: 2022-05-16 19:11:09
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \jack-aps\src\pages\practice\progressTracking\resourcemMap\forms\index.tsx
@@ -27,8 +27,8 @@ const HeaderForm = (props: { FormData: any }) => {
     const arr: any = res.data
     if (res.code === 200) {
       //  默认展示第2条数据
-      setTheDefault(arr[2])
-      FormData && FormData(arr[2].id)
+      setTheDefault(arr[0])
+      FormData && FormData(arr[0].id)
       arr.map((item: { name: any; deptName: any }) => {
         item.name = item.deptName
       })
