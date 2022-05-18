@@ -247,7 +247,9 @@ function Index() {
             >
               规则排程
             </Button>
+            　
             <Button
+              ghost
               className={styles.heckSchedule}
               type="primary"
               onClick={() => toggleVerifyVisible(true)}

@@ -170,7 +170,7 @@ const Index = () => {
     {
       title: '操作',
       align: 'center',
-      width: 150,
+      // width: 150,
       dataIndex: 'address',
       render: (_value: any, row: any) => {
         return (

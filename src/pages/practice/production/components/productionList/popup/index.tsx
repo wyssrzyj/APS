@@ -206,7 +206,7 @@ function Popup(props: { content: any }) {
 
   const handleCancel = () => {
     setIsModalVisible(false)
-
+    refreshData && refreshData()
     setGetDetailsId(null)
   }
 

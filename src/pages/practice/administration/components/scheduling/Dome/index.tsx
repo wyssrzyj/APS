@@ -45,7 +45,7 @@ const Dhx = (props: {
   const [restDate, setRestDate] = useState<any>() //单个班组的不可用日期
 
   const [select, setSelect] = useState<any>([]) //用于展示 线和不可用时间、给树传递id判断
-  const [type, setType] = useState<any>() //判断是点击还是移动
+  // const [type, setType] = useState<any>() //判断是点击还是移动
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
@@ -80,6 +80,7 @@ const Dhx = (props: {
           links: line
         })
       }
+      console.log('线更新', line)
 
       // const dataqq = [
       //   {
@@ -89,7 +90,7 @@ const Dhx = (props: {
       //     text: '裁剪车间—裁剪班组', //名称
       //     // duration: 6, //天数
       //     // progress: 1, //控制完成百分比 范围0-1
-      //     color: 'red', //控制颜色
+      //     color: '#52c41a', //控制颜色
       //     open: true
       //   },
       //   {
@@ -113,7 +114,7 @@ const Dhx = (props: {
       //     duration: 1,
       //     progress: 0.6,
       //     parent: 11,
-      //     color: 'red', //控制颜色
+      //     color: '#52c41a', //控制颜色
       //     open: true
       //   },
       //   {
@@ -137,10 +138,10 @@ const Dhx = (props: {
       // ]
 
       // const linksqq = [
-      //   // { id: 1, source: 111, target: 112, type: 0 },
+      //   { id: 1, source: 111, target: 112, type: 0 },
       //   { id: 3, source: 2, target: 3, type: 0 }
       // ]
-      // 假数据
+      // // 假数据
       // setSubjectData({
       //   data: dataqq,
       //   links: linksqq
@@ -148,6 +149,7 @@ const Dhx = (props: {
     }
   }, [chart, line, gunterType])
 
+  //点击
   useEffect(() => {
     // 线
     if (!isEmpty(select)) {
@@ -155,38 +157,41 @@ const Dhx = (props: {
     }
 
     // 获取对应的不可用时间
-    if (type === '0') {
-      //点击
-      if (!isEmpty(chart)) {
-        const teamId = chart.filter(
-          (item: { id: any }) => item.id === select
-        )[0].teamId
+    // if (type === '0') {
+    //点击
+    if (!isEmpty(chart)) {
+      const teamId = chart.filter((item: { id: any }) => item.id === select)[0]
+        .teamId
 
-        if (teamId !== null) {
-          const unavailable: any = notWorking.filter(
-            (item: { id: any }) => item.id === teamId
-          )
-          if (unavailable !== undefined && !isEmpty(unavailable)) {
-            setRestDate(unavailable[0].time)
-          }
-        } else {
-          console.log('置空')
-          setRestDate(['2000-06-06'])
+      if (teamId !== null) {
+        const unavailable: any = notWorking.filter(
+          (item: { id: any }) => item.id === teamId
+        )
+        if (unavailable !== undefined && !isEmpty(unavailable)) {
+          // console.log('点击不可用时间', unavailable[0].time)
+          setRestDate(unavailable[0].time)
         }
+      } else {
+        // console.log('暂无')
+        setRestDate(['2000-06-06'])
       }
     }
+    // }
 
-    if (type === '1') {
-      //移动
-      const unavailable: any = notWorking.filter(
-        (item: { id: any }) => item.id === select
-      )
-      if (unavailable !== undefined && !isEmpty(unavailable)) {
-        setRestDate(unavailable[0].time)
-      }
-    }
-  }, [select, type])
+    // if (type === '1') {
+    //   //移动
+    //   const unavailable: any = notWorking.filter(
+    //     (item: { id: any }) => item.id === select
+    //   )
+    //   if (unavailable !== undefined && !isEmpty(unavailable)) {
+    //     setRestDate(unavailable[0].time)
+    //   } else {
+    //     console.log('空~~~~~~~~~~')
+    //   }
+    // }
+  }, [select])
 
+  //线接口
   const getLineData = async (id: any) => {
     const line: any = await getLine({ id }) //线
     if (line.code === 200) {
@@ -215,15 +220,12 @@ const Dhx = (props: {
     return susa.includes(state)
   }
 
-  //计算
+  //移动
   useEffect(() => {
     if (!isEmpty(chart)) {
-      if (!isEmpty(updateData)) {
-        // 移动
-        setType('1')
-
+      if (updateData) {
+        // setType('1')
         // setSelect(updateData.teamId)
-
         //判断日期是否可用
         if (judgeAvailableDate(updateData)) {
           //提示
@@ -244,6 +246,7 @@ const Dhx = (props: {
             updateMethod && updateMethod()
           }
         } else {
+          // 可用走保存
           getEndTime(
             moment(updateData.start_date).valueOf(),
             updateData.id,
@@ -254,6 +257,7 @@ const Dhx = (props: {
     }
   }, [updateData])
 
+  //移动更新保存
   const getEndTime = async (
     planStartTime: number,
     detailId: any,
@@ -264,19 +268,25 @@ const Dhx = (props: {
       detailId,
       teamId
     })
-    // console.log('更新完成')
     message.success(`更新完成`)
-
-    // updateMethod && updateMethod()
   }
+
   const choose = (type: any) => {
     setCurrentZoom(type)
+  }
+  //** 点击事件 点击父节点 传递 不可用时间
+  const leftData = async (e: any) => {
+    setSelect(e)
+    // setType('0')
   }
   // 更新
   const updateList = (e: any) => {
     setUpdateData(e)
   }
 
+  const rightData = (e: any) => {
+    console.log('右键', e)
+  }
   const rightClick = (
     <Menu>
       <Menu.Item key="1">
@@ -292,14 +302,6 @@ const Dhx = (props: {
     </Menu>
   )
 
-  const rightData = (e: any) => {
-    console.log('右键', e)
-  }
-  //** 点击事件 点击父节点 传递 不可用时间
-  const leftData = async (e: any) => {
-    setSelect(e)
-    setType('0')
-  }
   // 图和树联动-判断传递的id
   useEffect(() => {
     if (!isEmpty(chart)) {
