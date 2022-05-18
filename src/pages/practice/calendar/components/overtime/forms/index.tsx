@@ -12,7 +12,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
 
   const layout = {
     labelCol: {
-      span: 7
+      span: 5
     },
     wrapperCol: {
       span: 24

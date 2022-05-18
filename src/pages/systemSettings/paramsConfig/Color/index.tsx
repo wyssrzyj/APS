@@ -1,11 +1,13 @@
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, Col, Input, InputNumber, Popover, Row } from 'antd'
+import { Button, Col, Input, InputNumber, Popover, Row, Select } from 'antd'
 import { isEmpty, isNil } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { ColorResult, SketchPicker } from 'react-color'
 
 import styles from './index.module.less'
+const { Option } = Select
+
 function WorkingHours(props: { onChange: any; list: any }) {
   const { onChange, list } = props
 
@@ -70,11 +72,14 @@ function WorkingHours(props: { onChange: any; list: any }) {
               <InputNumber
                 className={styles.inputText}
                 min={0}
-                style={{ width: 180 }}
+                style={{ width: 150 }}
                 value={data[index].expireTime}
                 onChange={(e) => inputValue(e, index)}
               />
-              　天　
+              <Select value={'1'} style={{ width: 60 }}>
+                <Option value="1">天</Option>
+              </Select>
+              　
               <Popover
                 content={
                   <SketchPicker

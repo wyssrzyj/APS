@@ -42,7 +42,7 @@ const Inputs = (props: { onChange: any; list: any; item: any }) => {
       <Row>
         <Col span={9}>
           <InputNumber
-            style={{ width: 140, marginRight: '20px' }}
+            style={{ width: 150 }}
             value={data.delay}
             onChange={(e) => {
               weight(e, 0)

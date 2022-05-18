@@ -27,6 +27,10 @@ const Gantt = (props: any) => {
 
   useEffect(() => {
     if (!isEmpty(tasks.data)) {
+      console.log('数据更新了')
+
+      // gantt.refreshData()
+      gantt.clearAll() //缓存问题 先清楚后添加
       ganttShow(tasks)
     }
   }, [tasks])
@@ -44,17 +48,6 @@ const Gantt = (props: any) => {
     if (!gantt.$initialized) {
       color()
     }
-
-    // gantt.clearAll() //缓存问题 先清楚后添加
-    // console.log('执行动态')
-    // gantt.addLink({
-    //   id: 2,
-    //   source: 112,
-    //   target: 113,
-    //   type: 0
-    // })
-    // gantt.refreshData()
-    //缩放-不可修该 勿动
     gantt.ext.zoom.setLevel(zoom)
   }, [rest, zoom])
 
@@ -73,7 +66,7 @@ const Gantt = (props: any) => {
     gantt.config.drag_resize = false //控制大小
     // gantt.config.show_links = false //控制两端的线是否可以拖动
     gantt.config.details_on_dblclick = false //双击出弹窗
-    // gantt.config.show_errors = false //发生异常时，允许弹出警告到UI界面
+    gantt.config.show_errors = false //发生异常时，允许弹出警告到UI界面
     // open = true  图数据中设置 open = true 默认展开树
 
     // 重置皮肤

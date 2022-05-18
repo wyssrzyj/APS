@@ -164,7 +164,10 @@ function Popup(props: { content: any }) {
     values.planStartTime = moment(values.planStartTime).valueOf()
 
     values.isLocked = type === false ? 0 : 1
-    values.additionalTime = moment(values.planEndTime).valueOf() - endTimeData
+    //手动减去api
+    values.additionalTime = values.planEndTime - endTimeData
+    values.additionalTime =
+      values.additionalTime === 0 ? null : values.additionalTime
 
     //外发不需要更改
     if (sectionType !== false) {
@@ -179,16 +182,21 @@ function Popup(props: { content: any }) {
     } else {
       values.id = editWindowList.id
     }
+    console.log('保存的数据', values)
 
-    // 结束时间 手动-接口
-    const res = await editingTasks(values)
-    if (res) {
-      form.resetFields()
-      editSubmission()
-      setEndTimeData(0) //接口算的结束时间清空
-      message.success('保存成功')
+    if (values.planStartTime < values.planEndTime) {
+      // 结束时间 手动-接口
+      const res = await editingTasks(values)
+      if (res) {
+        form.resetFields()
+        editSubmission()
+        setEndTimeData(0) //接口算的结束时间清空
+        message.success('保存成功')
+      } else {
+        message.error('保存失败')
+      }
     } else {
-      message.error('保存失败')
+      message.error('开始时间不能大于结束时间')
     }
   }
   let timeout: NodeJS.Timeout
@@ -209,7 +217,6 @@ function Popup(props: { content: any }) {
       const assignmentId = list.assignmentId
       const orderNum = list.productionAmount - list.completedAmount
       const startDate = moment(e).format('YYYY-MM-DD HH:mm:ss')
-      console.log('list', list)
       const teamId = list.teamId //班组id
       const additionalTime = Number(list.additionalTime)
       const capacityId = list.templateId
@@ -226,7 +233,10 @@ function Popup(props: { content: any }) {
         const cloneLis = cloneDeep(list)
         const time = moment(arr.data)
         // 用于保存
+        console.log('接口算的值', moment(arr.data).valueOf())
+
         setEndTimeData(moment(arr.data).valueOf())
+        // setEndTimeData(1653321600416)
         cloneLis.planStartTime = moment(e)
         cloneLis.planEndTime = time
         setList({ ...cloneLis })
@@ -377,7 +387,7 @@ function Popup(props: { content: any }) {
               >
                 <Select
                   allowClear
-                  placeholder="请选择所属工段"
+                  placeholder={sectionType ? '请选择所属工段' : ''}
                   onChange={handleChange}
                   disabled={!sectionType}
                 >
@@ -399,7 +409,7 @@ function Popup(props: { content: any }) {
                 <Select
                   disabled={!sectionType}
                   allowClear
-                  placeholder="请选择工作班组"
+                  placeholder={sectionType ? '请选择工作班组' : ''}
                   onChange={team}
                 >
                   {teamName.map((item: any) => (

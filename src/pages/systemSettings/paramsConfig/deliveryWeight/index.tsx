@@ -56,12 +56,12 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
   return (
     <div className={styles.NoExtended}>
       <Row className={styles.firstRow}>
-        <Col span={9} className={styles.container}>
+        <Col span={7} className={styles.container}>
           <div className={styles.innerContainer}>
             <span className={styles.labelText}>未延期:</span>
             <InputNumber
               value={data[0].delay}
-              style={{ width: 60 }}
+              style={{ width: 70 }}
               onChange={(e) => {
                 inpout(e, 0)
               }}
@@ -91,12 +91,12 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
         </Col>
       </Row>
       <Row>
-        <Col span={9} className={styles.container}>
+        <Col span={7} className={styles.container}>
           <div className={styles.innerContainer}>
             <span className={styles.labelText}> 已延期:</span>
             <InputNumber
               value={data[1].delay}
-              style={{ width: 60 }}
+              style={{ width: 70 }}
               onChange={(e) => {
                 inpout(e, 1)
               }}
