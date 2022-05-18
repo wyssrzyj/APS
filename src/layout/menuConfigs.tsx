@@ -141,7 +141,7 @@ export const menus = [
         url: '/resourcedMap'
       },
       {
-        label: '生产甘特图',
+        label: '生产单甘特图',
         key: 'orderChart',
         icon: 'jack-chartmixed',
         url: '/orderChart'
