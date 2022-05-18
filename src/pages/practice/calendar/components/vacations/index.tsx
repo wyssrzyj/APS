@@ -204,9 +204,9 @@ function Vacations() {
   const content = { isModalVisible, setIsModalVisible, type, edit }
   return (
     <div className={styles.qualification}>
-      <div>
+      {/* <div>
         <Title title={'节假日'} />
-      </div>
+      </div> */}
       <div>
         <div className={styles.content}>
           <Forms FormData={FormData}></Forms>

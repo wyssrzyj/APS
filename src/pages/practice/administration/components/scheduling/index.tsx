@@ -164,7 +164,6 @@ function Index() {
 
   const toggleVerifyVisible = (visible: boolean) => {
     const arr: any[] = []
-    // checkIDs
 
     promptList.map((item: { externalProduceOrderNum: any }) => {
       arr.push(item.externalProduceOrderNum)
@@ -233,9 +232,7 @@ function Index() {
   }
   return (
     <div className={styles.qualification}>
-      <div>
-        <Title title={'生产单排程'} />
-      </div>
+      <div>{/* <Title title={'生产单排程'} /> */}</div>
       <div>
         <div className={styles.content}>
           <Forms FormData={FormData}></Forms>
@@ -306,6 +303,7 @@ function Index() {
       {/* //规则排程 */}
       {visibleRule && (
         <RuleScheduling
+          formData={formData}
           visibleRule={visibleRule}
           onCancel={() => toggleRuleVisible(false)}
         />
@@ -313,6 +311,7 @@ function Index() {
       {visibleVerify && (
         <Verification
           update={update}
+          setCheckIDs={setCheckIDs}
           checkIDs={checkIDs}
           visibleVerify={visibleVerify}
           onCancel={() => toggleVerifyVisible(false)}

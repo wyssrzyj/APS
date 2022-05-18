@@ -258,9 +258,7 @@ const Index = () => {
   const content = { isModalVisible, setIsModalVisible, type, edit, factoryData }
   return (
     <div className={styles.qualification}>
-      <div>
-        <Title title={'工作模式'} />
-      </div>
+      <div>{/* <Title title={'工作模式'} /> */}</div>
       <div>
         <div className={styles.content}>
           <Forms factoryData={factoryData} FormData={FormData}></Forms>

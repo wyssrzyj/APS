@@ -150,7 +150,7 @@ const FormTable = (props: any) => {
           )
         },
         {
-          title: '齐套日期',
+          title: '齐料日期',
           dataIndex: 'prepareTime',
           fixed: 'right',
           align: 'center',

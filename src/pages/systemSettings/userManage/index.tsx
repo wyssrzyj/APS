@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 14:52:29
- * @LastEditTime: 2022-05-17 19:58:44
+ * @LastEditTime: 2022-05-18 15:10:14
  * @Description:
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  */
@@ -241,7 +241,7 @@ const UserManage = () => {
 
   return (
     <div className={styles.outContainer}>
-      <Title title={'用户管理'}></Title>
+      {/* <Title title={'用户管理'}></Title> */}
       <SearchBar
         configs={configs}
         params={params}

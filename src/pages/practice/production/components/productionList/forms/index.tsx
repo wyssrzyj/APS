@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 const { RangePicker } = DatePicker
 const layout = {
   labelCol: {
-    span: 4
+    span: 5
   },
   wrapperCol: {
     span: 15

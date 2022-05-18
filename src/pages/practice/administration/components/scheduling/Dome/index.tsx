@@ -44,10 +44,12 @@ const Dhx = (props: {
   const [InitialDrag, setInitialDrag] = useState<any>([]) //初始拖动数据
   const [restDate, setRestDate] = useState<any>() //单个班组的不可用日期
 
-  const [select, setSelect] = useState<any>([]) //用于展示 线和不可用时间、给树传递id判断
-  // const [type, setType] = useState<any>() //判断是点击还是移动
+  const [select, setSelect] = useState<any>() //用于展示 线和不可用时间、给树传递id判断
+  const [getLink, setGetLink] = useState<any>() //右键获取线
+
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
+  const [overtimeType, setOvertimeType] = useState<any>(false) //判断右键是否有值 有值且不展示添加加班
 
   useEffect(() => {
     getData()
@@ -80,7 +82,6 @@ const Dhx = (props: {
           links: line
         })
       }
-      console.log('线更新', line)
 
       // const dataqq = [
       //   {
@@ -90,17 +91,17 @@ const Dhx = (props: {
       //     text: '裁剪车间—裁剪班组', //名称
       //     // duration: 6, //天数
       //     // progress: 1, //控制完成百分比 范围0-1
-      //     color: '#52c41a', //控制颜色
+      //     color: '#ff4d4f', //控制颜色
       //     open: true
       //   },
       //   {
       //     //儿子
       //     id: 11,
-      //     text: '-生产单号10086',
+      //     text: '生产单1',
       //     // start_date: '2020-04-07',
       //     // duration: 2,
       //     progress: 0.6,
-      //     parent: 1,
+      //     // parent: 1,
       //     color: '', //控制颜色
       //     render: 'split', //添加同一行
       //     open: true
@@ -109,7 +110,7 @@ const Dhx = (props: {
       //     //孙子
       //     id: 111,
       //     text: '卢英杰的子1',
-      //     start_date: '', //开始时间
+      //     start_date: '2020-04-6', //开始时间
       //     end_date: '2020-04-7 ', //结束时间
       //     duration: 1,
       //     progress: 0.6,
@@ -117,22 +118,27 @@ const Dhx = (props: {
       //     color: '#52c41a', //控制颜色
       //     open: true
       //   },
+
       //   {
-      //     id: 112,
-      //     text: '卢英杰的子2',
-      //     start_date: '2020-04-10',
-      //     duration: 2,
+      //     //儿子
+      //     id: 22,
+      //     text: '生产单2',
       //     progress: 0.6,
-      //     parent: 11,
+      //     parent: 1,
+      //     color: '', //控制颜色
+      //     render: 'split', //添加同一行
       //     open: true
       //   },
       //   {
-      //     id: 113,
-      //     text: '卢英杰号的子3',
-      //     start_date: '2020-04-12',
-      //     duration: 2,
+      //     //孙子
+      //     id: 222,
+      //     text: '订2',
+      //     start_date: '2020-04-8', //开始时间
+      //     end_date: '2020-04-9', //结束时间
+      //     duration: 1,
       //     progress: 0.6,
-      //     parent: 11,
+      //     parent: 22,
+      //     color: '#52c41a', //控制颜色
       //     open: true
       //   }
       // ]
@@ -225,7 +231,6 @@ const Dhx = (props: {
     if (!isEmpty(chart)) {
       if (updateData) {
         // setType('1')
-        // setSelect(updateData.teamId)
         //判断日期是否可用
         if (judgeAvailableDate(updateData)) {
           //提示
@@ -276,16 +281,24 @@ const Dhx = (props: {
   }
   //** 点击事件 点击父节点 传递 不可用时间
   const leftData = async (e: any) => {
-    setSelect(e)
-    // setType('0')
+    if (e !== null) {
+      setSelect(e)
+    }
   }
+
   // 更新
   const updateList = (e: any) => {
     setUpdateData(e)
   }
 
+  //右键
   const rightData = (e: any) => {
-    console.log('右键', e)
+    // if (e !== null) {
+    //   // setGetLink(e)
+    //   setOvertimeType(false)
+    // } else {
+    //   setOvertimeType(true)
+    // }
   }
   const rightClick = (
     <Menu>
@@ -301,6 +314,7 @@ const Dhx = (props: {
       </Menu.Item>
     </Menu>
   )
+  const dontShow = <div></div>
 
   // 图和树联动-判断传递的id
   useEffect(() => {
@@ -330,7 +344,10 @@ const Dhx = (props: {
       <div>
         <div className={styles.ganttContent}>
           <div>
-            <Dropdown overlay={rightClick} trigger={['contextMenu']}>
+            <Dropdown
+              overlay={overtimeType ? rightClick : dontShow}
+              trigger={['contextMenu']}
+            >
               <div className="site-dropdown-context-menu">
                 <div className="gantt-container">
                   <Gantt

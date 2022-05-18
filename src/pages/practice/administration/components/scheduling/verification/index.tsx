@@ -1,4 +1,4 @@
-import { Button, Modal, Result, Space, Tag } from 'antd'
+import { Button, message, Modal, Result, Space, Tag } from 'antd'
 import classNames from 'classnames'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -22,7 +22,7 @@ const list = [
   { key: '工作时间重叠班组:', value: 'workTimeOverlapTeamList', list: [] }
 ]
 function VerifyModal(props: Record<string, any>) {
-  const { visibleVerify, onCancel, checkIDs, update } = props
+  const { visibleVerify, onCancel, checkIDs, update, setCheckIDs } = props
   const [checkList, setCheckList] = useState<Record<string, any>>(list)
 
   const [checkPass, setCheckPass] = useState('')
@@ -48,6 +48,8 @@ function VerifyModal(props: Record<string, any>) {
     await releaseSchedule(checkIDs)
     onCancel()
     update && update()
+    setCheckIDs([])
+    message.success(`保存成功`)
   }
   return (
     <div>

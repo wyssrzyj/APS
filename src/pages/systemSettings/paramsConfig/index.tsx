@@ -197,9 +197,7 @@ function Vacations() {
   }
   return (
     <div className={styles.qualification}>
-      <div>
-        <Title title={'系统参数设置'} />
-      </div>
+      <div>{/* <Title title={'系统参数设置'} /> */}</div>
       <div className={styles.content}>
         <Form
           form={form}

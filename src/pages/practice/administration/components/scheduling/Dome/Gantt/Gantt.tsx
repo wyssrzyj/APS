@@ -14,6 +14,8 @@ const Gantt = (props: any) => {
   const chartDom = document.getElementById(name) //获取id
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
+  const [select, setSelect] = useState<any>() //选中项
+
   const dataDome = ['2020-04-07', '2020-04-08']
   useEffect(() => {
     if (!isEmpty(restDate)) {
@@ -28,12 +30,31 @@ const Gantt = (props: any) => {
   useEffect(() => {
     if (!isEmpty(tasks.data)) {
       console.log('数据更新了')
+      //获取滚动的距离
+      let newLeft = 0
+      let newTop = 0
 
-      // gantt.refreshData()
-      gantt.clearAll() //缓存问题 先清楚后添加
-      ganttShow(tasks)
+      gantt.attachEvent('onGanttScroll', function (left, top) {
+        // console.log(left)
+        // console.log(top)
+        if (left !== 0 || top !== 0) {
+          newLeft = left
+          newTop = top
+        }
+      })
+
+      ganttShow(tasks) //渲染数据
+
+      // console.log('最终渲染的值', newLeft, newTop)
+      gantt.scrollTo(newLeft, newTop) //定位
+
+      //选中项
+      if (select !== undefined) {
+        gantt.selectTask(select)
+      }
     }
-  }, [tasks])
+  }, [tasks, select])
+
   // 静态方法
   const setZoom = (value: any) => {
     if (!gantt.$initialized) {
@@ -46,6 +67,7 @@ const Gantt = (props: any) => {
   // **需用和动态数据交互的方法
   useEffect(() => {
     if (!gantt.$initialized) {
+      // gantt.refreshData()
       color()
     }
     gantt.ext.zoom.setLevel(zoom)
@@ -53,6 +75,8 @@ const Gantt = (props: any) => {
 
   // 主要参数设置
   const initZoom = () => {
+    // gantt.config.preserve_scroll = false
+
     // gantt.templates.grid_header_class = function (columnName, column) {
     //   if (columnName == 'duration' || columnName == 'text') return 'updColor'
     // }
@@ -68,6 +92,12 @@ const Gantt = (props: any) => {
     gantt.config.details_on_dblclick = false //双击出弹窗
     gantt.config.show_errors = false //发生异常时，允许弹出警告到UI界面
     // open = true  图数据中设置 open = true 默认展开树
+    // gantt.selectTask('1')//默认选中
+
+    gantt.plugins({
+      //多选
+      multiselect: true
+    })
 
     // 重置皮肤
     // function changeSkin(name) {
@@ -93,19 +123,23 @@ const Gantt = (props: any) => {
 
     //表头
     gantt.config.columns = [
-      { name: 'text', label: '名称', tree: true, width: '200' },
+      { name: 'text', label: '名称', tree: true, width: '250' },
       { name: 'start_date', label: '时间', align: 'center' }
       // { name: 'duration', label: 'Duration', align: 'center' }
       // { name: 'add', label: '' },
     ]
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
+      setSelect(id)
       leftData && leftData(id)
     })
     //单击右键
     gantt.attachEvent('onContextMenu', function (id: any) {
+      console.log('右', id)
+
       rightData && rightData(id)
     })
+
     // //拖拽时
     // gantt.attachEvent('onTaskDrag', function (id: any, v: any, item: any) {
     //   drag(item)
@@ -197,6 +231,10 @@ const Gantt = (props: any) => {
 
   //  颜色 top名字的设置
   const color = () => {
+    // gantt.plugins({
+    //   multiselect: true
+    // })
+
     // const task = gantt.getLink(1)
     // task.type = 2
     // gantt.refreshLink(1)
@@ -275,20 +313,22 @@ const Gantt = (props: any) => {
     }
   }
 
-  const initGanttDataProcessor = () => {
-    gantt.createDataProcessor((type: any, action: any, item: any, id: any) => {
-      return new Promise<void>((resolve, reject) => {
-        // if (onDataUpdated) {
-        //   onDataUpdated(type, action, item, id)
-        // }
-        return resolve()
-      })
-    })
-  }
+  // const initGanttDataProcessor = () => {
+  //   gantt.createDataProcessor((type: any, action: any, item: any, id: any) => {
+  //     return new Promise<void>((resolve, reject) => {
+  //       // if (onDataUpdated) {
+  //       //   onDataUpdated(type, action, item, id)
+  //       // }
+  //       return resolve()
+  //     })
+  //   })
+  // }
   const ganttShow = async (list: any) => {
+    gantt.clearAll() //缓存问题 先清楚后添加
+    // gantt.refreshData() //刷新数据
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
-    initGanttDataProcessor()
+    // initGanttDataProcessor()
 
     gantt.parse(list) //渲染数据
   }

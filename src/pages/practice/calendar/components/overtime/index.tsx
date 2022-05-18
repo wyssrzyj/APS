@@ -287,9 +287,7 @@ function Overtime() {
   }
   return (
     <div className={styles.qualification}>
-      <div>
-        <Title title={'加班管理'} />
-      </div>
+      <div>{/* <Title title={'加班管理'} /> */}</div>
       <div>
         <div className={styles.content}>
           <Forms factoryData={factoryData} FormData={FormData}></Forms>

@@ -196,9 +196,7 @@ function ProductionPlan() {
 
   return (
     <div className={styles.qualification}>
-      <div>
-        <Title title={'生产计划'} />
-      </div>
+      <div>{/* <Title title={'生产计划'} /> */}</div>
       <div>
         <SearchBar
           configs={configs}

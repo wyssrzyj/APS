@@ -8,7 +8,7 @@ import { practice } from '@/recoil/apis'
 import Forms from './forms/index'
 import RulesTables from './tables/index'
 function RuleScheduling(props: Record<string, any>) {
-  const { visibleRule, onCancel } = props
+  const { visibleRule, onCancel, formData } = props
   const [searchParams, setSearchParams] = useState<Record<string, number>>({
     customerPriorityWeight: 1,
     orderPriorityWeight: 1,
@@ -17,8 +17,8 @@ function RuleScheduling(props: Record<string, any>) {
   const [dataSource, setDataSource] = useState<Record<string, any>>([])
   // 搜索框
   useEffect(() => {
-    getTableList({ ...searchParams, factoryId: 1481903393613139970 })
-  }, [searchParams])
+    getTableList({ ...searchParams, factoryId: formData })
+  }, [searchParams, formData])
   const valuesChange = debounce(
     (values: any, allValues: Record<string, number>) => {
       setSearchParams({ ...allValues })

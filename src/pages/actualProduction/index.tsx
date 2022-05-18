@@ -158,7 +158,7 @@ function ActualProductionList() {
 
   return (
     <div className={styles.outContainer}>
-      <Title title={'生产实绩'}></Title>
+      {/* <Title title={'生产实绩'}></Title> */}
       <SearchBar
         configs={configs}
         params={params}

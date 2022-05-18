@@ -202,9 +202,7 @@ function Rule() {
 
   return (
     <div className={styles.qualification}>
-      <div>
-        <Title title={'产能效率模板'} />
-      </div>
+      <div>{/* <Title title={'产能效率模板'} /> */}</div>
       <div>
         {/* <SearchBar
           configs={configs}

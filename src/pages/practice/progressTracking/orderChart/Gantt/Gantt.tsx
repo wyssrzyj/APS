@@ -59,7 +59,7 @@ const Gantt = (props: any) => {
 
     //表头
     gantt.config.columns = [
-      { name: 'text', label: '名称', tree: true, width: '180' },
+      { name: 'text', label: '名称', tree: true, width: '250' },
       { name: 'start_date', label: '时间', align: 'center' }
       // { name: 'duration', label: 'Duration', align: 'center' }
       // { name: 'add', label: '' },

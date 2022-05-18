@@ -40,26 +40,24 @@ const Inputs = (props: { onChange: any; list: any; item: any }) => {
   return (
     <div>
       <Row>
-        <Col span={9}>
-          <InputNumber
-            style={{ width: 150 }}
-            value={data.delay}
-            onChange={(e) => {
-              weight(e, 0)
-            }}
-          />
-          <Select
-            value={arr}
-            style={{ width: 60 }}
-            onChange={(e: any) => {
-              executionMethod(e, 0)
-            }}
-          >
-            <Option value="1">天</Option>
-            <Option value="2">周</Option>
-            <Option value="3">月</Option>
-          </Select>
-        </Col>
+        <InputNumber
+          style={{ width: 150 }}
+          value={data.delay}
+          onChange={(e) => {
+            weight(e, 0)
+          }}
+        />
+        <Select
+          value={arr}
+          style={{ width: 60 }}
+          onChange={(e: any) => {
+            executionMethod(e, 0)
+          }}
+        >
+          <Option value="1">天</Option>
+          <Option value="2">周</Option>
+          <Option value="3">月</Option>
+        </Select>
 
         {/* <Col span={12}>
         </Col> */}

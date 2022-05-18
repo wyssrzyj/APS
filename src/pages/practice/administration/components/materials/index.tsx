@@ -219,50 +219,57 @@ function Materials() {
     } else {
       //获取选中的数据
       const selectedValue = selectedList(selected, selectedData)
+
       //判断选中的状态是否一样
       const stateConsistent = selectedValue.every(
         (item) => item.checkStatus === selectedValue[0].checkStatus
       )
       if (stateConsistent === true) {
-        if (type === '1' && selectedValue[0].checkStatus !== 3) {
-          setMaterialModal(true)
-        }
-
-        //重新检查只能选择一个
-        if (selectedValue[0].checkStatus === 3) {
-          if (selectedValue.length === 1) {
-            const checked = {
-              ...selectedValue[0],
-              id: '1314520',
-              review: true, //重新检查判断条件
-              type: 1,
-              name: '已检查'
+        //生产中和生产完成不需要重新查看
+        const banView = selectedValue.every(
+          (item) => item.status !== 3 && item.status !== 4
+        )
+        if (banView) {
+          if (type === '1' && selectedValue[0].checkStatus !== 3) {
+            setMaterialModal(true)
+            //重新检查只能选择一个
+            if (selectedValue[0].checkStatus === 3) {
+              if (selectedValue.length === 1) {
+                const checked = {
+                  ...selectedValue[0],
+                  id: '1314520',
+                  review: true, //重新检查判断条件
+                  type: 1,
+                  name: '已检查'
+                }
+                const unchecked = {
+                  ...selectedValue[0],
+                  type: 2,
+                  review: true, //重新检查判断条件
+                  name: '重新检查'
+                }
+                const sum = [checked, unchecked]
+                setMaterialList(sum)
+                //只有物料齐套才会展示弹窗
+                if (type === '1') {
+                  setMaterialModal(true)
+                }
+              } else {
+                message.warning('重新检查只能选择一个')
+              }
+            } else {
+              console.log('准备传递', selectedValue)
+              setMaterialList(selectedValue)
             }
-            const unchecked = {
-              ...selectedValue[0],
-              type: 2,
-              review: true, //重新检查判断条件
-              name: '重新检查'
-            }
-            const sum = [checked, unchecked]
-            setMaterialList(sum)
-            //只有物料齐套才会展示弹窗
-            if (type === '1') {
-              setMaterialModal(true)
-            }
-          } else {
-            message.warning('重新检查只能选择一个')
+          }
+          if (type === '2') {
+            start('2')
+          }
+          if (type === '3') {
+            start('3')
           }
         } else {
-          console.log('准备传递', selectedValue)
-          setMaterialList(selectedValue)
-        }
-
-        if (type === '2') {
-          start('2')
-        }
-        if (type === '3') {
-          start('3')
+          message.warning('生产完成、生产完成不需要检查')
         }
       } else {
         message.warning('物料齐套状态不一致')
@@ -372,9 +379,7 @@ function Materials() {
 
   return (
     <div className={styles.qualification}>
-      <div>
-        <Title title={'物料齐套检查'} />
-      </div>
+      <div>{/* <Title title={'物料齐套检查'} /> */}</div>
       <div>
         <div className={styles.content}>
           <Forms factoryData={factoryData} FormData={FormData}></Forms>
