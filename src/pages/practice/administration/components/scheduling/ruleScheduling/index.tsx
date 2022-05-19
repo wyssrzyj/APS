@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-05-19 09:14:32
+ * @LastEditTime: 2022-05-19 09:18:24
  * @Description:
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com..
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  */
 import { getAttribute } from '@antv/g2/lib/dependents'
 import { Button, Modal, Space } from 'antd'
