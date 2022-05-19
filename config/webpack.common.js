@@ -14,7 +14,8 @@ const port = 8005
 const hosts = new Map()
 // hosts.set('development', 'http://101.37.116.101:8000')
 
-hosts.set('development', 'http://192.168.69.88:8000')
+// hosts.set('development', 'http://192.168.69.88:8000')
+hosts.set('development', 'http://10.18.4.25:8000')
 hosts.set('test', 'http://101.37.116.101:8000')
 hosts.set('production', 'http://101.37.116.101:8000/')
 
