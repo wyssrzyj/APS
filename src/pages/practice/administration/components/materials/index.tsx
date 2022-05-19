@@ -226,7 +226,7 @@ function Materials() {
       )
 
       if (stateConsistent === true) {
-        //生产中和生产完成不需要重新查看
+        //生产中和生产完成不需要重新查看.
         const banView = selectedValue.every(
           (item) => item.status !== 3 && item.status !== 4
         )
