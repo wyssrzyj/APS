@@ -1,6 +1,16 @@
+/*
+ * @Author: your name
+ * @Date: 2022-03-10 15:20:21
+ * @LastEditTime: 2022-05-18 11:10:52
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: \jack-aps\src\pages\practice\progressTracking\schedulingResults\index.tsx
+ */
+import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
+import { loadFigureApis } from '@/recoil/apis'
 
 import Custom from './custom/index'
 import Dhx from './dhx/index'
@@ -15,91 +25,33 @@ import VirtuaIList from './VirtuaIList'
 import VirtuaIListX from './VirtuaIListX'
 const SchedulingResults = () => {
   const [sum, setSum] = useState(1)
-  // 假数据
-  const treeData = [
-    {
-      title: '工厂',
-      value: 1,
-      key: 1,
-      children: [
-        {
-          title: '工厂1',
-          value: 2,
-          key: 2
-        },
-        {
-          title: '工厂2',
-          value: 3,
-          key: 3
-        }
-      ]
-    },
-    {
-      title: '原料',
-      value: '2-9',
-      key: '2-9',
-      children: [
-        {
-          title: '大米',
-          value: '2-1',
-          key: '2-1'
-        },
-        {
-          title: '土豆',
-          value: '2-2',
-          key: '2-2'
-        },
-        {
-          title: '菠萝',
-          value: '2-3',
-          key: '2-3'
-        }
-      ]
-    },
-    {
-      title: '玩具',
-      value: '3-9',
-      key: '3-9',
-      children: [
-        {
-          title: '金铲铲的冠冕',
-          value: '3-1',
-          key: '3-1'
-        },
-        {
-          title: '残暴之力',
-          value: '3-2',
-          key: '3-2'
-        },
-        {
-          title: '末日寒冬',
-          value: '3-3',
-          key: '3-3'
-        }
-      ]
-    },
-    {
-      title: '蔬菜',
-      value: '4',
-      key: '4'
-    }
-  ]
+  const [params, setParams] = useState<any>({})
+  const [list, setList] = useState<any>([])
+
+  const { teamLoadDiagram } = loadFigureApis
+
+  //头部form的数据
+  const FormData = (e: any) => {
+    setParams(e)
+  }
   useEffect(() => {
-    console.log(sum)
-  }, [sum])
-  const executionMethod = () => {
-    setSum((f) => f + 1)
+    if (!isEmpty(params)) {
+      executionMethod(params)
+    }
+  }, [params])
+  const executionMethod = async (e) => {
+    const res = await teamLoadDiagram({ factoryId: e })
+    if (res.code === 200) {
+      setList(res.data)
+    }
   }
 
   return (
     <div className={styles.qualification}>
-      <div>
-        <Title title={'资源负荷图'} />
-      </div>
-      {/* <button onClick={executionMethod}>单机</button> */}
-      <Forms FormData={FormData} treeData={treeData}></Forms>
+      <div>{/* <Title title={'资源负荷图'} /> */}</div>
+      <Forms FormData={FormData}></Forms>
       <div id="c1"></div>
-      <Tbale />
+      <Tbale load={list} />
     </div>
   )
 }

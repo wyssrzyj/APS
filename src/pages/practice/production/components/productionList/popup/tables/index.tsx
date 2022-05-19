@@ -1,22 +1,21 @@
+/*
+ * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @Date: 2022-03-10 15:20:21
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @LastEditTime: 2022-05-16 15:29:08
+ * @FilePath: \jack-aps\src\pages\practice\production\components\productionList\popup\tables\index.tsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { Table } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
-
 function Tables(props: any) {
-  const { getFormData, list, types } = props
-
-  const map = new Map()
-  map.set('1', '裁剪')
-  map.set('2', '缝制')
-  map.set('3', '后整')
-  map.set('4', '包装')
-  map.set('5', '外发')
-  map.set('6', '缝制线外组')
+  const { getFormData, list, pagingData, total, types } = props
 
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(5)
-  const [total] = useState<number>(0)
+
   const columns: any = [
     {
       title: '序号',
@@ -26,19 +25,20 @@ function Tables(props: any) {
     {
       title: '工序名称',
       align: 'center',
-      dataIndex: 'productName'
+      dataIndex: 'processName'
     },
     {
       title: '工序代码',
       align: 'center',
-      dataIndex: 'productCode'
+      dataIndex: 'processCode'
     },
     {
       title: '所属工段',
       align: 'center',
       dataIndex: 'section',
       render: (v: any) => {
-        return <div>{map.get(v)}</div>
+        // return <div>{map.get(v)}</div>
+        return <div>{v}</div>
       }
     },
     {
@@ -54,12 +54,14 @@ function Tables(props: any) {
         return (
           <div className={styles.flex}>
             <div
-              className={
-                !types ? styles.operation_item : styles.operation_itemNo
-              }
-              onClick={() => (!types ? getFormData(_row) : null)}
+              // className={
+              //   !types ? styles.operation_item : styles.operation_itemNo
+              // }
+              className={styles.operation_item}
+              // onClick={() => (!types ? getFormData(_row) : null)}
+              onClick={() => getFormData(_row)}
             >
-              编辑
+              {types ? '查看' : '编辑'}
             </div>
           </div>
         )
@@ -72,6 +74,7 @@ function Tables(props: any) {
   ) => {
     setPageNum(page)
     setPageSize(pageSize)
+    pagingData && pagingData(page, pageSize)
   }
   return (
     <div className={styles.table}>
@@ -80,14 +83,12 @@ function Tables(props: any) {
         dataSource={list || []}
         rowKey={'idx'}
         pagination={{
-          size: 'small',
+          // disabled: types,
           //分页
           showSizeChanger: true,
-          // showQuickJumper: true, //是否快速查找
           pageSize, //每页条数
           current: pageNum, //	当前页数
           total, //数据总数
-          // position: ['bottomCenter'], //居中
           pageSizeOptions: ['5', '10', '20', '50'],
           onChange: onPaginationChange //获取当前页码是一个function
         }}

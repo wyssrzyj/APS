@@ -1,21 +1,46 @@
-import { Checkbox, Form, Input, message, Modal, TreeSelect } from 'antd'
-import { useEffect } from 'react'
+import { Checkbox, Form, Input, message, Modal, Select, TreeSelect } from 'antd'
+import { isElement, isEmpty } from 'lodash'
+import { useEffect, useState } from 'react'
 
 import { getChild } from '@/components/getChild/index'
-import { practice } from '@/recoil/apis'
+import { dockingDataApis, workingModeApis } from '@/recoil/apis'
 
 import WorkingHours from './workingHours/index'
 function Popup(props: { content: any; newlyAdded: any }) {
   const { content, newlyAdded } = props
-  const { isModalVisible, setIsModalVisible, type, treeData, edit } = content
+  const { isModalVisible, setIsModalVisible, type, edit, factoryData } = content
   const { SHOW_PARENT } = TreeSelect
   const [form] = Form.useForm()
+  const { Option } = Select
+  const { teamList } = dockingDataApis
+  const { operatingModeDetails, teamId } = workingModeApis
+  const [listID, setListID] = useState<any>() //工厂ID
+  const [treeData, setTreeData] = useState<any>() //班组列表
 
-  const { operatingModeDetails, teamId } = practice
+  //加班班组
+  useEffect(() => {
+    if (listID !== undefined) {
+      dataDictionary(listID)
+    }
+  }, [listID])
+  const dataDictionary = async (e: any) => {
+    const teamData = await teamList({ factoryId: e }) //班组列表
+    teamData.map(
+      (item: { title: any; teamName: any; value: any; id: any; key: any }) => {
+        item.title = item.teamName
+        item.value = item.id
+        item.key = item.id
+      }
+    )
+    setTreeData(teamData)
+  }
   //回显
   useEffect(() => {
     if (type !== 1) {
+      console.log('返回的树', edit.id)
+
       form.setFieldsValue(edit) //回显
+      setListID(edit.factoryId)
     }
     if (type === 1) {
       form.resetFields()
@@ -48,6 +73,26 @@ function Popup(props: { content: any; newlyAdded: any }) {
   const handleCancel = () => {
     setIsModalVisible(false)
   }
+
+  const determineTime = (e) => {
+    if (!isEmpty(e)) {
+      //开始不能大于结束 且 不能相等
+      const type = e.every((item: any) => {
+        return (
+          item.startDateTime < item.endDateTime &&
+          item.startDateTime !== item.endDateTime
+        )
+      })
+      if (type) {
+        return true
+      } else {
+        message.warning('开始不能大于结束，且不能相等')
+        return false
+      }
+    } else {
+      return false
+    }
+  }
   const onOk = async (
     values: {
       teamIds: any[]
@@ -57,24 +102,28 @@ function Popup(props: { content: any; newlyAdded: any }) {
     },
     type: number
   ) => {
-    //编辑
-    values.teamIds = getChild(values.teamIds, treeData) //下拉多选的处理
     // 合并
     const lyj: { week: any; dayTimeList: any }[] = []
     values.weeks.map((item: any, index: any) => {
       return lyj.push({ week: item, dayTimeList: values.times })
     })
     values.workModes = lyj
-    const list = type === 1 ? values : { ...values, id: edit.id }
-    //班组为false才执行
-    const arr: any = await teamId({ idList: values.teamIds })
 
-    if (arr.success === true) {
-      const res = await operatingModeDetails(list)
-      if (res === true) {
-        newlyAdded()
-        form.resetFields()
-        setIsModalVisible(false)
+    if (determineTime(values.workModes[0].dayTimeList)) {
+      const list = type === 1 ? values : { ...values, id: edit.id }
+      //班组为false才执行
+      const arr: any = await teamId({
+        teamIds: values.teamIds,
+        workModes: list.workModes,
+        workModeId: type === 1 ? null : edit.id
+      })
+      if (arr.success === true) {
+        const res = await operatingModeDetails(list)
+        if (res === true) {
+          newlyAdded()
+          form.resetFields()
+          setIsModalVisible(false)
+        }
       }
     }
   }
@@ -85,6 +134,9 @@ function Popup(props: { content: any; newlyAdded: any }) {
     }
     if (type === 2) {
       onOk(values, 2)
+    }
+    if (type === 3) {
+      setIsModalVisible(false)
     }
   }
 
@@ -98,10 +150,15 @@ function Popup(props: { content: any; newlyAdded: any }) {
       width: '100%'
     }
   }
+  const getFactoryName = (e: any) => {
+    setListID(e)
+  }
   return (
     <div>
       <Modal
         width={700}
+        destroyOnClose={true}
+        maskClosable={false}
         title={
           type === 1
             ? '新增工作模式'
@@ -149,12 +206,43 @@ function Popup(props: { content: any; newlyAdded: any }) {
             name="times"
             rules={[{ required: true, message: '请选择工作时间!' }]}
           >
-            <WorkingHours edit={edit} type={type} onChange={undefined} />
+            <WorkingHours edit={edit} type={type} />
           </Form.Item>
           <Form.Item
-            label="工作班组"
+            label="工厂名称"
+            name="factoryId"
+            rules={[{ required: true, message: '请选择工厂名称!' }]}
+          >
+            <Select
+              disabled={type === 3 ? true : false}
+              onChange={getFactoryName}
+              placeholder="请选择工厂名称"
+              allowClear
+            >
+              {factoryData !== undefined
+                ? factoryData.map(
+                    (item: {
+                      id: React.Key | null | undefined
+                      name:
+                        | boolean
+                        | React.ReactChild
+                        | React.ReactFragment
+                        | React.ReactPortal
+                        | null
+                        | undefined
+                    }) => (
+                      <Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Option>
+                    )
+                  )
+                : null}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label="班组名称"
             name="teamIds"
-            rules={[{ required: true, message: '请选择工作班组!' }]}
+            rules={[{ required: true, message: '请选择班组名称!' }]}
           >
             <TreeSelect disabled={type === 3 ? true : false} {...tProps} />
           </Form.Item>

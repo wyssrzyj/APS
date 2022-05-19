@@ -1,59 +1,101 @@
-import { Col, DatePicker, Form, Input, Row } from 'antd'
+import { Col, DatePicker, Form, Input, Row, Select } from 'antd'
 import { debounce } from 'lodash' //防抖
 import moment from 'moment'
-import React from 'react'
+import React, { useState } from 'react'
 const { RangePicker } = DatePicker
 const layout = {
   labelCol: {
-    span: 6
+    span: 5
   },
   wrapperCol: {
     span: 15
   }
 }
 
-function index(props: { FormData: any }) {
-  const { FormData } = props
+const HeaderForm = (props: { FormData: any; factoryData: any }) => {
+  const { FormData, factoryData } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [form] = Form.useForm() //第二步.
+  const [form] = Form.useForm()
   const { validateFields } = form
+  const { Option } = Select
+  const [listID, setListID] = useState<any>() //工厂ID
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
-    FormData && FormData(values)
+    //处理时间格式
+    const timeFormat = { ...values, ...values.planEndDate }
+    FormData && FormData(timeFormat)
   }, 500)
 
-  //第5步 这个方法 会根据type的值来 return 返回不同的值
   const getValueFromEvent = (event: any, type = 'text') => {
-    // 可根据需要 通过 setFieldsValue 设置联动效果
     setTimeout(async () => {
       await handleSubmit()
     })
-    // ****根据不同的返回不同的数据
     if (type === 'input') {
       return event.target.value
     }
     if (type === 'picker') {
-      event.startTime = moment(event[0]).format('x')
-      event.endTime = moment(event[1]).format('x')
-      return event
+      //ceshi
+      console.log(event)
+
+      if (event !== null) {
+        event.startPlanEndDate = moment(event[0]).valueOf()
+        event.endPlanEndDate = moment(event[1]).valueOf()
+        return event
+      } else {
+        return null
+      }
     }
+
     return event
   }
-
+  const getFactoryName = (e: any) => {
+    setListID(e)
+  }
   return (
     <div>
-      <Form
-        form={form} //第一步
-      >
+      <Form form={form}>
         <Row>
           <Col span={8}>
             <Form.Item
               {...layout}
-              name="production"
+              name="factoryId"
+              label="工厂名称"
+              getValueFromEvent={(event: InputEvent) =>
+                getValueFromEvent(event, 'select')
+              }
+            >
+              <Select
+                allowClear={true}
+                onChange={getFactoryName}
+                placeholder="请选择工厂名称"
+              >
+                {factoryData != undefined
+                  ? factoryData.map(
+                      (item: {
+                        id: React.Key | null | undefined
+                        name:
+                          | boolean
+                          | React.ReactChild
+                          | React.ReactFragment
+                          | React.ReactPortal
+                          | null
+                          | undefined
+                      }) => (
+                        <Option key={item.id} value={item.id}>
+                          {item.name}
+                        </Option>
+                      )
+                    )
+                  : null}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              {...layout}
+              name="productOrderNum"
               label="生产单号"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -64,24 +106,8 @@ function index(props: { FormData: any }) {
           <Col span={8}>
             <Form.Item
               {...layout}
-              name="sales"
-              label="销售单号"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
-              }
-            >
-              <Input placeholder="请输入销售单号" allowClear />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              {...layout}
               name="productName"
               label="产品名称"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -94,10 +120,8 @@ function index(props: { FormData: any }) {
           <Col span={8}>
             <Form.Item
               {...layout}
-              name="number"
+              name="productNum"
               label="产品款号"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -108,10 +132,8 @@ function index(props: { FormData: any }) {
           <Col span={8}>
             <Form.Item
               {...layout}
-              name="customer"
+              name="productClientNum"
               label="客户款号"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
@@ -122,10 +144,8 @@ function index(props: { FormData: any }) {
           <Col span={8}>
             <Form.Item
               {...layout}
-              name="completionTime"
+              name="planEndDate"
               label="计划完成日期"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'picker')
               }
@@ -139,4 +159,4 @@ function index(props: { FormData: any }) {
   )
 }
 
-export default index
+export default HeaderForm

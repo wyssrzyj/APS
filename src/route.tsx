@@ -6,12 +6,9 @@ const Home = React.lazy(() => import('@/pages/home'))
 const Note = React.lazy(() => import('@/pages/note'))
 
 // 登录注册页
-const LoginAndRegister = React.lazy(() => import('@/pages/login'))
-const LoginContent = React.lazy(() => import('@/pages/login/content'))
+const Login = React.lazy(() => import('@/pages/login'))
 const Register = React.lazy(() => import('@/pages/register'))
 const Reset = React.lazy(() => import('@/pages/login/reset'))
-// 用户管理
-const UserManage = React.lazy(() => import('@/pages/user'))
 // 部门管理
 const DepartmentManage = React.lazy(() => import('@/pages/department'))
 // 角色管理
@@ -19,8 +16,10 @@ const RoleManage = React.lazy(() => import('@/pages/role'))
 const Demo = React.lazy(() => import('@/pages/demo'))
 //系统参数设置
 const SystemSettingsWork = React.lazy(
-  () => import('@/pages/practice/systemSettings/index')
+  () => import('@/pages/systemSettings/paramsConfig')
 )
+// 用户管理
+const UserManage = React.lazy(() => import('@/pages/systemSettings/userManage'))
 //-------基础数据 开始
 // 工作
 const Work = React.lazy(
@@ -52,6 +51,7 @@ const ProductionList = React.lazy(
 const Scheduling = React.lazy(
   () => import('@/pages/practice/administration/components/scheduling')
 )
+
 //生产管理 物料齐套检查
 const Materials = React.lazy(
   () => import('@/pages/practice/administration/components/materials')
@@ -59,7 +59,7 @@ const Materials = React.lazy(
 
 // ----------------生产管理结束
 
-//进度跟踪 派工计划
+//进度跟踪 生产计划
 const DispatchPan = React.lazy(
   () => import('@/pages/practice/progressTracking/dispatchPan')
 )
@@ -75,7 +75,8 @@ const OrderChart = React.lazy(
 const SchedulingResults = React.lazy(
   () => import('@/pages/practice/progressTracking/schedulingResults')
 )
-
+//排程结果 - 生产实绩
+const ActualProduction = React.lazy(() => import('@/pages/actualProduction'))
 /* ------------------------//测试 */
 
 const RouteList = () => {
@@ -84,16 +85,14 @@ const RouteList = () => {
       <Route path="home/:id" element={<Home />} />
       <Route path="demo" element={<Demo />} />
       <Route path="note" element={<Note />} />
-      <Route path="userManage" element={<UserManage />} />
       <Route path="departmentManage" element={<DepartmentManage />} />
       <Route path="roleManage" element={<RoleManage />} />
-      <Route path="user" element={<LoginAndRegister />}>
-        <Route path="login" element={<LoginContent />} />
-        <Route path="register" element={<Register />} />
-        <Route path="reset" element={<Reset />} />
-      </Route>
+      <Route path="login" element={<Login />} />
+      {/* <Route path="register" element={<Register />} />
+        <Route path="reset" element={<Reset />} /> */}
       {/* 系统参数设置 */}
       <Route path="/systemSettingsWork" element={<SystemSettingsWork />} />
+      <Route path="/userManage" element={<UserManage />} />
       {/* 日历-工作 */}
       <Route path="/work" element={<Work />} />
       {/* 日历-加班 */}
@@ -107,10 +106,11 @@ const RouteList = () => {
       <Route path="/materials" element={<Materials />} />
       {/* 生产管理-生产单排程 */}
       <Route path="/scheduling" element={<Scheduling />} />
+      {/* 生产管理-生产单排程 */}
 
       {/* 生产管理-规则排程 */}
       <Route path="/rule" element={<Rule />} />
-      {/* 进度跟踪 派工计划查看 */}
+      {/* 进度跟踪 生产计划查看 */}
       <Route path="/dispatchPan" element={<DispatchPan />} />
 
       {/* 排程结果 -资源甘特图 */}
@@ -119,6 +119,8 @@ const RouteList = () => {
       <Route path="/orderChart" element={<OrderChart />} />
       {/* 排程结果 -资源负荷图 */}
       <Route path="/schedulingResults" element={<SchedulingResults />} />
+      {/* 生产实绩 */}
+      <Route path="/actualProduction" element={<ActualProduction />} />
 
       {/* 无匹配路由 放置在最后一个路由的位置 */}
       <Route path="*" element={<Home />} />

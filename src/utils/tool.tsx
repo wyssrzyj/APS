@@ -7,7 +7,7 @@ export const getUId = () => {
 }
 
 export const getToken = () => {
-  return localStorage.getItem('token')
+  return JSON.parse(localStorage.getItem('token'))
 }
 
 export const getRefresh = () => {
@@ -275,4 +275,13 @@ export const getStatusMap = () => {
 export const transformStatus = (value: number) => {
   const statusMap: any[] = getStatusMap()
   return statusMap.find((item) => item.value == value).label
+}
+
+export const changeBolbToXls = (res: any, fileName: string) => {
+  const blob = new Blob([res], { type: 'application/octet-stream' })
+  const download = document.createElement('a')
+  download.href = window.URL.createObjectURL(blob)
+  download.download = `${fileName}.xls`
+  download.click()
+  window.URL.revokeObjectURL(download.href)
 }

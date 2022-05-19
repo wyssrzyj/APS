@@ -1,5 +1,5 @@
 import { Form, Input, Row } from 'antd'
-import { debounce } from 'lodash' //防抖
+import { debounce } from 'lodash'
 import React from 'react'
 
 const layout = {
@@ -11,24 +11,20 @@ const layout = {
   }
 }
 
-function index(props: { FormData: any }) {
+const HeaderForm = (props: { FormData: any }) => {
   const { FormData } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [form] = Form.useForm() //第二步.
+  const [form] = Form.useForm()
   const { validateFields } = form
-
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
     FormData && FormData(values)
   }, 500)
 
-  //第5步 这个方法 会根据type的值来 return 返回不同的值
   const getValueFromEvent = (event: any, type = 'text') => {
-    // 可根据需要 通过 setFieldsValue 设置联动效果
     setTimeout(async () => {
       await handleSubmit()
     })
-    // ****根据不同的返回不同的数据
     if (type === 'input') {
       return event.target.value
     }
@@ -37,16 +33,12 @@ function index(props: { FormData: any }) {
 
   return (
     <div>
-      <Form
-        form={form} //第一步
-      >
+      <Form form={form}>
         <Row>
           <Form.Item
             {...layout}
             name="name"
             label="节假日名称"
-            //第4步 给每个form.Item添加getValueFromEvent事件
-            //  {/* 设置如何将 event 的值转换成字段值 */}
             getValueFromEvent={(event: InputEvent) =>
               getValueFromEvent(event, 'input')
             }
@@ -59,4 +51,4 @@ function index(props: { FormData: any }) {
   )
 }
 
-export default index
+export default HeaderForm

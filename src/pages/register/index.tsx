@@ -91,7 +91,7 @@ const Register = () => {
       }
       const registerRes = await register(params)
       if (registerRes && registerRes.success) {
-        navigate('/user/login')
+        navigate('/login')
         localStorage.setItem('currentUser', JSON.stringify({}))
       }
     } catch (err) {
@@ -183,7 +183,7 @@ const Register = () => {
   }
 
   const toLogin = () => {
-    navigate('/user/login')
+    navigate('/login')
   }
 
   return (
@@ -192,7 +192,7 @@ const Register = () => {
       <Form
         form={form}
         scrollToFirstError={true}
-        className={styles.form}
+        className={styles.formContainer}
         onValuesChange={onValuesChange}
       >
         <Form.Item

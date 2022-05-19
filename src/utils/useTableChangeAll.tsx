@@ -77,14 +77,14 @@ const useTableChangeAll = (
 
   const tableChange = (
     pagination: TablePaginationConfig,
-    _filters: Record<string, FilterValue>,
-    sorter: SorterResult<any>
+    _filters: Record<string, FilterValue | null>,
+    sorter: SorterResult<any> | SorterResult<any>[]
   ) => {
     const { current = 1, pageSize = 20 } = pagination
     setPageNum(current)
     setPageSize(pageSize)
 
-    const { field, order } = sorter
+    const { field, order } = sorter as SorterResult<any>
     setSorterField(field as string)
     setOrder(order as string)
   }

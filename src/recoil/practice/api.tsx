@@ -16,7 +16,21 @@ const dealData = (data = []) => {
 
   return data
 }
-
+//工厂列表
+export const factoryList = async () => {
+  try {
+    const res: ResponseProps = await axios.get(`/aps/mes/get-factory-list`)
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
 export const getArea = async () => {
   try {
     const res: ResponseProps = (await axios.get(`/api/dmp/lms-area/tree`)) || {}
@@ -24,23 +38,6 @@ export const getArea = async () => {
     if (res.code === 200) {
       res.data = res.data || []
       return dealData(res.data)
-    }
-  } catch (e) {
-    console.log(e)
-  }
-}
-// 工序外发 - 显示
-export const processOutsourcing = async (params: any) => {
-  console.log('id', params)
-
-  try {
-    const res: ResponseProps =
-      (await axios.get(`/aps/outsource/out-process-get`, params)) || {}
-
-    if (res.code === 200) {
-      console.log(res)
-
-      return res.data
     }
   } catch (e) {
     console.log(e)
@@ -65,10 +62,11 @@ export const delArea = async (id: any) => {
   }
 }
 
-export const workingModes = async (params: any) => {
+// 生产单规则排程
+export const rulesScheduling = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/work-mode-list`,
+      `/aps/product-order/product-order-rule-schedule`,
       params
     )
     if (res.code !== 200) {
@@ -83,34 +81,16 @@ export const workingModes = async (params: any) => {
   }
 }
 
-export const operatingModeDetails = async (params: any) => {
+// 发布排程
+export const releaseSchedule = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/work-mode-save-update`,
+      `/aps/produce-assignment-detail/check-schedule`,
       params
     )
     if (res.code !== 200) {
       message.error(res.msg)
     }
-
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-export const listSorkingModesDelete = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/work-mode-delete`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-
     if (res) {
       return res.data || []
     }
@@ -120,10 +100,11 @@ export const listSorkingModesDelete = async (params: any) => {
   }
 }
 
-export const operatingModeDetailsData = async (params: any) => {
+// 班组信息
+export const teamList = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/work-mode-get`,
+      `/aps/mes/get-team-manager-list`,
       params
     )
     if (res.code !== 200) {
@@ -137,234 +118,52 @@ export const operatingModeDetailsData = async (params: any) => {
     console.log(e)
   }
 }
-//加班时间列表-显示
-export const overtimedisplay = async (params: any) => {
+
+//导出缺料报告
+export const detailsSewingPlan = async (params: any) => {
   try {
-    const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/extra-work-list`,
+    const res: ResponseProps = await axios.get(
+      `/aps/produce-assignment-detail-pulished/sewing-task-info`,
       params
     )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
     if (res) {
-      return res.data || []
+      return res
     }
     return []
   } catch (e) {
     console.log(e)
   }
 }
-// 加班时间详情 - 新增或者更新
-export const overtimeAddition = async (params: any) => {
+//取sku
+export const getSKU = async (params: any) => {
   try {
-    const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/extra-work-save-update`,
+    const res: ResponseProps = await axios.get(
+      `/aps/mes/get-produce-sku-list`,
       params
     )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
     if (res) {
-      return res.data || []
+      return res.data
     }
     return []
   } catch (e) {
     console.log(e)
   }
 }
-// 断当前班组是否有重复的排班,请传班组id
-export const teamId = async (params: any) => {
+
+// getTeamView
+export const getLine = async (params: any) => {
   try {
-    const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/time-overlap`,
+    const res: ResponseProps = await axios.get(
+      `/aps/produce-assignment-detail/get-line`,
       params
     )
+
     if (res.code !== 200) {
       message.error(res.msg)
     }
     if (res) {
       return res || []
     }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-// 加班时间列表-删除
-export const workOvertimeMov = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/extra-work-delete`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-// 加班时间详情-显示
-export const overtimeDetails = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/extra-work-get`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-// 节假日列表 - 显示
-export const holidayList = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/holiday-list`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-// 节假日详情-新增或者更新
-export const holidayAddition = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/holiday-save-update`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-// 节假日详情-显示
-export const holidayID = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/holiday-get`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-// 节假日列表-删除
-export const holidayListMov = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/work-calendar/holiday-delete`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-// 系统参数 - 显示
-export const systemParameter = async () => {
-  try {
-    const res: ResponseProps = await axios.get(`/aps/system_config/get`, {})
-
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      console.log(res)
-
-      return res.data || []
-    }
-  } catch (e) {
-    console.log(e)
-  }
-}
-// 系统参数-保存
-export const systemParameters = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/system_config/save-update`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-
-// 生产单-列表
-export const productionList = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(
-      `/aps/product-order/list`,
-      params
-    )
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res || []
-    }
-    return []
-  } catch (e) {
-    console.log(e)
-  }
-}
-
-// 工序-列表
-export const workingProcedure = async (params: any) => {
-  try {
-    const res: ResponseProps = await axios.post(`/aps/process/list`, params)
-    if (res.code !== 200) {
-      message.error(res.msg)
-    }
-    if (res) {
-      return res.data || []
-    }
-    return []
   } catch (e) {
     console.log(e)
   }

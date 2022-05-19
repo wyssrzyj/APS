@@ -1,9 +1,10 @@
 import { Table } from 'antd'
+import { isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
-import { practice } from '@/recoil/apis'
+import { productionSingleApis } from '@/recoil/apis'
 
 import Dome from './dome'
 import Forms from './forms'
@@ -12,16 +13,16 @@ import MovPopup from './movPopup'
 import Popup from './popup'
 
 function Production() {
-  const { productionList } = practice
+  const { productionList, factoryList } = productionSingleApis
   const map = new Map()
   map.set(1, '待计划')
-  map.set(2, '待生产')
-  map.set(3, '成产中')
-  map.set(4, '成产完成')
+  map.set(2, '已计划')
+  map.set(3, '生产中')
+  map.set(4, '生产完成')
 
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [total] = useState<number>(0)
+  const [total, setTotal] = useState<number>(0)
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [types, setType] = useState(false) //编辑或者查看
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
@@ -31,24 +32,57 @@ function Production() {
     pageNum: 1,
     pageSize: defaultPageSize
   })
+
   const [getDetailsId, setGetDetailsId] = useState() //工艺需要的id
   const [externalProduceOrderId, setExternalProduceOrderId] = useState() //外发需要的id
-
   const [list, setList] = useState([])
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
+  const [whetherEditor, setWhetherEditor] = useState<any>([])
+
+  //工厂名称
+  useEffect(() => {
+    getData()
+  }, [])
+
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setFactoryData(arr)
+    }
+  }
 
   useEffect(() => {
     api(params)
   }, [params])
 
+  const refreshData = () => {
+    api(params)
+  }
+
   const api = async (item: any) => {
+    //计划完成日期
+    if (item.planEndDate) {
+    } else {
+      item.endPlanEndDate = null
+      item.startPlanEndDate = null
+    }
+
     const arr: any = await productionList(item)
-    console.log(arr)
-    if (arr.code === 200) {
+    if (!isEmpty(arr.records)) {
+      setTotal(arr.total)
       setLoading(false)
-      arr.data.records.map((item: any) => {
+      arr.records.map((item: any) => {
         item.id = `${item.productId + Math.random()}` //后端没有成成id 这里自己做处理 防止key值重复
       })
-      setList(arr.data.records)
+      const arrData = arr.records
+      setList([...arrData])
+    } else {
+      setList([])
     }
   }
 
@@ -57,15 +91,15 @@ function Production() {
     {
       title: '生产单号',
       align: 'center',
-      key: 'productOrderNum',
-      dataIndex: 'productOrderNum'
+      key: 'externalProduceOrderNum',
+      dataIndex: 'externalProduceOrderNum'
     },
-    {
-      title: '销售单号',
-      key: 'orderNum',
-      align: 'center',
-      dataIndex: 'orderNum'
-    },
+    // {
+    //   title: '销售单号',
+    //   key: 'orderNum',
+    //   align: 'center',
+    //   dataIndex: 'orderNum'
+    // },
     {
       title: '接单工厂',
       key: 'factoryName',
@@ -146,15 +180,17 @@ function Production() {
               className={styles.operation_item}
               onClick={() => editUser(false, _row)}
             >
-              查看详情
+              查看
             </div>
-            <div
-              className={styles.operation}
-              onClick={() => editUser(true, _row)}
-            >
-              <div> 工艺</div>
-              <div> 外发</div>
-            </div>
+            {_row.status === 1 ? (
+              <div
+                className={styles.operation}
+                onClick={() => editUser(true, _row)}
+              >
+                <div> 工艺</div>
+                <div> 外发</div>
+              </div>
+            ) : null}
           </div>
         )
       }
@@ -163,7 +199,11 @@ function Production() {
 
   //头部form的数据
   const FormData = (e: any) => {
-    console.log(e)
+    if (e.factoryId !== undefined) {
+      setParams({ pageNum: 1, pageSize, ...e })
+    } else {
+      setParams({ pageNum, pageSize, ...e })
+    }
   }
   const onPaginationChange = (
     page: React.SetStateAction<number>,
@@ -171,16 +211,20 @@ function Production() {
   ) => {
     setPageNum(page)
     setPageSize(pageSize)
+    setParams({ ...params, pageNum: page, pageSize: pageSize })
   }
   const editUser = (type: boolean, row: any) => {
-    setGetDetailsId(row.productId)
+    console.log(row.outsourceType)
+
+    setWhetherEditor(row.outsourceType)
+
+    setGetDetailsId(row.externalProduceOrderId)
     setExternalProduceOrderId(row.externalProduceOrderId)
     if (type === true) {
       setType(false)
       setIsModalVisible(true)
     } else {
       setType(true)
-      console.log('查看')
       setIsModalVisible(true)
     }
   }
@@ -189,21 +233,22 @@ function Production() {
     console.log('删除逻辑')
   }
   const content = {
+    whetherEditor,
+    setGetDetailsId,
     isModalVisible,
     setIsModalVisible,
+    refreshData,
     types,
     getDetailsId,
     externalProduceOrderId
   }
   return (
     <div className={styles.qualification}>
-      <div>
-        <Title title={'生产单列表'} />
-      </div>
+      <div>{/* <Title title={'生产单列表'} /> */}</div>
       <div></div>
       <div>
         <div className={styles.content}>
-          <Forms FormData={FormData}></Forms>
+          <Forms factoryData={factoryData} FormData={FormData}></Forms>
           <Table
             className={styles.table}
             columns={columns}

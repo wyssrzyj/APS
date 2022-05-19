@@ -1,88 +1,98 @@
-import { Col, Form, Input, Row, TreeSelect } from 'antd'
-import { debounce } from 'lodash' //防抖
-import React from 'react'
+/*
+ * @Author: your name
+ * @Date: 2022-04-13 15:47:01
+ * @LastEditTime: 2022-05-16 19:10:49
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @FilePath: \jack-aps\src\pages\practice\progressTracking\resourcemMap\forms\index.tsx
+ */
+import { Form, Select } from 'antd'
+import { debounce } from 'lodash'
+import React, { useEffect, useState } from 'react'
 
-import { getChild } from '@/components/getChild/index'
-const layout = {
-  labelCol: {
-    span: 5
-  },
-  wrapperCol: {
-    span: 24
+import { practice } from '@/recoil/apis'
+
+const { Option } = Select
+
+const HeaderForm = (props: { FormData: any }) => {
+  const { FormData } = props
+  const { factoryList } = practice
+  const [list, setList] = useState<any>([])
+  const [theDefault, setTheDefault] = useState<any>() //默认展示
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+    if (res.code === 200) {
+      //  默认展示第2条数据
+      setTheDefault(arr[0])
+      FormData && FormData(arr[0].id)
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setList(arr)
+    }
   }
-}
-
-function index(props: { FormData: any; treeData: any }) {
-  const { FormData, treeData } = props
-  const { SHOW_PARENT } = TreeSelect
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [form] = Form.useForm() //第二步.
+  const [form] = Form.useForm()
   const { validateFields } = form
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
-    FormData && FormData(values)
+    FormData && FormData(values.keyword)
   }, 500)
 
-  //第5步 这个方法 会根据type的值来 return 返回不同的值
   const getValueFromEvent = (event: any, type = 'text') => {
-    // 可根据需要 通过 setFieldsValue 设置联动效果
     setTimeout(async () => {
       await handleSubmit()
     })
-    // ****根据不同的返回不同的数据
-    if (type === 'input') {
-      return event.target.value
-    }
-    if (type === 'treeSelect') {
-      return getChild(event, treeData)
+    if (type === 'select') {
+      return event
     }
   }
-  const tProps = {
-    treeData,
-    treeCheckable: true,
-    showCheckedStrategy: SHOW_PARENT,
-    placeholder: '请选择车间'
-  }
+
   return (
     <div>
-      <Form
-        form={form} //第一步
-      >
-        <Row>
-          <Col span={6}>
-            <Form.Item
-              {...layout}
-              name="name"
-              label="选择工厂"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
-              }
+      <Form form={form}>
+        <Form.Item
+          name="keyword"
+          label="选择工厂"
+          getValueFromEvent={(event: InputEvent) =>
+            getValueFromEvent(event, 'select')
+          }
+        >
+          {theDefault ? (
+            <Select
+              allowClear
+              defaultValue={theDefault.deptName}
+              style={{ width: 300 }}
+              // onChange={handleChange}
             >
-              <Input placeholder="请选择工厂" allowClear />
-            </Form.Item>
-          </Col>
-          <Col span={6}>
-            <Form.Item
-              {...layout}
-              name="teams"
-              label="选择车间"
-              //第4步 给每个form.Item添加getValueFromEvent事件
-              //  {/* 设置如何将 event 的值转换成字段值 */}
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'treeSelect')
-              }
-            >
-              <TreeSelect {...tProps} />
-            </Form.Item>
-          </Col>
-        </Row>
+              {list.map(
+                (item: {
+                  id: React.Key | null | undefined
+                  name:
+                    | boolean
+                    | React.ReactChild
+                    | React.ReactFragment
+                    | React.ReactPortal
+                    | null
+                    | undefined
+                }) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                )
+              )}
+            </Select>
+          ) : null}
+        </Form.Item>
       </Form>
     </div>
   )
 }
 
-export default index
+export default HeaderForm

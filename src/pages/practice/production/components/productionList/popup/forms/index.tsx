@@ -1,18 +1,21 @@
-import { Button, Col, Form, Image, Input, message, Row, TreeSelect } from 'antd'
+import { Col, Form, Input, InputNumber, message, Row, TreeSelect } from 'antd'
 import { debounce } from 'lodash' //防抖
-import React, { useEffect } from 'react'
+import { isEmpty } from 'lodash'
+import React, { useEffect, useState } from 'react'
 
 import { getChild } from '@/components/getChild'
 
 import styles from './index.module.less'
 
-function Forms(props: any) {
-  const { FormData, data, types, list } = props
+function Forms(props: { FormData: any; data: any; types: any }) {
+  const { FormData, data, types } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const { validateFields } = form
   useEffect(() => {
-    form.setFieldsValue(data)
+    if (!isEmpty(data)) {
+      form.setFieldsValue(data)
+    }
   }, [types, data])
 
   const { SHOW_PARENT } = TreeSelect
@@ -94,21 +97,25 @@ function Forms(props: any) {
       span: 15
     }
   }
-  const executionMethod = () => {
-    form.submit()
+  const layout1 = {
+    labelCol: {
+      span: 5
+    },
+    wrapperCol: {
+      span: 20
+    }
   }
   const onFinish = (values: any) => {
-    console.log('Success:', values)
     if (values.workTeam) {
       values.workTeam = getChild(values.workTeam, treeData) //下拉多选的处理
     }
-    // form.resetFields() //清除form中的数据
     message.success('修改成功')
   }
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
-    FormData && FormData(values)
+    FormData &&
+      FormData({ ...values, externalProcessId: data.externalProcessId })
   }, 500)
 
   const getValueFromEvent = (event: any, type = 'text') => {
@@ -118,22 +125,11 @@ function Forms(props: any) {
     })
     // ****根据不同的返回不同的数据
     if (type === 'input') {
-      return event.target.value
+      return event
     }
-
     return event
   }
 
-  const tProps = {
-    treeData,
-    value: value,
-    treeCheckable: true,
-    showCheckedStrategy: SHOW_PARENT,
-    placeholder: '请选择工作班组',
-    style: {
-      width: '100%'
-    }
-  }
   return (
     <div className={styles.relative}>
       <Form
@@ -147,51 +143,29 @@ function Forms(props: any) {
         <Row>
           <Col span={8}>
             <Form.Item label="序号" name="idx">
-              <Input maxLength={100} placeholder="请输入序号" disabled={true} />
+              <Input placeholder="请输入序号" disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="工序名称" name="productName">
-              <Input
-                maxLength={100}
-                placeholder="请输入工序名称"
-                disabled={true}
-              />
+            <Form.Item label="工序名称" name="processName">
+              <Input placeholder="请输入工序名称" disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item
-              label="工序代码"
-              name="productCode"
-              // rules={[{ required: true, message: '请选择工序代码!' }]}
-            >
-              <Input
-                maxLength={100}
-                placeholder="请选择工序代码"
-                disabled={true}
-              />
+            <Form.Item label="工序代码" name="processCode">
+              <Input placeholder="请选择工序代码" disabled={true} />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={8}>
             <Form.Item label="所属工段" name="section">
-              {/* <Input
-                maxLength={100}
-                placeholder="请输入所属工段"
-                disabled={true}
-              /> */}
-              <TreeSelect {...tProps} disabled={true} />
+              <Input placeholder="请选择所属工段" disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item label="工序耗时" name="secondPlan">
-              <Input
-                maxLength={100}
-                placeholder="请输入工序耗时"
-                suffix="秒"
-                disabled={true}
-              />
+              <InputNumber addonAfter="S" disabled={true} />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -202,12 +176,7 @@ function Forms(props: any) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input
-                maxLength={100}
-                placeholder="请输入固定用时"
-                suffix="天"
-                disabled={types}
-              />
+              <InputNumber addonAfter="天" disabled={types} />
             </Form.Item>
           </Col>
         </Row>
@@ -220,12 +189,7 @@ function Forms(props: any) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input
-                maxLength={100}
-                placeholder="请输入时间"
-                suffix="秒"
-                disabled={types}
-              />
+              <InputNumber addonAfter="S" disabled={types} />
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -236,61 +200,39 @@ function Forms(props: any) {
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input
-                maxLength={100}
-                placeholder="请输入时间"
-                suffix="秒"
-                disabled={types}
-              />
+              <InputNumber addonAfter="S" disabled={types} />
             </Form.Item>
           </Col>
           <Col span={8}>
             <Form.Item
-              label="前工序完成量"
+              label="前工段完成量"
               name="beforeFinishAmount"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input
-                maxLength={100}
-                placeholder="请输入前工序完成量"
-                disabled={types}
-              />
+              <InputNumber addonAfter="" disabled={types} />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Col span={8}>
             <Form.Item
-              label="前工序间隔时间"
+              label="前工段间隔时间"
               name="beforeWaitTime"
               getValueFromEvent={(event: InputEvent) =>
                 getValueFromEvent(event, 'input')
               }
             >
-              <Input
-                maxLength={100}
-                placeholder="请输入时间"
-                suffix="天"
-                disabled={types}
-              />
+              <InputNumber addonAfter="天" disabled={types} />
             </Form.Item>
           </Col>
-          <Col span={8}>
-            <Form.Item label="工艺说明" name="note">
+          <Col span={16}>
+            <Form.Item label="工艺说明" name="note" {...layout1}>
               <TextArea rows={4} placeholder="请输入工艺说明" disabled={true} />
             </Form.Item>
           </Col>
         </Row>
-        <Button
-          className={styles.executionMethod}
-          type="primary"
-          disabled={types}
-          onClick={executionMethod}
-        >
-          确认
-        </Button>
       </Form>
     </div>
   )

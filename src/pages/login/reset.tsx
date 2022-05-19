@@ -71,7 +71,7 @@ const Reset = () => {
       delete values.newPassword2
       const res = await resetPwd(values)
       if (res) {
-        navigate('/user/login')
+        navigate('/login')
       }
     } catch (e) {
       console.log(e)
@@ -87,7 +87,7 @@ const Reset = () => {
   }
 
   const backLogin = () => {
-    navigate('/user/login')
+    navigate('/login')
   }
 
   return (

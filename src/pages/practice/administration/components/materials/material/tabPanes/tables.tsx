@@ -22,7 +22,7 @@ function Tables(props: any) {
     { name: '物料缺少数量', width: '100px' },
     { name: '单位', width: '50px' },
     { name: '是否充足', width: '80px' },
-    { name: '齐套日期', width: '150px' }
+    { name: '齐料日期', width: '150px' }
   ]
   useEffect(() => {
     console.log('总数据', materialList[index].titls) //获取当前行的值

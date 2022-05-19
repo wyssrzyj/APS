@@ -1,27 +1,53 @@
-import { Button } from 'antd'
-import { useEffect, useState } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+/*
+ * @Author: zjr
+ * @Date: 2022-04-21 09:24:10
+ * @LastEditTime: 2022-05-13 17:39:52
+ * @Description:
+ * @LastEditors: zjr
+ */
+import { Col, Divider, Row, Space } from 'antd'
 
-import { commonState } from '@/recoil'
-import { commonApis } from '@/recoil/apis'
+import { Title } from '@/components'
 
-import Dome from './dome'
+import DynamicContent from './components/dynamicContent'
+import DynamicTable from './components/dynamicTable'
 import styles from './index.module.less'
-
 const Home = () => {
-  //设置可读可写
-  const [value, setValue] = useRecoilState(commonState.textState)
-  const [name, setName] = useRecoilState(commonState.lyj)
-  const executionMethod = () => {
-    setName('全局的id')
-  }
   return (
-    // 多个样式处理方法classNames 可使用三元
-    <div>
-      <input value={value} onChange={(e) => setValue(e.target.value)} />
-      <button onClick={executionMethod}>存全局的id</button>
-      <div>lyj：{name}</div>
-      {/* <Dome /> */}
+    <div className={styles.outContainer}>
+      {/* <Title title={'首页'}></Title> */}
+      <Row gutter={24}>
+        <Col span={12}>
+          <DynamicContent
+            key="manufactureOrder"
+            title="生产单动态"
+            type="manufactureOrder"
+          />
+        </Col>
+        <Col span={12}>
+          <DynamicContent
+            key="manufactureTask"
+            title="生产任务动态"
+            type="manufactureTask"
+          />
+        </Col>
+      </Row>
+      <div className={styles.dynamicTableContainer}>
+        <div>
+          <DynamicTable
+            title="生产延期查询"
+            isDelay={true}
+            key="productDelayTable"
+          />
+        </div>
+        <div className={styles.deliverLine}></div>
+        <div>
+          <DynamicTable
+            title="齐套生产单库存变动查询"
+            key="productChangeTable"
+          />
+        </div>
+      </div>
     </div>
   )
 }

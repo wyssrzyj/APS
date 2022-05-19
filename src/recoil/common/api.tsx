@@ -1,3 +1,10 @@
+/*
+ * @Author: zjr
+ * @Date: 2022-04-26 16:43:54
+ * @LastEditTime: 2022-05-13 18:29:23
+ * @Description:
+ * @LastEditors: zjr
+ */
 import { message } from 'antd'
 
 import axios from '@/utils/axios'
@@ -17,6 +24,52 @@ export const getInfo = async (params: Params) => {
       message.success(res.msg)
       return res.data
     }
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 班组信息
+export const teamList = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/mes/get-team-manager-list`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+//工厂列表
+export const factoryList = async () => {
+  try {
+    const res: ResponseProps = await axios.get(`/aps/mes/get-factory-list`)
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 工段列表
+export const getWorkshopSectionList = async () => {
+  try {
+    const res: ResponseProps = await axios.get(`/aps/mes/get-section-list`)
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
   } catch (e) {
     console.log(e)
   }

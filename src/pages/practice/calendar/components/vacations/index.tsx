@@ -1,15 +1,18 @@
-import { Button, message, Table, Tag } from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { Button, message, Modal, Table, Tag } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
-import { practice } from '@/recoil/apis'
+import { holidaySeasonApis } from '@/recoil/apis'
 
 import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
 import Popup from './popup'
 function Vacations() {
+  const { confirm } = Modal
+
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
@@ -27,7 +30,7 @@ function Vacations() {
   const [list, setlist] = useState([])
   const [edit, setEdit] = useState([]) //编辑数据
 
-  const { holidayList, holidayID, holidayListMov } = practice
+  const { holidayList, holidayID, holidayListMov } = holidaySeasonApis
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
@@ -129,8 +132,11 @@ function Vacations() {
   }
   //头部form的数据
   const FormData = (e: any) => {
-    console.log(e)
-    setParams({ ...params, ...e })
+    if (e.factoryId !== undefined) {
+      setParams({ pageNum: 1, pageSize, ...e })
+    } else {
+      setParams({ pageNum, pageSize, ...e })
+    }
   }
   const onPaginationChange = (
     page: React.SetStateAction<number>,
@@ -155,12 +161,11 @@ function Vacations() {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
-      setMovIsModalVisible(true)
+      showDeleteConfirm()
     }
   }
+
   const movApi = async () => {
-    console.log('删除逻辑')
-    console.log('选中的删除id', { idList: selectedRowKeys })
     const arr = await holidayListMov({ idList: selectedRowKeys })
     newlyAdded()
   }
@@ -181,12 +186,27 @@ function Vacations() {
     setIsModalVisible(true)
     setType(1)
   }
+  const showDeleteConfirm = () => {
+    confirm({
+      title: '确认删除选中项?',
+      icon: <ExclamationCircleOutlined />,
+      content: '是否删除',
+      okType: 'danger',
+      centered: true,
+      onOk() {
+        movApi()
+      },
+      onCancel() {
+        console.log('Cancel')
+      }
+    })
+  }
   const content = { isModalVisible, setIsModalVisible, type, edit }
   return (
     <div className={styles.qualification}>
-      <div>
+      {/* <div>
         <Title title={'节假日'} />
-      </div>
+      </div> */}
       <div>
         <div className={styles.content}>
           <Forms FormData={FormData}></Forms>

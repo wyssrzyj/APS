@@ -13,29 +13,29 @@ export const menus = [
       },
       {
         label: '用户管理',
-        key: 'user',
+        key: 'userManage',
         icon: 'jack-yonghu3',
         url: '/userManage'
-      },
-
-      {
-        label: '部门管理',
-        key: 'department',
-        icon: 'jack-viewgallery',
-        url: '/departmentManage'
-      },
-      {
-        label: '角色管理',
-        key: 'role',
-        icon: 'jack-jiaoseguanli1',
-        url: '/roleManage'
       }
+
+      // {
+      //   label: '部门管理',
+      //   key: 'department',
+      //   icon: 'jack-viewgallery',
+      //   url: '/departmentManage'
+      // },
+      // {
+      //   label: '角色管理',
+      //   key: 'role',
+      //   icon: 'jack-jiaoseguanli1',
+      //   url: '/roleManage'
+      // }
     ]
   },
   {
-    label: '日历管理',
-    key: 'management',
-    icon: 'jack-rili',
+    label: '基础数据',
+    key: 'basicData',
+    icon: 'jack-jichushuju',
     url: '/',
     children: [
       {
@@ -55,23 +55,39 @@ export const menus = [
         key: 'vacations',
         icon: 'jack-jiejiarishezhi',
         url: '/vacations'
-      }
-    ]
-  },
-  {
-    label: '产能效率管理',
-    key: 'capacity',
-    icon: 'jack-channengxiaoshuai-01',
-    url: '/',
-    children: [
+      },
       {
         label: '产能效率模板',
         key: 'rule',
         icon: 'jack-guanlimoban1',
         url: '/rule'
       }
+      // {
+      //   label: '日历管理',
+      //   key: 'management',
+      //   icon: 'jack-rili',
+      //   url: '/',
+      //   children: [
+
+      //   ]
+      // },
+      // {
+      //   label: '产能效率管理',
+      //   key: 'capacity',
+      //   icon: 'jack-channengxiaoshuai-01',
+      //   url: '/',
+      //   children: [
+      //     {
+      //       label: '产能效率模板',
+      //       key: 'rule',
+      //       icon: 'jack-guanlimoban1',
+      //       url: '/rule'
+      //     }
+      //   ]
+      // }
     ]
   },
+
   {
     label: '业务单数据管理',
     key: 'production ',
@@ -113,37 +129,81 @@ export const menus = [
     url: '/',
     children: [
       {
-        label: '派工计划',
+        label: '生产计划',
         key: 'dispatchPan',
         icon: 'jack-paigong',
         url: '/dispatchPan'
       },
       {
-        label: '排程结果',
+        label: '班组甘特图',
+        key: 'resourcedMap',
+        icon: 'jack-ziyuan1',
+        url: '/resourcedMap'
+      },
+      {
+        label: '生产单甘特图',
+        key: 'orderChart',
+        icon: 'jack-chartmixed',
+        url: '/orderChart'
+      },
+      {
+        label: '班组负荷图',
         key: 'schedulingResults',
-        icon: 'jack-xianshijieguo',
-        url: '/schedulingResults',
-        children: [
-          {
-            label: '资源甘特图',
-            key: 'resourcedMap',
-            icon: 'jack-ziyuan1',
-            url: '/resourcedMap'
-          },
-          {
-            label: '订单甘特图',
-            key: 'orderChart',
-            icon: 'jack-chartmixed',
-            url: '/orderChart'
-          },
-          {
-            label: '资源负荷图',
-            key: 'sjack-xianshijieguo2',
-            icon: 'jack-fuhe',
-            url: '/schedulingResults'
-          }
-        ]
+        icon: 'jack-fuhe',
+        url: '/schedulingResults'
+      },
+      {
+        label: '生产实绩',
+        key: 'actualProduction',
+        icon: 'jack-shengchanpicishiji',
+        url: '/actualProduction'
       }
     ]
+  }
+]
+
+type viewFormConfig = {
+  label: string
+  name: string
+  field: string
+  value: any
+  type: string
+  treeData: any
+  required: boolean
+  treeCheckable: boolean
+  placeholder: string
+  disabled: boolean
+  allowClear: boolean
+  options: any
+  span: number
+}
+
+export const editPwdModalConfig: Array<Partial<viewFormConfig>> = [
+  {
+    label: '原密码',
+    name: 'oldPassword',
+    field: 'oldPassword',
+    value: '',
+    type: 'passwordInput',
+    required: true,
+    placeholder: '请输入原密码'
+  },
+  {
+    label: '新密码',
+    name: 'newPassword',
+    field: 'newPassword',
+    value: '',
+    type: 'passwordInput',
+    required: true,
+    placeholder: '请输入新密码'
+  },
+  {
+    label: '确认新密码',
+    name: 'confirmPassword',
+    field: 'confirmPassword',
+    value: '',
+    type: 'passwordInput',
+    required: true,
+    placeholder: '请输入新密码'
   }
 ]

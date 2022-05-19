@@ -1,116 +1,74 @@
-import { Button, message, Table, Tag } from 'antd'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { Button, message, Modal, Table, Tag } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { Title } from '@/components'
-import { practice } from '@/recoil/apis'
+import { workOvertimeApis } from '@/recoil/apis'
 
 import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
 import Popup from './popup'
-
 function Overtime() {
+  const { confirm } = Modal
+
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
-  const defaultCurrent = 1
-  const defaultPageSize = 10
-
+  const [total, setTotal] = useState<number>(20)
   const [params, setParams] = useState<any>({
     pageNum: 1,
-    pageSize: defaultPageSize
+    pageSize: 10
   })
-  const [total] = useState<number>(0)
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
-  const [type, setType] = useState(1) //编辑或者新增
+  const [type, setType] = useState<any>() //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
-  const [list, setlist] = useState([])
-  const [edit, setEdit] = useState([]) //编辑数据
+  const [list, setList] = useState([])
+  const [edit, setEdit] = useState({}) //编辑数据
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
-  const { overtimedisplay, workOvertimeMov, overtimeDetails } = practice
-  // 假数据
-  const treeData = [
-    {
-      title: '工厂',
-      value: '1',
-      key: '1',
-      children: [
-        {
-          title: '工厂1',
-          value: '2',
-          key: '2'
-        },
-        {
-          title: '工厂2',
-          value: '3',
-          key: '3'
-        }
-      ]
-    },
-    {
-      title: '原料',
-      value: '2-9',
-      key: '2-9',
-      children: [
-        {
-          title: '大米',
-          value: '2-1',
-          key: '2-1'
-        },
-        {
-          title: '土豆',
-          value: '2-2',
-          key: '2-2'
-        },
-        {
-          title: '菠萝',
-          value: '2-3',
-          key: '2-3'
-        }
-      ]
-    },
-    {
-      title: '玩具',
-      value: '3-9',
-      key: '3-9',
-      children: [
-        {
-          title: '金铲铲的冠冕',
-          value: '3-1',
-          key: '3-1'
-        },
-        {
-          title: '残暴之力',
-          value: '3-2',
-          key: '3-2'
-        },
-        {
-          title: '末日寒冬',
-          value: '3-3',
-          key: '3-3'
-        }
-      ]
-    },
-    {
-      title: '蔬菜',
-      value: '4',
-      key: '4'
-    }
-  ]
+  const { overtimedisplay, workOvertimeMov, overtimeDetails, factoryList } =
+    workOvertimeApis
+
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
-      title: '加班班组',
+      title: '班组名称',
       align: 'center',
-      dataIndex: 'remark'
+      dataIndex: 'teamName',
+      render: (value: string, row: any) => {
+        const chars = value !== null ? value.split(',') : []
+        return (
+          <div>
+            {chars.map(
+              (
+                item:
+                  | boolean
+                  | React.ReactChild
+                  | React.ReactFragment
+                  | React.ReactPortal
+                  | null
+                  | undefined,
+                index: any | null | undefined
+              ) => (
+                // eslint-disable-next-line react/jsx-key
+                <Tag key={index}>{item}</Tag>
+              )
+            )}
+          </div>
+        )
+      }
     },
     {
       title: '加班日期',
       align: 'center',
       dataIndex: 'date',
       render: (value: string, row: any) => {
-        const chars = value.split(',')
+        // const chars = value.split(',')
+        const chars = value !== null ? value.split(',') : []
+
         return (
           <div>
             {chars.map(
@@ -213,12 +171,34 @@ function Overtime() {
       }
     }
   ]
+
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setFactoryData(arr)
+    }
+  }
+  useEffect(() => {
+    setParams({
+      pageNum: pageNum,
+      pageSize: pageSize
+    })
+  }, [pageNum, pageSize])
   useEffect(() => {
     api(params)
   }, [params])
   const api = async (item: any) => {
     const arr = await overtimedisplay(item)
-    setlist(arr.records)
+    setTotal(arr.total)
+    setList(arr.records)
   }
 
   const newlyAdded = async () => {
@@ -226,8 +206,11 @@ function Overtime() {
   }
   //头部form的数据
   const FormData = (e: any) => {
-    console.log(e)
-    setParams({ ...params, ...e })
+    if (e.factoryId !== undefined) {
+      setParams({ pageNum: 1, pageSize, ...e })
+    } else {
+      setParams({ pageNum, pageSize, ...e })
+    }
   }
   const onPaginationChange = (
     page: React.SetStateAction<number>,
@@ -241,23 +224,24 @@ function Overtime() {
     setEdit(arr)
     if (type === true) {
       setType(2)
+      setIsModalVisible(true)
     } else {
       setType(3)
+      setIsModalVisible(true)
     }
-    setIsModalVisible(true)
   }
   //删除
   const start = () => {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
-      setMovIsModalVisible(true)
+      showDeleteConfirm()
+      // setMovIsModalVisible(true)
     }
   }
   const movApi = async () => {
-    console.log('删除逻辑')
-    console.log('选中的删除id', selectedRowKeys)
-    const arr = await workOvertimeMov({ idList: selectedRowKeys })
+    await workOvertimeMov({ idList: selectedRowKeys })
+    setSelectedRowKeys([])
     newlyAdded()
   }
   const onSelectChange = (selectedRowKeys: React.SetStateAction<never[]>) => {
@@ -273,18 +257,40 @@ function Overtime() {
     onChange: onSelectChange
   }
   const executionMethod = () => {
-    setIsModalVisible(true)
     setType(1)
+    setIsModalVisible(true)
   }
-  const content = { isModalVisible, setIsModalVisible, type, treeData, edit }
+
+  const showDeleteConfirm = () => {
+    confirm({
+      title: '确认删除选中项?',
+      icon: <ExclamationCircleOutlined />,
+      content: '是否删除',
+      okType: 'danger',
+      centered: true,
+      onOk() {
+        movApi()
+      },
+      onCancel() {
+        console.log('Cancel')
+      }
+    })
+  }
+
+  const content = {
+    isModalVisible,
+    setIsModalVisible,
+    type,
+    edit,
+    factoryData,
+    setEdit
+  }
   return (
     <div className={styles.qualification}>
-      <div>
-        <Title title={'加班管理'} />
-      </div>
+      <div>{/* <Title title={'加班管理'} /> */}</div>
       <div>
         <div className={styles.content}>
-          <Forms FormData={FormData} treeData={treeData}></Forms>
+          <Forms factoryData={factoryData} FormData={FormData}></Forms>
           <Button
             className={styles.executionMethod}
             type="primary"
@@ -316,12 +322,13 @@ function Overtime() {
           <Popup content={content} newlyAdded={newlyAdded} />
         </div>
       </div>
-      <MovPopup
+
+      {/* <MovPopup
         type="mov"
         movIsModalVisible={movIsModalVisible}
         setMovIsModalVisible={setMovIsModalVisible}
         movApi={movApi}
-      />
+      /> */}
     </div>
   )
 }

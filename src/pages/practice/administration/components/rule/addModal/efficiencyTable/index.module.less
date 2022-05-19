@@ -1,0 +1,44 @@
+.container {
+  position: relative;
+  margin-left: 24px;
+  width: 100%;
+  border: 1px solid #bfbfbf;
+  border-bottom: 0px solid #bfbfbf;
+
+  & > div {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #bfbfbf;
+
+    & > div {
+      flex: 2;
+      text-align: center;
+      padding: 0 15px;
+
+      &:last-child {
+        flex: 1;
+      }
+
+      &:nth-child(2) {
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-left: 1px solid #bfbfbf;
+        border-right: 1px solid #bfbfbf;
+      }
+    }
+  }
+
+  &::before {
+    position: absolute;
+    display: inline-block;
+    margin-right: 4px;
+    color: #ff4d4f;
+    font-size: 14px;
+    font-family: SimSun, sans-serif;
+    line-height: 1;
+    content: '*';
+    left: -16px;
+  }
+}

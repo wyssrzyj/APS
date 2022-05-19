@@ -1,124 +1,160 @@
 // import './animate.css'
 
 import { Button, message, Table } from 'antd'
-import React, { SetStateAction, useState } from 'react'
+import { cloneDeep } from 'lodash'
+import moment, { Moment } from 'moment'
+import React, { SetStateAction, useCallback, useEffect, useState } from 'react'
 
-import { Title } from '@/components'
+import { CusDragTable, CustomModal, SearchBar, Title } from '@/components'
+import { productionPlanApis } from '@/recoil/apis'
+import useTableChange from '@/utils/useTableChange'
 
-import Forms from './forms'
+import { formItemConfig, searchConfigs, tableColumns } from './conifgs'
+import Details from './details/index'
 import styles from './index.module.less'
-import Popup from './popup'
-function DispatchPan() {
-  const [pageNum, setPageNum] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
-  const [total] = useState<number>(0)
+
+const {
+  productList,
+  exportProductList,
+  productDetail,
+  factoryList,
+  getWorkshopSectionList,
+  makeSewingPlan
+} = productionPlanApis
+
+const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const map = new Map()
+map.set(-1, '生成缝制任务')
+map.set(0, '编辑缝制任务')
+map.set(1, '查看缝制任务')
+map.set(2, '查看缝制任务')
+
+function ProductionPlan() {
+  tableColumns[tableColumns.length - 1].render = (
+    _text: any,
+    record: any,
+    index: number
+  ) => {
+    return (
+      <div key={index}>
+        <Button type="link" onClick={() => handleDetailInfo(record)}>
+          查看
+        </Button>
+
+        {record.section === '缝制' ? (
+          <Button type="link" onClick={() => showSewing(record)}>
+            {map.get(record.auditStatus)}
+          </Button>
+        ) : null}
+      </div>
+    )
+  }
+
+  const [params, setParams] = useState({
+    pageSize: 10,
+    pageNum: 1
+  })
+  const [configs, setConfigs] = useState<any[]>(searchConfigs)
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
+  const [rowInfo, setRowInfo] = useState() //展示弹窗
+  const [facList, setFacList] = useState([])
+  const [workshopSectionList, setWorkshopSectionList] = useState([])
+  const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
+  const [editData, setEditData] = useState<any>() //编辑数据
 
-  const onPaginationChange = (
-    page: React.SetStateAction<number>,
-    pageSize: React.SetStateAction<number>
-  ) => {
-    setPageNum(page)
-    setPageSize(pageSize)
+  const { dataSource, total, pageNum, pageSize, loading, tableChange } =
+    useTableChange(params, productList)
+
+  useEffect(() => {
+    ;(async () => {
+      getFacList()
+      getWorkshopSectionListInfo()
+    })()
+  }, [])
+
+  useEffect(() => {
+    const nConfigs: any[] = cloneDeep(configs)
+    nConfigs[0]['options'] = facList
+    nConfigs[2]['options'] = workshopSectionList
+    setConfigs(nConfigs)
+  }, [facList, workshopSectionList])
+
+  const getFacList = async () => {
+    try {
+      const res: any = await factoryList()
+      const { data = [] } = res
+      data.forEach((item: any) => {
+        item.label = item.deptName
+        item.value = item.id
+      })
+      setFacList(data)
+    } catch (err) {}
   }
 
-  const executionMethod = () => {
-    setIsModalVisible(true)
+  const getWorkshopSectionListInfo = async () => {
+    try {
+      const data: any = await getWorkshopSectionList()
+      data.forEach((item: any) => {
+        item.label = item.dictLabel
+        item.value = item.dictValue
+      })
+      setWorkshopSectionList(data)
+    } catch (err) {}
   }
-  //删除
-  const start = () => {
-    if (selectedRowKeys[0] === undefined) {
-      message.warning('请至少选择一个')
-    } else {
-      // setMovIsModalVisible(true)
-    }
+  const dealDate = (date: any[], index: number) => {
+    // return date ? moment(date[index]).format(FORMAT_DATE) : null
+    return date ? moment(date[index]).valueOf() : null
   }
-  const data = []
-  for (let i = 0; i < 5; i++) {
-    data.push({
-      id: i,
-      name: `Edward King ${i}`,
-      age: 32,
-      address: `London, Park Lane no. ${i}`
+
+  const searchParamsChange = (values: Record<string, any>) => {
+    const nParams: any = cloneDeep(params)
+
+    Reflect.ownKeys(values).forEach((key: any) => {
+      if (['endTime', 'startTime'].includes(key)) {
+        if (key === 'startTime') {
+          nParams.startPlanStartTime = dealDate(values.startTime, 0)
+          nParams.endPlanStartTime = dealDate(values.startTime, 1)
+        }
+        if (key === 'endTime') {
+          nParams.startPlanEndTime = dealDate(values.endTime, 0)
+          nParams.endPlanEndTime = dealDate(values.endTime, 1)
+        }
+      } else {
+        nParams[key] = values[key]
+      }
+    })
+
+    setParams(nParams)
+  }
+
+  const exportFile = () => {
+    exportProductList({
+      ...params
+    }).then((res: any) => {
+      const blob = new Blob([res], { type: 'application/octet-stream' })
+      const download = document.createElement('a')
+      download.href = window.URL.createObjectURL(blob)
+      download.download = `生产计划.xls`
+      download.click()
+      window.URL.revokeObjectURL(download.href)
     })
   }
-  // eslint-disable-next-line no-sparse-arrays
-  const columns: any = [
-    {
-      title: '工厂名称',
-      align: 'center',
-      dataIndex: 'name'
-    },
-    {
-      title: '销售单号',
-      align: 'center',
-      dataIndex: 'age'
-    },
-    {
-      title: '生产单号',
-      align: 'center',
-      dataIndex: 'address'
-    },
-    {
-      title: '产品名称',
-      align: 'center',
-      dataIndex: 'address'
-    },
-    {
-      title: '产品数量',
-      align: 'center',
-      dataIndex: 'address'
-    },
-    {
-      title: '工序名称',
-      align: 'center',
-      dataIndex: 'address'
-    },
-    {
-      title: '所属工段',
-      align: 'center',
-      dataIndex: 'address'
-    },
-    ,
-    {
-      title: '工作班组',
-      align: 'center',
-      dataIndex: 'address'
-    },
-    ,
-    {
-      title: '计划开始时间',
-      align: 'center',
-      dataIndex: 'address'
-    },
-    ,
-    {
-      title: '计划结束时间',
-      align: 'center',
-      dataIndex: 'address'
-    },
 
-    ,
-    {
-      title: '操作',
-      align: 'center',
-      dataIndex: 'address',
-      render: (_value: any, _row: any) => {
-        return (
-          <div className={styles.flex}>
-            <div className={styles.operation_item} onClick={executionMethod}>
-              查看
-            </div>
-          </div>
-        )
+  const handleDetailInfo = async (rowInfo: any) => {
+    try {
+      const res = await productDetail({ id: rowInfo.id })
+      if (res) {
+        setRowInfo(res)
+        toggleModalVisible(true)
       }
-    }
-  ]
-
-  const onSelectChange = (selectedRowKeys: SetStateAction<never[]>) => {
-    setSelectedRowKeys(selectedRowKeys)
+    } catch (err) {}
   }
+
+  const toggleModalVisible = (visible: boolean) => {
+    setIsModalVisible(visible)
+  }
+
   const rowSelection:
     | {
         selectedRowKeys: never[]
@@ -126,48 +162,89 @@ function DispatchPan() {
       }
     | any = {
     selectedRowKeys,
-    onChange: onSelectChange
+    onChange: (selectedRowKeys: SetStateAction<never[]>) => {
+      setSelectedRowKeys(selectedRowKeys)
+    }
   }
-  const content = { isModalVisible, setIsModalVisible }
-  return (
-    <div className={styles.qualification}>
-      <div>
-        <Title title={'派工计划'} />
-      </div>
-      <div>
-        <Forms FormData={FormData}></Forms>
+  const showSewing = async (v: any) => {
+    const res = await makeSewingPlan({
+      produceOrderNum: v.externalProduceOrderNum,
+      teamManagerId: v.teamId
+    })
+    console.log(res)
 
-        <Button type="primary" onClick={start}>
+    if (res.data) {
+      message.warning(' 已生成过缝制计划')
+    } else {
+      setEditData({ ...v })
+      setDetailsPopup(true)
+    }
+  }
+  const update = async () => {
+    const arr = await productList(params)
+  }
+
+  const TableLeft = () => {
+    return (
+      <>
+        <Button type="primary" onClick={exportFile}>
           导出
         </Button>
-        <div className={styles.secondaryCategory}>
-          <Table
-            className={styles.table}
+      </>
+    )
+  }
+
+  return (
+    <div className={styles.qualification}>
+      <div>{/* <Title title={'生产计划'} /> */}</div>
+      <div>
+        <SearchBar
+          configs={configs}
+          params={params}
+          callback={searchParamsChange}
+        ></SearchBar>
+        <div>
+          <CusDragTable
+            storageField={'productionPlan'}
             rowSelection={rowSelection}
-            bordered
-            columns={columns}
-            dataSource={data}
+            cusBarLeft={TableLeft}
+            columns={tableColumns}
+            dataSource={dataSource}
             rowKey={'id'}
-            // rowClassName={(record: any, index: number) => {
-            //   return 'animated fadeInRight'
-            // }}
+            scroll={{ x: 1000 }}
+            onChange={tableChange}
             pagination={{
               //分页
               showSizeChanger: true,
-              // showQuickJumper: true, //是否快速查找
+              showQuickJumper: true, //是否快速查找
               pageSize, //每页条数
               current: pageNum, //	当前页数
               total, //数据总数
-              // position: ['bottomCenter'], //居中
-              pageSizeOptions: ['10', '20', '50'],
-              onChange: onPaginationChange //获取当前页码是一个function
+              pageSizeOptions: ['10', '20', '50']
             }}
           />
         </div>
       </div>
-      <Popup content={content} />
+      {isModalVisible ? (
+        <CustomModal
+          width={800}
+          visible={isModalVisible}
+          title={'查看生产计划'}
+          configs={formItemConfig}
+          cancel={() => toggleModalVisible(false)}
+          footer={false}
+          initialValues={rowInfo}
+        ></CustomModal>
+      ) : null}
+      {/* 缝制任务 */}
+      <Details
+        update={update}
+        editData={editData}
+        setDetailsPopup={setDetailsPopup}
+        detailsPopup={detailsPopup}
+      />
     </div>
   )
 }
 
-export default DispatchPan
+export default ProductionPlan
