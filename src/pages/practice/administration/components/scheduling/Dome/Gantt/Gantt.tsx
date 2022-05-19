@@ -17,15 +17,6 @@ const Gantt = (props: any) => {
   const [select, setSelect] = useState<any>() //选中项
 
   const dataDome = ['2020-04-07', '2020-04-08']
-  useEffect(() => {
-    if (!isEmpty(restDate)) {
-      setRest(restDate)
-    }
-  }, [restDate])
-
-  useEffect(() => {
-    setZoom(zoom)
-  }, [zoom])
 
   useEffect(() => {
     if (!isEmpty(tasks.data)) {
@@ -33,19 +24,20 @@ const Gantt = (props: any) => {
       //获取滚动的距离
       let newLeft = 0
       let newTop = 0
-
       gantt.attachEvent('onGanttScroll', function (left, top) {
-        // console.log(left)
-        // console.log(top)
-        if (left !== 0 || top !== 0) {
+        // console.log('xxx', left)
+        // console.log('yyyyyy', top)
+
+        if ((left !== 0 && left !== 31) || top !== 0) {
           newLeft = left
           newTop = top
         }
       })
+      // console.log('最终渲染的值11111111111', newLeft, newTop)
 
       ganttShow(tasks) //渲染数据
 
-      // console.log('最终渲染的值', newLeft, newTop)
+      console.log('最终渲染的值2222222222222', newLeft, newTop)
       gantt.scrollTo(newLeft, newTop) //定位
 
       //选中项
@@ -54,6 +46,17 @@ const Gantt = (props: any) => {
       }
     }
   }, [tasks, select])
+
+  useEffect(() => {
+    if (!isEmpty(restDate)) {
+      setRest(restDate)
+    }
+  }, [restDate])
+
+  useEffect(() => {
+    console.log('缩放', zoom)
+    setZoom(zoom)
+  }, [zoom])
 
   // 静态方法
   const setZoom = (value: any) => {
@@ -67,7 +70,6 @@ const Gantt = (props: any) => {
   // **需用和动态数据交互的方法
   useEffect(() => {
     if (!gantt.$initialized) {
-      // gantt.refreshData()
       color()
     }
     gantt.ext.zoom.setLevel(zoom)
@@ -198,6 +200,7 @@ const Gantt = (props: any) => {
     gantt.ext.zoom.init(zoomConfig)
 
     // 更新的值 **误删**
+    let timeout
     const dp = gantt.createDataProcessor({
       task: {
         // create: function (data: any) {
@@ -208,7 +211,12 @@ const Gantt = (props: any) => {
         // },
         update: function (data: any, id: any) {
           // console.log('更新任务----------------------', data)
-          updateList && updateList(data)
+
+          //防止重复提交
+          clearTimeout(timeout)
+          timeout = setTimeout(() => {
+            updateList && updateList(data)
+          }, 500)
         }
         // delete: function (id: any) {
         //   console.log('删除任务----------------------', id)

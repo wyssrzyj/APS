@@ -53,6 +53,7 @@ function Index() {
   // 甘特图数据
   useEffect(() => {
     if (formData !== undefined) {
+      console.log(formData, gunterType)
       getChart(formData, gunterType)
     }
     /**
@@ -257,13 +258,13 @@ function Index() {
           <Forms FormData={FormData}></Forms>
           <div className={styles.scheduling}>
             <Button
+              className={styles.rules}
               ghost
               type="primary"
               onClick={() => toggleRuleVisible(true)}
             >
               规则排程
             </Button>
-            　
             <Button
               ghost
               className={styles.heckSchedule}
