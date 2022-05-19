@@ -100,11 +100,11 @@ function RuleTables(props: Record<string, any>) {
           <div className={styles.operateContainer}>
             {index !== 0 && (
               <span>
-                <UpOutlined
-                  onClick={() => changeOrder('upward', record, index)}
-                />
                 <VerticalAlignTopOutlined
                   onClick={() => changeOrder('placedTop', record, index)}
+                />
+                <UpOutlined
+                  onClick={() => changeOrder('upward', record, index)}
                 />
               </span>
             )}

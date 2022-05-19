@@ -159,10 +159,17 @@ function Index() {
   }
   //判断任务是否分派
   const toggleRuleVisible = (visible: boolean) => {
-    setVisibleRule(visible)
+    if (visible) {
+      if (validateCheckId()) {
+        setVisibleRule(visible)
+      }
+    } else {
+      setVisibleRule(visible)
+    }
   }
 
-  const toggleVerifyVisible = (visible: boolean) => {
+  const validateCheckId = () => {
+    let passflag = false
     const arr: any[] = []
 
     promptList.map((item: { externalProduceOrderNum: any }) => {
@@ -170,16 +177,28 @@ function Index() {
     })
 
     //选中里有不满足的就进行提示
-    if (visible === true && arr.length > 0) {
+    if (arr.length > 0) {
       message.warning(`生产单${arr.join('、')}任务未分派`)
+      passflag = false
     }
 
     if (!isEmpty(checkIDs)) {
       if (arr.length <= 0) {
-        setVisibleVerify(visible)
+        passflag = true
       }
     } else {
       message.warning(`暂无已计划数据`)
+      passflag = false
+    }
+    return passflag
+  }
+  const toggleVerifyVisible = (visible: boolean) => {
+    if (visible) {
+      if (validateCheckId()) {
+        setVisibleVerify(visible)
+      }
+    } else {
+      setVisibleVerify(visible)
     }
   }
   // 校验排程需要的数据
@@ -305,6 +324,7 @@ function Index() {
         <RuleScheduling
           formData={formData}
           visibleRule={visibleRule}
+          checkIDs={checkIDs}
           onCancel={() => toggleRuleVisible(false)}
         />
       )}

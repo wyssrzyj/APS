@@ -70,7 +70,7 @@ const Dhx = (props: {
     if (!isEmpty(gunterData) && !isEmpty(notWork)) {
       setChart(gunterData)
     }
-    setLine([]) //线 //初始的时候传空
+    setLine([]) //线 //初始的时候传空.
     setNotWorking(notWork) //不可工作时间
   }, [gunterData, notWork, gunterType])
 

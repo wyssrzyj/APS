@@ -1,3 +1,10 @@
+/*
+ * @Author: zjr
+ * @Date: 2022-04-22 17:40:18
+ * @LastEditTime: 2022-05-19 08:33:50
+ * @Description:
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ */
 import { getAttribute } from '@antv/g2/lib/dependents'
 import { Button, Modal, Space } from 'antd'
 import { debounce } from 'lodash'
