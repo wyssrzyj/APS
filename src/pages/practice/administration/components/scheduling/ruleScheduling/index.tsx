@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-05-19 08:33:50
+ * @LastEditTime: 2022-05-19 09:18:24
  * @Description:
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  */
@@ -15,7 +15,7 @@ import { practice } from '@/recoil/apis'
 import Forms from './forms/index'
 import RulesTables from './tables/index'
 function RuleScheduling(props: Record<string, any>) {
-  const { visibleRule, onCancel, formData } = props
+  const { visibleRule, onCancel, checkIDs } = props
   const [searchParams, setSearchParams] = useState<Record<string, number>>({
     customerPriorityWeight: 1,
     orderPriorityWeight: 1,
@@ -24,8 +24,8 @@ function RuleScheduling(props: Record<string, any>) {
   const [dataSource, setDataSource] = useState<Record<string, any>>([])
   // 搜索框
   useEffect(() => {
-    getTableList({ ...searchParams, factoryId: formData })
-  }, [searchParams, formData])
+    getTableList({ ...searchParams, produceOrderIdList: checkIDs })
+  }, [searchParams])
   const valuesChange = debounce(
     (values: any, allValues: Record<string, number>) => {
       setSearchParams({ ...allValues })
