@@ -29,7 +29,7 @@ const Gantt = (props: any) => {
 
   useEffect(() => {
     if (!isEmpty(tasks.data)) {
-      console.log('数据更新了')
+      console.log('数据更新了..')
       //获取滚动的距离
       let newLeft = 0
       let newTop = 0
