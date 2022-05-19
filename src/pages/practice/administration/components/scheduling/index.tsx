@@ -24,7 +24,7 @@ function Index() {
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
   const [visibleRule, setVisibleRule] = useState(false) //规则排程弹窗
   const [visibleVerify, setVisibleVerify] = useState(false) //校验排程弹窗
-  const [remind, setRemind] = useState() //甘特图高亮
+  const [remind, setRemind] = useState() //甘特图高亮..
   const [formData, setFormData] = useState() //form数据
   const [gunterType, setGunterType] = useState('1') //班组、订单
   const [gunterData, setGunterData] = useState<any[]>([]) //甘特图数据-班组
