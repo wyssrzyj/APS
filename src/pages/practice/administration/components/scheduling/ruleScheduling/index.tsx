@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-05-18 15:24:56
+ * @LastEditTime: 2022-05-19 09:09:14
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  */
 import { getAttribute } from '@antv/g2/lib/dependents'
 import { Button, Modal, Space } from 'antd'
@@ -36,7 +36,7 @@ function RuleScheduling(props: Record<string, any>) {
     const data = await practice.rulesScheduling(params)
     setDataSource(data)
   }
-  // 表格数据
+  // 表格数据..
   // useEffect(() => {
   //   console.log('dataSource', dataSource)
   // }, [dataSource])
