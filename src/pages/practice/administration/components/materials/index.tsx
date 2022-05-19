@@ -224,44 +224,47 @@ function Materials() {
       const stateConsistent = selectedValue.every(
         (item) => item.checkStatus === selectedValue[0].checkStatus
       )
+
       if (stateConsistent === true) {
         //生产中和生产完成不需要重新查看
         const banView = selectedValue.every(
           (item) => item.status !== 3 && item.status !== 4
         )
+
         if (banView) {
           if (type === '1' && selectedValue[0].checkStatus !== 3) {
             setMaterialModal(true)
+            setMaterialList(selectedValue)
+          }
+
+          //重新检查
+          if (type === '1' && selectedValue[0].checkStatus === 3) {
             //重新检查只能选择一个
-            if (selectedValue[0].checkStatus === 3) {
-              if (selectedValue.length === 1) {
-                const checked = {
-                  ...selectedValue[0],
-                  id: '1314520',
-                  review: true, //重新检查判断条件
-                  type: 1,
-                  name: '已检查'
-                }
-                const unchecked = {
-                  ...selectedValue[0],
-                  type: 2,
-                  review: true, //重新检查判断条件
-                  name: '重新检查'
-                }
-                const sum = [checked, unchecked]
-                setMaterialList(sum)
-                //只有物料齐套才会展示弹窗
-                if (type === '1') {
-                  setMaterialModal(true)
-                }
-              } else {
-                message.warning('重新检查只能选择一个')
+            if (selectedValue.length === 1) {
+              const checked = {
+                ...selectedValue[0],
+                id: '1314520',
+                review: true, //重新检查判断条件
+                type: 1,
+                name: '已检查'
+              }
+              const unchecked = {
+                ...selectedValue[0],
+                type: 2,
+                review: true, //重新检查判断条件
+                name: '重新检查'
+              }
+              const sum = [checked, unchecked]
+              setMaterialList(sum)
+              //只有物料齐套才会展示弹窗
+              if (type === '1') {
+                setMaterialModal(true)
               }
             } else {
-              console.log('准备传递', selectedValue)
-              setMaterialList(selectedValue)
+              message.warning('重新检查只能选择一个')
             }
           }
+
           if (type === '2') {
             start('2')
           }

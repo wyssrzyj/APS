@@ -164,10 +164,16 @@ function Popup(props: { content: any }) {
     values.planStartTime = moment(values.planStartTime).valueOf()
 
     values.isLocked = type === false ? 0 : 1
+    // 当接口为0 手动减去 上次的
     //手动减去api
-    values.additionalTime = values.planEndTime - endTimeData
-    values.additionalTime =
-      values.additionalTime === 0 ? null : values.additionalTime
+    if (endTimeData === undefined) {
+      console.log('没有进行操作')
+
+      values.additionalTime =
+        values.planEndTime - moment(list.planEndTime).valueOf()
+    } else {
+      values.additionalTime = values.planEndTime - endTimeData
+    }
 
     //外发不需要更改
     if (sectionType !== false) {
@@ -183,7 +189,6 @@ function Popup(props: { content: any }) {
       values.id = editWindowList.id
     }
     console.log('保存的数据', values)
-
     if (values.planStartTime < values.planEndTime) {
       // 结束时间 手动-接口
       const res = await editingTasks(values)
