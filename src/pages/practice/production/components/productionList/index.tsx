@@ -104,12 +104,14 @@ function Production() {
       title: '接单工厂',
       key: 'factoryName',
       align: 'center',
+      width: 100,
       dataIndex: 'factoryName'
     },
     {
       title: '产品名称',
       key: 'productName',
       align: 'center',
+      width: 100,
       dataIndex: 'productName'
     },
     {
@@ -187,8 +189,7 @@ function Production() {
                 className={styles.operation}
                 onClick={() => editUser(true, _row)}
               >
-                <div> 工艺</div>
-                <div> 外发</div>
+                <div> 工艺外发</div>
               </div>
             ) : null}
           </div>

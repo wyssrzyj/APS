@@ -95,7 +95,6 @@ function Details(props: {
   //table数据
   useEffect(() => {
     if (editData !== undefined) {
-      console.log(editData.auditStatus)
       if (editData.auditStatus === 1 || editData.auditStatus === 2) {
         setDisabled(true)
       }
@@ -390,6 +389,7 @@ function Details(props: {
           obj.teamManagerId = editData.teamId
           const res = await updateSewingPlan(obj)
           if (res.code === 200) {
+            message.success('保存成功')
             setDetailsPopup(false)
             update && update()
           }
@@ -401,6 +401,7 @@ function Details(props: {
           edit.sewingSkuDTOList = sku
           const res = await updateSewingPlan(edit)
           if (res.code === 200) {
+            message.success('保存成功')
             setDetailsPopup(false)
             update && update()
           }

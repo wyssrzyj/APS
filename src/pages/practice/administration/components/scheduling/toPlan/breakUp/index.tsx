@@ -167,6 +167,7 @@ const BreakUp = (props: any) => {
       })
       //这个时候先不能渲染 这里的会慢一步
       //先渲染后处理
+
       setInitialTeamList([...res])
     } else {
       //初始空数组 添加key防止报错
@@ -177,6 +178,7 @@ const BreakUp = (props: any) => {
       res.key = 2
       res.productionAmount = 0
       res.completedAmount = 0
+
       setData([res])
     }
   }
@@ -368,6 +370,7 @@ const BreakUp = (props: any) => {
         return (
           <div>
             <InputNumber
+              disabled={_row.createPlanStatus}
               defaultValue={_value}
               max={_row.orderSum} //最大值是生产单总量
               onChange={(e) => onBreakUp(e, _row, 1)}
@@ -408,6 +411,7 @@ const BreakUp = (props: any) => {
               placeholder="请选择工作车间"
               defaultValue={_value}
               style={{ width: 120 }}
+              disabled={_row.createPlanStatus}
               onChange={(e) => handleChange(1, e, _row)}
             >
               {factoryName.map((item: any) => (
@@ -432,7 +436,14 @@ const BreakUp = (props: any) => {
         return (
           <>
             <Select
-              disabled={_row.shopId ? false : true}
+              disabled={
+                _row.createPlanStatus === false
+                  ? _row.shopId
+                    ? false
+                    : true
+                  : _row.createPlanStatus
+              }
+              // disabled={_row.createPlanStatus}
               placeholder="请选择工作班组"
               key={_value}
               defaultValue={_value}

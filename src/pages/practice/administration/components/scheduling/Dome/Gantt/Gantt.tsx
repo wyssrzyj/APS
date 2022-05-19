@@ -7,7 +7,7 @@ import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 import { gantt } from 'dhtmlx-gantt'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 const Gantt = (props: any) => {
   const { zoom, tasks, updateList, rightData, leftData, restDate, name } = props
 
@@ -15,35 +15,27 @@ const Gantt = (props: any) => {
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   const [select, setSelect] = useState<any>() //选中项
-
-  const dataDome = ['2020-04-07', '2020-04-08']
+  const refPositioning = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
     if (!isEmpty(tasks.data)) {
-      console.log('数据更新了..')
       //获取滚动的距离
-      let newLeft = 0
-      let newTop = 0
       gantt.attachEvent('onGanttScroll', function (left, top) {
-        // console.log('xxx', left)
-        // console.log('yyyyyy', top)
-
-        if ((left !== 0 && left !== 31) || top !== 0) {
-          newLeft = left
-          newTop = top
+        if (left !== 0) {
+          refPositioning.current.x = left
+        }
+        if (top !== 0) {
+          refPositioning.current.y = top
         }
       })
-      // console.log('最终渲染的值11111111111', newLeft, newTop)
-
-      ganttShow(tasks) //渲染数据
-
-      console.log('最终渲染的值2222222222222', newLeft, newTop)
-      gantt.scrollTo(newLeft, newTop) //定位
+      ganttShow(tasks) //渲染数据-勿动
 
       //选中项
       if (select !== undefined) {
         gantt.selectTask(select)
       }
+    } else {
+      ganttShow({ data: [], links: [] })
     }
   }, [tasks, select])
 
@@ -321,24 +313,14 @@ const Gantt = (props: any) => {
     }
   }
 
-  // const initGanttDataProcessor = () => {
-  //   gantt.createDataProcessor((type: any, action: any, item: any, id: any) => {
-  //     return new Promise<void>((resolve, reject) => {
-  //       // if (onDataUpdated) {
-  //       //   onDataUpdated(type, action, item, id)
-  //       // }
-  //       return resolve()
-  //     })
-  //   })
-  // }
   const ganttShow = async (list: any) => {
     gantt.clearAll() //缓存问题 先清楚后添加
-    // gantt.refreshData() //刷新数据
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
-    // initGanttDataProcessor()
 
     gantt.parse(list) //渲染数据
+
+    gantt.scrollTo(refPositioning.current.x, refPositioning.current.y) //定位
   }
   // "main"
   return <div id={name} style={{ width: '100%', height: '100%' }}></div>

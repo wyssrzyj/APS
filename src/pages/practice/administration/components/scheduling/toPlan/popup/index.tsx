@@ -111,25 +111,28 @@ function Popup(props: { content: any }) {
     setShopName(arr.shopId)
     //所属工段
     arr.sectionDome = map.get(arr.section)
-
+    console.log('接口数据', arr)
     setList(arr)
   }
   //渲染数据
   useEffect(() => {
     if (!isEmpty(list)) {
-      list.planStartTime =
-        list.planStartTime === null ? null : moment(list.planStartTime)
+      const cloneList = cloneDeep(list)
+      cloneList.planStartTime =
+        cloneList.planStartTime === null
+          ? null
+          : moment(cloneList.planStartTime)
 
-      list.planEndTime =
-        list.planEndTime === null ? null : moment(list.planEndTime)
+      cloneList.planEndTime =
+        cloneList.planEndTime === null ? null : moment(cloneList.planEndTime)
+      cloneList.factoryName = formData
+      setLargestNumber(cloneList.productionAmount)
+      cloneList.remaining =
+        cloneList.productionAmount - cloneList.completedAmount
+      setType(cloneList.isLocked)
+      console.log('渲染的数据', cloneList)
 
-      list.factoryName = formData
-
-      setLargestNumber(list.productionAmount)
-
-      list.remaining = list.productionAmount - list.completedAmount
-      setType(list.isLocked)
-      form.setFieldsValue(list)
+      form.setFieldsValue(cloneList)
     }
   }, [list])
 
@@ -166,11 +169,9 @@ function Popup(props: { content: any }) {
     values.isLocked = type === false ? 0 : 1
     // 当接口为0 手动减去 上次的
     //手动减去api
-    if (endTimeData === undefined) {
-      console.log('没有进行操作')
 
-      values.additionalTime =
-        values.planEndTime - moment(list.planEndTime).valueOf()
+    if (endTimeData === undefined || endTimeData <= 0) {
+      values.additionalTime = values.planEndTime - list.planEndTime
     } else {
       values.additionalTime = values.planEndTime - endTimeData
     }

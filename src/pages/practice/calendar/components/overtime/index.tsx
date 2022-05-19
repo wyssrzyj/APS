@@ -35,6 +35,11 @@ function Overtime() {
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
+      title: '工厂名称',
+      align: 'center',
+      dataIndex: 'factoryName'
+    },
+    {
       title: '班组名称',
       align: 'center',
       dataIndex: 'teamName',

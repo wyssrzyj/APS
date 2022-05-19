@@ -1,8 +1,9 @@
 /* eslint-disable prefer-const */
 import { DatePicker, Input, InputNumber, Space, Table } from 'antd'
+import classNames from 'classnames'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo, useEffect, useRef, useState } from 'react'
 
 import { Icon } from '@/components'
 
@@ -204,6 +205,9 @@ const FormTable = (props: any) => {
         }
       } else {
         setData(notData)
+        console.log('关闭loding')
+
+        setLoading(false)
       }
     }
   }, [renderData, notData, cloneData, select])
@@ -266,8 +270,7 @@ const FormTable = (props: any) => {
       tableData.map((item: any) => {
         item.deliveredQty = item.deliveredQty === null ? 0 : item.deliveredQty //测试~~~已出库数量暂无 设置0
         item.id = item.materialCode //id是 materialCode
-        // item.key = `${item.materialCode}8848` //添加 key
-        item.key = item.materialCode //添加 key
+        item.key = `${item.materialCode}8848` //添加 key
 
         // item.counteractNum = 0 //添加初始 冲销数量
         item.children = subitemProcessing(item.children) //处理子项
@@ -307,10 +310,11 @@ const FormTable = (props: any) => {
   ) => {
     if (!isEmpty(current)) {
       current.map((item: any) => {
-        if (item.key === currentValue.materialCode) {
+        if (item.key === `${currentValue.materialCode}8848`) {
           if (!isEmpty(item.children)) {
             item.children.map((v: any) => {
               // 先赋值
+
               if (v.id === currentValue.id) {
                 if (type === 'number') {
                   v.counteractNum = Number(e)
@@ -341,6 +345,8 @@ const FormTable = (props: any) => {
           }
         }
       })
+      console.log('修改数据', current)
+
       setData([...current])
       setCloneData([...current])
     }
@@ -349,11 +355,7 @@ const FormTable = (props: any) => {
   const onExpandedRowsChange = (e: any) => {
     setExpandedRowKeys(e)
   }
-  useEffect(() => {
-    if (!isEmpty(data)) {
-      setLoading(false)
-    }
-  }, [data])
+
   const show = (e, v) => {
     //e 是接口数据
     //v 重新数据
@@ -369,24 +371,18 @@ const FormTable = (props: any) => {
       }
     }
   }
+  //虚拟测试~~~~~~~~~~~
 
-  function TreeData() {
-    return (
-      <>
-        <Table
-          columns={list}
-          loading={loading}
-          dataSource={data}
-          scroll={{ x: 1500, y: 300 }}
-          pagination={false}
-          defaultExpandAllRows={true}
-        />
-      </>
-    )
-  }
   return (
     <div>
-      <TreeData />
+      <Table
+        loading={loading}
+        columns={list}
+        dataSource={data}
+        scroll={{ x: 1500, y: 300 }}
+        pagination={false}
+        defaultExpandAllRows={true}
+      />
     </div>
   )
 }

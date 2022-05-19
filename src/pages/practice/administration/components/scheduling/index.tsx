@@ -53,7 +53,6 @@ function Index() {
   // 甘特图数据
   useEffect(() => {
     if (formData !== undefined) {
-      console.log(formData, gunterType)
       getChart(formData, gunterType)
     }
     /**

@@ -10,6 +10,7 @@ import { materialSetApis } from '@/recoil/apis'
 import Forms from './forms'
 import styles from './index.module.less'
 import Material from './material'
+// import Virtual from './virtual'
 
 const map = new Map()
 map.set(1, '已检查')
@@ -272,7 +273,7 @@ function Materials() {
             start('3')
           }
         } else {
-          message.warning('生产完成、生产完成不需要检查')
+          message.warning('生产中、生产完成不需要检查')
         }
       } else {
         message.warning('物料齐套状态不一致')

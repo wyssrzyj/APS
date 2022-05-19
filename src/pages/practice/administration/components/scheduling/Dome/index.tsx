@@ -1,7 +1,7 @@
 import { Button, Dropdown, Menu, message, Select, Tag } from 'antd'
 import { cloneDeep, divide, isEmpty, keys } from 'lodash'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { dockingData } from '@/recoil'
@@ -54,6 +54,7 @@ const Dhx = (props: {
   useEffect(() => {
     getData()
   }, [])
+
   const getData = async () => {
     const res: any = await factoryList()
     const arr: any = res.data
@@ -69,7 +70,11 @@ const Dhx = (props: {
   useEffect(() => {
     if (!isEmpty(gunterData) && !isEmpty(notWork)) {
       setChart(gunterData)
+    } else {
+      console.log('我是空', gunterData)
+      setChart([])
     }
+
     setLine([]) //线 //初始的时候传空.
     setNotWorking(notWork) //不可工作时间
   }, [gunterData, notWork, gunterType])
@@ -81,6 +86,10 @@ const Dhx = (props: {
           data: chart,
           links: line
         })
+      } else {
+        //没有数据展示空值
+        const arr = { data: [], links: [] }
+        setSubjectData({ ...arr })
       }
 
       // const dataqq = [
@@ -198,10 +207,10 @@ const Dhx = (props: {
   }, [select])
 
   //线接口
-  const getLineData = async (id: any) => {
-    const line: any = await getLine({ id }) //线
+  const getLineData = async (id: string) => {
+    const line: Record<string, any> = await getLine({ id }) //线
     if (line.code === 200) {
-      setLine(line.data === null ? [] : line.data)
+      setLine(line.data || [])
     }
   }
 
@@ -284,9 +293,9 @@ const Dhx = (props: {
     setCurrentZoom(type)
   }
   //** 点击事件 点击父节点 传递 不可用时间
-  const leftData = async (e: any) => {
-    if (e !== null) {
-      setSelect(e)
+  const leftData = async (id: string) => {
+    if (id !== null) {
+      setSelect(id)
     }
   }
 

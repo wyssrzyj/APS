@@ -68,7 +68,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
             />
           </div>
           <Select
-            value={arr}
+            value={arr !== undefined ? arr : '1'}
             style={{ width: 60 }}
             onSelect={(e: any) => {
               executionMethod(e, 0)
@@ -103,7 +103,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
             />
           </div>
           <Select
-            value={delayArr}
+            value={delayArr !== undefined ? delayArr : '1'}
             style={{ width: 60 }}
             onSelect={(e: any) => {
               executionMethod(e, 1)

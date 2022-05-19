@@ -181,6 +181,8 @@ function ProductionPlan() {
     }
   }
   const update = async () => {
+    console.log('双薪叶念')
+
     const arr = await productList(params)
   }
 
