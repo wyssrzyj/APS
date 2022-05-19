@@ -36,7 +36,7 @@ function Popup(props: { content: any }) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const defaultPageSize = 5
-  const [total, setTotal] = useState() //存放总数
+  const [total, setTotal] = useState() //存放总数.
   const [params, setParams] = useState<any>({
     pageNum: 1,
     pageSize: defaultPageSize,
