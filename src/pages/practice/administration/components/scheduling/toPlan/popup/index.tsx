@@ -129,7 +129,6 @@ function Popup(props: { content: any }) {
       cloneList.remaining =
         cloneList.productionAmount - cloneList.completedAmount
       setType(cloneList.isLocked)
-      console.log('渲染的数据', cloneList)
 
       form.setFieldsValue(cloneList)
     }
@@ -188,7 +187,6 @@ function Popup(props: { content: any }) {
     } else {
       values.id = editWindowList.id
     }
-    console.log('保存的数据', values)
     if (values.planStartTime < values.planEndTime) {
       // 结束时间 手动-接口
       const res = await editingTasks(values)
@@ -238,8 +236,6 @@ function Popup(props: { content: any }) {
         const cloneLis = cloneDeep(list)
         const time = moment(arr.data)
         // 用于保存
-        console.log('接口算的值', moment(arr.data).valueOf())
-
         setEndTimeData(moment(arr.data).valueOf())
         // setEndTimeData(1653321600416)
         cloneLis.planStartTime = moment(e)

@@ -3,7 +3,7 @@ import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 import { gantt } from 'dhtmlx-gantt'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 const Gantt = (props: any) => {
   const { zoom, tasks, updateList, leftData, restDate, name } = props
@@ -11,6 +11,8 @@ const Gantt = (props: any) => {
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   const dataDome = ['2020-04-07', '2020-04-08']
+  const locationRef = useRef({ x: 0, y: 0 })
+  const [select, setSelect] = useState<any>() //选中项
 
   useEffect(() => {
     if (!isEmpty(restDate)) {
@@ -23,7 +25,18 @@ const Gantt = (props: any) => {
   }, [zoom])
 
   useEffect(() => {
+    const newLeft = locationRef.current.x || 0
+    const newTop = locationRef.current.y || 0
+    gantt.attachEvent('onGanttScroll', function (left, top) {
+      locationRef.current = { x: left, y: top }
+    })
+
     ganttShow(tasks)
+    gantt.scrollTo(newLeft, newTop) //定位
+    //选中项
+    if (select !== undefined) {
+      gantt.selectTask(select)
+    }
   }, [tasks])
   // 静态方法
   const setZoom = (value: any) => {
@@ -68,6 +81,7 @@ const Gantt = (props: any) => {
     ]
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
+      setSelect(id)
       //折叠所有任务：
       // gantt.eachTask(function (task) {
       //   task.$open = true
