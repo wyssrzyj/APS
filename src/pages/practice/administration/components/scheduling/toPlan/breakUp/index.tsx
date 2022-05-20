@@ -75,7 +75,6 @@ const BreakUp = (props: any) => {
       list.splice(subscript, 1, record)
       setData([...list])
     } else {
-      console.log('没有执行')
     }
   }
 
@@ -168,7 +167,6 @@ const BreakUp = (props: any) => {
       })
       //这个时候先不能渲染 这里的会慢一步
       //先渲染后处理
-      console.log('初始接口~~~~~~~~~~~~', res)
 
       setInitialTeamList([...res])
     } else {
@@ -286,7 +284,6 @@ const BreakUp = (props: any) => {
   }
   //增加
   const increase = () => {
-    console.log('增加')
     const arr = cloneDeep(data)
     //拆分数量的总和
     const res = arr.reduce((total: any, current: { productionAmount: any }) => {
