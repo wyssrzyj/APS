@@ -34,6 +34,7 @@ function Index() {
   const [release, setRelease] = useState<any[]>() //发布
   const [time, setTime] = useState<any>({}) //最大时间 最小时间
   const [refreshTree, setRefreshTree] = useState<any>() //
+  const [treeSelection, setTreeSelection] = useState<any>() //树选中
 
   const { figureData, productionView, workingDate } = schedulingApis
 
@@ -253,8 +254,11 @@ function Index() {
   // 树刷新
   const refresh = () => {
     const cloneFormData = cloneDeep(formData)
-    console.log('树刷新', cloneFormData)
     setRefreshTree(cloneFormData)
+  }
+  // 树选中
+  const treeSelect = (e) => {
+    setTreeSelection(e)
   }
 
   return (
@@ -285,6 +289,7 @@ function Index() {
           <div className={styles.team}>
             <div className={styles.leftContent}>
               <ToPlan
+                treeSelect={treeSelect}
                 setRefreshTree={setRefreshTree}
                 refreshTree={refreshTree}
                 checkSchedule={checkSchedule}
@@ -313,6 +318,7 @@ function Index() {
               </div>
 
               <Dome
+                treeSelection={treeSelection}
                 refresh={refresh}
                 updateMethod={updateMethod}
                 gunterData={gunterData}

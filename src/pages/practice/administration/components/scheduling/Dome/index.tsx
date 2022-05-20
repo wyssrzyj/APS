@@ -19,6 +19,7 @@ const Dhx = (props: {
   formData: any
   gunterType: any
   refresh: any
+  treeSelection: any
 }) => {
   const {
     gunterData,
@@ -27,7 +28,8 @@ const Dhx = (props: {
     setHighlighted,
     formData,
     gunterType,
-    refresh
+    refresh,
+    treeSelection
   } = props
   const { getLine, calculateEndTimeAfterMove } = schedulingApis
   const { factoryList } = workOvertimeApis
@@ -52,6 +54,8 @@ const Dhx = (props: {
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
   const [overtimeType, setOvertimeType] = useState<any>(false) //判断右键是否有值 有值且不展示添加加班
+
+  const [treeSelectionGantt, setTreeSelectionGantt] = useState<any>() //树选中
 
   useEffect(() => {
     getData()
@@ -176,19 +180,16 @@ const Dhx = (props: {
     // if (type === '0') {
     //点击
     if (!isEmpty(chart)) {
-      const teamId = chart.filter((item: { id: any }) => item.id === select)[0]
-        .teamId
-
+      const arr = chart.filter((item: { id: any }) => item.id === select)
+      const teamId = !isEmpty(arr) ? arr[0].teamId : null
       if (teamId !== null) {
         const unavailable: any = notWorking.filter(
           (item: { id: any }) => item.id === teamId
         )
         if (unavailable !== undefined && !isEmpty(unavailable)) {
-          // console.log('点击不可用时间', unavailable[0].time)
           setRestDate(unavailable[0].time)
         }
       } else {
-        // console.log('暂无')
         setRestDate(['2000-06-06'])
       }
     }
@@ -296,12 +297,13 @@ const Dhx = (props: {
       setSelect(id)
     }
   }
+  useEffect(() => {
+    setSelect(treeSelection)
+  }, [treeSelection])
 
   // 更新
   const updateList = (e: any) => {
     setUpdateData(e)
-
-    console.log('更细~~~~~~')
   }
 
   //右键
@@ -334,10 +336,10 @@ const Dhx = (props: {
     if (!isEmpty(chart)) {
       if (!isEmpty(select)) {
         const gunter = chart.filter((item: { id: any }) => item.id === select)
-
         if (!isEmpty(gunter[0])) {
-          const id =
-            gunter[0].section === '2' ? gunter[0].id : gunter[0].assignmentId
+          //根据不同工段传递不同id 只有缝制工段才传id
+          const id = gunter[0].id
+          // gunter[0].section === '2' ? gunter[0].id : gunter[0].assignmentId
           setHighlighted && setHighlighted(id)
         }
       }
@@ -364,6 +366,8 @@ const Dhx = (props: {
               <div className="site-dropdown-context-menu">
                 <div className="gantt-container">
                   <Gantt
+                    select={select}
+                    treeSelectionGantt={treeSelectionGantt}
                     name={'test'}
                     leftData={leftData}
                     rightData={rightData}

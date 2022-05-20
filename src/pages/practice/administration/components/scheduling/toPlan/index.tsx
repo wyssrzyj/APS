@@ -19,6 +19,7 @@ function ToPlan(props: {
   release: any
   refreshTree
   setRefreshTree
+  treeSelect
 }) {
   const {
     remind,
@@ -27,15 +28,11 @@ function ToPlan(props: {
     checkSchedule,
     release,
     refreshTree,
-    setRefreshTree
+    setRefreshTree,
+    treeSelect
   } = props
-  const {
-    listProductionOrders,
-    unlockWork,
-    releaseFromAssignment,
-    forDetail,
-    factoryList
-  } = schedulingApis
+  const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
+    schedulingApis
   const { workshopList, teamList, capacityList } = dockingDataApis
   const [list, setList] = useState<any>([]) //总
   const [editWindow, setEditWindow] = useState(false) //编辑窗
@@ -48,6 +45,7 @@ function ToPlan(props: {
 
   const [current, setCurrent] = useState('0')
   const [keys, setKeys] = useState<any>()
+  const [selectedKeys, setSelectedKeys] = useState<any>() //树传图
 
   const [equal, setEqual] = useState<any>('1')
   const [currentItem, setCurrentItem] = useState<any>() //点击的值.
@@ -63,6 +61,11 @@ function ToPlan(props: {
   const [templateId, setTemplateId] = useState<any>() //效率模板数据
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
+  useEffect(() => {
+    if (selectedKeys !== null && selectedKeys !== undefined) {
+      treeSelect(selectedKeys[0])
+    }
+  }, [selectedKeys])
   const map = new Map()
   map.set('1', '裁剪工段')
   map.set('2', '缝制工段')
@@ -235,6 +238,7 @@ function ToPlan(props: {
   useEffect(() => {
     getData(list[Number(current)], current)
   }, [current])
+
   //处理数据
   const getData = (data: any, type: string) => {
     if (!isEmpty(data)) {
@@ -245,7 +249,7 @@ function ToPlan(props: {
         !isEmpty(i.children) &&
           i.children.map((item: any) => {
             item.disableCheckbox = true
-            item.key = item.id
+            item.key = item.section === '2' ? item.id : item.detailList[0].id
             item.type = item.title === '缝制工段' ? 1 : 0 //用于判断
             item.popover = false
             item.title = item.type === 1 ? sewing(item, 1) : sewing(item, 2)
@@ -282,15 +286,28 @@ function ToPlan(props: {
       }
     }
   }
+
+  //获取子项的所有数据
+
+  //切换
+
   const getCurrentTabs = (data: any[], i: any) => {
     // 待计划.
     const stayData = data[0]
     const waitDor: any[] = []
+
     stayData.map((item: { children: any }) => {
       if (!isEmpty(item.children)) {
         waitDor.push(item.children)
       }
     })
+
+    waitDor.flat(Infinity).forEach((item) => {
+      if (!isEmpty(item.children)) {
+        waitDor.push(item.children)
+      }
+    })
+
     const waitDorList = stayData.concat(waitDor.flat(Infinity))
     const waitIndex = waitDorList.findIndex(
       (item: { id: any }) => item.id === i
@@ -301,11 +318,19 @@ function ToPlan(props: {
     // 已计划
     const complete = data[1]
     const completeChildren: any[] = []
+
     complete.map((item: { children: any }) => {
       if (!isEmpty(item.children)) {
         completeChildren.push(item.children)
       }
     })
+
+    completeChildren.flat(Infinity).forEach((item) => {
+      if (!isEmpty(item.children)) {
+        completeChildren.push(item.children)
+      }
+    })
+
     const completeList = complete.concat(completeChildren.flat(Infinity))
     const completeIndex = completeList.findIndex(
       (item: { id: any }) => item.id === i
@@ -314,6 +339,7 @@ function ToPlan(props: {
       setCurrent('1')
     }
   }
+
   useEffect(() => {
     if (!isEmpty(list)) {
       //这次和上次不一样才执行
@@ -499,11 +525,14 @@ function ToPlan(props: {
       )
     }
   }
-  const onSelect = (selectedKeys: React.Key[], info: any) => {
+  const onSelect = (e: React.Key[], info: any) => {
     setCurrentItem(info.node)
-    setKeys(selectedKeys)
+    setSelectedKeys(e)
+    setKeys(e)
   }
   const onCheck = (checkedKeys: any, info: any) => {
+    console.log('点击是', checkedKeys)
+
     setToPlanID(checkedKeys)
   }
   //清空
@@ -518,6 +547,10 @@ function ToPlan(props: {
     setEditWindow,
     editWindowList
   }
+
+  // useEffect(() => {
+  //   console.log('处理后的已几乎~~~', WaitingTreeData)
+  // }, [WaitingTreeData])
   return (
     <div>
       {!isModalVisible ? (

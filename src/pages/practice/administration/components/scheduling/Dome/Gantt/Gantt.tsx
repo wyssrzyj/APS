@@ -9,12 +9,23 @@ import { isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
 const Gantt = (props: any) => {
-  const { zoom, tasks, updateList, rightData, leftData, restDate, name } = props
+  const {
+    select,
+    zoom,
+    tasks,
+    updateList,
+    rightData,
+    leftData,
+    restDate,
+    name,
+    treeSelectionGantt
+  } = props
 
   const chartDom = document.getElementById(name) //获取id
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
-  const [select, setSelect] = useState<any>() //选中项
+  // const [select, setSelect] = useState<any>() //选中项
+  const [treeSelection, setTreeSelection] = useState<any>() //选中项
   const locationRef = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
@@ -39,6 +50,14 @@ const Gantt = (props: any) => {
       ganttShow({ data: [], links: [] })
     }
   }, [tasks, select])
+
+  // useEffect(() => {
+  //   if (treeSelectionGantt !== undefined) {
+  //     // setSelect(treeSelectionGantt)
+  //     console.log('我执行了?', treeSelectionGantt)
+  //     setSelect(treeSelectionGantt)
+  //   }
+  // }, [treeSelectionGantt])
 
   useEffect(() => {
     if (!isEmpty(restDate)) {
@@ -124,13 +143,10 @@ const Gantt = (props: any) => {
     ]
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
-      setSelect(id)
       leftData && leftData(id)
     })
     //单击右键
     gantt.attachEvent('onContextMenu', function (id: any) {
-      console.log('右', id)
-
       rightData && rightData(id)
     })
 
