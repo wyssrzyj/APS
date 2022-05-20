@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 10:02:54
- * @LastEditTime: 2022-05-17 09:39:59
+ * @LastEditTime: 2022-05-20 09:48:42
  * @Description:
  * @LastEditors: zjr
  */
@@ -30,7 +30,7 @@ const LoginContent = () => {
       const values = await validateFields()
       const res = await login(values)
 
-      if (res && res.success) navigate('/home')
+      if (res && res.success) location.replace('/home')
       setLoadings(false)
     } catch (err) {
       setLoadings(false)

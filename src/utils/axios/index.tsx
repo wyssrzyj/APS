@@ -58,6 +58,10 @@ customAxios.interceptors.response.use(
     }
     if (location.pathname !== '/login' && code === 401) {
       // token失效
+      message.warning('登录过期，请重新登录')
+      localStorage.removeItem('token')
+      localStorage.removeItem('systemUuid')
+      localStorage.removeItem('currentUser')
       location.replace('/login')
     }
 
@@ -67,10 +71,14 @@ customAxios.interceptors.response.use(
     const { response } = error
     const { status, data } = response
     if (
-      location.pathname !== '/user/login' &&
+      location.pathname !== '/login' &&
       (status === 401 || +data.code === 401)
     ) {
       // token失效
+      message.warning('登录过期，请重新登录')
+      localStorage.removeItem('token')
+      localStorage.removeItem('systemUuid')
+      localStorage.removeItem('currentUser')
       location.replace('/user/login')
     }
     return Promise.reject(error)
