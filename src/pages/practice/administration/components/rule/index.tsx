@@ -226,7 +226,7 @@ function Rule() {
             pagination={{
               //分页
               showSizeChanger: true,
-              showQuickJumper: true, //是否快速查找
+              // showQuickJumper: true, //是否快速查找
               pageSize: pageSize, //每页条数
               current: pageNum, //	当前页数
               total, //数据总数
