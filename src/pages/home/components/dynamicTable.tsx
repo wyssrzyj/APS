@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-12 13:03:02
- * @LastEditTime: 2022-05-17 08:50:25
+ * @LastEditTime: 2022-05-20 09:01:42
  * @Description:
  * @LastEditors: zjr
  */
@@ -70,6 +70,7 @@ const DynamicTable = (props: Record<string, any>) => {
         </Form.Item>
       </Form>
       <CusDragTable
+        scroll={{ y: 500 }}
         key={isDelay ? 'productionDelayList' : 'productionChangeList'}
         noNeedDropdown={true}
         storageField={isDelay ? 'productionDelayList' : 'productionChangeList'}

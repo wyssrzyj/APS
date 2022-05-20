@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 14:52:29
- * @LastEditTime: 2022-05-19 08:33:36
+ * @LastEditTime: 2022-05-20 08:57:26
  * @Description:
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @LastEditors: zjr
  */
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, message, Modal, Switch } from 'antd'
@@ -259,7 +259,7 @@ const UserManage = () => {
           pagination={{
             //分页
             showSizeChanger: true,
-            showQuickJumper: true, //是否快速查找
+            // showQuickJumper: true, //是否快速查找
             pageSize: pageSize, //每页条数
             current: pageNum, //	当前页数
             total, //数据总数
