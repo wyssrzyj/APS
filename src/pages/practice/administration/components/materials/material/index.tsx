@@ -151,6 +151,7 @@ function Material(props: {
           setMaterialModal(false)
           update()
           setSizeList([])
+          message.success('保存成功')
         }
       } else {
         message.error('物料齐料日期未录入')
@@ -194,6 +195,7 @@ function Material(props: {
           setMaterialModal(false)
           update()
           setSizeList([])
+          message.success('保存成功')
         }
         if (methods === '切换') {
           setActiveKey(key)

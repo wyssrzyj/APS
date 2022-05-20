@@ -15,20 +15,21 @@ const Gantt = (props: any) => {
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   const [select, setSelect] = useState<any>() //选中项
-  const refPositioning = useRef({ x: 0, y: 0 })
+  const locationRef = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
     if (!isEmpty(tasks.data)) {
       //获取滚动的距离
+      const newLeft = locationRef.current.x || 0
+      const newTop = locationRef.current.y || 0
+
       gantt.attachEvent('onGanttScroll', function (left, top) {
-        if (left !== 0) {
-          refPositioning.current.x = left
-        }
-        if (top !== 0) {
-          refPositioning.current.y = top
-        }
+        locationRef.current = { x: left, y: top }
       })
-      ganttShow(tasks) //渲染数据-勿动
+
+      ganttShow(tasks) //渲染数据   勿动
+
+      gantt.scrollTo(newLeft, newTop) //定位
 
       //选中项
       if (select !== undefined) {
@@ -46,7 +47,6 @@ const Gantt = (props: any) => {
   }, [restDate])
 
   useEffect(() => {
-    console.log('缩放', zoom)
     setZoom(zoom)
   }, [zoom])
 
@@ -319,8 +319,6 @@ const Gantt = (props: any) => {
     gantt.init(chartDom) //根据 id
 
     gantt.parse(list) //渲染数据
-
-    gantt.scrollTo(refPositioning.current.x, refPositioning.current.y) //定位
   }
   // "main"
   return <div id={name} style={{ width: '100%', height: '100%' }}></div>

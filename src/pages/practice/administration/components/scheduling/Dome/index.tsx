@@ -18,6 +18,7 @@ const Dhx = (props: {
   setHighlighted: any
   formData: any
   gunterType: any
+  refresh: any
 }) => {
   const {
     gunterData,
@@ -25,7 +26,8 @@ const Dhx = (props: {
     updateMethod,
     setHighlighted,
     formData,
-    gunterType
+    gunterType,
+    refresh
   } = props
   const { getLine, calculateEndTimeAfterMove } = schedulingApis
   const { factoryList } = workOvertimeApis
@@ -71,7 +73,6 @@ const Dhx = (props: {
     if (!isEmpty(gunterData) && !isEmpty(notWork)) {
       setChart(gunterData)
     } else {
-      console.log('我是空', gunterData)
       setChart([])
     }
 
@@ -247,8 +248,6 @@ const Dhx = (props: {
             (item: { id: any }) => item.id === updateData.parent
           )[0].parent
           if (tipsID === 0) {
-            console.log('非通航')
-
             //非 同行
             const tips = chart.filter(
               (item: { id: any }) => item.id === updateData.parent
@@ -256,20 +255,19 @@ const Dhx = (props: {
             message.warning(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
             updateMethod && updateMethod()
           } else {
-            console.log('++++++++++++++++++++')
             // 同行
             const tips = chart.filter((item: { id: any }) => item.id === tipsID)
             message.warning(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
             updateMethod && updateMethod()
           }
         } else {
-          console.log('走保存')
           // 可用走保存
           getEndTime(
             moment(updateData.start_date).valueOf(),
             updateData.id,
             updateData.teamId
           )
+          refresh && refresh()
         }
       }
     }
@@ -301,8 +299,9 @@ const Dhx = (props: {
 
   // 更新
   const updateList = (e: any) => {
-    console.log('更细~~~~~~')
     setUpdateData(e)
+
+    console.log('更细~~~~~~')
   }
 
   //右键

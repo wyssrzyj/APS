@@ -111,7 +111,6 @@ function Popup(props: { content: any }) {
     setShopName(arr.shopId)
     //所属工段
     arr.sectionDome = map.get(arr.section)
-    console.log('接口数据', arr)
     setList(arr)
   }
   //渲染数据

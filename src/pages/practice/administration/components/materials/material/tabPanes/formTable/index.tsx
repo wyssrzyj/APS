@@ -131,7 +131,8 @@ const FormTable = (props: any) => {
           align: 'center',
           fixed: 'right',
           width: 70,
-          key: 'shortOfProductNum'
+          key: 'shortOfProductNum',
+          render: (_item: any) => <div>{_item.toFixed(2)}</div>
         },
         {
           title: '是否充足',
