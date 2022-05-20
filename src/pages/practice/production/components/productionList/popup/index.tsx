@@ -198,6 +198,19 @@ function Popup(props: { content: any }) {
         } else {
           message.error('外发管理的外发时间不能为空')
         }
+      } else {
+        //外发数据为空
+        const arr = await popupPreservation({
+          productId: getDetailsId,
+          externalProduceOrderId: externalProduceOrderId,
+          outsourceProcessDTOList: [], //外发全部为true且时间不为空的数据
+          processDTOList: allSaveList //工艺全部数据
+        })
+        if (arr) {
+          message.success('保存成功')
+          refreshData && refreshData()
+          handleCancel()
+        }
       }
     } else {
       handleCancel()
