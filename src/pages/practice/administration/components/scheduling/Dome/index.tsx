@@ -173,7 +173,7 @@ const Dhx = (props: {
   useEffect(() => {
     // 线
     if (!isEmpty(select)) {
-      getLineData(select)
+      getLineData(select, gunterType)
     }
 
     // 获取对应的不可用时间
@@ -206,11 +206,12 @@ const Dhx = (props: {
     //     console.log('空~~~~~~~~~~')
     //   }
     // }
-  }, [select])
+  }, [select, gunterType])
 
   //线接口
-  const getLineData = async (id: string) => {
-    const line: Record<string, any> = await getLine({ id }) //线
+  const getLineData = async (id: string, type: string) => {
+    const hasOutsource = type === '0' ? false : null
+    const line: Record<string, any> = await getLine({ id, hasOutsource }) //线
     if (line.code === 200) {
       setLine(line.data || [])
     }
@@ -368,7 +369,7 @@ const Dhx = (props: {
                   <Gantt
                     select={select}
                     treeSelectionGantt={treeSelectionGantt}
-                    name={'test'}
+                    name={'lyj'}
                     leftData={leftData}
                     rightData={rightData}
                     tasks={subjectData}

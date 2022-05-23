@@ -211,6 +211,7 @@ const Outgoing = (props: any) => {
               <Input
                 type="number"
                 addonAfter="天"
+                min={0}
                 disabled={types}
                 defaultValue={type}
                 onBlur={(e) => {

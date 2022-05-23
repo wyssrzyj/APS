@@ -25,31 +25,36 @@ const Gantt = (props: any) => {
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   // const [select, setSelect] = useState<any>() //选中项
-  const [treeSelection, setTreeSelection] = useState<any>() //选中项
+  // const [treeSelection, setTreeSelection] = useState<any>() //选中项
   const locationRef = useRef({ x: 0, y: 0 })
+  const treeSelection = useRef({ select: '' })
 
   useEffect(() => {
     if (!isEmpty(tasks.data)) {
       //获取滚动的距离
       const newLeft = locationRef.current.x || 0
       const newTop = locationRef.current.y || 0
+      const selectRef = treeSelection.current.select || 0
 
       gantt.attachEvent('onGanttScroll', function (left, top) {
         locationRef.current = { x: left, y: top }
       })
-
       ganttShow(tasks) //渲染数据   勿动
-
       gantt.scrollTo(newLeft, newTop) //定位
-
       //选中项
       if (select !== undefined) {
-        gantt.selectTask(select)
+        gantt.selectTask(selectRef)
       }
     } else {
       ganttShow({ data: [], links: [] })
     }
-  }, [tasks, select])
+  }, [tasks])
+
+  useEffect(() => {
+    if (select !== null) {
+      treeSelection.current.select = select
+    }
+  }, [select])
 
   // useEffect(() => {
   //   if (treeSelectionGantt !== undefined) {

@@ -433,13 +433,16 @@ function Materials() {
         </div>
       </div>
       {/* 物料齐套检查弹窗 */}
-      <Material
-        refreshList={refreshList}
-        update={update}
-        materialList={materialList}
-        materialModal={materialModal}
-        setMaterialModal={setMaterialModal}
-      />
+      {materialModal && (
+        <Material
+          refreshList={refreshList}
+          update={update}
+          materialList={materialList}
+          materialModal={materialModal}
+          setMaterialModal={setMaterialModal}
+        />
+      )}
+
       {/* <MovPopup
         type="mov"
         movIsModalVisible={movIsModalVisible}
