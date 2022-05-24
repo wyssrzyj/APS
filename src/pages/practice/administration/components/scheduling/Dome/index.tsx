@@ -309,12 +309,12 @@ const Dhx = (props: {
 
   //右键
   const rightData = (e: any) => {
-    // if (e !== null) {
-    //   // setGetLink(e)
-    //   setOvertimeType(false)
-    // } else {
-    //   setOvertimeType(true)
-    // }
+    if (e !== null) {
+      // setGetLink(e)
+      setOvertimeType(false)
+    } else {
+      setOvertimeType(true)
+    }
   }
   const rightClick = (
     <Menu>

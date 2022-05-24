@@ -30,6 +30,7 @@ const FormTable = (props: any) => {
   const [renderData, setRenderData] = useState<any>()
 
   const [cloneData, setCloneData] = useState<any>([]) //修改存取来
+  const [defaultExpandedRow, setDefaultExpandedRow] = useState<any>([]) //全部展开
   useEffect(() => {
     saveData && saveData(data)
     //给后台传递的数据
@@ -197,7 +198,6 @@ const FormTable = (props: any) => {
   useEffect(() => {
     if (select !== undefined) {
       if (select.name === '重新检查') {
-        console.log('我是重新')
         //判断修改中是否有值 有值就用老数据
         if (!isEmpty(cloneData)) {
           setData(cloneData)
@@ -208,7 +208,6 @@ const FormTable = (props: any) => {
       }
 
       if (select.name === '已检查') {
-        console.log('已检查')
         setData(notData)
       }
 
@@ -223,10 +222,8 @@ const FormTable = (props: any) => {
     }
     if (!isEmpty(renderData)) {
       setList(renderData) //渲染结构
-      console.log('渲染完毕', renderData)
       setLoading(false)
     }
-    console.log('执行了几次')
   }, [renderData, notData, cloneData, select])
 
   //处理建值对
@@ -283,18 +280,20 @@ const FormTable = (props: any) => {
   //初始数据
   useEffect(() => {
     // 调取接口口添加 key和 counteractNum -半成品冲销数量的字段
+    let defaultExpandedRow = []
     if (!isEmpty(tableData)) {
       tableData.map((item: any) => {
         item.deliveredQty = item.deliveredQty === null ? 0 : item.deliveredQty //测试~~~已出库数量暂无 设置0
         item.id = item.materialCode //id是 materialCode
         item.key = `${item.materialCode}8848` //添加 key
-
+        defaultExpandedRow.push(item.key)
         // item.counteractNum = 0 //添加初始 冲销数量
         item.children = subitemProcessing(item.children) //处理子项
         item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
       setNotData([...tableData])
+      setDefaultExpandedRow([...defaultExpandedRow])
     }
   }, [tableData])
 
@@ -391,16 +390,28 @@ const FormTable = (props: any) => {
       }
     }
   }
-
+  //展开
+  const onExpand = (e, v) => {
+    const sum = cloneDeep(defaultExpandedRow)
+    const subscript = sum.findIndex((item: any) => item === v.key)
+    if (subscript !== -1) {
+      sum.splice(subscript, 1)
+      setDefaultExpandedRow([...sum])
+    } else {
+      sum.push(v.key)
+      setDefaultExpandedRow([...sum])
+    }
+  }
   return (
     <div>
       <Table
-        // expandedRowClassName={true}
+        expandedRowKeys={defaultExpandedRow}
         loading={loading}
         columns={list}
         dataSource={data}
         rowKey={'key'}
         scroll={{ x: 1500, y: 300 }}
+        onExpand={onExpand}
         // pagination={false}
       />
     </div>

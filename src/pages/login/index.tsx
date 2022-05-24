@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 10:02:54
- * @LastEditTime: 2022-05-20 09:48:42
+ * @LastEditTime: 2022-05-24 08:41:13
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  */
 import { Button, Form, Input, message, Tabs } from 'antd'
 import React, { useState } from 'react'
@@ -83,7 +83,7 @@ const LoginContent = () => {
           <Form.Item label="">
             {/* <Button type={'primary'} onClick={submit} block loading={loadings}> */}
             <Button type={'primary'} onClick={submit} block>
-              登录
+              登录11
             </Button>
           </Form.Item>
         </Form>
