@@ -28,12 +28,12 @@ function Index() {
   const [formData, setFormData] = useState() //form数据
   const [gunterType, setGunterType] = useState('1') //班组、订单
   const [gunterData, setGunterData] = useState<any[]>([]) //甘特图数据-班组
-  // const [productionData, setProductionData] = useState<any>([]) //甘特图数据-生产
   const [notWork, setNotWork] = useState<any[]>([]) //不可工作时间
   const [checkIDs, setCheckIDs] = useState<any[]>([]) //校验id
   const [promptList, setPromptList] = useState<any[]>([]) //提示数据
   const [release, setRelease] = useState<any[]>() //发布
   const [time, setTime] = useState<any>({}) //最大时间 最小时间
+  const [refreshTree, setRefreshTree] = useState<any>() //
 
   const { figureData, productionView, workingDate } = schedulingApis
 
@@ -49,11 +49,11 @@ function Index() {
   //头部form的数据
   const FormData = (e: any) => {
     setFormData(e)
+    setCheckIDs([])
   }
   // 甘特图数据
   useEffect(() => {
     if (formData !== undefined) {
-      console.log(formData, gunterType)
       getChart(formData, gunterType)
     }
     /**
@@ -250,6 +250,13 @@ function Index() {
   const update = () => {
     setRelease(formData)
   }
+  // 树刷新
+  const refresh = () => {
+    const cloneFormData = cloneDeep(formData)
+    console.log('树刷新', cloneFormData)
+    setRefreshTree(cloneFormData)
+  }
+
   return (
     <div className={styles.qualification}>
       <div>{/* <Title title={'生产单排程'} /> */}</div>
@@ -278,6 +285,8 @@ function Index() {
           <div className={styles.team}>
             <div className={styles.leftContent}>
               <ToPlan
+                setRefreshTree={setRefreshTree}
+                refreshTree={refreshTree}
                 checkSchedule={checkSchedule}
                 updateMethod={updateMethod}
                 gunterType={gunterType}
@@ -304,6 +313,7 @@ function Index() {
               </div>
 
               <Dome
+                refresh={refresh}
                 updateMethod={updateMethod}
                 gunterData={gunterData}
                 notWork={notWork}

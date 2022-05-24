@@ -1,7 +1,7 @@
 import { Button, Dropdown, Menu, message, Select, Tag } from 'antd'
 import { cloneDeep, divide, isEmpty, keys } from 'lodash'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { dockingData } from '@/recoil'
@@ -18,6 +18,7 @@ const Dhx = (props: {
   setHighlighted: any
   formData: any
   gunterType: any
+  refresh: any
 }) => {
   const {
     gunterData,
@@ -25,7 +26,8 @@ const Dhx = (props: {
     updateMethod,
     setHighlighted,
     formData,
-    gunterType
+    gunterType,
+    refresh
   } = props
   const { getLine, calculateEndTimeAfterMove } = schedulingApis
   const { factoryList } = workOvertimeApis
@@ -54,6 +56,7 @@ const Dhx = (props: {
   useEffect(() => {
     getData()
   }, [])
+
   const getData = async () => {
     const res: any = await factoryList()
     const arr: any = res.data
@@ -69,7 +72,10 @@ const Dhx = (props: {
   useEffect(() => {
     if (!isEmpty(gunterData) && !isEmpty(notWork)) {
       setChart(gunterData)
+    } else {
+      setChart([])
     }
+
     setLine([]) //线 //初始的时候传空.
     setNotWorking(notWork) //不可工作时间
   }, [gunterData, notWork, gunterType])
@@ -81,6 +87,10 @@ const Dhx = (props: {
           data: chart,
           links: line
         })
+      } else {
+        //没有数据展示空值
+        const arr = { data: [], links: [] }
+        setSubjectData({ ...arr })
       }
 
       // const dataqq = [
@@ -198,10 +208,10 @@ const Dhx = (props: {
   }, [select])
 
   //线接口
-  const getLineData = async (id: any) => {
-    const line: any = await getLine({ id }) //线
+  const getLineData = async (id: string) => {
+    const line: Record<string, any> = await getLine({ id }) //线
     if (line.code === 200) {
-      setLine(line.data === null ? [] : line.data)
+      setLine(line.data || [])
     }
   }
 
@@ -238,8 +248,6 @@ const Dhx = (props: {
             (item: { id: any }) => item.id === updateData.parent
           )[0].parent
           if (tipsID === 0) {
-            console.log('非通航')
-
             //非 同行
             const tips = chart.filter(
               (item: { id: any }) => item.id === updateData.parent
@@ -247,20 +255,19 @@ const Dhx = (props: {
             message.warning(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
             updateMethod && updateMethod()
           } else {
-            console.log('++++++++++++++++++++')
             // 同行
             const tips = chart.filter((item: { id: any }) => item.id === tipsID)
             message.warning(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
             updateMethod && updateMethod()
           }
         } else {
-          console.log('走保存')
           // 可用走保存
           getEndTime(
             moment(updateData.start_date).valueOf(),
             updateData.id,
             updateData.teamId
           )
+          refresh && refresh()
         }
       }
     }
@@ -284,16 +291,17 @@ const Dhx = (props: {
     setCurrentZoom(type)
   }
   //** 点击事件 点击父节点 传递 不可用时间
-  const leftData = async (e: any) => {
-    if (e !== null) {
-      setSelect(e)
+  const leftData = async (id: string) => {
+    if (id !== null) {
+      setSelect(id)
     }
   }
 
   // 更新
   const updateList = (e: any) => {
-    console.log('更细~~~~~~')
     setUpdateData(e)
+
+    console.log('更细~~~~~~')
   }
 
   //右键

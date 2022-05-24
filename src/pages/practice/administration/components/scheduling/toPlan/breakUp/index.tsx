@@ -25,7 +25,8 @@ const BreakUp = (props: any) => {
     isModalVisible,
     workSplitList,
     breakSave,
-    formData
+    formData,
+    empty
   } = props
   const { workshopList, teamList, capacityListID } = dockingDataApis
   const { splitMethod, breakQuery } = schedulingApis
@@ -59,7 +60,7 @@ const BreakUp = (props: any) => {
     }
   }
   useEffect(() => {
-    if (!isElement(workSplitList) && workSplitList !== undefined) {
+    if (!isEmpty(workSplitList) && workSplitList !== undefined) {
       getInterfaceData(workSplitList)
     }
   }, [workSplitList])
@@ -74,7 +75,6 @@ const BreakUp = (props: any) => {
       list.splice(subscript, 1, record)
       setData([...list])
     } else {
-      console.log('没有执行')
     }
   }
 
@@ -167,6 +167,7 @@ const BreakUp = (props: any) => {
       })
       //这个时候先不能渲染 这里的会慢一步
       //先渲染后处理
+
       setInitialTeamList([...res])
     } else {
       //初始空数组 添加key防止报错
@@ -177,6 +178,7 @@ const BreakUp = (props: any) => {
       res.key = 2
       res.productionAmount = 0
       res.completedAmount = 0
+
       setData([res])
     }
   }
@@ -196,6 +198,7 @@ const BreakUp = (props: any) => {
 
   const handleCancel = () => {
     setIsModalVisible(false)
+    empty && empty()
   }
   const onChange = (e: { target: { checked: any } }) => {
     console.log(`checked = ${e.target.checked}`)
@@ -281,7 +284,6 @@ const BreakUp = (props: any) => {
   }
   //增加
   const increase = () => {
-    console.log('增加')
     const arr = cloneDeep(data)
     //拆分数量的总和
     const res = arr.reduce((total: any, current: { productionAmount: any }) => {
@@ -311,6 +313,89 @@ const BreakUp = (props: any) => {
     const arr = cloneDeep(data)
     const res = arr.filter((item: { ids: any }) => item.ids !== ids)
     setData([...res])
+  }
+
+  // 保存事件
+  const handleOk = async () => {
+    const arr = cloneDeep(data)
+    const state = { timeState: false, number: false, teamType: false }
+    //时间的过滤
+    const Time = arr.filter(
+      (item: { planStartTime: undefined; planEndTime: undefined }) =>
+        item.planStartTime === undefined || item.planEndTime === undefined
+    )
+    if (Time.length > 0) {
+      message.warning(`时间不能为空`)
+    } else {
+      state.timeState = true
+    }
+    // 拆分数量
+    const res = arr.reduce((total: any, current: { productionAmount: any }) => {
+      total += current.productionAmount
+      return total
+    }, 0)
+    const value = res - arr[0].orderSum
+    if (value !== 0) {
+      if (value < 0) {
+        message.warning(`拆分数量总和未满足订单总量 剩余-【${value}】`)
+      } else {
+        message.warning(`拆分数量总和 超出订单总量 超出-【${Math.abs(value)}】`)
+      }
+    } else {
+      state.number = true
+    }
+
+    //工作班组 不可重复
+    //判断班组是否重复
+    const team: any = []
+    arr.map((item: { teamId: any }) => {
+      team.push(item.teamId)
+    })
+    function isRepeat(arr: any) {
+      const hash: any = {}
+      for (const i in arr) {
+        if (hash[arr[i]]) return true
+        hash[arr[i]] = true
+      }
+      return false
+    }
+
+    if (!isRepeat(team)) {
+      state.teamType = true
+    } else {
+      state.teamType = false
+      message.warning(`班组不能相同`)
+    }
+    if (
+      state.timeState === true &&
+      state.number === true &&
+      state.teamType === true
+    ) {
+      arr.map((item: any) => {
+        item.isLocked = item.isLocked === true ? 1 : 0
+        item.id = null
+      })
+      const sum = await splitMethod({
+        assignmentId: workSplitList.id,
+        data: arr
+      })
+
+      if (sum) {
+        message.success('保存成功')
+        breakSave && breakSave()
+        empty && empty()
+      } else {
+        message.error('保存失败')
+      }
+    }
+  }
+
+  const onPaginationChange = (
+    page: React.SetStateAction<number>,
+    pageSize: React.SetStateAction<number>
+  ) => {
+    setPageNum(page)
+    setPageSize(pageSize)
   }
 
   // eslint-disable-next-line no-sparse-arrays
@@ -368,6 +453,7 @@ const BreakUp = (props: any) => {
         return (
           <div>
             <InputNumber
+              disabled={_row.createPlanStatus}
               defaultValue={_value}
               max={_row.orderSum} //最大值是生产单总量
               onChange={(e) => onBreakUp(e, _row, 1)}
@@ -408,6 +494,7 @@ const BreakUp = (props: any) => {
               placeholder="请选择工作车间"
               defaultValue={_value}
               style={{ width: 120 }}
+              disabled={_row.createPlanStatus}
               onChange={(e) => handleChange(1, e, _row)}
             >
               {factoryName.map((item: any) => (
@@ -432,7 +519,14 @@ const BreakUp = (props: any) => {
         return (
           <>
             <Select
-              disabled={_row.shopId ? false : true}
+              disabled={
+                _row.createPlanStatus === false
+                  ? _row.shopId
+                    ? false
+                    : true
+                  : _row.createPlanStatus
+              }
+              // disabled={_row.createPlanStatus}
               placeholder="请选择工作班组"
               key={_value}
               defaultValue={_value}
@@ -508,7 +602,6 @@ const BreakUp = (props: any) => {
       render: (_value: any, _row: any) => {
         return (
           <div>
-            <>{console.log('测试', _value)}</>
             <Select
               placeholder="请选择效率模板"
               key={_value}
@@ -574,88 +667,6 @@ const BreakUp = (props: any) => {
       }
     }
   ]
-
-  // 保存事件
-  const handleOk = async () => {
-    const arr = cloneDeep(data)
-    const state = { timeState: false, number: false, teamType: false }
-    //时间的过滤
-    const Time = arr.filter(
-      (item: { planStartTime: undefined; planEndTime: undefined }) =>
-        item.planStartTime === undefined || item.planEndTime === undefined
-    )
-    if (Time.length > 0) {
-      message.warning(`时间不能为空`)
-    } else {
-      state.timeState = true
-    }
-    // 拆分数量
-    const res = arr.reduce((total: any, current: { productionAmount: any }) => {
-      total += current.productionAmount
-      return total
-    }, 0)
-    const value = res - arr[0].orderSum
-    if (value !== 0) {
-      if (value < 0) {
-        message.warning(`拆分数量总和未满足订单总量 剩余-【${value}】`)
-      } else {
-        message.warning(`拆分数量总和 超出订单总量 超出-【${Math.abs(value)}】`)
-      }
-    } else {
-      state.number = true
-    }
-
-    //工作班组 不可重复
-    //判断班组是否重复
-    const team: any = []
-    arr.map((item: { teamId: any }) => {
-      team.push(item.teamId)
-    })
-    function isRepeat(arr: any) {
-      const hash: any = {}
-      for (const i in arr) {
-        if (hash[arr[i]]) return true
-        hash[arr[i]] = true
-      }
-      return false
-    }
-
-    if (!isRepeat(team)) {
-      state.teamType = true
-    } else {
-      state.teamType = false
-      message.warning(`班组不能相同`)
-    }
-    if (
-      state.timeState === true &&
-      state.number === true &&
-      state.teamType === true
-    ) {
-      arr.map((item: any) => {
-        item.isLocked = item.isLocked === true ? 1 : 0
-        item.id = null
-      })
-      const sum = await splitMethod({
-        assignmentId: workSplitList.id,
-        data: arr
-      })
-
-      if (sum) {
-        message.success('保存成功')
-        breakSave && breakSave()
-      } else {
-        message.error('保存失败')
-      }
-    }
-  }
-
-  const onPaginationChange = (
-    page: React.SetStateAction<number>,
-    pageSize: React.SetStateAction<number>
-  ) => {
-    setPageNum(page)
-    setPageSize(pageSize)
-  }
   return (
     <div className={styles.popup}>
       <Modal
@@ -666,27 +677,27 @@ const BreakUp = (props: any) => {
         onCancel={handleCancel}
       >
         <div className={styles.title}>缝制任务拆分</div>
-        {!isEmpty(data) ? (
-          <Table
-            className={styles.table}
-            bordered
-            columns={columns}
-            scroll={{ x: 1500, y: 500 }}
-            dataSource={data}
-            rowKey={'id'}
-            pagination={{
-              //分页
-              showSizeChanger: true,
-              // showQuickJumper: true, //是否快速查找
-              pageSize, //每页条数
-              current: pageNum, //	当前页数
-              total, //数据总数
-              // position: ['bottomCenter'], //居中
-              pageSizeOptions: ['10', '20', '50'],
-              onChange: onPaginationChange //获取当前页码是一个function
-            }}
-          />
-        ) : null}
+        {/* {!isEmpty(data) ? ( */}
+        <Table
+          className={styles.table}
+          bordered
+          columns={columns}
+          scroll={{ x: 1500, y: 500 }}
+          dataSource={data}
+          rowKey={'id'}
+          pagination={{
+            //分页
+            showSizeChanger: true,
+            // showQuickJumper: true, //是否快速查找
+            pageSize, //每页条数
+            current: pageNum, //	当前页数
+            total, //数据总数
+            // position: ['bottomCenter'], //居中
+            pageSizeOptions: ['10', '20', '50'],
+            onChange: onPaginationChange //获取当前页码是一个function
+          }}
+        />
+        {/* // ) : null} */}
       </Modal>
       {/* <Details setDetailsPopup={setDetailsPopup} detailsPopup={detailsPopup} /> */}
     </div>

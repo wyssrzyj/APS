@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-05-12 13:16:06
+ * @LastEditTime: 2022-05-20 10:52:21
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  */
 
 import { divide } from 'lodash'
@@ -13,14 +13,15 @@ import styles from '../index.module.less'
 const DynamicContent = (props: Record<string, any>) => {
   const { title, type } = props
   const scdList = [
-    { id: 'PD202203050122', time: '2022-05-11', type: 1 },
-    { id: 'PD202203050122', time: '2022-05-10', type: 2 },
-    { id: 'PD202203050122', time: '2022-05-10', type: 1 }
+    { id: 'PD202203050121', time: '2022-05-08', type: 1 },
+    { id: 'PD202203050212', time: '2022-05-11', type: 2 },
+    { id: 'PD202203050513', time: '2022-05-21', type: 1 }
   ]
   const scrwList = [
-    { id: 'PD202203050122', time: '2022-05-11 09:52' },
-    { id: 'PD202203050122', time: '2022-05-10 09:52' },
-    { id: 'PD202203050122', time: '2022-05-10 09:52' }
+    { id: 'PD202203050222', time: '2022-05-01 09:34' },
+    { id: 'PD202203050672', time: '2022-05-11 09:40' },
+    { id: 'PD202203050672', time: '2022-05-17 09:51' },
+    { id: 'PD202203050271', time: '2022-05-20 10:56' }
   ]
   return (
     <div className={styles.dynamicContent}>

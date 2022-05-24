@@ -124,7 +124,7 @@ function EditActualProduction(props: Record<string, any>) {
     <Modal
       title="工作实绩明细"
       visible={visible}
-      width={1000}
+      width={1200}
       onCancel={() => callback(false)}
       onOk={handleOk}
     >

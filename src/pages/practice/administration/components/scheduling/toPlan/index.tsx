@@ -17,8 +17,18 @@ function ToPlan(props: {
   updateMethod: any
   checkSchedule: any
   release: any
+  refreshTree
+  setRefreshTree
 }) {
-  const { remind, formData, updateMethod, checkSchedule, release } = props
+  const {
+    remind,
+    formData,
+    updateMethod,
+    checkSchedule,
+    release,
+    refreshTree,
+    setRefreshTree
+  } = props
   const {
     listProductionOrders,
     unlockWork,
@@ -34,7 +44,7 @@ function ToPlan(props: {
   const [WaitingTreeData, setWaitingTreeData] = useState([]) //处理后的已计划
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [efficiencyData, setEfficiencyData] = useState(false) //效率
-  const [workSplitList, setWorkSplitList] = useState() //工作拆分
+  const [workSplitList, setWorkSplitList] = useState<any>() //工作拆分
 
   const [current, setCurrent] = useState('0')
   const [keys, setKeys] = useState<any>()
@@ -76,6 +86,14 @@ function ToPlan(props: {
       workshopTeam(formData)
     }
   }, [formData])
+
+  //图移动  树刷新
+  useEffect(() => {
+    if (refreshTree !== undefined && refreshTree !== '') {
+      dataAcquisition(refreshTree)
+      setRefreshTree('')
+    }
+  }, [refreshTree])
 
   useEffect(() => {
     if (release !== undefined) {
@@ -352,7 +370,6 @@ function ToPlan(props: {
   const efficiencyMethods = async (id: any) => {
     setEfficiencyID(id)
     const res = await forDetail({ id })
-    console.log('效率模板', res)
 
     setTemplateId(res)
     setEfficiencyData(true)
@@ -489,6 +506,10 @@ function ToPlan(props: {
   const onCheck = (checkedKeys: any, info: any) => {
     setToPlanID(checkedKeys)
   }
+  //清空
+  const empty = () => {
+    setWorkSplitList({})
+  }
   const contents = {
     factoryName,
     formData,
@@ -533,15 +554,18 @@ function ToPlan(props: {
         </Tabs>
       ) : null}
       {/* 拆分 */}
-      <BreakUp
-        teamName={teamName}
-        capacityData={capacityData}
-        formData={formData}
-        breakSave={breakSave}
-        workSplitList={workSplitList}
-        setIsModalVisible={setIsModalVisible}
-        isModalVisible={isModalVisible}
-      />
+      {isModalVisible && (
+        <BreakUp
+          empty={empty}
+          teamName={teamName}
+          capacityData={capacityData}
+          formData={formData}
+          breakSave={breakSave}
+          workSplitList={workSplitList}
+          setIsModalVisible={setIsModalVisible}
+          isModalVisible={isModalVisible}
+        />
+      )}
       {/* 效率模板 */}
       <TheEfficiency
         templateId={templateId}

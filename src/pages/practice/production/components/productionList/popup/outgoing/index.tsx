@@ -47,6 +47,7 @@ const Outgoing = (props: any) => {
   const [data, setData] = useState<any>([]) //处理后的展示数据
   const [processedData, setProcessedData] = useState<any>([]) //全部数据-用于保存
   const [edited, setEdited] = useState<any>(false) //已编辑
+  const [formData, setFormData] = useState<any>()
 
   useEffect(() => {
     setParams({ pageNum: pageNum, pageSize: pageSize })
@@ -55,9 +56,9 @@ const Outgoing = (props: any) => {
   //接口
   useEffect(() => {
     if (externalProduceOrderId !== null) {
-      getList(params)
+      getList({ ...params, ...formData })
     }
-  }, [params, externalProduceOrderId])
+  }, [params, externalProduceOrderId, formData])
 
   const getList = async (e) => {
     const res = await processOutsourcing({
@@ -75,6 +76,8 @@ const Outgoing = (props: any) => {
       )
       setTotal(res.total)
       setList([...res.records])
+    } else {
+      setData([])
     }
   }
 
@@ -278,7 +281,8 @@ const Outgoing = (props: any) => {
   }
   //头部form的数据
   const FormData = (e: any) => {
-    setParams({ ...params, ...e })
+    setFormData(e)
+    // setParams({ ...params, ...e })
   }
   useEffect(() => {
     if (whetherEditor === 2) {

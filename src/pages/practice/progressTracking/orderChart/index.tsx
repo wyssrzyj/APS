@@ -32,7 +32,7 @@ const SchedulingResults = () => {
 
   const getChart = async (id: undefined) => {
     const chart: any = await productionSingleView({ factoryId: id })
-    console.log('订单图')
+
     const arr = cloneDeep(chart.data)
     if (chart.code === 200) {
       dateFormat(arr)

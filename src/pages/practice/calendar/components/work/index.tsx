@@ -72,6 +72,11 @@ const Index = () => {
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
+      title: '工厂名称',
+      align: 'center',
+      dataIndex: 'factoryName'
+    },
+    {
       title: '工作模式',
       align: 'center',
       dataIndex: 'name'

@@ -1,12 +1,12 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-05-19 09:18:24
+ * @LastEditTime: 2022-05-19 13:55:53
  * @Description:
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  */
 import { getAttribute } from '@antv/g2/lib/dependents'
-import { Button, Modal, Space } from 'antd'
+import { Button, message, Modal, Space } from 'antd'
 import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
@@ -46,6 +46,7 @@ function RuleScheduling(props: Record<string, any>) {
   // 开始排程
   const startSchedule = () => {
     console.log('dataSource', dataSource)
+    message.success(`保存完成`)
     onCancel()
   }
   return (
