@@ -82,7 +82,7 @@ export const tableColumns: Array<Partial<Column>> = [
     title: '产品名称',
     align: 'center',
     dataIndex: 'productName',
-    width: 300
+    width: 250
   },
   {
     title: '产品款号',
@@ -94,19 +94,19 @@ export const tableColumns: Array<Partial<Column>> = [
     title: '生产量',
     align: 'center',
     dataIndex: 'productionAmount',
-    width: 200
+    width: 100
   },
   {
     title: '工段名称',
     align: 'center',
     dataIndex: 'section',
-    width: 200
+    width: 100
   },
   {
     title: '计划开始时间',
     align: 'center',
     dataIndex: 'planStartTime',
-    width: 200,
+    width: 170,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
@@ -114,7 +114,7 @@ export const tableColumns: Array<Partial<Column>> = [
     title: '计划结束时间',
     align: 'center',
     dataIndex: 'planEndTime',
-    width: 200,
+    width: 170,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
@@ -140,6 +140,7 @@ type viewFormConfig = {
   allowClear: boolean
   options: any
   span: number
+  layout: any
 }
 export const formItemConfig: Array<Partial<viewFormConfig>> = [
   {
@@ -265,6 +266,10 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     disabled: true,
     placeholder: '请输入备注',
     allowClear: true,
-    span: 24
+    span: 24,
+    layout: {
+      labelCol: { span: '3' },
+      wrapperCol: { span: '21' }
+    }
   }
 ]

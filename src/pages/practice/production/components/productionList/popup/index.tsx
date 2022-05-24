@@ -204,7 +204,7 @@ function Popup(props: { content: any }) {
           productId: getDetailsId,
           externalProduceOrderId: externalProduceOrderId,
           outsourceProcessDTOList: [], //外发全部为true且时间不为空的数据
-          processDTOList: allSaveList //工艺全部数据
+          processDTOList: allSaveList //工艺全部数据.
         })
         if (arr) {
           message.success('保存成功')

@@ -29,7 +29,6 @@ const MenuBox = () => {
   const navigate = useNavigate()
 
   const [currentMenu, setCurrentMenu] = useState<Array<string>>([])
-  const [collapsed, setCollapsed] = useState<boolean>(false)
   const [openKey, setOpenKey] = useState<Array<string>>(['basicConfiguration'])
   const location = useLocation()
 
@@ -39,10 +38,6 @@ const MenuBox = () => {
       setCurrentMenu(['home'])
     }
   }, [location.pathname])
-
-  const toggleCollapsed = () => {
-    setCollapsed((f) => !f)
-  }
 
   useEffect(() => {
     initOpenKeys(menus, setOpenKey)
@@ -143,33 +138,22 @@ const MenuBox = () => {
   }, [location.pathname])
 
   return (
-    <div className={classNames(styles.menu, collapsed && styles.miniMenu)}>
-      <Menu
-        selectedKeys={currentMenu}
-        // openKeys={openKey}
-        // defaultSelectedKeys={['classification']}
-        // defaultOpenKeys={[openKey]}
-        mode="inline"
-        inlineCollapsed={collapsed}
-        style={{ flex: 1 }}
-        multiple={false}
-        onClick={changePage}
-        onOpenChange={onOpenChange}
-      >
-        {menus.map((item) => {
-          return getMenuDOM(item)
-        })}
-      </Menu>
-
-      <Icon
-        onClick={toggleCollapsed}
-        type={collapsed ? 'jack-menu-unfold' : 'jack-menu-fold'}
-        className={classNames(
-          styles.menuSwitchIcon,
-          collapsed && styles.centerSwitchIcon
-        )}
-      ></Icon>
-    </div>
+    // <div className={classNames(styles.menu, collapsed && styles.miniMenu)}>
+    <Menu
+      selectedKeys={currentMenu}
+      // openKeys={openKey}
+      // defaultSelectedKeys={['classification']}
+      // defaultOpenKeys={[openKey]}
+      mode="inline"
+      style={{ flex: 1 }}
+      multiple={false}
+      onClick={changePage}
+      onOpenChange={onOpenChange}
+    >
+      {menus.map((item) => {
+        return getMenuDOM(item)
+      })}
+    </Menu>
   )
 }
 
