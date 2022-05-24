@@ -412,7 +412,7 @@ const FormTable = (props: any) => {
         rowKey={'key'}
         scroll={{ x: 1500, y: 300 }}
         onExpand={onExpand}
-        // pagination={false}.
+        // pagination={false}
       />
     </div>
   )
