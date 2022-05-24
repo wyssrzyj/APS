@@ -56,7 +56,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
   return (
     <div className={styles.NoExtended}>
       <Row className={styles.firstRow}>
-        <Col span={7} className={styles.container}>
+        <Col span={13} className={styles.container}>
           <div className={styles.innerContainer}>
             <span className={styles.labelText}>未延期:</span>
             <InputNumber
@@ -79,7 +79,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
             <Option value="3">月</Option>
           </Select>
         </Col>
-        <Col span={5}>
+        <Col span={10}>
           权重:
           <span className={styles.operationIcon}>-</span>
           <InputNumber
@@ -91,7 +91,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
         </Col>
       </Row>
       <Row>
-        <Col span={7} className={styles.container}>
+        <Col span={13} className={styles.container}>
           <div className={styles.innerContainer}>
             <span className={styles.labelText}> 已延期:</span>
             <InputNumber
@@ -114,7 +114,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
             <Option value="3">月</Option>
           </Select>
         </Col>
-        <Col span={5}>
+        <Col span={10}>
           权重:
           <span className={styles.operationIcon}>+</span>
           <InputNumber

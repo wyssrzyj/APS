@@ -1,11 +1,12 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-05-17 09:44:27
+ * @LastEditTime: 2022-05-24 09:02:48
  * @Description:
  * @LastEditors: zjr
  */
-import { message } from 'antd'
+import { UserOutlined } from '@ant-design/icons'
+import { Avatar, message } from 'antd'
 import { userInfo } from 'os'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -74,6 +75,11 @@ const Header = () => {
       <div className={styles.headerR}>
         <div className={styles.userInfo}>
           <div className={styles.user}>
+            <Avatar
+              size={24}
+              style={{ backgroundColor: '#1890ff', marginRight: '8px' }}
+              icon={<UserOutlined />}
+            />
             {JSON.parse(localStorage.getItem('currentUser')) &&
               JSON.parse(localStorage.getItem('currentUser')).user.username}
           </div>

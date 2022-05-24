@@ -285,3 +285,26 @@ export const changeBolbToXls = (res: any, fileName: string) => {
   download.click()
   window.URL.revokeObjectURL(download.href)
 }
+
+export const clearLocalStorage = (options?: {
+  keepItems?: Array<{ key: string }>
+}): void => {
+  for (let i = localStorage.length - 1; i >= 0; i--) {
+    const key = localStorage.key(i)
+    if (key === null) {
+      continue
+    }
+    let keep = false
+    if (options && options.keepItems) {
+      for (const keepItem of options.keepItems) {
+        if (keepItem.key === key) {
+          keep = true
+          break
+        }
+      }
+    }
+    if (!keep) {
+      localStorage.removeItem(key)
+    }
+  }
+}
