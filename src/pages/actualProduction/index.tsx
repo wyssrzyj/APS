@@ -176,7 +176,7 @@ function ActualProductionList() {
           rowSelection={rowSelection}
           pagination={{
             showSizeChanger: true,
-            showQuickJumper: true, //是否快速查找
+            // showQuickJumper: true, //是否快速查找
             pageSize, //每页条数
             current: pageNum, //	当前页数
             total, //数据总数

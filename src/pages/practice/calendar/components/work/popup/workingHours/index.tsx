@@ -26,14 +26,21 @@ function WorkingHours(props: {
     console.log('状态', type)
   }, [type, edit])
 
-  const start = (index: string | number, e: moment.MomentInput) => {
-    const time = moment(e).format('YYYY-MM-DD HH:mm')
-    data[index].startDateTime = moment(time).valueOf()
-    setData([...data])
-  }
-  const end = (index: string | number, e: moment.MomentInput) => {
-    const time = moment(e).format('YYYY-MM-DD HH:mm')
-    data[index].endDateTime = moment(time).valueOf()
+  // const start = (index: string | number, e: moment.MomentInput) => {
+  //   const time = moment(e).format('YYYY-MM-DD HH:mm')
+  //   data[index].startDateTime = moment(time).valueOf()
+  //   setData([...data])
+  // }
+  // const end = (index: string | number, e: moment.MomentInput) => {
+  //   const time = moment(e).format('YYYY-MM-DD HH:mm')
+  //   data[index].endDateTime = moment(time).valueOf()
+  //   setData([...data])
+  // }
+  const time = (index, e) => {
+    const startTime = moment(e[0]).format('YYYY-MM-DD HH:mm')
+    const endTime = moment(e[1]).format('YYYY-MM-DD HH:mm')
+    data[index].startDateTime = moment(startTime).valueOf()
+    data[index].endDateTime = moment(endTime).valueOf()
     setData([...data])
   }
 
@@ -57,6 +64,7 @@ function WorkingHours(props: {
         }
       }
     }
+    console.log(data)
   }, [data])
 
   const executionMethod = (type: string, index: number) => {
@@ -83,29 +91,19 @@ function WorkingHours(props: {
           index: number
         ) => (
           <div key={index} className={styles.timePicker}>
-            <TimePicker
-              defaultValue={
-                item.startDateTime === undefined
-                  ? null
-                  : moment(item.startDateTime)
-              }
+            <TimePicker.RangePicker
+              defaultValue={[
+                item.startDateTime !== undefined
+                  ? moment(item.startDateTime)
+                  : undefined,
+                item.endDateTime !== undefined
+                  ? moment(item.endDateTime)
+                  : undefined
+              ]}
               disabled={type === 3 ? true : false}
-              format={format}
+              format={'HH:mm'}
               onChange={(e) => {
-                start(index, e)
-              }}
-            />
-            ~
-            <TimePicker
-              defaultValue={
-                item.startDateTime === undefined
-                  ? null
-                  : moment(item.endDateTime)
-              }
-              disabled={type === 3 ? true : false}
-              format={format}
-              onChange={(e) => {
-                end(index, e)
+                time(index, e)
               }}
             />
             <div className={styles.executionMethod}>

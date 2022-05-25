@@ -7,16 +7,63 @@ import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 import { gantt } from 'dhtmlx-gantt'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 const Gantt = (props: any) => {
-  const { zoom, tasks, updateList, rightData, leftData, restDate, name } = props
+  const {
+    select,
+    zoom,
+    tasks,
+    updateList,
+    rightData,
+    leftData,
+    restDate,
+    name,
+    treeSelectionGantt
+  } = props
 
   const chartDom = document.getElementById(name) //获取id
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
-  const [select, setSelect] = useState<any>() //选中项
+  // const [select, setSelect] = useState<any>() //选中项
+  // const [treeSelection, setTreeSelection] = useState<any>() //选中项
+  const locationRef = useRef({ x: 0, y: 0 })
+  const treeSelection = useRef({ select: '' })
 
-  const dataDome = ['2020-04-07', '2020-04-08']
+  useEffect(() => {
+    if (!isEmpty(tasks.data)) {
+      //获取滚动的距离
+      const newLeft = locationRef.current.x || 0
+      const newTop = locationRef.current.y || 0
+      const selectRef = treeSelection.current.select || 0
+
+      gantt.attachEvent('onGanttScroll', function (left, top) {
+        locationRef.current = { x: left, y: top }
+      })
+      ganttShow(tasks) //渲染数据   勿动
+      gantt.scrollTo(newLeft, newTop) //定位
+      //选中项
+      if (selectRef !== undefined) {
+        gantt.selectTask(selectRef)
+      }
+    } else {
+      ganttShow({ data: [], links: [] })
+    }
+  }, [tasks])
+
+  useEffect(() => {
+    if (select !== null) {
+      treeSelection.current.select = select
+    }
+  }, [select])
+
+  // useEffect(() => {
+  //   if (treeSelectionGantt !== undefined) {
+  //     // setSelect(treeSelectionGantt)
+  //     console.log('我执行了?', treeSelectionGantt)
+  //     setSelect(treeSelectionGantt)
+  //   }
+  // }, [treeSelectionGantt])
+
   useEffect(() => {
     if (!isEmpty(restDate)) {
       setRest(restDate)
@@ -26,34 +73,6 @@ const Gantt = (props: any) => {
   useEffect(() => {
     setZoom(zoom)
   }, [zoom])
-
-  useEffect(() => {
-    if (!isEmpty(tasks.data)) {
-      console.log('数据更新了..')
-      //获取滚动的距离
-      let newLeft = 0
-      let newTop = 0
-
-      gantt.attachEvent('onGanttScroll', function (left, top) {
-        // console.log(left)
-        // console.log(top)
-        if (left !== 0 || top !== 0) {
-          newLeft = left
-          newTop = top
-        }
-      })
-
-      ganttShow(tasks) //渲染数据
-
-      // console.log('最终渲染的值', newLeft, newTop)
-      gantt.scrollTo(newLeft, newTop) //定位
-
-      //选中项
-      if (select !== undefined) {
-        gantt.selectTask(select)
-      }
-    }
-  }, [tasks, select])
 
   // 静态方法
   const setZoom = (value: any) => {
@@ -67,7 +86,6 @@ const Gantt = (props: any) => {
   // **需用和动态数据交互的方法
   useEffect(() => {
     if (!gantt.$initialized) {
-      // gantt.refreshData()
       color()
     }
     gantt.ext.zoom.setLevel(zoom)
@@ -130,13 +148,10 @@ const Gantt = (props: any) => {
     ]
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
-      setSelect(id)
       leftData && leftData(id)
     })
     //单击右键
     gantt.attachEvent('onContextMenu', function (id: any) {
-      console.log('右', id)
-
       rightData && rightData(id)
     })
 
@@ -198,6 +213,7 @@ const Gantt = (props: any) => {
     gantt.ext.zoom.init(zoomConfig)
 
     // 更新的值 **误删**
+    let timeout
     const dp = gantt.createDataProcessor({
       task: {
         // create: function (data: any) {
@@ -208,7 +224,12 @@ const Gantt = (props: any) => {
         // },
         update: function (data: any, id: any) {
           // console.log('更新任务----------------------', data)
-          updateList && updateList(data)
+
+          //防止重复提交
+          clearTimeout(timeout)
+          timeout = setTimeout(() => {
+            updateList && updateList(data)
+          }, 500)
         }
         // delete: function (id: any) {
         //   console.log('删除任务----------------------', id)
@@ -313,22 +334,10 @@ const Gantt = (props: any) => {
     }
   }
 
-  // const initGanttDataProcessor = () => {
-  //   gantt.createDataProcessor((type: any, action: any, item: any, id: any) => {
-  //     return new Promise<void>((resolve, reject) => {
-  //       // if (onDataUpdated) {
-  //       //   onDataUpdated(type, action, item, id)
-  //       // }
-  //       return resolve()
-  //     })
-  //   })
-  // }
   const ganttShow = async (list: any) => {
     gantt.clearAll() //缓存问题 先清楚后添加
-    // gantt.refreshData() //刷新数据
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
-    // initGanttDataProcessor()
 
     gantt.parse(list) //渲染数据
   }

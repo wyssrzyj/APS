@@ -15,7 +15,7 @@ function WorkingHours(props: { onChange: any; list: any }) {
   const [data, setData] = useState<any>(sum)
   // 回显
   useEffect(() => {
-    if (!isEmpty(list)) {
+    if (!isEmpty(list.expireColorConfigs)) {
       setData(list.expireColorConfigs)
     }
   }, [list])

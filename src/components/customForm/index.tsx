@@ -36,7 +36,7 @@ interface Props {
 
 const initLayout = {
   labelCol: { span: 6 },
-  wrapperCol: { span: 17 }
+  wrapperCol: { span: 18 }
 }
 
 const CustomForm = forwardRef((props: Props, ref) => {
@@ -64,7 +64,7 @@ const CustomForm = forwardRef((props: Props, ref) => {
       initialValues={initialValues}
       onValuesChange={valuesChange}
     >
-      <Row>
+      <Row gutter={24}>
         {configs.map((item, idx) => {
           const data: any = {}
           keys.forEach((i) => {
@@ -89,7 +89,8 @@ const CustomForm = forwardRef((props: Props, ref) => {
                 label={item.label}
                 rules={[{ required: item.required, message: item.message }]}
                 // initialValue={item.initialValue}
-                {...layout}
+
+                {...(item.layout ? item.layout : layout)}
               >
                 <FormNode {...data}></FormNode>
               </FormItem>

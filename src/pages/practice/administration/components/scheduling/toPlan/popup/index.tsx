@@ -111,25 +111,26 @@ function Popup(props: { content: any }) {
     setShopName(arr.shopId)
     //所属工段
     arr.sectionDome = map.get(arr.section)
-
     setList(arr)
   }
   //渲染数据
   useEffect(() => {
     if (!isEmpty(list)) {
-      list.planStartTime =
-        list.planStartTime === null ? null : moment(list.planStartTime)
+      const cloneList = cloneDeep(list)
+      cloneList.planStartTime =
+        cloneList.planStartTime === null
+          ? null
+          : moment(cloneList.planStartTime)
 
-      list.planEndTime =
-        list.planEndTime === null ? null : moment(list.planEndTime)
+      cloneList.planEndTime =
+        cloneList.planEndTime === null ? null : moment(cloneList.planEndTime)
+      cloneList.factoryName = formData
+      setLargestNumber(cloneList.productionAmount)
+      cloneList.remaining =
+        cloneList.productionAmount - cloneList.completedAmount
+      setType(cloneList.isLocked)
 
-      list.factoryName = formData
-
-      setLargestNumber(list.productionAmount)
-
-      list.remaining = list.productionAmount - list.completedAmount
-      setType(list.isLocked)
-      form.setFieldsValue(list)
+      form.setFieldsValue(cloneList)
     }
   }, [list])
 
@@ -164,10 +165,14 @@ function Popup(props: { content: any }) {
     values.planStartTime = moment(values.planStartTime).valueOf()
 
     values.isLocked = type === false ? 0 : 1
+    // 当接口为0 手动减去 上次的
     //手动减去api
-    values.additionalTime = values.planEndTime - endTimeData
-    values.additionalTime =
-      values.additionalTime === 0 ? null : values.additionalTime
+
+    if (endTimeData === undefined || endTimeData <= 0) {
+      values.additionalTime = values.planEndTime - list.planEndTime
+    } else {
+      values.additionalTime = values.planEndTime - endTimeData
+    }
 
     //外发不需要更改
     if (sectionType !== false) {
@@ -182,8 +187,6 @@ function Popup(props: { content: any }) {
     } else {
       values.id = editWindowList.id
     }
-    console.log('保存的数据', values)
-
     if (values.planStartTime < values.planEndTime) {
       // 结束时间 手动-接口
       const res = await editingTasks(values)
@@ -233,8 +236,6 @@ function Popup(props: { content: any }) {
         const cloneLis = cloneDeep(list)
         const time = moment(arr.data)
         // 用于保存
-        console.log('接口算的值', moment(arr.data).valueOf())
-
         setEndTimeData(moment(arr.data).valueOf())
         // setEndTimeData(1653321600416)
         cloneLis.planStartTime = moment(e)

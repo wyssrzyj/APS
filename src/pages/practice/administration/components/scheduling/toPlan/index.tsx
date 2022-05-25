@@ -1,10 +1,11 @@
 import { message, Popover, Tabs, Tag, Tree } from 'antd'
-import { divide, isEmpty } from 'lodash'
+import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { dockingDataApis, schedulingApis } from '@/recoil/apis'
 
 import BreakUp from './breakUp/index'
+import Forms from './forms/index'
 import styles from './index.module.less'
 import Popup from './popup'
 import TheEfficiency from './theEfficiency'
@@ -17,15 +18,22 @@ function ToPlan(props: {
   updateMethod: any
   checkSchedule: any
   release: any
+  refreshTree
+  setRefreshTree
+  treeSelect
 }) {
-  const { remind, formData, updateMethod, checkSchedule, release } = props
   const {
-    listProductionOrders,
-    unlockWork,
-    releaseFromAssignment,
-    forDetail,
-    factoryList
-  } = schedulingApis
+    remind,
+    formData,
+    updateMethod,
+    checkSchedule,
+    release,
+    refreshTree,
+    setRefreshTree,
+    treeSelect
+  } = props
+  const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
+    schedulingApis
   const { workshopList, teamList, capacityList } = dockingDataApis
   const [list, setList] = useState<any>([]) //总
   const [editWindow, setEditWindow] = useState(false) //编辑窗
@@ -34,10 +42,11 @@ function ToPlan(props: {
   const [WaitingTreeData, setWaitingTreeData] = useState([]) //处理后的已计划
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [efficiencyData, setEfficiencyData] = useState(false) //效率
-  const [workSplitList, setWorkSplitList] = useState() //工作拆分
+  const [workSplitList, setWorkSplitList] = useState<any>() //工作拆分
 
   const [current, setCurrent] = useState('0')
   const [keys, setKeys] = useState<any>()
+  const [selectedKeys, setSelectedKeys] = useState<any>() //树传图
 
   const [equal, setEqual] = useState<any>('1')
   const [currentItem, setCurrentItem] = useState<any>() //点击的值.
@@ -53,6 +62,11 @@ function ToPlan(props: {
   const [templateId, setTemplateId] = useState<any>() //效率模板数据
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
+  useEffect(() => {
+    if (selectedKeys !== null && selectedKeys !== undefined) {
+      treeSelect(selectedKeys[0])
+    }
+  }, [selectedKeys])
   const map = new Map()
   map.set('1', '裁剪工段')
   map.set('2', '缝制工段')
@@ -76,6 +90,14 @@ function ToPlan(props: {
       workshopTeam(formData)
     }
   }, [formData])
+
+  //图移动  树刷新
+  useEffect(() => {
+    if (refreshTree !== undefined && refreshTree !== '') {
+      dataAcquisition(refreshTree)
+      setRefreshTree('')
+    }
+  }, [refreshTree])
 
   useEffect(() => {
     if (release !== undefined) {
@@ -217,6 +239,7 @@ function ToPlan(props: {
   useEffect(() => {
     getData(list[Number(current)], current)
   }, [current])
+
   //处理数据
   const getData = (data: any, type: string) => {
     if (!isEmpty(data)) {
@@ -227,7 +250,7 @@ function ToPlan(props: {
         !isEmpty(i.children) &&
           i.children.map((item: any) => {
             item.disableCheckbox = true
-            item.key = item.id
+            item.key = item.section === '2' ? item.id : item.detailList[0].id
             item.type = item.title === '缝制工段' ? 1 : 0 //用于判断
             item.popover = false
             item.title = item.type === 1 ? sewing(item, 1) : sewing(item, 2)
@@ -264,15 +287,28 @@ function ToPlan(props: {
       }
     }
   }
+
+  //获取子项的所有数据
+
+  //切换
+
   const getCurrentTabs = (data: any[], i: any) => {
     // 待计划.
     const stayData = data[0]
     const waitDor: any[] = []
+
     stayData.map((item: { children: any }) => {
       if (!isEmpty(item.children)) {
         waitDor.push(item.children)
       }
     })
+
+    waitDor.flat(Infinity).forEach((item) => {
+      if (!isEmpty(item.children)) {
+        waitDor.push(item.children)
+      }
+    })
+
     const waitDorList = stayData.concat(waitDor.flat(Infinity))
     const waitIndex = waitDorList.findIndex(
       (item: { id: any }) => item.id === i
@@ -283,11 +319,19 @@ function ToPlan(props: {
     // 已计划
     const complete = data[1]
     const completeChildren: any[] = []
+
     complete.map((item: { children: any }) => {
       if (!isEmpty(item.children)) {
         completeChildren.push(item.children)
       }
     })
+
+    completeChildren.flat(Infinity).forEach((item) => {
+      if (!isEmpty(item.children)) {
+        completeChildren.push(item.children)
+      }
+    })
+
     const completeList = complete.concat(completeChildren.flat(Infinity))
     const completeIndex = completeList.findIndex(
       (item: { id: any }) => item.id === i
@@ -296,6 +340,7 @@ function ToPlan(props: {
       setCurrent('1')
     }
   }
+
   useEffect(() => {
     if (!isEmpty(list)) {
       //这次和上次不一样才执行
@@ -352,7 +397,6 @@ function ToPlan(props: {
   const efficiencyMethods = async (id: any) => {
     setEfficiencyID(id)
     const res = await forDetail({ id })
-    console.log('效率模板', res)
 
     setTemplateId(res)
     setEfficiencyData(true)
@@ -482,12 +526,17 @@ function ToPlan(props: {
       )
     }
   }
-  const onSelect = (selectedKeys: React.Key[], info: any) => {
+  const onSelect = (e: React.Key[], info: any) => {
     setCurrentItem(info.node)
-    setKeys(selectedKeys)
+    setSelectedKeys(e)
+    setKeys(e)
   }
   const onCheck = (checkedKeys: any, info: any) => {
     setToPlanID(checkedKeys)
+  }
+  //清空
+  const empty = () => {
+    setWorkSplitList({})
   }
   const contents = {
     factoryName,
@@ -497,6 +546,32 @@ function ToPlan(props: {
     setEditWindow,
     editWindowList
   }
+  //获取id.
+  const getID = (e, data) => {
+    if (!isEmpty(data)) {
+      const current = data.filter(
+        (item) => item.externalProduceOrderNum === e.productName
+      )
+      if (!isEmpty(current)) {
+        return [current[0].externalProduceOrderId]
+      }
+    }
+  }
+
+  const FormData = (e, type) => {
+    if (type === 'stay') {
+      if (getID(e, treeData) !== undefined) {
+        setSelectedKeys(getID(e, treeData))
+        setKeys(getID(e, treeData))
+      }
+    }
+    if (type === 'already') {
+      if (getID(e, treeData) !== undefined) {
+        setSelectedKeys(getID(e, WaitingTreeData))
+        setKeys(getID(e, WaitingTreeData))
+      }
+    }
+  }
   return (
     <div>
       {!isModalVisible ? (
@@ -504,6 +579,12 @@ function ToPlan(props: {
           <TabPane tab="待计划" key="0">
             {treeData !== undefined && treeData.length > 0 ? (
               <div>
+                <Forms
+                  FormData={(e) => {
+                    FormData(e, 'stay')
+                  }}
+                ></Forms>
+
                 <Tree
                   checkable
                   // height={500}
@@ -519,6 +600,12 @@ function ToPlan(props: {
           <TabPane tab="已计划" key="1">
             {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
               <div>
+                <Forms
+                  FormData={(e) => {
+                    FormData(e, 'already')
+                  }}
+                ></Forms>
+
                 <Tree
                   // height={200}
                   selectedKeys={keys}
@@ -533,15 +620,18 @@ function ToPlan(props: {
         </Tabs>
       ) : null}
       {/* 拆分 */}
-      <BreakUp
-        teamName={teamName}
-        capacityData={capacityData}
-        formData={formData}
-        breakSave={breakSave}
-        workSplitList={workSplitList}
-        setIsModalVisible={setIsModalVisible}
-        isModalVisible={isModalVisible}
-      />
+      {isModalVisible && (
+        <BreakUp
+          empty={empty}
+          teamName={teamName}
+          capacityData={capacityData}
+          formData={formData}
+          breakSave={breakSave}
+          workSplitList={workSplitList}
+          setIsModalVisible={setIsModalVisible}
+          isModalVisible={isModalVisible}
+        />
+      )}
       {/* 效率模板 */}
       <TheEfficiency
         templateId={templateId}

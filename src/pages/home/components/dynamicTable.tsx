@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-12 13:03:02
- * @LastEditTime: 2022-05-17 08:50:25
+ * @LastEditTime: 2022-05-23 17:46:45
  * @Description:
  * @LastEditors: zjr
  */
@@ -46,7 +46,7 @@ const DynamicTable = (props: Record<string, any>) => {
   }
 
   return (
-    <div className={styles.dynamicTable}>
+    <div>
       <header>{title}</header>
       <Form
         form={form}
@@ -69,16 +69,21 @@ const DynamicTable = (props: Record<string, any>) => {
           </Select>
         </Form.Item>
       </Form>
-      <CusDragTable
-        key={isDelay ? 'productionDelayList' : 'productionChangeList'}
-        noNeedDropdown={true}
-        storageField={isDelay ? 'productionDelayList' : 'productionChangeList'}
-        columns={changeTableColumn()}
-        dataSource={dataSource}
-        rowKey={'externalProduceOrderId'}
-        onChange={tableChange}
-        pagination={false}
-      />
+      <div className={styles.dynamicTable}>
+        <CusDragTable
+          scroll={{ x: 420, y: 'calc(100vh - 605px)' }}
+          key={isDelay ? 'productionDelayList' : 'productionChangeList'}
+          noNeedDropdown={true}
+          storageField={
+            isDelay ? 'productionDelayList' : 'productionChangeList'
+          }
+          columns={changeTableColumn()}
+          dataSource={dataSource}
+          rowKey={'externalProduceOrderId'}
+          onChange={tableChange}
+          pagination={false}
+        />
+      </div>
     </div>
   )
 }

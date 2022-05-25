@@ -1,12 +1,11 @@
-import { Table } from 'antd'
-import { isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { Title } from '@/components'
+import { CusDragTable } from '@/components'
 import { productionSingleApis } from '@/recoil/apis'
+import useTableChange from '@/utils/useTableChange'
 
-import Dome from './dome'
 import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
@@ -20,24 +19,37 @@ function Production() {
   map.set(3, '生产中')
   map.set(4, '生产完成')
 
-  const [pageNum, setPageNum] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
-  const [total, setTotal] = useState<number>(0)
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [types, setType] = useState(false) //编辑或者查看
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
-  const [loading, setLoading] = useState(true) //删除弹窗
-  const defaultPageSize = 10
   const [params, setParams] = useState<any>({
     pageNum: 1,
-    pageSize: defaultPageSize
+    pageSize: 10
   })
 
   const [getDetailsId, setGetDetailsId] = useState() //工艺需要的id
   const [externalProduceOrderId, setExternalProduceOrderId] = useState() //外发需要的id
-  const [list, setList] = useState([])
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
   const [whetherEditor, setWhetherEditor] = useState<any>([])
+  const [data, setData] = useState<any>([])
+  const {
+    tableChange,
+    dataSource,
+    total,
+    pageNum,
+    pageSize,
+    loading,
+    getDataList
+  } = useTableChange(params, productionList)
+  useEffect(() => {
+    if (!isEmpty(dataSource)) {
+      const cloneDataSource = cloneDeep(dataSource)
+      cloneDataSource.map((item) => {
+        item.id = item.externalProduceOrderId
+      })
+      setData(cloneDataSource)
+    }
+  }, [dataSource])
 
   //工厂名称
   useEffect(() => {
@@ -55,35 +67,8 @@ function Production() {
       setFactoryData(arr)
     }
   }
-
-  useEffect(() => {
-    api(params)
-  }, [params])
-
   const refreshData = () => {
-    api(params)
-  }
-
-  const api = async (item: any) => {
-    //计划完成日期
-    if (item.planEndDate) {
-    } else {
-      item.endPlanEndDate = null
-      item.startPlanEndDate = null
-    }
-
-    const arr: any = await productionList(item)
-    if (!isEmpty(arr.records)) {
-      setTotal(arr.total)
-      setLoading(false)
-      arr.records.map((item: any) => {
-        item.id = `${item.productId + Math.random()}` //后端没有成成id 这里自己做处理 防止key值重复
-      })
-      const arrData = arr.records
-      setList([...arrData])
-    } else {
-      setList([])
-    }
+    getDataList && getDataList()
   }
 
   // eslint-disable-next-line no-sparse-arrays
@@ -104,19 +89,22 @@ function Production() {
       title: '接单工厂',
       key: 'factoryName',
       align: 'center',
+      width: 100,
       dataIndex: 'factoryName'
     },
     {
       title: '产品名称',
       key: 'productName',
       align: 'center',
+      width: 250,
       dataIndex: 'productName'
     },
     {
       title: '产品款号',
       key: 'productNum',
       align: 'center',
-      dataIndex: 'productNum'
+      dataIndex: 'productNum',
+      width: 200
     },
     {
       title: '客户款号',
@@ -128,13 +116,16 @@ function Production() {
       title: '生产单总量',
       key: 'orderSum',
       align: 'center',
-      dataIndex: 'orderSum'
+      dataIndex: 'orderSum',
+      width: 100
     },
     {
       title: '计划完成日期',
       key: 'planEndDate',
       align: 'center',
       dataIndex: 'planEndDate',
+      width: 170,
+
       render: (v: any) => {
         return <div>{moment(v).format('YYYY-MM-DD')}</div>
       }
@@ -187,8 +178,7 @@ function Production() {
                 className={styles.operation}
                 onClick={() => editUser(true, _row)}
               >
-                <div> 工艺</div>
-                <div> 外发</div>
+                <div> 工艺外发</div>
               </div>
             ) : null}
           </div>
@@ -205,14 +195,7 @@ function Production() {
       setParams({ pageNum, pageSize, ...e })
     }
   }
-  const onPaginationChange = (
-    page: React.SetStateAction<number>,
-    pageSize: React.SetStateAction<number>
-  ) => {
-    setPageNum(page)
-    setPageSize(pageSize)
-    setParams({ ...params, pageNum: page, pageSize: pageSize })
-  }
+
   const editUser = (type: boolean, row: any) => {
     console.log(row.outsourceType)
 
@@ -242,31 +225,32 @@ function Production() {
     getDetailsId,
     externalProduceOrderId
   }
+
   return (
     <div className={styles.qualification}>
-      <div>{/* <Title title={'生产单列表'} /> */}</div>
-      <div></div>
       <div>
         <div className={styles.content}>
           <Forms factoryData={factoryData} FormData={FormData}></Forms>
-          <Table
-            className={styles.table}
+          <CusDragTable
+            storageField={'productionList'}
             columns={columns}
-            dataSource={list}
-            loading={loading}
+            dataSource={data}
             rowKey={'id'}
+            scroll={{ x: 1000 }}
+            loading={loading}
+            onChange={tableChange}
             pagination={{
               //分页
               showSizeChanger: true,
               // showQuickJumper: true, //是否快速查找
-              pageSize, //每页条数
+              pageSize: pageSize, //每页条数
               current: pageNum, //	当前页数
               total, //数据总数
               // position: ['bottomCenter'], //居中
-              pageSizeOptions: ['10', '20', '50'],
-              onChange: onPaginationChange //获取当前页码是一个function
+              pageSizeOptions: ['10', '20', '50']
             }}
           />
+
           <Popup content={content} />
         </div>
       </div>

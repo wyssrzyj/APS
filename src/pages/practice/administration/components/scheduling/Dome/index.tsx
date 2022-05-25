@@ -1,7 +1,7 @@
 import { Button, Dropdown, Menu, message, Select, Tag } from 'antd'
 import { cloneDeep, divide, isEmpty, keys } from 'lodash'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { dockingData } from '@/recoil'
@@ -18,6 +18,8 @@ const Dhx = (props: {
   setHighlighted: any
   formData: any
   gunterType: any
+  refresh: any
+  treeSelection: any
 }) => {
   const {
     gunterData,
@@ -25,7 +27,9 @@ const Dhx = (props: {
     updateMethod,
     setHighlighted,
     formData,
-    gunterType
+    gunterType,
+    refresh,
+    treeSelection
   } = props
   const { getLine, calculateEndTimeAfterMove } = schedulingApis
   const { factoryList } = workOvertimeApis
@@ -51,9 +55,12 @@ const Dhx = (props: {
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
   const [overtimeType, setOvertimeType] = useState<any>(false) //判断右键是否有值 有值且不展示添加加班
 
+  const [treeSelectionGantt, setTreeSelectionGantt] = useState<any>() //树选中
+
   useEffect(() => {
     getData()
   }, [])
+
   const getData = async () => {
     const res: any = await factoryList()
     const arr: any = res.data
@@ -69,8 +76,11 @@ const Dhx = (props: {
   useEffect(() => {
     if (!isEmpty(gunterData) && !isEmpty(notWork)) {
       setChart(gunterData)
+    } else {
+      setChart([])
     }
-    setLine([]) //线 //初始的时候传空
+
+    setLine([]) //线 //初始的时候传空.
     setNotWorking(notWork) //不可工作时间
   }, [gunterData, notWork, gunterType])
 
@@ -81,6 +91,10 @@ const Dhx = (props: {
           data: chart,
           links: line
         })
+      } else {
+        //没有数据展示空值
+        const arr = { data: [], links: [] }
+        setSubjectData({ ...arr })
       }
 
       // const dataqq = [
@@ -159,26 +173,23 @@ const Dhx = (props: {
   useEffect(() => {
     // 线
     if (!isEmpty(select)) {
-      getLineData(select)
+      getLineData(select, gunterType)
     }
 
     // 获取对应的不可用时间
     // if (type === '0') {
     //点击
     if (!isEmpty(chart)) {
-      const teamId = chart.filter((item: { id: any }) => item.id === select)[0]
-        .teamId
-
+      const arr = chart.filter((item: { id: any }) => item.id === select)
+      const teamId = !isEmpty(arr) ? arr[0].teamId : null
       if (teamId !== null) {
         const unavailable: any = notWorking.filter(
           (item: { id: any }) => item.id === teamId
         )
         if (unavailable !== undefined && !isEmpty(unavailable)) {
-          // console.log('点击不可用时间', unavailable[0].time)
           setRestDate(unavailable[0].time)
         }
       } else {
-        // console.log('暂无')
         setRestDate(['2000-06-06'])
       }
     }
@@ -195,13 +206,14 @@ const Dhx = (props: {
     //     console.log('空~~~~~~~~~~')
     //   }
     // }
-  }, [select])
+  }, [select, gunterType])
 
   //线接口
-  const getLineData = async (id: any) => {
-    const line: any = await getLine({ id }) //线
+  const getLineData = async (id: string, type: string) => {
+    const hasOutsource = type === '0' ? false : null
+    const line: Record<string, any> = await getLine({ id, hasOutsource }) //线
     if (line.code === 200) {
-      setLine(line.data === null ? [] : line.data)
+      setLine(line.data || [])
     }
   }
 
@@ -257,6 +269,7 @@ const Dhx = (props: {
             updateData.id,
             updateData.teamId
           )
+          refresh && refresh()
         }
       }
     }
@@ -280,11 +293,14 @@ const Dhx = (props: {
     setCurrentZoom(type)
   }
   //** 点击事件 点击父节点 传递 不可用时间
-  const leftData = async (e: any) => {
-    if (e !== null) {
-      setSelect(e)
+  const leftData = async (id: string) => {
+    if (id !== null) {
+      setSelect(id)
     }
   }
+  useEffect(() => {
+    setSelect(treeSelection)
+  }, [treeSelection])
 
   // 更新
   const updateList = (e: any) => {
@@ -293,12 +309,12 @@ const Dhx = (props: {
 
   //右键
   const rightData = (e: any) => {
-    // if (e !== null) {
-    //   // setGetLink(e)
-    //   setOvertimeType(false)
-    // } else {
-    //   setOvertimeType(true)
-    // }
+    if (e !== null) {
+      // setGetLink(e)
+      setOvertimeType(false)
+    } else {
+      setOvertimeType(true)
+    }
   }
   const rightClick = (
     <Menu>
@@ -321,10 +337,10 @@ const Dhx = (props: {
     if (!isEmpty(chart)) {
       if (!isEmpty(select)) {
         const gunter = chart.filter((item: { id: any }) => item.id === select)
-
         if (!isEmpty(gunter[0])) {
-          const id =
-            gunter[0].section === '2' ? gunter[0].id : gunter[0].assignmentId
+          //根据不同工段传递不同id 只有缝制工段才传id
+          const id = gunter[0].id
+          // gunter[0].section === '2' ? gunter[0].id : gunter[0].assignmentId
           setHighlighted && setHighlighted(id)
         }
       }
@@ -351,7 +367,9 @@ const Dhx = (props: {
               <div className="site-dropdown-context-menu">
                 <div className="gantt-container">
                   <Gantt
-                    name={'test'}
+                    select={select}
+                    treeSelectionGantt={treeSelectionGantt}
+                    name={'lyj'}
                     leftData={leftData}
                     rightData={rightData}
                     tasks={subjectData}

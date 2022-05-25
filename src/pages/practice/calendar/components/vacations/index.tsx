@@ -1,10 +1,11 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, message, Modal, Table, Tag } from 'antd'
+import { Button, message, Modal, Tag } from 'antd'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
-import { Title } from '@/components'
+import { CusDragTable } from '@/components'
 import { holidaySeasonApis } from '@/recoil/apis'
+import useTableChange from '@/utils/useTableChange'
 
 import Forms from './forms'
 import styles from './index.module.less'
@@ -12,25 +13,28 @@ import MovPopup from './movPopup'
 import Popup from './popup'
 function Vacations() {
   const { confirm } = Modal
-
-  const [pageNum, setPageNum] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
-  const [total] = useState<number>(0)
-  const defaultCurrent = 1
-  const defaultPageSize = 10
+  const { holidayList, holidayID, holidayListMov } = holidaySeasonApis
 
   const [params, setParams] = useState<any>({
     pageNum: 1,
-    pageSize: defaultPageSize
+    pageSize: 10
   })
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [type, setType] = useState(1) //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
-  const [list, setlist] = useState([])
   const [edit, setEdit] = useState([]) //编辑数据
 
-  const { holidayList, holidayID, holidayListMov } = holidaySeasonApis
+  const {
+    tableChange,
+    dataSource,
+    total,
+    pageNum,
+    pageSize,
+    loading,
+    getDataList
+  } = useTableChange(params, holidayList)
+
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
@@ -119,17 +123,6 @@ function Vacations() {
     }
   ]
 
-  useEffect(() => {
-    api(params)
-  }, [params])
-  const api = async (item: any) => {
-    const arr = await holidayList(item)
-    setlist(arr.records)
-  }
-
-  const newlyAdded = async () => {
-    api(params)
-  }
   //头部form的数据
   const FormData = (e: any) => {
     if (e.factoryId !== undefined) {
@@ -138,13 +131,7 @@ function Vacations() {
       setParams({ pageNum, pageSize, ...e })
     }
   }
-  const onPaginationChange = (
-    page: React.SetStateAction<number>,
-    pageSize: React.SetStateAction<number>
-  ) => {
-    setPageNum(page)
-    setPageSize(pageSize)
-  }
+
   const editUser = async (type: boolean, value: any) => {
     const arr = await holidayID({ id: value.id })
     setEdit(arr)
@@ -167,7 +154,7 @@ function Vacations() {
 
   const movApi = async () => {
     const arr = await holidayListMov({ idList: selectedRowKeys })
-    newlyAdded()
+    getDataList && getDataList()
   }
   const onSelectChange = (selectedRowKeys: React.SetStateAction<never[]>) => {
     setSelectedRowKeys(selectedRowKeys)
@@ -202,44 +189,50 @@ function Vacations() {
     })
   }
   const content = { isModalVisible, setIsModalVisible, type, edit }
+  const TableLeft = () => {
+    return (
+      <>
+        <Button
+          className={styles.executionMethod}
+          type="primary"
+          onClick={executionMethod}
+        >
+          新增
+        </Button>
+        <Button type="primary" danger onClick={start}>
+          删除
+        </Button>
+      </>
+    )
+  }
   return (
     <div className={styles.qualification}>
-      {/* <div>
-        <Title title={'节假日'} />
-      </div> */}
       <div>
         <div className={styles.content}>
           <Forms FormData={FormData}></Forms>
 
-          <Button
-            className={styles.executionMethod}
-            type="primary"
-            onClick={executionMethod}
-          >
-            新增
-          </Button>
-          <Button type="primary" danger onClick={start}>
-            删除
-          </Button>
-          <Table
-            className={styles.table}
+          <CusDragTable
+            storageField={'vacations'}
+            cusBarLeft={TableLeft}
             rowSelection={rowSelection}
             columns={columns}
-            dataSource={list}
+            dataSource={dataSource}
             rowKey={'id'}
+            scroll={{ x: 1000 }}
+            loading={loading}
+            onChange={tableChange}
             pagination={{
               //分页
               showSizeChanger: true,
               // showQuickJumper: true, //是否快速查找
-              pageSize, //每页条数
+              pageSize: pageSize, //每页条数
               current: pageNum, //	当前页数
               total, //数据总数
               // position: ['bottomCenter'], //居中
-              pageSizeOptions: ['10', '20', '50'],
-              onChange: onPaginationChange //获取当前页码是一个function
+              pageSizeOptions: ['10', '20', '50']
             }}
           />
-          <Popup content={content} newlyAdded={newlyAdded} />
+          <Popup content={content} newlyAdded={getDataList} />
         </div>
       </div>
       <MovPopup

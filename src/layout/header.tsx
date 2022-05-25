@@ -1,11 +1,12 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-05-17 09:44:27
+ * @LastEditTime: 2022-05-24 10:01:27
  * @Description:
  * @LastEditors: zjr
  */
-import { message } from 'antd'
+import { UserOutlined } from '@ant-design/icons'
+import { Avatar, message } from 'antd'
 import { userInfo } from 'os'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -13,6 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { CustomModal } from '@/components'
 import Icon from '@/components/Icon'
 import { loginApis, systemSettingsApis } from '@/recoil/apis'
+import { clearLocalStorage } from '@/utils/tool'
 
 import styles from './index.module.less'
 import { editPwdModalConfig } from './menuConfigs'
@@ -53,9 +55,7 @@ const Header = () => {
     if (res.success) {
       message.success(res.msg || '修改密码成功，请重新登录')
       setIsEditPwdVisible(false)
-      localStorage.removeItem('currentUser')
-      localStorage.removeItem('token')
-      localStorage.removeItem('systemUuid')
+      clearLocalStorage()
       navigate('/login')
     } else {
       message.warning(res.msg || '操作失败，请稍后重试')
@@ -74,6 +74,11 @@ const Header = () => {
       <div className={styles.headerR}>
         <div className={styles.userInfo}>
           <div className={styles.user}>
+            <Avatar
+              size={24}
+              style={{ backgroundColor: '#1890ff', marginRight: '8px' }}
+              icon={<UserOutlined />}
+            />
             {JSON.parse(localStorage.getItem('currentUser')) &&
               JSON.parse(localStorage.getItem('currentUser')).user.username}
           </div>

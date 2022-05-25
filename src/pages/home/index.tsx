@@ -1,11 +1,12 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-05-13 17:39:52
+ * @LastEditTime: 2022-05-25 09:54:43
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  */
 import { Col, Divider, Row, Space } from 'antd'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 
 import { Title } from '@/components'
 
@@ -13,8 +14,9 @@ import DynamicContent from './components/dynamicContent'
 import DynamicTable from './components/dynamicTable'
 import styles from './index.module.less'
 const Home = () => {
+  const containerRef = useRef<HTMLDivElement>(null)
   return (
-    <div className={styles.outContainer}>
+    <div className={styles.outContainer} ref={containerRef}>
       {/* <Title title={'首页'}></Title> */}
       <Row gutter={24}>
         <Col span={12}>
@@ -33,20 +35,13 @@ const Home = () => {
         </Col>
       </Row>
       <div className={styles.dynamicTableContainer}>
-        <div>
-          <DynamicTable
-            title="生产延期查询"
-            isDelay={true}
-            key="productDelayTable"
-          />
-        </div>
-        <div className={styles.deliverLine}></div>
-        <div>
-          <DynamicTable
-            title="齐套生产单库存变动查询"
-            key="productChangeTable"
-          />
-        </div>
+        <DynamicTable
+          title="生产延期查询"
+          isDelay={true}
+          key="productDelayTable"
+        />
+        <div className={styles.deliverLine}>&nbsp;</div>
+        <DynamicTable title="齐套生产单库存变动查询" key="productChangeTable" />
       </div>
     </div>
   )

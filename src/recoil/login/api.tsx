@@ -1,23 +1,21 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-05-16 09:48:27
+ * @LastEditTime: 2022-05-24 10:07:16
  * @Description:
  * @LastEditors: zjr
  */
 import { message } from 'antd'
 
 import axios from '@/utils/axios'
+import { clearLocalStorage } from '@/utils/tool'
 
 import { ResponseProps } from '../types'
-
 export const logout = async () => {
   try {
     const res: ResponseProps = await axios.post('/aps/sys/user/logout')
     if (res.code === 200) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('systemUuid')
-      localStorage.removeItem('currentUser')
+      clearLocalStorage()
     }
     if (res && res.code !== 200) {
       message.error(res.msg)
@@ -30,9 +28,7 @@ export const logout = async () => {
     console.log(e) // message.error('')
     if (e.code === 40101 || e.code === 401) {
       message.success('退出成功')
-      localStorage.removeItem('token')
-      // localStorage.removeItem('refresh')
-      localStorage.removeItem('currentUser')
+      clearLocalStorage()
       return true
     }
   }
@@ -62,8 +58,6 @@ export const resetPwd = async (params: any) => {
       `/api/user/forget-password`,
       params
     )
-    console.log('🚀 ~ file: loginStore.tsx ~ line 97 ~ LoginStore ~ res', res)
-
     if (res.code === 200) {
       message.success(res.msg)
     }

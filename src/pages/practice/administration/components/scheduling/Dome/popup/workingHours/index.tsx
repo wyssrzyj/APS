@@ -23,12 +23,19 @@ function WorkingHours(props: { onChange?: (params?: any) => void }) {
     return allDay.substring(10)
   }
 
-  const start = (index: string | number, e: moment.MomentInput) => {
-    data[index].startDateTime = moment(e).valueOf()
-    setData([...data])
-  }
-  const end = (index: string | number, e: moment.MomentInput) => {
-    data[index].endDateTime = moment(e).valueOf()
+  // const start = (index: string | number, e: moment.MomentInput) => {
+  //   data[index].startDateTime = moment(e).valueOf()
+  //   setData([...data])
+  // }
+  // const end = (index: string | number, e: moment.MomentInput) => {
+  //   data[index].endDateTime = moment(e).valueOf()
+  //   setData([...data])
+  // }
+  const time = (index, e) => {
+    const startTime = moment(e[0]).format('YYYY-MM-DD HH:mm')
+    const endTime = moment(e[1]).format('YYYY-MM-DD HH:mm')
+    data[index].startDateTime = moment(startTime).valueOf()
+    data[index].endDateTime = moment(endTime).valueOf()
     setData([...data])
   }
 
@@ -85,7 +92,7 @@ function WorkingHours(props: { onChange?: (params?: any) => void }) {
             {data.map((item, index) => (
               // eslint-disable-next-line react/jsx-key
               <div className={styles.timePicker} key={index}>
-                <TimePicker
+                {/* <TimePicker
                   key={index + 1}
                   defaultValue={
                     item.startDateTime === undefined
@@ -110,6 +117,21 @@ function WorkingHours(props: { onChange?: (params?: any) => void }) {
                   format={format}
                   onChange={(e) => {
                     end(index, e)
+                  }}
+                /> */}
+                <TimePicker.RangePicker
+                  defaultValue={[
+                    item.startDateTime !== undefined
+                      ? moment(item.startDateTime)
+                      : undefined,
+
+                    item.endDateTime !== undefined
+                      ? moment(item.endDateTime)
+                      : undefined
+                  ]}
+                  format={'HH:mm'}
+                  onChange={(e) => {
+                    time(index, e)
                   }}
                 />
                 <div className={styles.executionMethod}>

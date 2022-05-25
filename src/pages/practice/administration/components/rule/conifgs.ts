@@ -41,7 +41,7 @@ export const tableColumns: Array<Partial<Column>> = [
     title: '模板名称',
     align: 'center',
     dataIndex: 'templateName',
-    width: 150
+    width: 250
   },
   {
     title: '工作班组',
@@ -53,26 +53,26 @@ export const tableColumns: Array<Partial<Column>> = [
     title: '初始效率',
     align: 'center',
     dataIndex: 'startEfficiency',
-    width: 150
+    width: 100
   },
   {
     title: '最终效率',
     align: 'center',
     dataIndex: 'finallyEfficiency',
-    width: 200
+    width: 100
   },
   {
     title: '备注',
     align: 'center',
     dataIndex: 'remark',
-    width: 200
+    width: 300
   },
   {
     title: '操作',
     align: 'center',
     dataIndex: 'operate',
     fixed: 'right',
-    width: 200
+    width: 150
   }
 ]
 type AddFormConfig = {

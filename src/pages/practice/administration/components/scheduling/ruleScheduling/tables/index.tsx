@@ -6,6 +6,7 @@ import {
 } from '@ant-design/icons'
 import { Table, Tooltip } from 'antd'
 import { cloneDeep } from 'lodash'
+import moment from 'moment'
 import React, { useState } from 'react'
 
 import styles from './index.module.less'
@@ -77,7 +78,8 @@ function RuleTables(props: Record<string, any>) {
     {
       title: '计划完成时间',
       align: 'center',
-      dataIndex: 'planEndDate'
+      dataIndex: 'planEndDate',
+      render: (vaule: any) => moment(vaule).format('YYYY-MM-DD')
     },
     {
       title: '权重',

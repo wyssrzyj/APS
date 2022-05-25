@@ -190,7 +190,7 @@ export const editTableColumn: any = [
     title: '产品款号',
     align: 'center',
     dataIndex: 'productNum',
-    width: 150
+    width: 200
   },
   {
     title: '生产单总量',
@@ -214,13 +214,13 @@ export const editTableColumn: any = [
     title: '工作车间',
     align: 'center',
     dataIndex: 'shopName',
-    width: 100
+    width: 200
   },
   {
     title: '工作班组',
     align: 'center',
     dataIndex: 'teamName',
-    width: 100
+    width: 150
   },
   {
     title: '计划开始时间',

@@ -1,7 +1,13 @@
 import { message } from 'antd'
 import axios, { Canceler, Method } from 'axios'
 
-import { getCurrentUser, getRefresh, getToken } from '../tool'
+import {
+  clearLocalStorage,
+  getCurrentUser,
+  getRefresh,
+  getToken
+} from '@/utils/tool'
+
 import {
   addSubscriber,
   // dealRefresh,
@@ -40,9 +46,7 @@ customAxios.interceptors.response.use(
     const pathFlag = !noTokenList.includes(location.pathname)
 
     if (pathFlag && !getToken()) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('systemUuid')
-      localStorage.removeItem('currentUser')
+      clearLocalStorage()
       location.replace('/login')
     }
     if (pathFlag && (flag || code === 40101)) {
@@ -58,6 +62,8 @@ customAxios.interceptors.response.use(
     }
     if (location.pathname !== '/login' && code === 401) {
       // token失效
+      message.warning('登录过期，请重新登录')
+      clearLocalStorage()
       location.replace('/login')
     }
 
@@ -67,10 +73,12 @@ customAxios.interceptors.response.use(
     const { response } = error
     const { status, data } = response
     if (
-      location.pathname !== '/user/login' &&
+      location.pathname !== '/login' &&
       (status === 401 || +data.code === 401)
     ) {
       // token失效
+      message.warning('登录过期，请重新登录')
+      clearLocalStorage()
       location.replace('/user/login')
     }
     return Promise.reject(error)

@@ -24,16 +24,17 @@ function Index() {
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
   const [visibleRule, setVisibleRule] = useState(false) //规则排程弹窗
   const [visibleVerify, setVisibleVerify] = useState(false) //校验排程弹窗
-  const [remind, setRemind] = useState() //甘特图高亮
+  const [remind, setRemind] = useState() //甘特图高亮..
   const [formData, setFormData] = useState() //form数据
   const [gunterType, setGunterType] = useState('1') //班组、订单
   const [gunterData, setGunterData] = useState<any[]>([]) //甘特图数据-班组
-  // const [productionData, setProductionData] = useState<any>([]) //甘特图数据-生产
   const [notWork, setNotWork] = useState<any[]>([]) //不可工作时间
   const [checkIDs, setCheckIDs] = useState<any[]>([]) //校验id
   const [promptList, setPromptList] = useState<any[]>([]) //提示数据
   const [release, setRelease] = useState<any[]>() //发布
   const [time, setTime] = useState<any>({}) //最大时间 最小时间
+  const [refreshTree, setRefreshTree] = useState<any>() //
+  const [treeSelection, setTreeSelection] = useState<any>() //树选中
 
   const { figureData, productionView, workingDate } = schedulingApis
 
@@ -49,6 +50,7 @@ function Index() {
   //头部form的数据
   const FormData = (e: any) => {
     setFormData(e)
+    setCheckIDs([])
   }
   // 甘特图数据
   useEffect(() => {
@@ -249,6 +251,16 @@ function Index() {
   const update = () => {
     setRelease(formData)
   }
+  // 树刷新
+  const refresh = () => {
+    const cloneFormData = cloneDeep(formData)
+    setRefreshTree(cloneFormData)
+  }
+  // 树选中
+  const treeSelect = (e) => {
+    setTreeSelection(e)
+  }
+
   return (
     <div className={styles.qualification}>
       <div>{/* <Title title={'生产单排程'} /> */}</div>
@@ -257,13 +269,13 @@ function Index() {
           <Forms FormData={FormData}></Forms>
           <div className={styles.scheduling}>
             <Button
+              className={styles.rules}
               ghost
               type="primary"
               onClick={() => toggleRuleVisible(true)}
             >
               规则排程
             </Button>
-            　
             <Button
               ghost
               className={styles.heckSchedule}
@@ -277,6 +289,9 @@ function Index() {
           <div className={styles.team}>
             <div className={styles.leftContent}>
               <ToPlan
+                treeSelect={treeSelect}
+                setRefreshTree={setRefreshTree}
+                refreshTree={refreshTree}
                 checkSchedule={checkSchedule}
                 updateMethod={updateMethod}
                 gunterType={gunterType}
@@ -301,8 +316,9 @@ function Index() {
                   </Option>
                 </Select>
               </div>
-
               <Dome
+                treeSelection={treeSelection}
+                refresh={refresh}
                 updateMethod={updateMethod}
                 gunterData={gunterData}
                 notWork={notWork}

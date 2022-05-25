@@ -1,12 +1,11 @@
 /*
  * @Author: your name
  * @Date: 2022-04-13 15:47:01
- * @LastEditTime: 2022-05-18 15:03:24
+ * @LastEditTime: 2022-05-25 10:48:12
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \jack-aps\src\pages\practice\progressTracking\schedulingResults\tbale\index.tsx
  */
-import { Item } from '@ant-design/flowchart/es/components/editor-panel/control-map-service/components/fields/position'
 import { Table } from 'antd'
 import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
