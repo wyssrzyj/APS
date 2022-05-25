@@ -1,12 +1,10 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-05-20 10:52:21
+ * @LastEditTime: 2022-05-24 11:15:44
  * @Description:
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @LastEditors: zjr
  */
-
-import { divide } from 'lodash'
 
 import styles from '../index.module.less'
 
@@ -18,6 +16,9 @@ const DynamicContent = (props: Record<string, any>) => {
     { id: 'PD202203050513', time: '2022-05-21', type: 1 }
   ]
   const scrwList = [
+    { id: 'PD202203050222', time: '2022-05-01 09:34' },
+    { id: 'PD202203050672', time: '2022-05-11 09:40' },
+    { id: 'PD202203050672', time: '2022-05-17 09:51' },
     { id: 'PD202203050222', time: '2022-05-01 09:34' },
     { id: 'PD202203050672', time: '2022-05-11 09:40' },
     { id: 'PD202203050672', time: '2022-05-17 09:51' },

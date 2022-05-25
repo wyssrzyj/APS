@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-05-24 09:02:48
+ * @LastEditTime: 2022-05-24 10:01:27
  * @Description:
  * @LastEditors: zjr
  */
@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { CustomModal } from '@/components'
 import Icon from '@/components/Icon'
 import { loginApis, systemSettingsApis } from '@/recoil/apis'
+import { clearLocalStorage } from '@/utils/tool'
 
 import styles from './index.module.less'
 import { editPwdModalConfig } from './menuConfigs'
@@ -54,9 +55,7 @@ const Header = () => {
     if (res.success) {
       message.success(res.msg || '修改密码成功，请重新登录')
       setIsEditPwdVisible(false)
-      localStorage.removeItem('currentUser')
-      localStorage.removeItem('token')
-      localStorage.removeItem('systemUuid')
+      clearLocalStorage()
       navigate('/login')
     } else {
       message.warning(res.msg || '操作失败，请稍后重试')

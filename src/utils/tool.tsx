@@ -285,7 +285,11 @@ export const changeBolbToXls = (res: any, fileName: string) => {
   download.click()
   window.URL.revokeObjectURL(download.href)
 }
-
+/**
+ * 清空本地存储
+ * @param options {keepItem: [key: '本地存储不用清除的名称']}
+ *
+ */
 export const clearLocalStorage = (options?: {
   keepItems?: Array<{ key: string }>
 }): void => {
