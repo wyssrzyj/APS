@@ -21,7 +21,7 @@ const Gantt = (props: any) => {
     treeSelectionGantt
   } = props
 
-  const chartDom = document.getElementById(name) //获取id
+  const chartDom = document.getElementById(name) //获取id.
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   // const [select, setSelect] = useState<any>() //选中项
