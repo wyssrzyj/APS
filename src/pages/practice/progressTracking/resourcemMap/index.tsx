@@ -66,7 +66,7 @@ const SchedulingResults = () => {
   }, [select])
 
   const getLineData = async (id) => {
-    const line: any = await getLine({ id }) //线
+    const line: any = await getLine({ id, hasOutsource: false }) //线
     if (line.code === 200) {
       setLine(line.data === null ? [] : line.data)
     }
@@ -92,7 +92,6 @@ const SchedulingResults = () => {
 
   const leftData = async (e: any) => {
     setSelect(e)
-    console.log('leftData', e)
   }
   // 更新
   const updateList = (e: any) => {
