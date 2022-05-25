@@ -42,7 +42,7 @@ const Gantt = (props: any) => {
       ganttShow(tasks) //渲染数据   勿动
       gantt.scrollTo(newLeft, newTop) //定位
       //选中项
-      if (select !== undefined) {
+      if (selectRef !== undefined) {
         gantt.selectTask(selectRef)
       }
     } else {

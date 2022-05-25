@@ -114,6 +114,7 @@ const SchedulingResults = () => {
 
       <div className={styles.ganttContent}>
         <Gantt
+          select={select}
           name={'test'}
           leftData={leftData} //左键
           rightData={rightData} //左键

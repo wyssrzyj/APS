@@ -44,24 +44,29 @@ function Popup(props: { content: any; newlyAdded: any }) {
     )
     setTreeData(teamData)
   }
+  useEffect(() => {
+    if (type !== 1) {
+      if (edit !== undefined) {
+        setList(edit)
+      }
+    }
+    if (type === 1) {
+      setList({})
+    }
+  }, [edit, type])
+
   //渲染
   useEffect(() => {
     if (!isEmpty(list)) {
-      form.setFieldsValue(list)
+      list.date = list.timeList
+        ? moment(list.timeList[0].startDateTime)
+        : undefined
+
+      console.log(list)
+      form.setFieldsValue(list) //回显
+      setListID(list.factoryId)
     }
   }, [list])
-  useEffect(() => {
-    if (!isEmpty(edit)) {
-      if (type !== 1) {
-        edit.date = moment(edit.timeList[0].endDate)
-        setList(edit)
-      }
-      if (type === 1) {
-        form.resetFields()
-      }
-      setListID(edit.factoryId)
-    }
-  }, [edit, type])
 
   const value = ['0-0-0']
 
@@ -79,7 +84,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
   }
 
   const handleCancel = () => {
-    // form.resetFields()
+    form.resetFields()
     setIsModalVisible(false)
   }
   const times = (item: any, e: any) => {
@@ -177,96 +182,98 @@ function Popup(props: { content: any; newlyAdded: any }) {
     }
   }
   const getFactoryName = (e: any) => {
-    setListID(e)
-    const cloneList = cloneDeep(list)
-    cloneList.teamIds = []
-    setList(cloneList)
+    list.factoryId = e
+    setTreeData([])
+    list.teamIds = null || []
+    setList({ ...list })
   }
   return (
     <div>
-      <Modal
-        destroyOnClose={true}
-        width={700}
-        title={type === 1 ? '新增加班' : type === 2 ? '编辑加班' : '查看加班'}
-        visible={isModalVisible}
-        onOk={handleOk}
-        maskClosable={false}
-        onCancel={handleCancel}
-        centered={true}
-      >
-        <Form
-          form={form}
-          name="basic"
-          {...layout}
-          // initialValues={}
-          onFinish={onFinish}
-          autoComplete="off"
+      {isModalVisible ? (
+        <Modal
+          destroyOnClose={true}
+          width={700}
+          title={type === 1 ? '新增加班' : type === 2 ? '编辑加班' : '查看加班'}
+          visible={isModalVisible}
+          onOk={handleOk}
+          maskClosable={false}
+          onCancel={handleCancel}
+          centered={true}
         >
-          <Form.Item
-            label="工厂名称"
-            name="factoryId"
-            rules={[{ required: true, message: '请选择工厂名称!' }]}
+          <Form
+            form={form}
+            name="basic"
+            {...layout}
+            // initialValues={}
+            onFinish={onFinish}
+            autoComplete="off"
           >
-            <Select
-              disabled={type === 3 ? true : false}
-              onChange={getFactoryName}
-              placeholder="请选择工厂名称"
-              allowClear
+            <Form.Item
+              label="工厂名称"
+              name="factoryId"
+              rules={[{ required: true, message: '请选择工厂名称!' }]}
             >
-              {factoryData !== undefined
-                ? factoryData.map(
-                    (item: {
-                      id: React.Key | null | undefined
-                      name:
-                        | boolean
-                        | React.ReactChild
-                        | React.ReactFragment
-                        | React.ReactPortal
-                        | null
-                        | undefined
-                    }) => (
-                      <Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Option>
+              <Select
+                disabled={type === 3 ? true : false}
+                onChange={getFactoryName}
+                placeholder="请选择工厂名称"
+                allowClear
+              >
+                {factoryData !== undefined
+                  ? factoryData.map(
+                      (item: {
+                        id: React.Key | null | undefined
+                        name:
+                          | boolean
+                          | React.ReactChild
+                          | React.ReactFragment
+                          | React.ReactPortal
+                          | null
+                          | undefined
+                      }) => (
+                        <Option key={item.id} value={item.id}>
+                          {item.name}
+                        </Option>
+                      )
                     )
-                  )
-                : null}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label="班组名称"
-            name="teamIds"
-            rules={[{ required: true, message: '请先选择班组名称!' }]}
-          >
-            <TreeSelect {...tProps} disabled={type === 3 ? true : false} />
-          </Form.Item>
-          <Form.Item
-            label="加班日期"
-            name="date"
-            rules={[{ required: true, message: '请先选择加班日期!' }]}
-          >
-            <DatePicker
-              // onChange={onChange}
-              disabled={type === 3 ? true : false}
-            />
-          </Form.Item>
-          <Form.Item
-            label="工作时间"
-            name="timeList"
-            rules={[{ required: true, message: '请选择工作时间!' }]}
-          >
-            <WorkingHours edit={edit} type={type} />
-          </Form.Item>
+                  : null}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label="班组名称"
+              name="teamIds"
+              rules={[{ required: true, message: '请先选择班组名称!' }]}
+            >
+              <TreeSelect {...tProps} disabled={type === 3 ? true : false} />
+            </Form.Item>
+            <Form.Item
+              label="加班日期"
+              name="date"
+              rules={[{ required: true, message: '请先选择加班日期!' }]}
+            >
+              <DatePicker
+                // onChange={onChange}
+                disabled={type === 3 ? true : false}
+              />
+            </Form.Item>
+            <Form.Item
+              label="工作时间"
+              name="timeList"
+              rules={[{ required: true, message: '请选择工作时间!' }]}
+            >
+              <WorkingHours edit={edit} type={type} />
+            </Form.Item>
 
-          <Form.Item label="备注" name="remark">
-            <Input
-              disabled={type === 3 ? true : false}
-              maxLength={100}
-              placeholder="请输入备注"
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
+            <Form.Item label="备注" name="remark">
+              <Input
+                disabled={type === 3 ? true : false}
+                maxLength={100}
+                placeholder="请输入备注"
+              />
+            </Form.Item>
+          </Form>
+        </Modal>
+      ) : null}
     </div>
   )
 }

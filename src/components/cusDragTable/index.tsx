@@ -166,7 +166,7 @@ const CusDragTable = (props: CusTableProps) => {
 
   const dealColumns = (data: Column[]) => {
     return [...data].map((item: Column, index: number) => {
-      if (item.draggable) {
+      if (item && item.draggable) {
         item.title = (
           <div className={styles.tableTitle} key={item.label}>
             {item['label']}

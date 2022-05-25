@@ -1,16 +1,15 @@
 import { Button, Dropdown, Menu, message, Space, Table } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
-import { any } from 'prop-types'
-import { memo, SetStateAction, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { Title } from '@/components'
+import { CusDragTable } from '@/components'
 import { materialSetApis } from '@/recoil/apis'
+import useTableChange from '@/utils/useTableChange'
 
 import Forms from './forms'
 import styles from './index.module.less'
 import Material from './material'
-// import Virtual from './virtual'
 
 const map = new Map()
 map.set(1, '已检查')
@@ -23,30 +22,35 @@ production.set(2, '已计划')
 production.set(3, '生产中')
 production.set(4, '生产完成')
 function Materials() {
-  const [pageNum, setPageNum] = useState<number>(1)
-  const [page, setPage] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
-  const [total, setTotal] = useState<number>(0)
-  const [params, setParams] = useState<any>({
-    pageNum: pageNum,
-    pageSize: pageSize
-  })
-  const [selected, setSelected] = useState([]) //选中的id
-  const [selectedData, setSelectedData] = useState([]) //记录以获取的所有数据
-  const [type, setType] = useState(false) //编辑或者新增
-  const [movIsModalVisible, setMovIsModalVisible] = useState<boolean>(false) //删除弹窗
-  const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
-  const [materialList, setMaterialList] = useState<any>() //物料齐套数据
-  const [list, setList] = useState<any>()
-  const [queryData, setQueryData] = useState<any>({})
-  const [factoryData, setFactoryData] = useState<any>([]) //工厂
-
   const {
     productionList,
     completeInspectionReport,
     exportShortageReport,
     factoryList
   } = materialSetApis
+
+  const [params, setParams] = useState<any>({
+    pageNum: 1,
+    pageSize: 10
+  })
+  const [selected, setSelected] = useState([]) //选中的id
+  const [selectedData, setSelectedData] = useState([]) //记录以获取的所有数据
+  const [type, setType] = useState(false) //编辑或者新增
+  const [movIsModalVisible, setMovIsModalVisible] = useState<boolean>(false) //删除弹窗
+  const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
+  const [materialList, setMaterialList] = useState<any>() //物料齐套数据.
+  const [queryData, setQueryData] = useState<any>({})
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
+  const {
+    tableChange,
+    dataSource,
+    total,
+    pageNum,
+    pageSize,
+    loading,
+    getDataList
+  } = useTableChange(params, productionList)
+  const [list, setList] = useState<any>()
 
   const columns: any = [
     {
@@ -58,17 +62,20 @@ function Materials() {
     {
       title: '工厂名称',
       align: 'center',
-      dataIndex: 'factoryName'
+      dataIndex: 'factoryName',
+      width: 200
     },
     {
       title: '产品名称',
       align: 'center',
-      dataIndex: 'productName'
+      dataIndex: 'productName',
+      width: 250
     },
     {
       title: '产品款号',
       align: 'center',
-      dataIndex: 'productNum'
+      dataIndex: 'productNum',
+      width: 200
     },
     {
       title: '客户款号',
@@ -84,7 +91,6 @@ function Materials() {
       title: '计划完成日期',
       align: 'center',
       dataIndex: ' planEndDate',
-      width: 100,
       render: (v: any) => {
         return moment(v).format('YYYY-MM-DD')
       }
@@ -127,35 +133,18 @@ function Materials() {
       setFactoryData(arr)
     }
   }
-  useEffect(() => {
-    setParams({ pageNum, pageSize, ...queryData })
-  }, [pageNum, pageSize, queryData])
-
-  const objectValueAllEmpty = (object) => {
-    let isEmpty = true
-    Object.keys(object).forEach(function (x) {
-      if (object[x] != null && object[x] != '') {
-        isEmpty = false
-      }
-    })
-    return isEmpty
-  }
-
-  //获取列表数据
-  useEffect(() => {
-    formApi(params)
-  }, [params])
 
   const update = () => {
-    formApi(params)
+    getDataList && getDataList()
     setSelected([])
     setSelectedData([])
   }
+  useEffect(() => {
+    formApi(dataSource)
+  }, [dataSource])
   const formApi = async (v: any) => {
-    const res = await productionList(v)
-    setTotal(res.total)
-    if (!isEmpty(res.records)) {
-      res.records.map(
+    if (!isEmpty(v)) {
+      v.map(
         (item: {
           id: any
           externalProduceOrderId: any
@@ -168,7 +157,7 @@ function Materials() {
           item.name = `生产单：${item.externalProduceOrderNum}`
         }
       )
-      setList(res.records)
+      setList(v)
     } else {
       setList([])
     }
@@ -177,26 +166,15 @@ function Materials() {
   //头部form的数据
   const FormData = (e: any) => {
     setQueryData(e)
-    setPage(1)
     setParams({ pageNum: 1, pageSize: 10, ...e })
     setSelected([])
   }
-  const onPaginationChange = (
-    page: SetStateAction<number>,
-    pageSize: SetStateAction<number>
-  ) => {
-    setPageNum(page)
-    setPage(page)
-    setPageSize(pageSize)
-  }
-
   //获取选中的数据
   const selectedList = (v: any[], data: any[]) => {
     /**
      * v 选中的值
      * data 总数据
      */
-
     //过滤出对应的
     const selectedForm = (v: any, data: any[]) => {
       if (!isEmpty(data)) {
@@ -325,23 +303,11 @@ function Materials() {
     }
   }
 
-  //替换数据
-  const updateData = (record, list) => {
-    /**
-     * record 修改后的单个值
-     * list 老数据
-     */
-    const sum = cloneDeep(list)
-    const subscript = sum.findIndex((item: any) => item.id === record.id)
-    if (subscript !== -1) {
-      sum.splice(subscript, 1, record)
-      // setData(sum)
-    }
-  }
   const rowSelection: any = {
     selectedRowKeys: selected,
     onChange: onSelectChange
   }
+
   useEffect(() => {
     //获取所有的接口数据 且不能重复添加
     if (!isEmpty(list)) {
@@ -365,7 +331,7 @@ function Materials() {
   }
   //刷新列表
   const refreshList = () => {
-    formApi(params)
+    getDataList && getDataList()
     // setSelected([])//是否清空勾选
   }
   const menu = (
@@ -390,44 +356,51 @@ function Materials() {
       </Menu.Item>
     </Menu>
   )
-
+  const TableLeft = () => {
+    return (
+      <>
+        <Button
+          className={styles.executionMethod}
+          type="primary"
+          onClick={() => {
+            materials('1')
+          }}
+        >
+          物料齐套检查
+        </Button>
+        <Space wrap>
+          <Dropdown arrow overlay={menu} placement="topLeft">
+            <Button type="primary">导出报告</Button>
+          </Dropdown>
+        </Space>
+      </>
+    )
+  }
   return (
     <div className={styles.qualification}>
       <div>{/* <Title title={'物料齐套检查'} /> */}</div>
       <div>
         <div className={styles.content}>
           <Forms factoryData={factoryData} FormData={FormData}></Forms>
-          <Button
-            className={styles.executionMethod}
-            type="primary"
-            onClick={() => {
-              materials('1')
-            }}
-            // onClick={executionMethod}
-          >
-            物料齐套检查
-          </Button>
-          <Space wrap>
-            <Dropdown arrow overlay={menu} placement="topLeft">
-              <Button type="primary">导出报告</Button>
-            </Dropdown>
-          </Space>
-          <Table
-            className={styles.table}
+          <CusDragTable
+            storageField={'materials'}
+            cusBarLeft={TableLeft}
             rowSelection={rowSelection}
             columns={columns}
             dataSource={list}
             rowKey={'id'}
+            scroll={{ x: 1000 }}
+            loading={loading}
+            onChange={tableChange}
             pagination={{
               //分页
               showSizeChanger: true,
               // showQuickJumper: true, //是否快速查找
-              pageSize, //每页条数
-              current: page, //	当前页数
+              pageSize: pageSize, //每页条数
+              current: pageNum, //	当前页数
               total, //数据总数
               // position: ['bottomCenter'], //居中
-              pageSizeOptions: ['10', '20', '50'],
-              onChange: onPaginationChange //获取当前页码是一个function
+              pageSizeOptions: ['10', '20', '50']
             }}
           />
         </div>
@@ -442,13 +415,6 @@ function Materials() {
           setMaterialModal={setMaterialModal}
         />
       )}
-
-      {/* <MovPopup
-        type="mov"
-        movIsModalVisible={movIsModalVisible}
-        setMovIsModalVisible={setMovIsModalVisible}
-        movApi={movApi}
-      /> */}
     </div>
   )
 }
