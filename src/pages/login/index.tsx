@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 10:02:54
- * @LastEditTime: 2022-05-17 09:39:59
+ * @LastEditTime: 2022-05-25 15:41:14
  * @Description:
  * @LastEditors: zjr
  */
@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 
 import Icon from '@/components/Icon'
 import { loginApis } from '@/recoil/apis'
+import { clearLocalStorage } from '@/utils/tool'
 
 import styles from './index.module.less'
 
@@ -25,12 +26,13 @@ const LoginContent = () => {
   const { validateFields, resetFields } = form
 
   const submit = async () => {
+    clearLocalStorage()
     try {
       setLoadings(true)
       const values = await validateFields()
       const res = await login(values)
 
-      if (res && res.success) navigate('/home')
+      if (res && res.success) location.replace('/home')
       setLoadings(false)
     } catch (err) {
       setLoadings(false)

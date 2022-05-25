@@ -4,7 +4,7 @@ import {
   VerticalAlignBottomOutlined,
   VerticalAlignTopOutlined
 } from '@ant-design/icons'
-import { Table } from 'antd'
+import { Table, Tooltip } from 'antd'
 import { cloneDeep } from 'lodash'
 import React, { useState } from 'react'
 
@@ -82,7 +82,10 @@ function RuleTables(props: Record<string, any>) {
     {
       title: '权重',
       align: 'center',
-      dataIndex: 'weight'
+      dataIndex: 'weight',
+      render: (text, record) => {
+        return <Tooltip title={record.weightFormula}>{text}</Tooltip>
+      }
     },
     {
       title: '生产单状态',
