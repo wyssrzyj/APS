@@ -25,7 +25,7 @@ const Gantt = (props: any) => {
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
   // const [select, setSelect] = useState<any>() //选中项
-  // const [treeSelection, setTreeSelection] = useState<any>() //选中项.
+  // const [treeSelection, setTreeSelection] = useState<any>() //选中项..
   const locationRef = useRef({ x: 0, y: 0 })
   const treeSelection = useRef({ select: '' })
 
