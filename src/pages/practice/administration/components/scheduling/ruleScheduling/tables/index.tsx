@@ -86,8 +86,7 @@ function RuleTables(props: Record<string, any>) {
       align: 'center',
       dataIndex: 'weight',
       render: (text, record) => {
-        // return <Tooltip title={record.externalProduceOrderNum}>{text}</Tooltip>
-        return { text }
+        return <Tooltip title={record.weightFormula}>{text}</Tooltip>
       }
     },
     {

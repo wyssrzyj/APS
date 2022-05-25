@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 10:02:54
- * @LastEditTime: 2022-05-24 15:54:07
+ * @LastEditTime: 2022-05-25 15:45:14
  * @Description:
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @LastEditors: zjr
  */
 import { Button, Form, Input, message, Tabs } from 'antd'
 import React, { useState } from 'react'
@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 
 import Icon from '@/components/Icon'
 import { loginApis } from '@/recoil/apis'
+import { clearLocalStorage } from '@/utils/tool'
 
 import styles from './index.module.less'
 
@@ -25,6 +26,7 @@ const LoginContent = () => {
   const { validateFields, resetFields } = form
 
   const submit = async () => {
+    clearLocalStorage()
     try {
       setLoadings(true)
       const values = await validateFields()
