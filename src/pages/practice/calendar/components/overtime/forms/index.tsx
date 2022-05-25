@@ -72,7 +72,6 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
     }
   }
   const getFactoryName = (e: any) => {
-    console.log(e)
     setListID(e)
     const cloneList = cloneDeep(list)
     cloneList.teamId = null

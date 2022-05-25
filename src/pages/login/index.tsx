@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 10:02:54
- * @LastEditTime: 2022-05-24 08:41:13
+ * @LastEditTime: 2022-05-24 15:54:07
  * @Description:
  * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  */
@@ -83,7 +83,7 @@ const LoginContent = () => {
           <Form.Item label="">
             {/* <Button type={'primary'} onClick={submit} block loading={loadings}> */}
             <Button type={'primary'} onClick={submit} block>
-              登录11
+              登录
             </Button>
           </Form.Item>
         </Form>

@@ -15,7 +15,7 @@ const Virtual = (props) => {
 
     return { ...column, width: Math.floor(tableWidth / widthColumnCount) }
   })
-  const gridRef = useRef()
+  const gridRef: any = useRef()
   const [connectObject] = useState(() => {
     const obj = {}
     Object.defineProperty(obj, 'scrollLeft', {

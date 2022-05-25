@@ -1,10 +1,11 @@
 import { message, Popover, Tabs, Tag, Tree } from 'antd'
-import { divide, isEmpty } from 'lodash'
+import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { dockingDataApis, schedulingApis } from '@/recoil/apis'
 
 import BreakUp from './breakUp/index'
+import Forms from './forms/index'
 import styles from './index.module.less'
 import Popup from './popup'
 import TheEfficiency from './theEfficiency'
@@ -531,8 +532,6 @@ function ToPlan(props: {
     setKeys(e)
   }
   const onCheck = (checkedKeys: any, info: any) => {
-    console.log('点击是', checkedKeys)
-
     setToPlanID(checkedKeys)
   }
   //清空
@@ -547,10 +546,32 @@ function ToPlan(props: {
     setEditWindow,
     editWindowList
   }
+  //获取id.
+  const getID = (e, data) => {
+    if (!isEmpty(data)) {
+      const current = data.filter(
+        (item) => item.externalProduceOrderNum === e.productName
+      )
+      if (!isEmpty(current)) {
+        return [current[0].externalProduceOrderId]
+      }
+    }
+  }
 
-  // useEffect(() => {
-  //   console.log('处理后的已几乎~~~', WaitingTreeData)
-  // }, [WaitingTreeData])
+  const FormData = (e, type) => {
+    if (type === 'stay') {
+      if (getID(e, treeData) !== undefined) {
+        setSelectedKeys(getID(e, treeData))
+        setKeys(getID(e, treeData))
+      }
+    }
+    if (type === 'already') {
+      if (getID(e, treeData) !== undefined) {
+        setSelectedKeys(getID(e, WaitingTreeData))
+        setKeys(getID(e, WaitingTreeData))
+      }
+    }
+  }
   return (
     <div>
       {!isModalVisible ? (
@@ -558,6 +579,12 @@ function ToPlan(props: {
           <TabPane tab="待计划" key="0">
             {treeData !== undefined && treeData.length > 0 ? (
               <div>
+                <Forms
+                  FormData={(e) => {
+                    FormData(e, 'stay')
+                  }}
+                ></Forms>
+
                 <Tree
                   checkable
                   // height={500}
@@ -573,6 +600,12 @@ function ToPlan(props: {
           <TabPane tab="已计划" key="1">
             {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
               <div>
+                <Forms
+                  FormData={(e) => {
+                    FormData(e, 'already')
+                  }}
+                ></Forms>
+
                 <Tree
                   // height={200}
                   selectedKeys={keys}

@@ -22,17 +22,22 @@ const Gantt = (props: any) => {
   }, [zoom])
 
   useEffect(() => {
-    const newLeft = locationRef.current.x || 0
-    const newTop = locationRef.current.y || 0
-    gantt.attachEvent('onGanttScroll', function (left, top) {
-      locationRef.current = { x: left, y: top }
-    })
+    //添加判断防止报错
+    if (!isEmpty(tasks.data)) {
+      const newLeft = locationRef.current.x || 0
+      const newTop = locationRef.current.y || 0
+      gantt.attachEvent('onGanttScroll', function (left, top) {
+        locationRef.current = { x: left, y: top }
+      })
 
-    ganttShow(tasks)
-    gantt.scrollTo(newLeft, newTop) //定位
-    //选中项
-    if (select !== undefined) {
-      gantt.selectTask(select)
+      ganttShow(tasks)
+      gantt.scrollTo(newLeft, newTop) //定位
+      //选中项
+      if (select !== undefined) {
+        gantt.selectTask(select)
+      }
+    } else {
+      ganttShow({ data: [], links: [] })
     }
   }, [tasks])
   // 静态方法

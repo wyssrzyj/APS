@@ -1,21 +1,20 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, message, Modal, Table, Tag } from 'antd'
+import { Button, message, Modal, Tag } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
-import { Title } from '@/components'
+import { CusDragTable } from '@/components'
 import { workOvertimeApis } from '@/recoil/apis'
+import useTableChange from '@/utils/useTableChange'
 
 import Forms from './forms'
 import styles from './index.module.less'
-import MovPopup from './movPopup'
 import Popup from './popup'
+
 function Overtime() {
   const { confirm } = Modal
-
-  const [pageNum, setPageNum] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
-  const [total, setTotal] = useState<number>(20)
+  const { overtimedisplay, workOvertimeMov, overtimeDetails, factoryList } =
+    workOvertimeApis
   const [params, setParams] = useState<any>({
     pageNum: 1,
     pageSize: 10
@@ -28,20 +27,29 @@ function Overtime() {
   const [list, setList] = useState([])
   const [edit, setEdit] = useState({}) //编辑数据
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
-
-  const { overtimedisplay, workOvertimeMov, overtimeDetails, factoryList } =
-    workOvertimeApis
+  const {
+    tableChange,
+    dataSource,
+    total,
+    pageNum,
+    pageSize,
+    loading,
+    getDataList
+  } = useTableChange(params, overtimedisplay)
 
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
       title: '工厂名称',
       align: 'center',
-      dataIndex: 'factoryName'
+      dataIndex: 'factoryName',
+      width: 200
     },
     {
       title: '班组名称',
       align: 'center',
+      width: 200,
+
       dataIndex: 'teamName',
       render: (value: string, row: any) => {
         const chars = value !== null ? value.split(',') : []
@@ -180,10 +188,10 @@ function Overtime() {
   useEffect(() => {
     getData()
   }, [])
+
   const getData = async () => {
     const res: any = await factoryList()
     const arr: any = res.data
-
     if (res.code === 200) {
       arr.map((item: { name: any; deptName: any }) => {
         item.name = item.deptName
@@ -191,24 +199,11 @@ function Overtime() {
       setFactoryData(arr)
     }
   }
-  useEffect(() => {
-    setParams({
-      pageNum: pageNum,
-      pageSize: pageSize
-    })
-  }, [pageNum, pageSize])
-  useEffect(() => {
-    api(params)
-  }, [params])
-  const api = async (item: any) => {
-    const arr = await overtimedisplay(item)
-    setTotal(arr.total)
-    setList(arr.records)
-  }
 
   const newlyAdded = async () => {
-    api(params)
+    getDataList && getDataList()
   }
+
   //头部form的数据
   const FormData = (e: any) => {
     if (e.factoryId !== undefined) {
@@ -217,13 +212,7 @@ function Overtime() {
       setParams({ pageNum, pageSize, ...e })
     }
   }
-  const onPaginationChange = (
-    page: React.SetStateAction<number>,
-    pageSize: React.SetStateAction<number>
-  ) => {
-    setPageNum(page)
-    setPageSize(pageSize)
-  }
+
   const editUser = async (type: boolean, value: any) => {
     const arr = await overtimeDetails({ id: value.id })
     setEdit(arr)
@@ -241,7 +230,6 @@ function Overtime() {
       message.warning('请至少选择一个')
     } else {
       showDeleteConfirm()
-      // setMovIsModalVisible(true)
     }
   }
   const movApi = async () => {
@@ -290,50 +278,52 @@ function Overtime() {
     factoryData,
     setEdit
   }
+  const TableLeft = () => {
+    return (
+      <>
+        <Button
+          className={styles.executionMethod}
+          type="primary"
+          onClick={executionMethod}
+        >
+          新增
+        </Button>
+        <Button type="primary" danger onClick={start}>
+          删除
+        </Button>
+      </>
+    )
+  }
   return (
     <div className={styles.qualification}>
-      <div>{/* <Title title={'加班管理'} /> */}</div>
       <div>
         <div className={styles.content}>
           <Forms factoryData={factoryData} FormData={FormData}></Forms>
-          <Button
-            className={styles.executionMethod}
-            type="primary"
-            onClick={executionMethod}
-          >
-            新增
-          </Button>
-          <Button type="primary" danger onClick={start}>
-            删除
-          </Button>
-          <Table
-            className={styles.table}
+          <CusDragTable
+            storageField={'overtime'}
+            cusBarLeft={TableLeft}
             rowSelection={rowSelection}
             columns={columns}
-            dataSource={list}
+            dataSource={dataSource}
             rowKey={'id'}
+            scroll={{ x: 1000 }}
+            loading={loading}
+            onChange={tableChange}
             pagination={{
               //分页
               showSizeChanger: true,
               // showQuickJumper: true, //是否快速查找
-              pageSize, //每页条数
+              pageSize: pageSize, //每页条数
               current: pageNum, //	当前页数
               total, //数据总数
               // position: ['bottomCenter'], //居中
-              pageSizeOptions: ['10', '20', '50'],
-              onChange: onPaginationChange //获取当前页码是一个function
+              pageSizeOptions: ['10', '20', '50']
             }}
           />
+
           <Popup content={content} newlyAdded={newlyAdded} />
         </div>
       </div>
-
-      {/* <MovPopup
-        type="mov"
-        movIsModalVisible={movIsModalVisible}
-        setMovIsModalVisible={setMovIsModalVisible}
-        movApi={movApi}
-      /> */}
     </div>
   )
 }

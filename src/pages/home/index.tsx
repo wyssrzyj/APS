@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-05-23 16:55:27
+ * @LastEditTime: 2022-05-25 09:54:43
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  */
 import { Col, Divider, Row, Space } from 'antd'
 import { useEffect, useLayoutEffect, useRef } from 'react'
@@ -15,11 +15,6 @@ import DynamicTable from './components/dynamicTable'
 import styles from './index.module.less'
 const Home = () => {
   const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    console.log(containerRef.current.clientWidth)
-  }, [containerRef.current])
-
   return (
     <div className={styles.outContainer} ref={containerRef}>
       {/* <Title title={'首页'}></Title> */}

@@ -14,8 +14,27 @@ function Popup(props: { content: any; newlyAdded: any }) {
   const { Option } = Select
   const { teamList } = dockingDataApis
   const { operatingModeDetails, teamId } = workingModeApis
+  const [list, setList] = useState<any>({}) //回显数据
+
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
+
+  useEffect(() => {
+    if (type !== 1) {
+      if (edit !== undefined) {
+        setList(edit)
+      }
+    }
+    if (type === 1) {
+      setList({})
+    }
+  }, [edit, type])
+
+  //回显
+  useEffect(() => {
+    form.setFieldsValue(list) //回显
+    setListID(list.factoryId)
+  }, [list])
 
   //加班班组
   useEffect(() => {
@@ -32,20 +51,11 @@ function Popup(props: { content: any; newlyAdded: any }) {
         item.key = item.id
       }
     )
+    console.log('班组为啥will')
+
     setTreeData(teamData)
   }
-  //回显
-  useEffect(() => {
-    if (type !== 1) {
-      console.log('返回的树', edit.id)
 
-      form.setFieldsValue(edit) //回显
-      setListID(edit.factoryId)
-    }
-    if (type === 1) {
-      form.resetFields()
-    }
-  }, [edit, type])
   const value = ['0-0-0']
 
   const layout = {
@@ -71,6 +81,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
   }
 
   const handleCancel = () => {
+    form.resetFields()
     setIsModalVisible(false)
   }
 
@@ -151,7 +162,10 @@ function Popup(props: { content: any; newlyAdded: any }) {
     }
   }
   const getFactoryName = (e: any) => {
-    setListID(e)
+    list.factoryId = e
+    setTreeData([])
+    list.teamIds = null || []
+    setList({ ...list })
   }
   return (
     <div>
