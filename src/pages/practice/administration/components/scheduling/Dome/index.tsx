@@ -55,8 +55,12 @@ const Dhx = (props: {
 
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
+
   const [overtimeType, setOvertimeType] = useState<any>(false) //判断右键是否有值 有值且不展示添加加班
   const [movingDistance, setMovingDistance] = useState<any>({ x: 0, y: 0 })
+  // const [chartTree, setChartTree] = useState<any>([]) //甘特树结构
+  const chartTree = useRef({ data: [] })
+
   useEffect(() => {
     getData()
   }, [])
@@ -98,6 +102,79 @@ const Dhx = (props: {
       }
     }
   }, [chart, line, gunterType])
+
+  //--------------y轴的-----------------
+  //**计算当前项 等于 几个格子
+  const getCurrentGrid = (v) => {
+    let fatherQuantity = 0 //父数量
+    let subQuantity = 0 //子数量
+    if (v.open === true) {
+      fatherQuantity = v.children.length
+      if (!isEmpty(v.children)) {
+        v.children.map((item) => {
+          if (item.open === true) {
+            subQuantity = !isEmpty(item.children) ? item.children.length : 0
+          }
+        })
+      }
+      return fatherQuantity + subQuantity + 1
+    } else {
+      return 1
+    }
+  }
+  //子
+  const getChartChildren = (v, chartData) => {
+    const Subitem = chartData.filter((item) => item.parent === v.id)
+    //孙
+    if (!isEmpty(Subitem)) {
+      Subitem.map((item) => {
+        if (item.text === '缝制') {
+          item.children = chartData.filter((s) => s.parent === item.id)
+          item.quantity = item.children.length
+        }
+      })
+    }
+    return Subitem
+  }
+  //初始 -父
+  const treeStructure = (v) => {
+    const cloneChart = cloneDeep(v)
+    //现获取最外层
+    const parent = cloneChart.filter(
+      (item) => item.open === true && (item.parent === null || 0)
+    )
+    parent.map((item) => {
+      item.children = getChartChildren(item, cloneChart)
+      item.sum = getCurrentGrid(item)
+    })
+    chartTree.current = { data: parent }
+  }
+  //图数据转成树结构
+  useEffect(() => {
+    if (!isEmpty(chart)) {
+      treeStructure(chart)
+    }
+  }, [chart])
+
+  //更改
+  const expandOperation = (type, e) => {
+    const openChartTree = chartTree.current.data
+    openChartTree.map((item) => {
+      if (item.id === e) {
+        item.open = type === '开' ? true : false
+      } else {
+        item.children.map((v) => {
+          if (v.id === e) {
+            v.open = type === '开' ? true : false
+          }
+        })
+      }
+      item.sum = getCurrentGrid(item)
+    })
+    chartTree.current = { data: openChartTree }
+  }
+
+  //--------------y轴的-----------------
 
   //点击
   useEffect(() => {
@@ -212,9 +289,7 @@ const Dhx = (props: {
   }
   //获取x轴的距离
   const distanceX = (id) => {
-    console.log('选中的id', id)
     if (!isEmpty(chart)) {
-      console.log('主体数据', chart)
       const currentItem = chart.filter((item) => item.id === id)
       if (!isEmpty(currentItem)) {
         const currentStartTime = moment(currentItem[0].start_date).valueOf()
@@ -224,8 +299,40 @@ const Dhx = (props: {
         return Math.abs(x * 100)
       }
     }
+  }
+  //获取树结构的值
+  const getTreeData = (data) => {
+    const clone = cloneDeep(chartTree.current.data)
+    return clone.filter((item) => item.id === data.id)
+  }
+  //获取Y周的距离
+  const distanceY = (id) => {
+    const cloneChart = cloneDeep(chart)
+    const subscript = chart.findIndex((item: any) => item.id === id)
+    const chartSplice = cloneChart.splice(0, subscript + 1)
+    const parent = chartSplice.filter(
+      (item) =>
+        item.open === true && (item.parent === null || item.parent === 0)
+    )
+    //前面有几个父级
+    const ahead = parent.splice(0, parent.length - 1)
+    if (!isEmpty(ahead)) {
+      const newData = []
+      ahead.forEach((item) => {
+        newData.push(getTreeData(item))
+      })
+      //  newData.flat(Infinity) 自己的树结构数据
+      const sums = newData.flat(Infinity).reduce((total, current) => {
+        total += current.sum
+        return total
+      }, 0)
+      console.log(sums)
 
-    console.log('时间', time)
+      return (sums * 35) / 2
+    } else {
+      console.log('我点击的是第一组')
+      return 0
+    }
   }
 
   //** 点击事件 点击父节点 传递 不可用时间
@@ -237,10 +344,11 @@ const Dhx = (props: {
   //树选中
   useEffect(() => {
     setSelect(treeSelection)
-    console.log('x轴的距离', distanceX(treeSelection))
-    setMovingDistance({ x: distanceX(treeSelection), y: 0 })
+    setMovingDistance({
+      x: distanceX(treeSelection),
+      y: distanceY(treeSelection)
+    })
   }, [treeSelection])
-  0
   // 更新
   const updateList = (e: any) => {
     setUpdateData(e)
@@ -314,6 +422,7 @@ const Dhx = (props: {
                     tasks={subjectData}
                     zoom={currentZoom}
                     updateList={updateList}
+                    expandOperation={expandOperation}
                     // restDate={restDate} //不可用时间
                   />
                 </div>

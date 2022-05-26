@@ -121,7 +121,7 @@ function Index() {
       startDate: start.sort()[0],
       endDate: end.sort()[start.length - 1]
     }
-    console.log('时间~~~~~~~~', time)
+
     setTime(time)
 
     const cloneArr = cloneDeep(arr)

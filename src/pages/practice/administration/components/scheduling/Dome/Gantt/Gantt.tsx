@@ -18,7 +18,8 @@ const Gantt = (props: any) => {
     leftData,
     restDate,
     name,
-    movingDistance
+    movingDistance,
+    expandOperation
   } = props
 
   const chartDom = document.getElementById(name) //获取id....
@@ -41,7 +42,7 @@ const Gantt = (props: any) => {
       })
       ganttShow(tasks) //渲染数据   勿动
 
-      console.log('渲染的距离', newLeft, newTop)
+      // console.log('渲染的距离', newLeft, newTop)
       gantt.scrollTo(newLeft, newTop) //定位
       //选中项
       if (selectRef !== undefined) {
@@ -54,7 +55,7 @@ const Gantt = (props: any) => {
   useEffect(() => {
     if (movingDistance !== undefined) {
       // console.log('移动距离', movingDistance)
-      locationRef.current = { x: movingDistance.x, y: 100 }
+      locationRef.current = { x: movingDistance.x, y: movingDistance.y }
     }
   }, [movingDistance])
 
@@ -147,13 +148,7 @@ const Gantt = (props: any) => {
       // { name: 'add', label: '' },
     ]
     //单击事件
-    gantt.attachEvent('onTaskSelected', function (id: any, a, b, c, d) {
-      console.log(id)
-      console.log(a)
-      console.log(b)
-      console.log(c)
-      console.log(d)
-
+    gantt.attachEvent('onTaskSelected', function (id: any) {
       leftData && leftData(id)
     })
     //单击右键
@@ -167,10 +162,12 @@ const Gantt = (props: any) => {
     // })
 
     gantt.attachEvent('onTaskOpened', function (e: any) {
-      console.log('分支被打开时(任务打开)', e)
+      // console.log('分支被打开时(任务打开)', e)
+      expandOperation && expandOperation('开', e)
     })
     gantt.attachEvent('onTaskClosed', function (e: any) {
-      console.log('分支关闭时(任务关闭)', e)
+      // console.log('分支关闭时(任务关闭)', e)
+      expandOperation && expandOperation('关', e)
     })
 
     // 可以通过此控制 是否可以拖动 当前的状态=1不可拖动
