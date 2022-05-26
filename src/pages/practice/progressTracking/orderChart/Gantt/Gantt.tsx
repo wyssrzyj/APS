@@ -133,9 +133,12 @@ const Gantt = (props: any) => {
         },
         {
           name: 'Days', //日
-          scale_height: 27,
+          scale_height: 50,
           min_column_width: 100,
-          scales: [{ unit: 'day', step: 1, format: ' %M %d' }]
+          scales: [
+            { unit: 'day', step: 1, format: ' %M %d ' }, //月日
+            { unit: 'day', step: 1, format: '  %l' } //星期
+          ]
         },
         {
           name: 'Quarter', //月

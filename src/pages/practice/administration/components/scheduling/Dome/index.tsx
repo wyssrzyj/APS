@@ -20,6 +20,7 @@ const Dhx = (props: {
   gunterType: any
   refresh: any
   treeSelection: any
+  time: any
 }) => {
   const {
     gunterData,
@@ -29,7 +30,8 @@ const Dhx = (props: {
     formData,
     gunterType,
     refresh,
-    treeSelection
+    treeSelection,
+    time
   } = props
   const { getLine, calculateEndTimeAfterMove } = schedulingApis
   const { factoryList } = workOvertimeApis
@@ -54,9 +56,7 @@ const Dhx = (props: {
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
   const [overtimeType, setOvertimeType] = useState<any>(false) //判断右键是否有值 有值且不展示添加加班
-
-  const [treeSelectionGantt, setTreeSelectionGantt] = useState<any>() //树选中
-
+  const [movingDistance, setMovingDistance] = useState<any>({ x: 0, y: 0 })
   useEffect(() => {
     getData()
   }, [])
@@ -96,76 +96,6 @@ const Dhx = (props: {
         const arr = { data: [], links: [] }
         setSubjectData({ ...arr })
       }
-
-      // const dataqq = [
-      //   {
-      //     //父亲
-      //     id: 1,
-      //     type: true, //判断是否可以移动
-      //     text: '裁剪车间—裁剪班组', //名称
-      //     // duration: 6, //天数
-      //     // progress: 1, //控制完成百分比 范围0-1
-      //     color: '#ff4d4f', //控制颜色
-      //     open: true
-      //   },
-      //   {
-      //     //儿子
-      //     id: 11,
-      //     text: '生产单1',
-      //     // start_date: '2020-04-07',
-      //     // duration: 2,
-      //     progress: 0.6,
-      //     // parent: 1,
-      //     color: '', //控制颜色
-      //     render: 'split', //添加同一行
-      //     open: true
-      //   },
-      //   {
-      //     //孙子
-      //     id: 111,
-      //     text: '卢英杰的子1',
-      //     start_date: '2020-04-6', //开始时间
-      //     end_date: '2020-04-7 ', //结束时间
-      //     duration: 1,
-      //     progress: 0.6,
-      //     parent: 11,
-      //     color: '#52c41a', //控制颜色
-      //     open: true
-      //   },
-
-      //   {
-      //     //儿子
-      //     id: 22,
-      //     text: '生产单2',
-      //     progress: 0.6,
-      //     parent: 1,
-      //     color: '', //控制颜色
-      //     render: 'split', //添加同一行
-      //     open: true
-      //   },
-      //   {
-      //     //孙子
-      //     id: 222,
-      //     text: '订2',
-      //     start_date: '2020-04-8', //开始时间
-      //     end_date: '2020-04-9', //结束时间
-      //     duration: 1,
-      //     progress: 0.6,
-      //     parent: 22,
-      //     color: '#52c41a', //控制颜色
-      //     open: true
-      //   }
-      // ]
-
-      // const linksqq = [
-      //   { id: 1, source: 111, target: 112, type: 0 },
-      //   { id: 3, source: 2, target: 3, type: 0 }
-      // ]
-      // // 假数据
-      // setSubjectData({
-      //   data: dataqq,
-      //   links: linksqq
-      // })
     }
   }, [chart, line, gunterType])
 
@@ -193,18 +123,6 @@ const Dhx = (props: {
         setRestDate(['2000-06-06'])
       }
     }
-    // }
-
-    // if (type === '1') {
-    //   //移动
-    //   const unavailable: any = notWorking.filter(
-    //     (item: { id: any }) => item.id === select
-    //   )
-    //   if (unavailable !== undefined && !isEmpty(unavailable)) {
-    //     setRestDate(unavailable[0].time)
-    //   } else {
-    //     console.log('空~~~~~~~~~~')
-    //   }
     // }
   }, [select, gunterType])
 
@@ -292,16 +210,37 @@ const Dhx = (props: {
   const choose = (type: any) => {
     setCurrentZoom(type)
   }
+  //获取x轴的距离
+  const distanceX = (id) => {
+    console.log('选中的id', id)
+    if (!isEmpty(chart)) {
+      console.log('主体数据', chart)
+      const currentItem = chart.filter((item) => item.id === id)
+      if (!isEmpty(currentItem)) {
+        const currentStartTime = moment(currentItem[0].start_date).valueOf()
+        const timeDifference = time.startDate - currentStartTime
+        //获取x的位移距离
+        const x = timeDifference / 1000 / 60 / 60 / 24
+        return Math.abs(x * 100)
+      }
+    }
+
+    console.log('时间', time)
+  }
+
   //** 点击事件 点击父节点 传递 不可用时间
   const leftData = async (id: string) => {
     if (id !== null) {
       setSelect(id)
     }
   }
+  //树选中
   useEffect(() => {
     setSelect(treeSelection)
+    console.log('x轴的距离', distanceX(treeSelection))
+    setMovingDistance({ x: distanceX(treeSelection), y: 0 })
   }, [treeSelection])
-
+  0
   // 更新
   const updateList = (e: any) => {
     setUpdateData(e)
@@ -368,7 +307,7 @@ const Dhx = (props: {
                 <div className="gantt-container">
                   <Gantt
                     select={select}
-                    treeSelectionGantt={treeSelectionGantt}
+                    movingDistance={movingDistance}
                     name={'lyj'}
                     leftData={leftData}
                     rightData={rightData}

@@ -18,7 +18,7 @@ const Gantt = (props: any) => {
     leftData,
     restDate,
     name,
-    treeSelectionGantt
+    movingDistance
   } = props
 
   const chartDom = document.getElementById(name) //获取id....
@@ -40,6 +40,8 @@ const Gantt = (props: any) => {
         locationRef.current = { x: left, y: top }
       })
       ganttShow(tasks) //渲染数据   勿动
+
+      console.log('渲染的距离', newLeft, newTop)
       gantt.scrollTo(newLeft, newTop) //定位
       //选中项
       if (selectRef !== undefined) {
@@ -49,20 +51,18 @@ const Gantt = (props: any) => {
       ganttShow({ data: [], links: [] })
     }
   }, [tasks])
+  useEffect(() => {
+    if (movingDistance !== undefined) {
+      // console.log('移动距离', movingDistance)
+      locationRef.current = { x: movingDistance.x, y: 100 }
+    }
+  }, [movingDistance])
 
   useEffect(() => {
     if (select !== null) {
       treeSelection.current.select = select
     }
   }, [select])
-
-  // useEffect(() => {
-  //   if (treeSelectionGantt !== undefined) {
-  //     // setSelect(treeSelectionGantt)
-  //     console.log('我执行了?', treeSelectionGantt)
-  //     setSelect(treeSelectionGantt)
-  //   }
-  // }, [treeSelectionGantt])
 
   useEffect(() => {
     if (!isEmpty(restDate)) {
@@ -147,7 +147,13 @@ const Gantt = (props: any) => {
       // { name: 'add', label: '' },
     ]
     //单击事件
-    gantt.attachEvent('onTaskSelected', function (id: any) {
+    gantt.attachEvent('onTaskSelected', function (id: any, a, b, c, d) {
+      console.log(id)
+      console.log(a)
+      console.log(b)
+      console.log(c)
+      console.log(d)
+
       leftData && leftData(id)
     })
     //单击右键
@@ -160,10 +166,12 @@ const Gantt = (props: any) => {
     //   drag(item)
     // })
 
-    //点击了空白
-    // gantt.attachEvent('onEmptyClick', function (e: any) {
-    //   console.log(e)
-    // })
+    gantt.attachEvent('onTaskOpened', function (e: any) {
+      console.log('分支被打开时(任务打开)', e)
+    })
+    gantt.attachEvent('onTaskClosed', function (e: any) {
+      console.log('分支关闭时(任务关闭)', e)
+    })
 
     // 可以通过此控制 是否可以拖动 当前的状态=1不可拖动
     gantt.attachEvent(
@@ -192,9 +200,12 @@ const Gantt = (props: any) => {
         },
         {
           name: 'Days', //日
-          scale_height: 27,
+          scale_height: 50,
           min_column_width: 100,
-          scales: [{ unit: 'day', step: 1, format: ' %M %d' }]
+          scales: [
+            { unit: 'day', step: 1, format: ' %M %d ' }, //月日
+            { unit: 'day', step: 1, format: '  %l' } //星期
+          ]
         },
         {
           name: 'Quarter', //月
@@ -223,7 +234,7 @@ const Gantt = (props: any) => {
         //   console.log('点击----------------------', data)
         // },
         update: function (data: any, id: any) {
-          // console.log('更新任务----------------------', data)
+          console.log('更新任务----------------------', data)
 
           //防止重复提交
           clearTimeout(timeout)
@@ -338,7 +349,6 @@ const Gantt = (props: any) => {
     gantt.clearAll() //缓存问题 先清楚后添加
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
-
     gantt.parse(list) //渲染数据
   }
   // "main"
