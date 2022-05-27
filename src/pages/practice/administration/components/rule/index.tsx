@@ -1,17 +1,16 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Button, message, Modal, TablePaginationConfig } from 'antd'
-import { FilterValue } from 'antd/es/table/interface'
-import { SorterResult } from 'antd/lib/table/interface'
+import { DownOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+import { Button, Dropdown, Menu, message, Modal, Space, Upload } from 'antd'
 import { cloneDeep } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
-import { CusDragTable, SearchBar, Title } from '@/components'
+import { CusDragTable, CustomModal, SearchBar, Title } from '@/components'
 import { efficiencyTemplateApis } from '@/recoil/apis'
+import { getToken } from '@/utils/tool'
 import useTableChange from '@/utils/useTableChange'
 
 import AddModal from './addModal'
 import { searchConfigs, tableColumns } from './conifgs'
-import Forms from './forms'
+import ExportModal from './exportModal'
 import styles from './index.module.less'
 const { confirm } = Modal
 const {
@@ -19,7 +18,8 @@ const {
   efficiencyInfo,
   factoryList,
   teamList,
-  deleteEfficiencyInfo
+  deleteEfficiencyInfo,
+  importTemplate
 } = efficiencyTemplateApis
 
 function Rule() {
@@ -50,7 +50,7 @@ function Rule() {
   const [isModalVisible, setIsModalVisible] = useState(false) // 新增展示弹窗
   const [modalType, setModalType] = useState('add')
   const [rowInfo, setRowInfo] = useState()
-  const [factoryData, setFactoryData] = useState<any>([]) //工厂
+  const [exportModalVisible, setExportModalVisible] = useState(false)
   const {
     tableChange,
     dataSource,
@@ -61,26 +61,6 @@ function Rule() {
     getDataList
   } = useTableChange(params, efficiencyList)
 
-  useEffect(() => {
-    getData()
-  }, [])
-  const getData = async () => {
-    const res: any = await factoryList()
-    const arr: any = res.data
-    if (res.code === 200) {
-      arr.map((item: { name: any; deptName: any }) => {
-        item.name = item.deptName
-      })
-      setFactoryData(arr)
-    }
-  }
-  const FormData = (e: any) => {
-    if (e.factoryId !== undefined) {
-      setParams({ pageNum: 1, pageSize, ...e })
-    } else {
-      setParams({ pageNum, pageSize, ...e })
-    }
-  }
   useEffect(() => {
     ;(async () => {
       try {
@@ -95,10 +75,14 @@ function Rule() {
     })()
   }, [])
 
-  useEffect(() => {
+  const searchFactoryChange = () => {
     const nConfigs: any[] = cloneDeep(configs)
     nConfigs[0]['options'] = facList
     setConfigs(nConfigs)
+  }
+
+  useEffect(() => {
+    searchFactoryChange()
   }, [facList])
 
   const changeTeamConfig = async (factoryId?: string) => {
@@ -114,21 +98,14 @@ function Rule() {
 
   const paramsChange = (values: Record<string, any>) => {
     const oldParams = cloneDeep(params)
-    if (params.factoryId && values.factoryId !== params.factoryId) {
-      values.teamId = undefined
-    }
-    // 判断工厂id是否变更，再重置配置项信息
     if (oldParams.factoryId !== values.factoryId) {
+      values.teamId = undefined
       changeTeamConfig(values.factoryId)
     }
-    setParams(values)
+
+    setParams({ ...values })
   }
 
-  // useEffect(() => {
-  // changeTeamConfig(params.factoryId)
-  // }, [params.factoryId])
-
-  //删除
   const deleteInfo = () => {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
@@ -149,7 +126,6 @@ function Rule() {
   }
 
   const onSelectChange = (selectedRowKeys: React.SetStateAction<never[]>) => {
-    console.log('selectedRowKeys', selectedRowKeys)
     setSelectedRowKeys(selectedRowKeys)
   }
   const rowSelection:
@@ -161,7 +137,7 @@ function Rule() {
     selectedRowKeys,
     onChange: onSelectChange
   }
-  // 新增弹窗
+
   const onAddCancel = (isUpdate?: boolean) => {
     setIsModalVisible(false)
     isUpdate && getDataList()
@@ -183,20 +159,77 @@ function Rule() {
     setModalType(type)
     setIsModalVisible(true)
   }
+
+  const uploadProps = {
+    name: 'file',
+    action: '/aps/capacity-efficiency-manage/import-data',
+    headers: {
+      Authorization: getToken()
+    },
+    beforeUpload: (file) => {
+      const { name } = file
+      // 校验是否是excel文件
+      const isExcel = /(xls|xlsx)$/i.test(name)
+      if (!isExcel) {
+        message.error('只能上传xls或xlsx格式的文件')
+      }
+
+      return isExcel
+    },
+    onChange(info) {
+      const { status, response } = info.file
+      if (status !== 'uploading') {
+        // console.log(info.file, info.fileList)
+      }
+      if (status === 'done') {
+        if (response.success) {
+          message.success(`${info.file.name}上传成功`)
+          getDataList()
+        } else {
+          message.error(response.msg || '上传失败，请重试')
+        }
+      } else if (status === 'error') {
+        message.error(`${info.file.name}上传失败，请重试`)
+      }
+    },
+    showUploadList: false
+  }
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="1">
+        <div
+          onClick={() => {
+            setExportModalVisible(true)
+          }}
+        >
+          模板下载
+        </div>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <Upload {...uploadProps}>
+          <span>Excel导入</span>
+        </Upload>
+      </Menu.Item>
+    </Menu>
+  )
+
   const TableLeft = () => {
     return (
-      <>
-        <Button
-          className={styles.executionMethod}
-          type="primary"
-          onClick={() => handleInfo(undefined)}
-        >
+      <Space>
+        <Button type="primary" onClick={() => handleInfo(undefined)}>
           新增
         </Button>
         <Button type="primary" danger onClick={deleteInfo}>
           删除
         </Button>
-      </>
+        <Dropdown overlay={menu} placement="topLeft">
+          <Button type="primary">
+            导入
+            <DownOutlined />
+          </Button>
+        </Dropdown>
+      </Space>
     )
   }
 
@@ -204,13 +237,11 @@ function Rule() {
     <div className={styles.qualification}>
       <div>{/* <Title title={'产能效率模板'} /> */}</div>
       <div>
-        {/* <SearchBar
+        <SearchBar
           configs={configs}
           params={params}
           callback={paramsChange}
         ></SearchBar>
-         */}
-        <Forms factoryData={factoryData} FormData={FormData}></Forms>
 
         <div className={styles.content}>
           <CusDragTable
@@ -242,6 +273,15 @@ function Rule() {
           isModalVisible={isModalVisible}
           type={modalType}
           modalInfo={rowInfo}
+          facList={facList}
+        />
+      )}
+      {exportModalVisible && (
+        <ExportModal
+          onCancel={() => {
+            setExportModalVisible(false)
+          }}
+          isModalVisible={exportModalVisible}
           facList={facList}
         />
       )}

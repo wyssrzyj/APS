@@ -125,3 +125,54 @@ export const formItemConfig: Array<Partial<AddFormConfig>> = [
     allowClear: true
   }
 ]
+
+type exportFormConfig = {
+  label: string
+  name: string
+  field: string
+  value: any
+  type: string
+  treeData: any
+  required: boolean
+  treeCheckable: boolean
+  placeholder: string
+  disabled: boolean
+  allowClear: boolean
+  options: any
+  span: number
+  layout: any
+  min: number
+}
+export const exportModalConfig: Array<Partial<exportFormConfig>> = [
+  {
+    label: '工厂名称',
+    name: 'factoryId',
+    value: '',
+    required: true,
+    placeholder: '请输入工厂名称',
+    type: 'select',
+    options: [],
+    allowClear: true
+  },
+  {
+    label: '工作班组',
+    name: 'teamId',
+    value: '',
+    type: 'multipleSelect',
+    options: [],
+    required: true,
+    placeholder: '请选择工作班组',
+    allowClear: true,
+    disabled: true
+  },
+  {
+    label: '天数',
+    name: 'days',
+    value: '',
+    type: 'number',
+    required: true,
+    placeholder: '请输入天数',
+    allowClear: true,
+    min: 0
+  }
+]

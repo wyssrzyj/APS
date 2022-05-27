@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
  * @LastEditors: zjr
- * @LastEditTime: 2022-05-13 18:34:24
+ * @LastEditTime: 2022-05-26 14:44:51
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -144,6 +144,43 @@ export const productionChangeList = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
       `/aps/product-order/list-change`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+// 生产单动态
+export const proSingleDynamic = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-order-log/list`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+// 生产任务动态
+
+export const proTaskDynamic = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-log/list`,
       params
     )
     if (res.code !== 200) {

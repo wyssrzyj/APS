@@ -419,6 +419,7 @@ const FormNode = (props: FormNodeProps) => {
           value={nodeValue}
           style={{ width: '100%' }}
           disabled={disabled}
+          placeholder={placeholder}
           max={max}
           {...other}
         ></InputNumber>
