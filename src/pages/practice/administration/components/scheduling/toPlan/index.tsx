@@ -621,7 +621,7 @@ function ToPlan(props: {
     }
   }
   return (
-    <div>
+    <div className={styles.tree}>
       {!isModalVisible ? (
         <Tabs onChange={callback} activeKey={current} type="card">
           <TabPane tab="待计划" key="0">
@@ -634,7 +634,7 @@ function ToPlan(props: {
               <div>
                 <Tree
                   checkable
-                  // height={500}
+                  height={600}
                   selectedKeys={keys}
                   defaultExpandAll={true}
                   onSelect={onSelect}
@@ -653,7 +653,7 @@ function ToPlan(props: {
             {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
               <div>
                 <Tree
-                  // height={200}
+                  height={600}
                   selectedKeys={keys}
                   defaultExpandAll={true}
                   onSelect={onSelect}

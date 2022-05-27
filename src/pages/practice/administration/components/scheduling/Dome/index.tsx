@@ -58,7 +58,6 @@ const Dhx = (props: {
 
   const [overtimeType, setOvertimeType] = useState<any>(false) //判断右键是否有值 有值且不展示添加加班
   const [movingDistance, setMovingDistance] = useState<any>({ x: 0, y: 0 })
-  // const [chartTree, setChartTree] = useState<any>([]) //甘特树结构
   const chartTree = useRef({ data: [] })
 
   useEffect(() => {
@@ -321,7 +320,6 @@ const Dhx = (props: {
       ahead.forEach((item) => {
         newData.push(getTreeData(item))
       })
-      //  newData.flat(Infinity) 自己的树结构数据
       const sums = newData.flat(Infinity).reduce((total, current) => {
         total += current.sum
         return total
@@ -337,9 +335,9 @@ const Dhx = (props: {
 
   //** 点击事件 点击父节点 传递 不可用时间
   const leftData = async (id: string) => {
-    if (id !== null) {
-      setSelect(id)
-    }
+    // if (id !== null) {
+    //   setSelect(id)
+    // }
   }
   //树选中
   useEffect(() => {
@@ -404,34 +402,28 @@ const Dhx = (props: {
   }
   return (
     <div>
-      <div>
-        <div className={styles.ganttContent}>
-          <div>
-            <Dropdown
-              overlay={overtimeType ? rightClick : dontShow}
-              trigger={['contextMenu']}
-            >
-              <div className="site-dropdown-context-menu">
-                <div className="gantt-container">
-                  <Gantt
-                    select={select}
-                    movingDistance={movingDistance}
-                    name={'lyj'}
-                    leftData={leftData}
-                    rightData={rightData}
-                    tasks={subjectData}
-                    zoom={currentZoom}
-                    updateList={updateList}
-                    expandOperation={expandOperation}
-                    // restDate={restDate} //不可用时间
-                  />
-                </div>
-              </div>
-            </Dropdown>
-          </div>
-        </div>
-        <Popup content={content} />
+      <div className={styles.ganttContent}>
+        <>
+          <Dropdown
+            overlay={overtimeType ? rightClick : dontShow}
+            trigger={['contextMenu']}
+          >
+            <Gantt
+              select={select}
+              movingDistance={movingDistance}
+              name={'lyj'}
+              leftData={leftData}
+              rightData={rightData}
+              tasks={subjectData}
+              zoom={currentZoom}
+              updateList={updateList}
+              expandOperation={expandOperation}
+              // restDate={restDate} //不可用时间
+            />
+          </Dropdown>
+        </>
       </div>
+      <Popup content={content} />
     </div>
   )
 }

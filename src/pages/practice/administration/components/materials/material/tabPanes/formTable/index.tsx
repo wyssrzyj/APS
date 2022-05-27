@@ -31,10 +31,35 @@ const FormTable = (props: any) => {
 
   const [cloneData, setCloneData] = useState<any>([]) //修改存取来
   const [defaultExpandedRow, setDefaultExpandedRow] = useState<any>([]) //全部展开
+  const [materialDate, setMaterialDate] = useState<any>() //全部展开
   useEffect(() => {
     saveData && saveData(data)
     //给后台传递的数据
   }, [data])
+  //添加最后一层的时间
+  const getMaxTime = (v) => {
+    let time = []
+    if (!isEmpty(v)) {
+      let arr = []
+      v.forEach((item) => {
+        if (!isEmpty(item.children)) {
+          arr.push(item.children)
+        }
+      })
+      if (!isEmpty(arr.flat(Infinity))) {
+        arr.flat(Infinity).forEach((item) => {
+          if (item.prepareTime !== null) {
+            time.push(item.prepareTime)
+          }
+        })
+      }
+    }
+    if (!isEmpty(time)) {
+      return Number(Math.max(...time))
+    } else {
+      return null
+    }
+  }
 
   //已检查且已计划 才不可用
   const whetherAvailable = (e) => {
@@ -170,7 +195,7 @@ const FormTable = (props: any) => {
                     <DatePicker
                       disabled={whetherAvailable(select)}
                       allowClear={false}
-                      defaultValue={_item ? moment(Number(_item)) : undefined}
+                      value={_item ? moment(Number(_item)) : undefined}
                       onChange={(e) => {
                         onChange(e, v)
                       }}
@@ -292,6 +317,8 @@ const FormTable = (props: any) => {
         item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
+      tableData[0].bottomTime = getMaxTime(tableData)
+      console.log('初始', tableData)
       setNotData([...tableData])
       setDefaultExpandedRow([...defaultExpandedRow])
     }
@@ -365,7 +392,8 @@ const FormTable = (props: any) => {
           }
         }
       })
-
+      current[0].bottomTime = getMaxTime(current) //添加物料齐套日期的时间
+      console.log('修改后的', current)
       let arr = cloneDeep(current)
       setCloneData([...arr])
     }
@@ -402,8 +430,17 @@ const FormTable = (props: any) => {
       setDefaultExpandedRow([...sum])
     }
   }
+  const disabledEndDate = (current: any, startTime: any) => {
+    return current && startTime && current < startTime
+  }
+
+  const MaterialDateBottom = (e) => {
+    let arr = cloneDeep(data)
+    arr[0].bottomTime = moment(e).valueOf()
+    setData(arr)
+  }
   //底部
-  const Dome = (e) => {
+  const Dome = (e, data) => {
     const cloneData = cloneDeep(e)
     const value = cloneData.splice(2)
     if (!isEmpty(cloneData)) {
@@ -417,14 +454,19 @@ const FormTable = (props: any) => {
               index={index + 1}
             ></Table.Summary.Cell>
           ))}
+
           <Table.Summary.Cell index={e.length - 1}>
+            {console.log(data)}
             <DatePicker
               disabled={whetherAvailable(select)}
               allowClear={false}
-              // defaultValue={_item ? moment(Number(_item)) : undefined}
-              // onChange={(e) => {
-              //   onChange(e, v)
-              // }}
+              disabledDate={(current) =>
+                disabledEndDate(current, moment(data[0].bottomTime))
+              }
+              value={getMaxTime(data) ? moment(data[0].bottomTime) : undefined}
+              onChange={(e) => {
+                MaterialDateBottom(e)
+              }}
             />
           </Table.Summary.Cell>
         </>
@@ -444,7 +486,9 @@ const FormTable = (props: any) => {
         onExpand={onExpand}
         summary={() => (
           <Table.Summary fixed>
-            <Table.Summary.Row>{Dome(list)}</Table.Summary.Row>
+            {!isEmpty(data) ? (
+              <Table.Summary.Row>{Dome(list, data)}</Table.Summary.Row>
+            ) : null}
           </Table.Summary>
         )}
       />
