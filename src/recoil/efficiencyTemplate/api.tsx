@@ -1,8 +1,8 @@
 /*
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-07 09:22:51
+ * @LastEditors: zjr
+ * @LastEditTime: 2022-05-26 14:29:50
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -115,5 +115,17 @@ export const teamList = async (params: any) => {
     return []
   } catch (e) {
     console.log(e)
+  }
+}
+// 导出模板
+export const exportTemplate = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/capacity-efficiency-manage/export-template`,
+      params
+    )
+    return res
+  } catch (e) {
+    message.error('操作失败，请稍后重试')
   }
 }

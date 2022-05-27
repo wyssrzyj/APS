@@ -19,7 +19,8 @@ const keys = [
   'max',
   'addonAfter',
   'showSearch',
-  'onSearch'
+  'onSearch',
+  'allowClear'
 ]
 
 interface Props {
@@ -31,7 +32,7 @@ interface Props {
     labelCol: { span: number; [key: string]: any }
     wrapperCol: { span: number; [key: string]: any }
   }
-  onChange?: (values: any) => void
+  onChange?: (values: any, changeVal) => void
 }
 
 const initLayout = {
@@ -55,7 +56,7 @@ const CustomForm = forwardRef((props: Props, ref) => {
   })
 
   const valuesChange = (_values: any, allValues: any) => {
-    onChange && onChange(allValues)
+    onChange && onChange(allValues, _values)
   }
 
   return (

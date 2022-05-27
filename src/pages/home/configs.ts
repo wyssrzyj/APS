@@ -4,7 +4,7 @@ const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
 /*
  * @Author: zjr
  * @Date: 2022-05-12 15:11:00
- * @LastEditTime: 2022-05-23 17:24:57
+ * @LastEditTime: 2022-05-26 15:02:41
  * @Description:
  * @LastEditors: zjr
  */
@@ -17,6 +17,12 @@ type Column = {
   render: ReactNode
 }
 export const delayTableColumns = [
+  {
+    title: '工厂名称',
+    align: 'center',
+    dataIndex: 'factoryName',
+    width: 200
+  },
   {
     title: '生产单号',
     align: 'center',
@@ -43,6 +49,12 @@ export const delayTableColumns = [
   }
 ]
 export const inventoryTableColumns = [
+  {
+    title: '工厂名称',
+    align: 'center',
+    dataIndex: 'factoryName',
+    width: 200
+  },
   {
     title: '生产单号',
     align: 'center',

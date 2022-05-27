@@ -101,6 +101,7 @@ const CusDragTable = (props: CusTableProps) => {
     cusBarRight,
     storageField,
     noNeedDropdown,
+    noBtn,
     ...rest
   } = props
 
@@ -284,7 +285,7 @@ const CusDragTable = (props: CusTableProps) => {
 
   return (
     <div className={styles.cusMoveTableBox}>
-      <div className={styles.tableBtnBox}>
+      <div className={noBtn ? '' : styles.tableBtnBox}>
         <div className={styles.tableBtnBoxLeft}>
           {cusBarLeft && cusBarLeft()}
         </div>

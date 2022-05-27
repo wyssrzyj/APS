@@ -16,9 +16,9 @@ const hosts = new Map()
 // hosts.set('development', 'http://192.168.69.88:8000')
 hosts.set('development', 'http://10.18.4.25:8000')
 
-hosts.set('test', 'http://101.37.116.101:8000')
+hosts.set('test', 'http://10.18.4.26:8000')
 
-hosts.set('production', 'http://101.37.116.101:8000/')
+hosts.set('production', 'http://10.18.4.26:8000/')
 
 module.exports = {
   entry: ['@babel/polyfill', path.resolve(__dirname, '../src/main.tsx')],
