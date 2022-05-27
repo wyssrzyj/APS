@@ -402,6 +402,36 @@ const FormTable = (props: any) => {
       setDefaultExpandedRow([...sum])
     }
   }
+  //底部
+  const Dome = (e) => {
+    const cloneData = cloneDeep(e)
+    const value = cloneData.splice(2)
+    if (!isEmpty(cloneData)) {
+      return (
+        <>
+          <Table.Summary.Cell index={0}>物料齐套日期</Table.Summary.Cell>
+          {value.map((_item, index) => (
+            // eslint-disable-next-line react/jsx-key
+            <Table.Summary.Cell
+              key={index}
+              index={index + 1}
+            ></Table.Summary.Cell>
+          ))}
+          <Table.Summary.Cell index={e.length - 1}>
+            <DatePicker
+              disabled={whetherAvailable(select)}
+              allowClear={false}
+              // defaultValue={_item ? moment(Number(_item)) : undefined}
+              // onChange={(e) => {
+              //   onChange(e, v)
+              // }}
+            />
+          </Table.Summary.Cell>
+        </>
+      )
+    } else {
+    }
+  }
   return (
     <div>
       <Table
@@ -412,7 +442,11 @@ const FormTable = (props: any) => {
         rowKey={'key'}
         scroll={{ x: 1500, y: 300 }}
         onExpand={onExpand}
-        // pagination={false}
+        summary={() => (
+          <Table.Summary fixed>
+            <Table.Summary.Row>{Dome(list)}</Table.Summary.Row>
+          </Table.Summary>
+        )}
       />
     </div>
   )
