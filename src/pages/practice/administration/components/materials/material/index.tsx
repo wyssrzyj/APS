@@ -75,7 +75,7 @@ function Material(props: {
         produceOrderNum: data.externalProduceOrderNum
       })
       console.log('已检查')
-      //黄勇给的参数 我自己插入第一条数据中.
+      //黄勇给的参数 我自己插入第一条数据中...
       //  resData.tableContent[0].bottomTime=
       setTableList(resData.tableContent)
     }
