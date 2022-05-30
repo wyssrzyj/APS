@@ -173,7 +173,7 @@ const BreakUp = (props: any) => {
       //初始空数组 添加key防止报错
       // delete data.id //防止 id和父级一样
       const res = cloneDeep(data)
-      res.children = []
+      // res.children = []
       res.id = 1
       res.key = 2
       res.productionAmount = 0
@@ -199,9 +199,6 @@ const BreakUp = (props: any) => {
   const handleCancel = () => {
     setIsModalVisible(false)
     empty && empty()
-  }
-  const onChange = (e: { target: { checked: any } }) => {
-    console.log(`checked = ${e.target.checked}`)
   }
 
   //单选的处理
@@ -242,18 +239,17 @@ const BreakUp = (props: any) => {
   ) => {
     const sum = cloneDeep(data)
     if (type === 1) {
-      record.productionAmount = e
-      clearTimeout(timeout)
-      timeout = setTimeout(() => {
+      if (e === '0') {
+        message.warning('请输入大于0的数')
         updateData(record, sum)
-      }, 500)
+      } else {
+        record.productionAmount = e
+        updateData(record, sum)
+      }
     }
     if (type === 2) {
       record.completedAmount = e
-      clearTimeout(timeout)
-      timeout = setTimeout(() => {
-        updateData(record, sum)
-      }, 500)
+      updateData(record, sum)
     }
   }
   //时间的处理
@@ -285,30 +281,41 @@ const BreakUp = (props: any) => {
   //增加
   const increase = () => {
     const arr = cloneDeep(data)
-    //拆分数量的总和
-    const res = arr.reduce((total: any, current: { productionAmount: any }) => {
-      total += current.productionAmount
-      return total
-    }, 0)
-    const value = arr[0].orderSum - res
-    if (value <= 0) {
-      message.success('拆分数量以到达最大值')
+    if (arr[0].productionAmount === 0) {
+      message.warning('请填写拆分数量')
     } else {
-      arr.push({
-        key: Date.now(),
-        ids: Date.now() * Math.random(),
-        productionAmount: value,
-        // shopId: arr[0].shopId,
-        // teamId: arr[0].teamId,
-        planStartTime: undefined,
-        planEndTime: undefined,
-        efficiency: arr[0].efficiency,
-        isLocked: arr[0].isLocked,
-        completedAmount: 0
-      })
-      setData([...arr])
+      //拆分数量的总和
+      const res = arr.reduce(
+        (total: any, current: { productionAmount: any }) => {
+          total += current.productionAmount
+          return total
+        },
+        0
+      )
+      const value = arr[0].orderSum - res
+      if (value <= 0) {
+        message.warning('拆分数量以到达最大值')
+      } else {
+        arr.push({
+          key: Date.now(),
+          ids: Date.now() * Math.random(),
+          productionAmount: value,
+          // shopId: arr[0].shopId,
+          // teamId: arr[0].teamId,
+          planStartTime: undefined,
+          planEndTime: undefined,
+          efficiency: arr[0].efficiency,
+          isLocked: arr[0].isLocked,
+          externalProduceOrderNum: arr[0].externalProduceOrderNum,
+          productName: arr[0].productName,
+          productNum: arr[0].productNum,
+          completedAmount: 0
+        })
+        setData([...arr])
+      }
     }
   }
+
   const reduce = (ids: any) => {
     const arr = cloneDeep(data)
     const res = arr.filter((item: { ids: any }) => item.ids !== ids)
@@ -453,10 +460,11 @@ const BreakUp = (props: any) => {
         return (
           <div>
             <InputNumber
+              min={0}
               disabled={_row.createPlanStatus}
-              defaultValue={_value}
+              value={_value}
               max={_row.orderSum} //最大值是生产单总量
-              onChange={(e) => onBreakUp(e, _row, 1)}
+              onBlur={(e) => onBreakUp(e.target.value, _row, 1)}
             />
           </div>
         )
@@ -474,7 +482,7 @@ const BreakUp = (props: any) => {
             <InputNumber
               defaultValue={_value}
               max={_row.productionAmount} //最大值是拆分数量
-              onChange={(e) => onBreakUp(e, _row, 2)}
+              onBlur={(e) => onBreakUp(e.target.value, _row, 2)}
             />
           </div>
         )
@@ -684,7 +692,7 @@ const BreakUp = (props: any) => {
           columns={columns}
           scroll={{ x: 1500, y: 500 }}
           dataSource={data}
-          rowKey={'id'}
+          rowKey={'key'}
           pagination={{
             //分页
             showSizeChanger: true,

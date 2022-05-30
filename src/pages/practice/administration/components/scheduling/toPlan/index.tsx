@@ -1,5 +1,5 @@
 import { message, Popover, Tabs, Tag, Tree } from 'antd'
-import { isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { Icon } from '@/components' //路径
@@ -256,6 +256,10 @@ function ToPlan(props: {
             item.key = item.section === '2' ? item.id : item.detailList[0].id
             item.type = item.title === '缝制工段' ? 1 : 0 //用于判断
             item.popover = false
+            //添加 生产单号	产品名称
+            item.productName = i.productName
+            item.productNum = i.productNum
+
             item.title = item.type === 1 ? sewing(item, 1) : sewing(item, 2)
             //子项添加key
             if (!isEmpty(item.children)) {
@@ -290,52 +294,65 @@ function ToPlan(props: {
       }
     }
   }
-
-  //获取子项的所有数据
-
+  // 格式转换
+  const formatProcessing = (data) => {
+    const NewData = []
+    data.map((item) => {
+      if (item.section === '2') {
+        NewData.push(item) //父
+        if (!isEmpty(item.children)) {
+          NewData.push(item.children) //子
+        }
+      }
+      //非缝制
+      if (item.section !== '2') {
+        NewData.push(item.detailList[0])
+      }
+    })
+    return NewData.flat(Infinity)
+  }
   //切换
-
   const getCurrentTabs = (data: any[], i: any) => {
     // 待计划.
-    const stayData = data[0]
+    const stayData = cloneDeep(data[0])
+    stayData.map((item) => {
+      item.id = item.externalProduceOrderId
+    })
+
     const waitDor: any[] = []
 
-    stayData.map((item: { children: any }) => {
+    stayData.forEach((item: { children: any }) => {
       if (!isEmpty(item.children)) {
         waitDor.push(item.children)
       }
     })
 
-    waitDor.flat(Infinity).forEach((item) => {
-      if (!isEmpty(item.children)) {
-        waitDor.push(item.children)
-      }
-    })
-
-    const waitDorList = stayData.concat(waitDor.flat(Infinity))
+    const waitDorList = stayData.concat(
+      formatProcessing(waitDor.flat(Infinity))
+    )
     const waitIndex = waitDorList.findIndex(
       (item: { id: any }) => item.id === i
     )
     if (waitIndex !== -1) {
       setCurrent('0')
     }
-    // 已计划
-    const complete = data[1]
-    const completeChildren: any[] = []
 
+    // 已计划
+    const complete = cloneDeep(data[1])
+    complete.map((item) => {
+      item.id = item.externalProduceOrderId
+    })
+    const completeChildren: any[] = []
     complete.map((item: { children: any }) => {
       if (!isEmpty(item.children)) {
         completeChildren.push(item.children)
       }
     })
 
-    completeChildren.flat(Infinity).forEach((item) => {
-      if (!isEmpty(item.children)) {
-        completeChildren.push(item.children)
-      }
-    })
+    const completeList = complete.concat(
+      formatProcessing(completeChildren.flat(Infinity))
+    )
 
-    const completeList = complete.concat(completeChildren.flat(Infinity))
     const completeIndex = completeList.findIndex(
       (item: { id: any }) => item.id === i
     )
@@ -510,7 +527,6 @@ function ToPlan(props: {
             trigger="hover"
           >
             <span className={styles.titleIcon}> {sewingData.title}</span>
-            {/* {console.log('为啥报错', sewingData.detailList)} */}
             {!isEmpty(sewingData.detailList) ? (
               <>
                 {sewingData.detailList[0].isLocked === 0 ? (
