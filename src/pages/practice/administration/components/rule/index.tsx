@@ -18,8 +18,8 @@ const {
   efficiencyInfo,
   factoryList,
   teamList,
-  deleteEfficiencyInfo,
-  importTemplate
+  deleteEfficiencyInfo
+  // importTemplate
 } = efficiencyTemplateApis
 
 function Rule() {
