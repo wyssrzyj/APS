@@ -182,10 +182,8 @@ function Vacations() {
       centered: true,
       onOk() {
         movApi()
-      },
-      onCancel() {
-        console.log('Cancel')
       }
+      // onCancel() {}
     })
   }
   const content = { isModalVisible, setIsModalVisible, type, edit }
@@ -232,7 +230,9 @@ function Vacations() {
               pageSizeOptions: ['10', '20', '50']
             }}
           />
-          <Popup content={content} newlyAdded={getDataList} />
+          {isModalVisible && (
+            <Popup content={content} newlyAdded={getDataList} />
+          )}
         </div>
       </div>
       <MovPopup
