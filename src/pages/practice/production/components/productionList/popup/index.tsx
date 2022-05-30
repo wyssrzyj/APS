@@ -86,15 +86,16 @@ function ProductionOrder(props: { content: any }) {
       title: '序号',
       align: 'center',
       dataIndex: 'idx',
+      width: 100,
       render: (_value, _row, index) => {
         return <div>{index + 1}</div>
       }
     },
     {
       title: '所属工段',
-      align: 'section',
       dataIndex: 'section',
-      width: 100,
+      align: 'center',
+      width: 150,
       render: (v: any) => {
         // return <div>{map.get(v)}</div>
         return <div>{v}</div>
@@ -102,9 +103,9 @@ function ProductionOrder(props: { content: any }) {
     },
     {
       title: '固定耗时（单位：天）',
-      align: 'center',
       dataIndex: 'consuming',
-      width: 150,
+      align: 'center',
+      width: 200,
       render: (_item, v) => {
         return (
           <>
@@ -126,7 +127,6 @@ function ProductionOrder(props: { content: any }) {
       title: '工序明细',
       align: 'center',
       dataIndex: 'operationDetails',
-      width: 200,
       render: (_item) => {
         return (
           <>
@@ -151,6 +151,7 @@ function ProductionOrder(props: { content: any }) {
       title: '操作',
       align: 'center',
       dataIndex: 'address',
+      width: 100,
       render: (_value: any, _row: any) => {
         return (
           <div className={styles.flex}>
