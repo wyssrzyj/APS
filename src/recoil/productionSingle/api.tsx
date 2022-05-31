@@ -1,8 +1,8 @@
 /*
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
- * @LastEditors: zjr
- * @LastEditTime: 2022-05-26 14:44:51
+ * @LastEditors: lyj
+ * @LastEditTime: 2022-05-31 16:36:12
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -38,6 +38,37 @@ export const processOutsourcing = async (params: any) => {
     if (res.code === 200) {
       return res.data
     }
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 工序编辑
+export const processRoute = async (params: any) => {
+  try {
+    const res: ResponseProps =
+      (await axios.get(`/aps/section/list`, params)) || {}
+
+    if (res.code === 200) {
+      return res.data
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 工序保存
+export const processSave = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/process/save-update`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
   } catch (e) {
     console.log(e)
   }
