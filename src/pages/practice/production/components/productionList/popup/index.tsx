@@ -1,13 +1,13 @@
-import { Button, Form, message, Modal, Tabs } from 'antd'
+import { Button, Form, Input, message, Modal, Table, Tabs, Tag } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import { productionSingleApis } from '@/recoil/apis'
 
-import Forms from './forms/index'
 import styles from './index.module.less'
 import Outgoing from './outgoing/index'
-import Tables from './tables/index'
+import Popup from './popup'
+
 const map = new Map()
 map.set('1', '裁剪')
 map.set('2', '缝制')
@@ -16,7 +16,7 @@ map.set('4', '包装')
 map.set('5', '外发')
 map.set('6', '缝制线外组')
 
-function Popup(props: { content: any }) {
+function ProductionOrder(props: { content: any }) {
   const { content } = props
   const {
     isModalVisible,
@@ -34,47 +34,151 @@ function Popup(props: { content: any }) {
 
   const { TabPane } = Tabs
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [form] = Form.useForm()
-  const defaultPageSize = 5
+  const defaultPageSize = 10
   const [total, setTotal] = useState() //存放总数.
+  const [pageNum, setPageNum] = useState<number>(1)
+  const [pageSize, setPageSize] = useState<number>(10)
+
   const [params, setParams] = useState<any>({
     pageNum: 1,
-    pageSize: defaultPageSize,
-    externalProduceOrderId: getDetailsId
+    pageSize: 10
   })
 
-  const [usedList, setUsedList] = useState([]) //老数据
-  const [allList, setAllList] = useState<any>([]) //全部-工艺数据
+  const [list, setList] = useState<any>([]) //工艺数据
 
-  const [localData, setLocalData] = useState<any>([]) //工艺数据-修改保存
-  const [list, setList] = useState([]) //修改后-数据-展示
   const [allSaveList, setAllSaveList] = useState<any>([]) //全部-工艺数据-保存
 
   const [allData, setAllData] = useState<any>([]) //外发全部数据-初始
   const [processedData, setProcessedData] = useState<any>([]) //外发全部数据-修改
-
-  const [data, setData] = useState() //form的单个数据
-  const [caseIds, setCaseIds] = useState([]) //存放id
-
-  // const [outgoing, setOutgoing] = useState<any>([]) //外发数据
+  const [editType, setEditType] = useState<boolean>(false)
+  const [operation, setOperation] = useState(false)
+  const [workingProcedureId, setWorkingProcedureId] = useState()
 
   useEffect(() => {
     if (getDetailsId !== undefined && getDetailsId !== null) {
-      const sum = {
-        pageNum: 1,
-        pageSize: defaultPageSize,
-        externalProduceOrderId: getDetailsId
-      }
-      const all = {
-        pageNum: 1,
-        pageSize: 1000,
-        externalProduceOrderId: getDetailsId
-      }
-      getDetails('1', sum)
-      getDetails('2', all)
       getAllData() //外发全部数据
     }
   }, [getDetailsId])
+  useEffect(() => {
+    getProcessRoute(params)
+  }, [params])
+  const getProcessRoute = (v) => {
+    const domeList = [
+      {
+        id: 1,
+        section: '裁剪',
+        consuming: 1,
+        operationDetails: ['铺布1', '打包2', '裁剪3', '铺布', '打包', '裁剪']
+      },
+      {
+        id: 2,
+        section: '缝制',
+        consuming: 2,
+        operationDetails: ['铺布', '打包', '裁剪']
+      }
+    ]
+    setList(domeList)
+    setAllSaveList(domeList)
+  }
+
+  const columns: any = [
+    {
+      title: '序号',
+      align: 'center',
+      dataIndex: 'idx',
+      width: 100,
+      render: (_value, _row, index) => {
+        return <div>{index + 1}</div>
+      }
+    },
+    {
+      title: '所属工段',
+      dataIndex: 'section',
+      align: 'center',
+      width: 150,
+      render: (v: any) => {
+        // return <div>{map.get(v)}</div>
+        return <div>{v}</div>
+      }
+    },
+    {
+      title: '固定耗时（单位：天）',
+      dataIndex: 'consuming',
+      align: 'center',
+      width: 200,
+      render: (_item, v) => {
+        return (
+          <>
+            <Input
+              disabled={types ? true : false}
+              type="number"
+              // disabled={whetherAvailable(select)}
+              min={0}
+              defaultValue={_item}
+              onBlur={(e) => {
+                quantity(e.target.value, v)
+              }}
+            />
+          </>
+        )
+      }
+    },
+    {
+      title: '工序明细',
+      align: 'center',
+      dataIndex: 'operationDetails',
+      render: (_item) => {
+        return (
+          <>
+            {!isEmpty(_item) ? (
+              <div className={styles.todoContent}>
+                {_item.map((item) => (
+                  <Tag
+                    className={styles.operationTag}
+                    key={item}
+                    color="#108ee9"
+                  >
+                    {item}
+                  </Tag>
+                ))}
+              </div>
+            ) : null}
+          </>
+        )
+      }
+    },
+    {
+      title: '操作',
+      align: 'center',
+      dataIndex: 'address',
+      width: 100,
+      render: (_value: any, _row: any) => {
+        return (
+          <div className={styles.flex}>
+            <div
+              className={styles.operation_item}
+              // onClick={() => getFormData(_row)}
+              onClick={() => getFormData(externalProduceOrderId)}
+            >
+              {types ? '查看' : '编辑工序'}
+            </div>
+          </div>
+        )
+      }
+    }
+  ]
+  const quantity = (e, v) => {
+    v.consuming = e
+    updateData(v, allSaveList)
+  }
+  const updateData = (record, list) => {
+    const sum = cloneDeep(list)
+    const subscript = sum.findIndex((item: any) => item.id === record.id)
+    if (subscript !== -1) {
+      sum.splice(subscript, 1, record)
+      setAllSaveList(sum)
+    }
+  }
   const getAllData = async () => {
     const res = await processOutsourcing({
       pageNum: 1,
@@ -93,83 +197,20 @@ function Popup(props: { content: any }) {
       setProcessedData(res.records)
     }
   }
-
-  useEffect(() => {
-    if (params.externalProduceOrderId !== undefined) {
-      getDetails('1', params)
-    }
-  }, [params])
-  //子项的分页数据
-  const pagingData = (e, v) => {
-    setParams({ externalProduceOrderId: getDetailsId, pageNum: e, pageSize: v })
-  }
-
-  const getDetails = async (type, params: any) => {
-    const res: any = await workingProcedure(params)
-    res.records.map((item) => {
-      item.section = map.get(item.section)
+  const saveMethod = async (processed) => {
+    //保存的时候工艺和外发 都需要传全部数据.
+    const arr = await popupPreservation({
+      productId: getDetailsId,
+      externalProduceOrderId: externalProduceOrderId,
+      outsourceProcessDTOList: processed, //外发全部为true且时间不为空的数据
+      processDTOList: allSaveList //工艺全部数据
     })
-    if (type === '1') {
-      setUsedList(res.records)
-      setTotal(res.total)
-    }
-    if (type === '2') {
-      setAllList(res.records)
-      setTotal(res.total)
+    if (arr) {
+      message.success('保存成功')
+      refreshData && refreshData()
+      handleCancel()
     }
   }
-
-  //判断本地是否有值 有的就重新处理
-  useEffect(() => {
-    // 替换 数据
-    if (!isEmpty(localData)) {
-      localData.forEach((item: any) => {
-        oldAndNewFilter('1', item, usedList)
-        oldAndNewFilter('2', item, allList)
-      })
-    } else {
-      setList(usedList)
-      setAllSaveList(allList)
-    }
-  }, [allList, usedList, localData])
-
-  //  **判断接口数据中  是否有本地数据  有则替换**
-  const oldAndNewFilter = (type, v: any, total: any) => {
-    const saveIndex = total.findIndex((item: any) => item.idx === v.idx)
-    if (saveIndex !== -1) {
-      total.splice(saveIndex, 1, v)
-      if (type === '1') {
-        setList([...total])
-      }
-      if (type === '2') {
-        setAllSaveList([...total])
-      }
-    } else {
-      setList(total)
-      setAllSaveList(total)
-    }
-  }
-  //把数据传递给底部from
-  const getFormData = (value: any) => {
-    setCaseIds([...caseIds])
-    setData(value)
-  }
-  //**底部form返回的数据
-  const FormData = (e: any) => {
-    localDataHandle(e)
-  }
-  // *** 存放修改后的数据**.
-  const localDataHandle = (data: any) => {
-    // 单条数据
-    const saveIndex = localData.findIndex((item: any) => item.idx === data.idx) //找下表
-    if (saveIndex === -1) {
-      setLocalData([...localData, data])
-    } else {
-      localData.splice(saveIndex, 1, data) //处理后的数据
-      setLocalData([...localData])
-    }
-  }
-
   const handleOk = async () => {
     if (!types) {
       // 判断外发管理的外发时间是否为空.
@@ -178,25 +219,20 @@ function Popup(props: { content: any }) {
       if (!isEmpty(processedData)) {
         const processed = processedData.filter((item) => item.need === true)
         const outTimeType = processed.every((item: any) => {
-          return item.outTime !== null && item.outTime !== ''
+          return (
+            item.outTime !== null && item.outTime !== '' && item.outTime !== '0'
+          )
         })
-
-        if (outTimeType) {
-          //保存的时候工艺和外发 都需要传全部数据.
-          const arr = await popupPreservation({
-            productId: getDetailsId,
-            externalProduceOrderId: externalProduceOrderId,
-            outsourceProcessDTOList: processed, //外发全部为true且时间不为空的数据
-            processDTOList: allSaveList //工艺全部数据
-          })
-
-          if (arr) {
-            message.success('保存成功')
-            refreshData && refreshData()
-            handleCancel()
-          }
+        //判断是否编辑
+        if (editType) {
+          saveMethod(processed)
         } else {
-          message.error('外发管理的外发时间不能为空')
+          //判断勾选的是否全部输入值切不为空
+          if (outTimeType) {
+            saveMethod(processed)
+          } else {
+            message.error('外发管理的外发时间不能为空')
+          }
         }
       } else {
         //外发数据为空
@@ -224,8 +260,21 @@ function Popup(props: { content: any }) {
   }
 
   //外发全部数据
-  const AllData = (e: any) => {
+  const AllData = (e: any, type) => {
+    setEditType(type)
     setProcessedData(e)
+  }
+
+  const getFormData = (value: any) => {
+    setWorkingProcedureId(value)
+    setOperation(true)
+  }
+  const onPaginationChange = (
+    page: React.SetStateAction<number>,
+    pageSize: React.SetStateAction<number>
+  ) => {
+    setPageNum(page)
+    setPageSize(pageSize)
   }
   return (
     <div className={styles.mainBody}>
@@ -246,23 +295,30 @@ function Popup(props: { content: any }) {
         visible={isModalVisible}
         maskClosable={false}
         onOk={handleOk}
-        // okText={types ? '确认' : '保存'}
+        // okText={types ? '确认' : '保存'}。
         onCancel={handleCancel}
         centered={true}
       >
         <Tabs type="card">
           <TabPane tab="工艺路线" key="1">
-            <Tables
-              total={total}
-              pagingData={pagingData}
-              list={list}
-              getFormData={getFormData}
-              types={types}
+            <Table
+              columns={columns}
+              dataSource={list || []}
+              rowKey={'id'}
+              pagination={null}
+              // pagination={{。
+              //   // disabled: types,
+              //   //分页
+              //   showSizeChanger: true,
+              //   pageSize, //每页条数
+              //   current: pageNum, //	当前页数
+              //   total, //数据总数
+              //   pageSizeOptions: ['5', '10', '20', '50'],
+              //   onChange: onPaginationChange //获取当前页码是一个function
+              // }}
             />
-            <div className={styles.forms}>
-              <Forms FormData={FormData} data={data} types={types}></Forms>
-            </div>
           </TabPane>
+
           <TabPane tab="外发管理" key="2">
             <Outgoing
               allData={allData}
@@ -274,9 +330,18 @@ function Popup(props: { content: any }) {
             />
           </TabPane>
         </Tabs>
+        {operation && (
+          <Popup
+            externalProduceOrderId={workingProcedureId}
+            getDetailsId={getDetailsId}
+            types={types}
+            operation={operation}
+            setOperation={setOperation}
+          />
+        )}
       </Modal>
     </div>
   )
 }
 
-export default Popup
+export default ProductionOrder

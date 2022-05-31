@@ -324,20 +324,18 @@ const Dhx = (props: {
         total += current.sum
         return total
       }, 0)
-      console.log(sums)
 
       return (sums * 35) / 2
     } else {
-      console.log('我点击的是第一组')
       return 0
     }
   }
 
   //** 点击事件 点击父节点 传递 不可用时间
   const leftData = async (id: string) => {
-    // if (id !== null) {
-    //   setSelect(id)
-    // }
+    if (id !== null) {
+      setSelect(id)
+    }
   }
   //树选中
   useEffect(() => {

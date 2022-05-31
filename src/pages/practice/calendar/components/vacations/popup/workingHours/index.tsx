@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2022-03-10 15:20:21
- * @LastEditTime: 2022-05-07 08:47:03
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @LastEditTime: 2022-05-30 14:30:02
+ * @LastEditors: lyj
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \jack-aps\src\pages\practice\calendar\components\vacations\popup\workingHours\index.tsx
  */
@@ -31,7 +31,8 @@ function WorkingHours(props: any) {
 
   const executionMethod = (type: string, index: number) => {
     if (type === 'push') {
-      data.push(moment(new Date()).format('YYYY-MM-DD'))
+      const time = moment(data[data.length - 1]).valueOf() + 86400000
+      data.push(moment(time).format('YYYY-MM-DD'))
       setData([...data])
     } else {
       data.splice(index, 1)

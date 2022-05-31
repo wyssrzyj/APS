@@ -130,8 +130,8 @@ const Outgoing = (props: any) => {
 
   // 传递出去用于保存
   useEffect(() => {
-    AllData && AllData(processedData)
-  }, [processedData])
+    AllData && AllData(processedData, edited)
+  }, [processedData, edited])
 
   const columns: any = [
     {

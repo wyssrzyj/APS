@@ -1,5 +1,5 @@
 import { Form, Input, Modal } from 'antd'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { getChild } from '@/components/getChild'
 import { holidaySeasonApis } from '@/recoil/apis'
@@ -9,17 +9,22 @@ function Popup(props: any) {
   const { content, newlyAdded } = props
   const { isModalVisible, setIsModalVisible, type, edit } = content
   const { holidayAddition } = holidaySeasonApis
+  const [initialValues, setInitialValues] = useState({})
   const [form] = Form.useForm()
   //回显
   useEffect(() => {
     if (type !== 1) {
-      // endDate
-      form.setFieldsValue(edit) //回显
+      setInitialValues(edit)
     }
     if (type === 1) {
       form.resetFields()
     }
   }, [edit, type])
+  useEffect(() => {
+    if (initialValues) {
+      form.resetFields() //重置form中的数据
+    }
+  }, [initialValues])
 
   useEffect(() => {
     form.resetFields()
@@ -76,6 +81,7 @@ function Popup(props: any) {
           type === 1 ? '新增节假日' : type === 2 ? '编辑节假日' : '查看节假日'
         }
         visible={isModalVisible}
+        destroyOnClose={true}
         maskClosable={false}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -87,6 +93,7 @@ function Popup(props: any) {
           {...layout}
           onFinish={onFinish}
           autoComplete="off"
+          initialValues={initialValues}
         >
           <Form.Item
             label="节假日"

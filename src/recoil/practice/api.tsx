@@ -168,3 +168,19 @@ export const getLine = async (params: any) => {
     console.log(e)
   }
 }
+// 工作日历
+export const getWorkCalendar = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/work-calendar/work-calendar`,
+      params
+    )
+
+    if (res.code !== 200) {
+      message.error(res.msg || '获取失败')
+    }
+    if (res) return res
+  } catch (e) {
+    console.log(e)
+  }
+}
