@@ -20,6 +20,7 @@ const Dhx = (props: {
   gunterType: any
   refresh: any
   treeSelection: any
+  time: any
 }) => {
   const {
     gunterData,
@@ -29,7 +30,8 @@ const Dhx = (props: {
     formData,
     gunterType,
     refresh,
-    treeSelection
+    treeSelection,
+    time
   } = props
   const { getLine, calculateEndTimeAfterMove } = schedulingApis
   const { factoryList } = workOvertimeApis
@@ -53,9 +55,10 @@ const Dhx = (props: {
 
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
-  const [overtimeType, setOvertimeType] = useState<any>(false) //判断右键是否有值 有值且不展示添加加班
 
-  const [treeSelectionGantt, setTreeSelectionGantt] = useState<any>() //树选中
+  const [overtimeType, setOvertimeType] = useState<any>(false) //判断右键是否有值 有值且不展示添加加班
+  const [movingDistance, setMovingDistance] = useState<any>({ x: 0, y: 0 })
+  const chartTree = useRef({ data: [] })
 
   useEffect(() => {
     getData()
@@ -96,78 +99,81 @@ const Dhx = (props: {
         const arr = { data: [], links: [] }
         setSubjectData({ ...arr })
       }
-
-      // const dataqq = [
-      //   {
-      //     //父亲
-      //     id: 1,
-      //     type: true, //判断是否可以移动
-      //     text: '裁剪车间—裁剪班组', //名称
-      //     // duration: 6, //天数
-      //     // progress: 1, //控制完成百分比 范围0-1
-      //     color: '#ff4d4f', //控制颜色
-      //     open: true
-      //   },
-      //   {
-      //     //儿子
-      //     id: 11,
-      //     text: '生产单1',
-      //     // start_date: '2020-04-07',
-      //     // duration: 2,
-      //     progress: 0.6,
-      //     // parent: 1,
-      //     color: '', //控制颜色
-      //     render: 'split', //添加同一行
-      //     open: true
-      //   },
-      //   {
-      //     //孙子
-      //     id: 111,
-      //     text: '卢英杰的子1',
-      //     start_date: '2020-04-6', //开始时间
-      //     end_date: '2020-04-7 ', //结束时间
-      //     duration: 1,
-      //     progress: 0.6,
-      //     parent: 11,
-      //     color: '#52c41a', //控制颜色
-      //     open: true
-      //   },
-
-      //   {
-      //     //儿子
-      //     id: 22,
-      //     text: '生产单2',
-      //     progress: 0.6,
-      //     parent: 1,
-      //     color: '', //控制颜色
-      //     render: 'split', //添加同一行
-      //     open: true
-      //   },
-      //   {
-      //     //孙子
-      //     id: 222,
-      //     text: '订2',
-      //     start_date: '2020-04-8', //开始时间
-      //     end_date: '2020-04-9', //结束时间
-      //     duration: 1,
-      //     progress: 0.6,
-      //     parent: 22,
-      //     color: '#52c41a', //控制颜色
-      //     open: true
-      //   }
-      // ]
-
-      // const linksqq = [
-      //   { id: 1, source: 111, target: 112, type: 0 },
-      //   { id: 3, source: 2, target: 3, type: 0 }
-      // ]
-      // // 假数据
-      // setSubjectData({
-      //   data: dataqq,
-      //   links: linksqq
-      // })
     }
   }, [chart, line, gunterType])
+
+  //--------------y轴的-----------------
+  //**计算当前项 等于 几个格子
+  const getCurrentGrid = (v) => {
+    let fatherQuantity = 0 //父数量
+    let subQuantity = 0 //子数量
+    if (v.open === true) {
+      fatherQuantity = v.children.length
+      if (!isEmpty(v.children)) {
+        v.children.map((item) => {
+          if (item.open === true) {
+            subQuantity = !isEmpty(item.children) ? item.children.length : 0
+          }
+        })
+      }
+      return fatherQuantity + subQuantity + 1
+    } else {
+      return 1
+    }
+  }
+  //子
+  const getChartChildren = (v, chartData) => {
+    const Subitem = chartData.filter((item) => item.parent === v.id)
+    //孙
+    if (!isEmpty(Subitem)) {
+      Subitem.map((item) => {
+        if (item.text === '缝制') {
+          item.children = chartData.filter((s) => s.parent === item.id)
+          item.quantity = item.children.length
+        }
+      })
+    }
+    return Subitem
+  }
+  //初始 -父
+  const treeStructure = (v) => {
+    const cloneChart = cloneDeep(v)
+    //现获取最外层
+    const parent = cloneChart.filter(
+      (item) => item.open === true && (item.parent === null || 0)
+    )
+    parent.map((item) => {
+      item.children = getChartChildren(item, cloneChart)
+      item.sum = getCurrentGrid(item)
+    })
+    chartTree.current = { data: parent }
+  }
+  //图数据转成树结构
+  useEffect(() => {
+    if (!isEmpty(chart)) {
+      treeStructure(chart)
+    }
+  }, [chart])
+
+  //更改
+  const expandOperation = (type, e) => {
+    const openChartTree = chartTree.current.data
+    openChartTree.map((item) => {
+      if (item.id === e) {
+        item.open = type === '开' ? true : false
+      } else {
+        item.children.map((v) => {
+          if (v.id === e) {
+            v.open = type === '开' ? true : false
+          }
+        })
+      }
+      item.sum = getCurrentGrid(item)
+    })
+    chartTree.current = { data: openChartTree }
+  }
+
+  //--------------y轴的-----------------
 
   //点击
   useEffect(() => {
@@ -193,18 +199,6 @@ const Dhx = (props: {
         setRestDate(['2000-06-06'])
       }
     }
-    // }
-
-    // if (type === '1') {
-    //   //移动
-    //   const unavailable: any = notWorking.filter(
-    //     (item: { id: any }) => item.id === select
-    //   )
-    //   if (unavailable !== undefined && !isEmpty(unavailable)) {
-    //     setRestDate(unavailable[0].time)
-    //   } else {
-    //     console.log('空~~~~~~~~~~')
-    //   }
     // }
   }, [select, gunterType])
 
@@ -292,16 +286,67 @@ const Dhx = (props: {
   const choose = (type: any) => {
     setCurrentZoom(type)
   }
+  //获取x轴的距离
+  const distanceX = (id) => {
+    if (!isEmpty(chart)) {
+      const currentItem = chart.filter((item) => item.id === id)
+      if (!isEmpty(currentItem)) {
+        const currentStartTime = moment(currentItem[0].start_date).valueOf()
+        const timeDifference = time.startDate - currentStartTime
+        //获取x的位移距离
+        const x = timeDifference / 1000 / 60 / 60 / 24
+        return Math.abs(x * 100)
+      }
+    }
+  }
+  //获取树结构的值
+  const getTreeData = (data) => {
+    const clone = cloneDeep(chartTree.current.data)
+    return clone.filter((item) => item.id === data.id)
+  }
+  //获取Y周的距离
+  const distanceY = (id) => {
+    const cloneChart = cloneDeep(chart)
+    const subscript = chart.findIndex((item: any) => item.id === id)
+    const chartSplice = cloneChart.splice(0, subscript + 1)
+    const parent = chartSplice.filter(
+      (item) =>
+        item.open === true && (item.parent === null || item.parent === 0)
+    )
+    //前面有几个父级
+    const ahead = parent.splice(0, parent.length - 1)
+    if (!isEmpty(ahead)) {
+      const newData = []
+      ahead.forEach((item) => {
+        newData.push(getTreeData(item))
+      })
+      const sums = newData.flat(Infinity).reduce((total, current) => {
+        total += current.sum
+        return total
+      }, 0)
+      console.log(sums)
+
+      return (sums * 35) / 2
+    } else {
+      console.log('我点击的是第一组')
+      return 0
+    }
+  }
+
   //** 点击事件 点击父节点 传递 不可用时间
   const leftData = async (id: string) => {
     if (id !== null) {
       setSelect(id)
     }
   }
+  //树选中
   useEffect(() => {
     setSelect(treeSelection)
+    setMovingDistance({
+      x: distanceX(treeSelection),
+      y: distanceY(treeSelection)
+    })
   }, [treeSelection])
-
   // 更新
   const updateList = (e: any) => {
     setUpdateData(e)
@@ -357,33 +402,28 @@ const Dhx = (props: {
   }
   return (
     <div>
-      <div>
-        <div className={styles.ganttContent}>
-          <div>
-            <Dropdown
-              overlay={overtimeType ? rightClick : dontShow}
-              trigger={['contextMenu']}
-            >
-              <div className="site-dropdown-context-menu">
-                <div className="gantt-container">
-                  <Gantt
-                    select={select}
-                    treeSelectionGantt={treeSelectionGantt}
-                    name={'lyj'}
-                    leftData={leftData}
-                    rightData={rightData}
-                    tasks={subjectData}
-                    zoom={currentZoom}
-                    updateList={updateList}
-                    // restDate={restDate} //不可用时间
-                  />
-                </div>
-              </div>
-            </Dropdown>
-          </div>
-        </div>
-        <Popup content={content} />
+      <div className={styles.ganttContent}>
+        <>
+          <Dropdown
+            overlay={overtimeType ? rightClick : dontShow}
+            trigger={['contextMenu']}
+          >
+            <Gantt
+              select={select}
+              movingDistance={movingDistance}
+              name={'lyj'}
+              leftData={leftData}
+              rightData={rightData}
+              tasks={subjectData}
+              zoom={currentZoom}
+              updateList={updateList}
+              expandOperation={expandOperation}
+              // restDate={restDate} //不可用时间
+            />
+          </Dropdown>
+        </>
       </div>
+      <Popup content={content} />
     </div>
   )
 }

@@ -1,7 +1,8 @@
 import { message, Popover, Tabs, Tag, Tree } from 'antd'
-import { isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
+import { Icon } from '@/components' //路径
 import { dockingDataApis, schedulingApis } from '@/recoil/apis'
 
 import BreakUp from './breakUp/index'
@@ -181,6 +182,7 @@ function ToPlan(props: {
       }
     }
   }
+
   //字段更改
   const fieldChanges = (
     data: {
@@ -199,6 +201,7 @@ function ToPlan(props: {
         !isEmpty(item.children) &&
           item.children.map((v: any) => {
             v.title = map.get(v.section)
+            // v.title = title(v)
             //待会进行修改
             v.children = v.section === '2' ? v.detailList : null
             !isEmpty(v.children) &&
@@ -253,6 +256,10 @@ function ToPlan(props: {
             item.key = item.section === '2' ? item.id : item.detailList[0].id
             item.type = item.title === '缝制工段' ? 1 : 0 //用于判断
             item.popover = false
+            //添加 生产单号	产品名称
+            item.productName = i.productName
+            item.productNum = i.productNum
+
             item.title = item.type === 1 ? sewing(item, 1) : sewing(item, 2)
             //子项添加key
             if (!isEmpty(item.children)) {
@@ -287,52 +294,65 @@ function ToPlan(props: {
       }
     }
   }
-
-  //获取子项的所有数据
-
+  // 格式转换
+  const formatProcessing = (data) => {
+    const NewData = []
+    data.map((item) => {
+      if (item.section === '2') {
+        NewData.push(item) //父
+        if (!isEmpty(item.children)) {
+          NewData.push(item.children) //子
+        }
+      }
+      //非缝制
+      if (item.section !== '2') {
+        NewData.push(item.detailList[0])
+      }
+    })
+    return NewData.flat(Infinity)
+  }
   //切换
-
   const getCurrentTabs = (data: any[], i: any) => {
     // 待计划.
-    const stayData = data[0]
+    const stayData = cloneDeep(data[0])
+    stayData.map((item) => {
+      item.id = item.externalProduceOrderId
+    })
+
     const waitDor: any[] = []
 
-    stayData.map((item: { children: any }) => {
+    stayData.forEach((item: { children: any }) => {
       if (!isEmpty(item.children)) {
         waitDor.push(item.children)
       }
     })
 
-    waitDor.flat(Infinity).forEach((item) => {
-      if (!isEmpty(item.children)) {
-        waitDor.push(item.children)
-      }
-    })
-
-    const waitDorList = stayData.concat(waitDor.flat(Infinity))
+    const waitDorList = stayData.concat(
+      formatProcessing(waitDor.flat(Infinity))
+    )
     const waitIndex = waitDorList.findIndex(
       (item: { id: any }) => item.id === i
     )
     if (waitIndex !== -1) {
       setCurrent('0')
     }
-    // 已计划
-    const complete = data[1]
-    const completeChildren: any[] = []
 
+    // 已计划
+    const complete = cloneDeep(data[1])
+    complete.map((item) => {
+      item.id = item.externalProduceOrderId
+    })
+    const completeChildren: any[] = []
     complete.map((item: { children: any }) => {
       if (!isEmpty(item.children)) {
         completeChildren.push(item.children)
       }
     })
 
-    completeChildren.flat(Infinity).forEach((item) => {
-      if (!isEmpty(item.children)) {
-        completeChildren.push(item.children)
-      }
-    })
+    const completeList = complete.concat(
+      formatProcessing(completeChildren.flat(Infinity))
+    )
 
-    const completeList = complete.concat(completeChildren.flat(Infinity))
     const completeIndex = completeList.findIndex(
       (item: { id: any }) => item.id === i
     )
@@ -489,7 +509,6 @@ function ToPlan(props: {
       </div>
     )
   }
-
   const sewing = (sewingData: any, type: any) => {
     //1是缝制.
     //2的时候
@@ -507,11 +526,40 @@ function ToPlan(props: {
             }
             trigger="hover"
           >
-            {sewingData.title}
+            <span className={styles.titleIcon}> {sewingData.title}</span>
+            {!isEmpty(sewingData.detailList) ? (
+              <>
+                {sewingData.detailList[0].isLocked === 0 ? (
+                  <Icon type="jack-jiesuo-copy" className={styles.previous} />
+                ) : (
+                  <Icon type="jack-suoding-copy" className={styles.previous} />
+                )}
+              </>
+            ) : null}
           </Popover>
         </div>
       )
-    } else {
+    }
+    if (type === 3) {
+      return (
+        <div style={{ height: '20px' }}>
+          <Popover
+            key={sewingData.id}
+            placement="right"
+            content={() => content(sewingData, type)}
+            trigger="hover"
+          >
+            <span className={styles.titleIcon}> {sewingData.title}</span>
+            {sewingData.isLocked === 0 ? (
+              <Icon type="jack-jiesuo-copy" className={styles.previous} />
+            ) : (
+              <Icon type="jack-suoding-copy" className={styles.previous} />
+            )}
+          </Popover>
+        </div>
+      )
+    }
+    if (type !== 2 && type !== 3) {
       return (
         <div style={{ height: '20px' }}>
           <Popover
@@ -558,36 +606,51 @@ function ToPlan(props: {
     }
   }
 
-  const FormData = (e, type) => {
+  const FormData = async (e, type) => {
     if (type === 'stay') {
-      if (getID(e, treeData) !== undefined) {
-        setSelectedKeys(getID(e, treeData))
-        setKeys(getID(e, treeData))
-      }
+      const notPlan = await listProductionOrders({
+        factoryId: formData,
+        isPlanned: 0,
+        externalProduceOrderNum: e.productName
+      })
+      const sum = [fieldChanges(notPlan), list[1]]
+      setList(sum)
+      getData(sum[Number(current)], current)
     }
     if (type === 'already') {
-      if (getID(e, treeData) !== undefined) {
-        setSelectedKeys(getID(e, WaitingTreeData))
-        setKeys(getID(e, WaitingTreeData))
+      const planned = await listProductionOrders({
+        factoryId: formData,
+        isPlanned: 1,
+        externalProduceOrderNum: e.productName
+      })
+
+      if (!isEmpty(planned)) {
+        const plannedData = planned.map((item: any) => {
+          return item.externalProduceOrderId
+        })
+        setPlannedID(plannedData)
       }
+      //添加字段
+      const sum = [list[0], fieldChanges(planned)]
+      setList(sum)
+      getData(sum[Number(current)], current)
     }
   }
   return (
-    <div>
+    <div className={styles.tree}>
       {!isModalVisible ? (
         <Tabs onChange={callback} activeKey={current} type="card">
           <TabPane tab="待计划" key="0">
+            <Forms
+              FormData={(e) => {
+                FormData(e, 'stay')
+              }}
+            ></Forms>
             {treeData !== undefined && treeData.length > 0 ? (
               <div>
-                <Forms
-                  FormData={(e) => {
-                    FormData(e, 'stay')
-                  }}
-                ></Forms>
-
                 <Tree
                   checkable
-                  // height={500}
+                  height={600}
                   selectedKeys={keys}
                   defaultExpandAll={true}
                   onSelect={onSelect}
@@ -598,16 +661,15 @@ function ToPlan(props: {
             ) : null}
           </TabPane>
           <TabPane tab="已计划" key="1">
+            <Forms
+              FormData={(e) => {
+                FormData(e, 'already')
+              }}
+            ></Forms>
             {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
               <div>
-                <Forms
-                  FormData={(e) => {
-                    FormData(e, 'already')
-                  }}
-                ></Forms>
-
                 <Tree
-                  // height={200}
+                  height={600}
                   selectedKeys={keys}
                   defaultExpandAll={true}
                   onSelect={onSelect}

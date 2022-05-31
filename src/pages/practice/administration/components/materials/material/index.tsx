@@ -63,6 +63,7 @@ function Material(props: {
         externalProduceOrderId: data.externalProduceOrderId,
         produceOrderNum: data.externalProduceOrderNum
       })
+      console.log('未检查')
 
       setTableList(resData)
     }
@@ -73,6 +74,9 @@ function Material(props: {
         externalProduceOrderId: data.externalProduceOrderId,
         produceOrderNum: data.externalProduceOrderNum
       })
+      console.log('已检查')
+      //黄勇给的参数 我自己插入第一条数据中...
+      //  resData.tableContent[0].bottomTime=
       setTableList(resData.tableContent)
     }
     //  重新检查 特殊处理-待定
@@ -134,6 +138,53 @@ function Material(props: {
   const handleOk = () => {
     setMaterialModal(false)
   }
+  //判断是否满足保存条件
+  const meetConditions = (data: any[]) => {
+    //只要底部有时间就可以提交
+
+    if (!isEmpty(data)) {
+      if (data[0].bottomTime !== null) {
+        return true
+      } else {
+        data.map((item) => {
+          if (!isEmpty(item.children)) {
+            item.save = meet(item.children)
+          }
+        })
+        const allMeet = data.every((item) => item.save === true)
+        console.log(allMeet)
+        return allMeet
+      }
+    } else {
+      return true
+    }
+  }
+  //重新
+
+  const meetConditionsAgain = (data: any[], type) => {
+    //只要底部有时间就可以提交
+    if (type === '已检查') {
+      return true
+    } else {
+      if (!isEmpty(data)) {
+        if (data[0].bottomTime !== null) {
+          console.log(data)
+          return true
+        } else {
+          data.map((item) => {
+            if (!isEmpty(item.children)) {
+              item.save = meet(item.children)
+            }
+          })
+          const allMeet = data.every((item) => item.save === true)
+          console.log(allMeet)
+          return allMeet
+        }
+      } else {
+        return false
+      }
+    }
+  }
 
   //确认
   const confirm = async () => {
@@ -142,21 +193,29 @@ function Material(props: {
     )[0]
     //重新检查保存
     if (current.name === '已检查' || current.name === '重新检查') {
-      const type: any = meetConditions(recheck) //判断当前是否全部填写
+      const type: any = meetConditionsAgain(recheck, current.name) //判断当前是否全部填写
       if (type === true) {
-        selectedData[1].tableContent = recheck
-        const res = await materialSaved(current)
-        if (res) {
-          refreshList && refreshList()
+        if (current.name === '已检查') {
           setMaterialModal(false)
           update()
           setSizeList([])
-          message.success('保存成功')
+        } else {
+          selectedData[1].tableContent = recheck
+          const res = await materialSaved(current)
+          if (res) {
+            refreshList && refreshList()
+            setMaterialModal(false)
+            update()
+            setSizeList([])
+            message.success('保存成功')
+          }
         }
       } else {
         message.error('物料齐料日期未录入')
       }
+      console.log('重新家产')
     } else {
+      console.log('正常')
       save('2', activeKey)
     }
   }
@@ -180,7 +239,6 @@ function Material(props: {
   //保存
   const added = async (current: any, next: any, methods: any, key: any) => {
     const type: any = meetConditions(modifyData) //判断当前是否全部填写
-
     if (type === true) {
       //确认保存
       current.tableContent = modifyData
@@ -240,6 +298,7 @@ function Material(props: {
           setActiveKey(key)
           tableData(next)
         } else {
+          console.log('重新检查')
           added(current, next, '切换', key)
         }
       } else {
@@ -248,22 +307,12 @@ function Material(props: {
     }
   }
 
-  //判断是否满足保存条件
-  const meetConditions = (data: any[]) => {
-    data.map((item) => {
-      if (!isEmpty(item.children)) {
-        item.save = meet(item.children)
-      }
-    })
-    const allMeet = data.every((item) => item.save === true)
-    return allMeet
-  }
-
   const meet = (data: any[]) => {
     return data.every((item: any) => {
-      return item.prepareTime !== null || item.enoughFlag !== 0
+      return item.enoughFlag !== 0
     })
   }
+
   useEffect(() => {
     if (!isEmpty(tableList)) {
       const sum = []

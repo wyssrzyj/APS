@@ -250,8 +250,7 @@ function Production() {
               pageSizeOptions: ['10', '20', '50']
             }}
           />
-
-          <Popup content={content} />
+          {isModalVisible && <Popup content={content} />}
         </div>
       </div>
       <MovPopup

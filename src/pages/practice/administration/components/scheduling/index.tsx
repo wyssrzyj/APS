@@ -121,6 +121,7 @@ function Index() {
       startDate: start.sort()[0],
       endDate: end.sort()[start.length - 1]
     }
+
     setTime(time)
 
     const cloneArr = cloneDeep(arr)
@@ -263,28 +264,9 @@ function Index() {
 
   return (
     <div className={styles.qualification}>
-      <div>{/* <Title title={'生产单排程'} /> */}</div>
-      <div>
+      <>
         <div className={styles.content}>
           <Forms FormData={FormData}></Forms>
-          <div className={styles.scheduling}>
-            <Button
-              className={styles.rules}
-              ghost
-              type="primary"
-              onClick={() => toggleRuleVisible(true)}
-            >
-              规则排程
-            </Button>
-            <Button
-              ghost
-              className={styles.heckSchedule}
-              type="primary"
-              onClick={() => toggleVerifyVisible(true)}
-            >
-              校验排程
-            </Button>
-          </div>
 
           <div className={styles.team}>
             <div className={styles.leftContent}>
@@ -299,24 +281,49 @@ function Index() {
                 remind={remind}
                 release={release}
               />
+              <div className={styles.schedule}>
+                <Button
+                  className={styles.rules}
+                  ghost
+                  type="primary"
+                  onClick={() => toggleRuleVisible(true)}
+                >
+                  规则排程
+                </Button>
+                <Button
+                  ghost
+                  className={styles.heckSchedule}
+                  type="primary"
+                  onClick={() => toggleVerifyVisible(true)}
+                >
+                  校验排程
+                </Button>
+                {/* <Button
+                  ghost
+                  className={styles.heckSchedule}
+                  type="primary"
+                  // onClick={() => toggleVerifyVisible(true)}
+                >
+                  紧急插单
+                </Button> */}
+              </div>
             </div>
             {/* 甘特图 */}
             <div className={styles.rightContent}>
-              <div className={styles.choose}>
-                <Select
-                  defaultValue={gunterType}
-                  style={{ width: 130 }}
-                  onChange={handleChange}
-                >
-                  <Option key={'0'} value="0">
-                    班组甘特图
-                  </Option>
-                  <Option key={'1'} value="1">
-                    生产单甘特图
-                  </Option>
-                </Select>
-              </div>
+              <Select
+                defaultValue={gunterType}
+                style={{ width: 130 }}
+                onChange={handleChange}
+              >
+                <Option key={'0'} value="0">
+                  班组甘特图
+                </Option>
+                <Option key={'1'} value="1">
+                  生产单甘特图
+                </Option>
+              </Select>
               <Dome
+                time={time}
                 treeSelection={treeSelection}
                 refresh={refresh}
                 updateMethod={updateMethod}
@@ -328,12 +335,8 @@ function Index() {
               />
             </div>
           </div>
-
-          {/* <Button type="primary" danger onClick={start}>
-            删除
-          </Button> */}
         </div>
-      </div>
+      </>
 
       {/* //规则排程 */}
       {visibleRule && (

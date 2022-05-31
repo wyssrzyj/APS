@@ -284,6 +284,8 @@ function Materials() {
   // 当前页面打勾，切换页面选择新数据打勾，回到之前的页面，勾的数据不见了
   //勾选
   const onSelectChange = (selectedRowKeys: any) => {
+    console.log(selectedRowKeys)
+
     //后面有数据的时候 根据id获取所有数据中对应的 然后给from
     const cloneSelected = cloneDeep(selected)
 
