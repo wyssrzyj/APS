@@ -252,7 +252,7 @@ function ProductionOrder(props: { content: any }) {
   const handleCancel = () => {
     setIsModalVisible(false)
     refreshData && refreshData()
-    // setGetDetailsId(null)
+    // setGetDetailsId(null)....
   }
   useEffect(() => {
     setEditType(whetherEditor === 2 ? true : false)
