@@ -324,11 +324,9 @@ const Dhx = (props: {
         total += current.sum
         return total
       }, 0)
-      console.log(sums)
 
       return (sums * 35) / 2
     } else {
-      console.log('我点击的是第一组')
       return 0
     }
   }

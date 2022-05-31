@@ -50,6 +50,7 @@ function ProductionOrder(props: { content: any }) {
 
   const [allData, setAllData] = useState<any>([]) //外发全部数据-初始
   const [processedData, setProcessedData] = useState<any>([]) //外发全部数据-修改
+  const [editType, setEditType] = useState<boolean>(false)
   const [operation, setOperation] = useState(false)
   const [workingProcedureId, setWorkingProcedureId] = useState()
 
@@ -62,7 +63,6 @@ function ProductionOrder(props: { content: any }) {
     getProcessRoute(params)
   }, [params])
   const getProcessRoute = (v) => {
-    console.log('接口数据', v)
     const domeList = [
       {
         id: 1,
@@ -176,7 +176,6 @@ function ProductionOrder(props: { content: any }) {
     const subscript = sum.findIndex((item: any) => item.id === record.id)
     if (subscript !== -1) {
       sum.splice(subscript, 1, record)
-      console.log(sum)
       setAllSaveList(sum)
     }
   }
@@ -198,7 +197,20 @@ function ProductionOrder(props: { content: any }) {
       setProcessedData(res.records)
     }
   }
-
+  const saveMethod = async (processed) => {
+    //保存的时候工艺和外发 都需要传全部数据.
+    const arr = await popupPreservation({
+      productId: getDetailsId,
+      externalProduceOrderId: externalProduceOrderId,
+      outsourceProcessDTOList: processed, //外发全部为true且时间不为空的数据
+      processDTOList: allSaveList //工艺全部数据
+    })
+    if (arr) {
+      message.success('保存成功')
+      refreshData && refreshData()
+      handleCancel()
+    }
+  }
   const handleOk = async () => {
     if (!types) {
       // 判断外发管理的外发时间是否为空.
@@ -207,25 +219,20 @@ function ProductionOrder(props: { content: any }) {
       if (!isEmpty(processedData)) {
         const processed = processedData.filter((item) => item.need === true)
         const outTimeType = processed.every((item: any) => {
-          return item.outTime !== null && item.outTime !== ''
+          return (
+            item.outTime !== null && item.outTime !== '' && item.outTime !== '0'
+          )
         })
-
-        if (outTimeType) {
-          //保存的时候工艺和外发 都需要传全部数据.
-          const arr = await popupPreservation({
-            productId: getDetailsId,
-            externalProduceOrderId: externalProduceOrderId,
-            outsourceProcessDTOList: processed, //外发全部为true且时间不为空的数据
-            processDTOList: allSaveList //工艺全部数据
-          })
-
-          if (arr) {
-            message.success('保存成功')
-            refreshData && refreshData()
-            handleCancel()
-          }
+        //判断是否编辑
+        if (editType) {
+          saveMethod(processed)
         } else {
-          message.error('外发管理的外发时间不能为空')
+          //判断勾选的是否全部输入值切不为空
+          if (outTimeType) {
+            saveMethod(processed)
+          } else {
+            message.error('外发管理的外发时间不能为空')
+          }
         }
       } else {
         //外发数据为空
@@ -253,7 +260,8 @@ function ProductionOrder(props: { content: any }) {
   }
 
   //外发全部数据
-  const AllData = (e: any) => {
+  const AllData = (e: any, type) => {
+    setEditType(type)
     setProcessedData(e)
   }
 
@@ -287,7 +295,7 @@ function ProductionOrder(props: { content: any }) {
         visible={isModalVisible}
         maskClosable={false}
         onOk={handleOk}
-        // okText={types ? '确认' : '保存'}
+        // okText={types ? '确认' : '保存'}。
         onCancel={handleCancel}
         centered={true}
       >
