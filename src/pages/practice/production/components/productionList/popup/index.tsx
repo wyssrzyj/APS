@@ -306,7 +306,7 @@ function ProductionOrder(props: { content: any }) {
               dataSource={list || []}
               rowKey={'id'}
               pagination={null}
-              // pagination={{
+              // pagination={{。
               //   // disabled: types,
               //   //分页
               //   showSizeChanger: true,
