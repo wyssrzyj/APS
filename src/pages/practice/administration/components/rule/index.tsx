@@ -46,7 +46,7 @@ function Rule() {
   })
   const [facList, setFacList] = useState([]) // 选中的值
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) // 选中的值
-  const [isModalVisible, setIsModalVisible] = useState(false) // 新增展示弹窗
+  const [isModalVisible, setIsModalVisible] = useState(false) // 新增展示弹窗.
   const [modalType, setModalType] = useState('add')
   const [rowInfo, setRowInfo] = useState()
   const [exportModalVisible, setExportModalVisible] = useState(false)
