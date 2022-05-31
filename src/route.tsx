@@ -46,6 +46,10 @@ const ProductionList = React.lazy(
 // ---业务单数据管理 结束
 
 //----------生产管理开始
+// 班组工作日历
+const WorkCalendar = React.lazy(
+  () => import('@/pages/practice/administration/components/workCalendar')
+)
 
 //生产管理 生产单排程
 const Scheduling = React.lazy(
@@ -101,9 +105,10 @@ const RouteList = () => {
       <Route path="/vacations" element={<Vacations />} />
       {/* 业务单数据管理-生产单列表 */}
       <Route path="/productionList" element={<ProductionList />} />
-
-      {/* 生产管理-物料齐套检查 */}
+      {/* 生产管理-工作班组日历 */}
       <Route path="/materials" element={<Materials />} />
+      {/* 生产管理-物料齐套检查 */}
+      <Route path="/workCalendar" element={<WorkCalendar />} />
       {/* 生产管理-生产单排程 */}
       <Route path="/scheduling" element={<Scheduling />} />
       {/* 生产管理-生产单排程 */}

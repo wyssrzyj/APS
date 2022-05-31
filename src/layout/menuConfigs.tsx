@@ -109,6 +109,12 @@ export const menus = [
     url: '/',
     children: [
       {
+        label: '班组工作日历',
+        key: 'workCalendar',
+        icon: 'jack-wuliaoguanli',
+        url: '/workCalendar'
+      },
+      {
         label: '物料齐套检查',
         key: 'materials',
         icon: 'jack-wuliaoguanli',
