@@ -23,7 +23,7 @@ const Outgoing = (props: any) => {
     AllData,
     types,
     externalProduceOrderId,
-    // preservation,...
+    // preservation,....
     whetherEditor,
     allData
   } = props
