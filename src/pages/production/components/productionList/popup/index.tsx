@@ -1,4 +1,4 @@
-import { Button, Form, Input, message, Modal, Table, Tabs, Tag } from 'antd'
+import { Button, Input, message, Modal, Table, Tabs, Tag } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
@@ -20,7 +20,6 @@ function ProductionOrder(props: { content: any }) {
   const { content } = props
   const {
     isModalVisible,
-    setGetDetailsId,
     setIsModalVisible,
     types,
     getDetailsId,
@@ -34,16 +33,6 @@ function ProductionOrder(props: { content: any }) {
 
   const { TabPane } = Tabs
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const defaultPageSize = 10
-  const [total, setTotal] = useState() //存放总数.
-  const [pageNum, setPageNum] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
-
-  const [params, setParams] = useState<any>({
-    pageNum: 1,
-    pageSize: 10
-  })
-
   const [list, setList] = useState<any>([]) //工艺数据
 
   const [allSaveList, setAllSaveList] = useState<any>([]) //全部-工艺数据-保存
@@ -64,7 +53,6 @@ function ProductionOrder(props: { content: any }) {
   }, [externalProduceOrderId])
   const getProcessRoute = async (v) => {
     const arr = await processRoute({ produceOrderId: externalProduceOrderId })
-    console.log(arr)
     if (!isEmpty(arr)) {
       arr.map((item, index) => {
         item.key = index
@@ -107,7 +95,6 @@ function ProductionOrder(props: { content: any }) {
             <Input
               disabled={types ? true : false}
               type="number"
-              // disabled={whetherAvailable(select)}
               min={0}
               defaultValue={_item}
               onBlur={(e) => {
@@ -163,7 +150,7 @@ function ProductionOrder(props: { content: any }) {
     }
   ]
   const quantity = (e, v) => {
-    v.consuming = e
+    v.reservedTime = e
     updateData(v, allSaveList)
   }
   const updateData = (record, list) => {
@@ -252,7 +239,6 @@ function ProductionOrder(props: { content: any }) {
   const handleCancel = () => {
     setIsModalVisible(false)
     refreshData && refreshData()
-    // setGetDetailsId(null)....
   }
   useEffect(() => {
     setEditType(whetherEditor === 2 ? true : false)
@@ -267,13 +253,7 @@ function ProductionOrder(props: { content: any }) {
     setWorkingProcedure(value)
     setOperation(true)
   }
-  const onPaginationChange = (
-    page: React.SetStateAction<number>,
-    pageSize: React.SetStateAction<number>
-  ) => {
-    setPageNum(page)
-    setPageSize(pageSize)
-  }
+
   return (
     <div className={styles.mainBody}>
       <Modal
@@ -292,7 +272,6 @@ function ProductionOrder(props: { content: any }) {
         destroyOnClose={true}
         visible={isModalVisible}
         maskClosable={false}
-        // okText={types ? '确认' : '保存'}。
         onCancel={handleCancel}
         centered={true}
       >
@@ -301,18 +280,8 @@ function ProductionOrder(props: { content: any }) {
             <Table
               columns={columns}
               dataSource={list || []}
-              rowKey={'id'}
+              rowKey={'key'}
               pagination={null}
-              // pagination={{。
-              //   // disabled: types,
-              //   //分页
-              //   showSizeChanger: true,
-              //   pageSize, //每页条数
-              //   current: pageNum, //	当前页数
-              //   total, //数据总数
-              //   pageSizeOptions: ['5', '10', '20', '50'],
-              //   onChange: onPaginationChange //获取当前页码是一个function
-              // }}
             />
           </TabPane>
 

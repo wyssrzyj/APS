@@ -11,7 +11,12 @@ const layout = {
     span: 15
   }
 }
-
+const arr = [
+  { name: '待计划', id: '1' },
+  { name: '已计划', id: '2' },
+  { name: '生产中', id: '3' },
+  { name: '生产完成', id: '4' }
+]
 const HeaderForm = (props: { FormData: any; factoryData: any }) => {
   const { FormData, factoryData } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -132,13 +137,36 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
           <Col span={8}>
             <Form.Item
               {...layout}
-              name="productClientNum"
-              label="客户款号"
+              name="status"
+              label="生产单状态"
               getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
+                getValueFromEvent(event, 'select')
               }
             >
-              <Input placeholder="请输入客户款号" allowClear />
+              <Select
+                allowClear={true}
+                onChange={getFactoryName}
+                placeholder="请选择生产单状态"
+              >
+                {arr != undefined
+                  ? arr.map(
+                      (item: {
+                        id: React.Key | null | undefined
+                        name:
+                          | boolean
+                          | React.ReactChild
+                          | React.ReactFragment
+                          | React.ReactPortal
+                          | null
+                          | undefined
+                      }) => (
+                        <Option key={item.id} value={item.id}>
+                          {item.name}
+                        </Option>
+                      )
+                    )
+                  : null}
+              </Select>
             </Form.Item>
           </Col>
           <Col span={8}>

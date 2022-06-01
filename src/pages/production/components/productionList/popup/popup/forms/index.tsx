@@ -17,78 +17,7 @@ function Forms(props: { FormData: any; data: any; types: any }) {
       form.setFieldsValue(data)
     }
   }, [types, data])
-
-  const { SHOW_PARENT } = TreeSelect
   const { TextArea } = Input
-  const value = ['0-0-0']
-  const treeData = [
-    {
-      title: '工厂',
-      value: '1',
-      key: '1',
-      children: [
-        {
-          title: '工厂1',
-          value: '1-1',
-          key: '1-1'
-        },
-        {
-          title: '工厂2',
-          value: '1-2',
-          key: '1-2'
-        }
-      ]
-    },
-    {
-      title: '原料',
-      value: '2',
-      key: '2',
-      children: [
-        {
-          title: '大米',
-          value: '2-1',
-          key: '2-1'
-        },
-        {
-          title: '土豆',
-          value: '2-2',
-          key: '2-2'
-        },
-        {
-          title: '菠萝',
-          value: '2-3',
-          key: '2-3'
-        }
-      ]
-    },
-    {
-      title: '玩具',
-      value: '3',
-      key: '3',
-      children: [
-        {
-          title: '金铲铲的冠冕',
-          value: '3-1',
-          key: '3-1'
-        },
-        {
-          title: '残暴之力',
-          value: '3-2',
-          key: '3-2'
-        },
-        {
-          title: '末日寒冬',
-          value: '3-3',
-          key: '3-3'
-        }
-      ]
-    },
-    {
-      title: '蔬菜',
-      value: '4',
-      key: '4'
-    }
-  ]
   const layout = {
     labelCol: {
       span: 10
@@ -104,12 +33,6 @@ function Forms(props: { FormData: any; data: any; types: any }) {
     wrapperCol: {
       span: 20
     }
-  }
-  const onFinish = (values: any) => {
-    if (values.workTeam) {
-      values.workTeam = getChild(values.workTeam, treeData) //下拉多选的处理
-    }
-    message.success('修改成功')
   }
 
   const handleSubmit = debounce(async () => {
@@ -137,8 +60,7 @@ function Forms(props: { FormData: any; data: any; types: any }) {
           form={form}
           name="basic"
           {...layout}
-          // initialValues={}
-          onFinish={onFinish}
+          // onFinish={onFinish}
           autoComplete="off"
         >
           <Row>
@@ -233,7 +155,7 @@ function Forms(props: { FormData: any; data: any; types: any }) {
                 <TextArea
                   rows={4}
                   placeholder="请输入工艺说明"
-                  // disabled={true}
+                  disabled={true}
                 />
               </Form.Item>
             </Col>

@@ -32,6 +32,7 @@ const FormTable = (props: any) => {
   const [cloneData, setCloneData] = useState<any>([]) //修改存取来
   const [defaultExpandedRow, setDefaultExpandedRow] = useState<any>([]) //全部展开
   const [materialDate, setMaterialDate] = useState<any>() //全部展开
+  const [time, setTime] = useState<any>() //最大的齐套日期
   useEffect(() => {
     saveData && saveData(data)
     //给后台传递的数据
@@ -236,13 +237,8 @@ const FormTable = (props: any) => {
         setData(notData)
       }
 
-      //普通  判断是否修改修改过  修改过 就走老数据
       if (select.name !== '已检查' && select.name !== '重新检查') {
-        if (!isEmpty(cloneData)) {
-          setData(cloneData)
-        } else {
-          setData(notData)
-        }
+        setData(notData)
       }
     }
     if (!isEmpty(renderData)) {
@@ -317,7 +313,8 @@ const FormTable = (props: any) => {
         item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
-      tableData[0].bottomTime = getMaxTime(tableData)
+
+      setTime(getMaxTime(tableData))
       setNotData([...tableData])
       setDefaultExpandedRow([...defaultExpandedRow])
     }
@@ -392,6 +389,7 @@ const FormTable = (props: any) => {
         }
       })
       current[0].bottomTime = getMaxTime(current) //添加物料齐套日期的时间
+      setTime(getMaxTime(current))
       let arr = cloneDeep(current)
       setCloneData([...arr])
     }
@@ -457,9 +455,7 @@ const FormTable = (props: any) => {
             <DatePicker
               disabled={whetherAvailable(select)}
               allowClear={false}
-              disabledDate={(current) =>
-                disabledEndDate(current, moment(data[0].bottomTime))
-              }
+              disabledDate={(current) => disabledEndDate(current, time)}
               value={getMaxTime(data) ? moment(data[0].bottomTime) : undefined}
               onChange={(e) => {
                 MaterialDateBottom(e)

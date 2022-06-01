@@ -2,6 +2,7 @@
 import { Button, message, Modal, Tabs } from 'antd'
 import Item from 'antd/lib/list/Item'
 import { cloneDeep, each, isEmpty } from 'lodash'
+import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { materialSetApis } from '@/recoil/apis'
@@ -28,6 +29,20 @@ function Material(props: {
   const [activeKey, setActiveKey] = useState<any>() //当前激活的key
   const [select, setSelect] = useState<any>() //当前选中的值
   const [recheck, setRecheck] = useState<any>() //重进检查
+
+  // const [storeData, setstoreData] = useState([])
+  // useEffect(() => {
+  //   let isFlag = false
+  //   getData().then((res) => {
+  //     if (!isFlag) {
+  //       setstoreData(res)
+  //     }
+  //   })
+  //   return () => {
+  //     isFlag = true
+  //   }
+  // }, [])
+
   useEffect(() => {
     if (materialList && !isEmpty(materialList)) {
       setSelectedData(materialList)
@@ -55,6 +70,31 @@ function Material(props: {
     return obj
   }
 
+  //添加最后一层的时间
+  const getMaxTime = (v) => {
+    const time = []
+    if (!isEmpty(v)) {
+      const arr = []
+      v.forEach((item) => {
+        if (!isEmpty(item.children)) {
+          arr.push(item.children)
+        }
+      })
+      if (!isEmpty(arr.flat(Infinity))) {
+        arr.flat(Infinity).forEach((item) => {
+          if (item.prepareTime !== null) {
+            time.push(item.prepareTime)
+          }
+        })
+      }
+    }
+    if (!isEmpty(time)) {
+      return Number(Math.max(...time))
+    } else {
+      return null
+    }
+  }
+
   //获取table接口数据 -只需要传当前项就可以
   const tableData = async (data: any) => {
     //  未检查
@@ -63,8 +103,9 @@ function Material(props: {
         externalProduceOrderId: data.externalProduceOrderId,
         produceOrderNum: data.externalProduceOrderNum
       })
-      console.log('未检查')
-
+      if (!isEmpty(resData)) {
+        resData[0].bottomTime = getMaxTime(resData)
+      }
       setTableList(resData)
     }
     //  已检查.
@@ -74,9 +115,11 @@ function Material(props: {
         externalProduceOrderId: data.externalProduceOrderId,
         produceOrderNum: data.externalProduceOrderNum
       })
-      console.log('已检查')
-      //黄勇给的参数 我自己插入第一条数据中...
-      //  resData.tableContent[0].bottomTime=
+      //插入第一条数据中...
+      if (!isEmpty(resData)) {
+        resData.tableContent[0].bottomTime = resData.prepareTime
+      }
+
       setTableList(resData.tableContent)
     }
     //  重新检查 特殊处理-待定
@@ -129,6 +172,7 @@ function Material(props: {
   const onCancel = () => {
     setMaterialModal(false)
     setSizeList([])
+    update() //关闭页面刷新数据，防止数据保存更新了 但是重新获取还是旧的数据 checkStatus--用来判断调取已完成还是未完成
     refreshList && refreshList()
   }
   const handleCancel = () => {
@@ -138,27 +182,7 @@ function Material(props: {
   const handleOk = () => {
     setMaterialModal(false)
   }
-  //判断是否满足保存条件
-  const meetConditions = (data: any[]) => {
-    //只要底部有时间就可以提交
 
-    if (!isEmpty(data)) {
-      if (data[0].bottomTime !== null) {
-        return true
-      } else {
-        data.map((item) => {
-          if (!isEmpty(item.children)) {
-            item.save = meet(item.children)
-          }
-        })
-        const allMeet = data.every((item) => item.save === true)
-        console.log(allMeet)
-        return allMeet
-      }
-    } else {
-      return true
-    }
-  }
   //重新
 
   const meetConditionsAgain = (data: any[], type) => {
@@ -168,7 +192,6 @@ function Material(props: {
     } else {
       if (!isEmpty(data)) {
         if (data[0].bottomTime !== null) {
-          console.log(data)
           return true
         } else {
           data.map((item) => {
@@ -177,7 +200,6 @@ function Material(props: {
             }
           })
           const allMeet = data.every((item) => item.save === true)
-          console.log(allMeet)
           return allMeet
         }
       } else {
@@ -235,13 +257,39 @@ function Material(props: {
     })
     setSelectedData(cloneSelectedData)
   }
+  //判断是否满足保存条件
+  const meetConditions = (data: any[]) => {
+    //只要底部有时间就可以提交
 
+    if (!isEmpty(data)) {
+      if (data[0].bottomTime !== null) {
+        return true
+      } else {
+        data.map((item) => {
+          if (!isEmpty(item.children)) {
+            item.save = meet(item.children)
+          }
+        })
+        const allMeet = data.every((item) => item.save === true)
+        console.log(allMeet)
+        return allMeet
+      }
+    } else {
+      return true
+    }
+  }
   //保存
   const added = async (current: any, next: any, methods: any, key: any) => {
-    const type: any = meetConditions(modifyData) //判断当前是否全部填写
+    const type: any = meetConditions(modifyData) //判断当前是否满足条件
+
     if (type === true) {
       //确认保存
+
       current.tableContent = modifyData
+      if (!isEmpty(modifyData)) {
+        current.prepareTime = modifyData[0].bottomTime
+      }
+      console.log('boos---保存的数据', current)
       // const externalProduceOrderId = materialList.externalProduceOrderId //添加
       const res = await materialSaved(current)
       if (res) {

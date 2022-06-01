@@ -46,6 +46,7 @@ function Production() {
       const cloneDataSource = cloneDeep(dataSource)
       cloneDataSource.map((item) => {
         item.id = item.externalProduceOrderId
+        item.key = item.externalProduceOrderId
       })
       setData(cloneDataSource)
     }
@@ -232,14 +233,13 @@ function Production() {
             storageField={'productionList'}
             columns={columns}
             dataSource={data}
-            rowKey={'id'}
+            rowKey={'key'}
             scroll={{ x: 1000 }}
             loading={loading}
             onChange={tableChange}
             pagination={{
               //分页
               showSizeChanger: true,
-              // showQuickJumper: true, //是否快速查找
               pageSize: pageSize, //每页条数
               current: pageNum, //	当前页数
               total, //数据总数
@@ -250,12 +250,12 @@ function Production() {
           {isModalVisible && <Popup content={content} />}
         </div>
       </div>
-      <MovPopup
+      {/* <MovPopup
         type="mov"
         movIsModalVisible={movIsModalVisible}
         setMovIsModalVisible={setMovIsModalVisible}
         movApi={movApi}
-      />
+      /> */}
     </div>
   )
 }

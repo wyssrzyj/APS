@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2022-04-13 15:47:01
- * @LastEditTime: 2022-05-16 19:10:49
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @LastEditTime: 2022-06-01 11:24:21
+ * @LastEditors: lyj
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \jack-aps\src\pages\practice\progressTracking\resourcemMap\forms\index.tsx
  */
@@ -18,6 +18,7 @@ const HeaderForm = (props: { FormData: any }) => {
   const { FormData } = props
   const { factoryList } = practice
   const [list, setList] = useState<any>([])
+  const [initialValues, setInitialValues] = useState<any>()
   const [theDefault, setTheDefault] = useState<any>() //默认展示
   useEffect(() => {
     getData()
@@ -53,10 +54,19 @@ const HeaderForm = (props: { FormData: any }) => {
       return event
     }
   }
-
+  useEffect(() => {
+    if (theDefault) {
+      setInitialValues(theDefault.deptName)
+    }
+  }, [theDefault])
+  useEffect(() => {
+    if (initialValues) {
+      form.resetFields() //重置form中的数据
+    }
+  }, [initialValues])
   return (
     <div>
-      <Form form={form}>
+      <Form form={form} initialValues={initialValues}>
         <Form.Item
           name="keyword"
           label="选择工厂"
@@ -67,7 +77,7 @@ const HeaderForm = (props: { FormData: any }) => {
           {theDefault ? (
             <Select
               allowClear
-              defaultValue={theDefault.deptName}
+              // defaultValue={theDefault.deptName}
               style={{ width: 300 }}
               // onChange={handleChange}
             >

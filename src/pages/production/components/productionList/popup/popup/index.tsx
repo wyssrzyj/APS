@@ -1,11 +1,11 @@
 /*
  * @Author: lyj
  * @Date: 2022-05-30 09:06:43
- * @LastEditTime: 2022-05-31 17:09:51
+ * @LastEditTime: 2022-06-01 09:14:43
  * @Description:
  * @LastEditors: lyj
  */
-import { Form, Input, Modal } from 'antd'
+import { Button, message, Modal } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
@@ -32,21 +32,12 @@ function Popup(props: any) {
   const defaultPageSize = 5
   const [caseIds, setCaseIds] = useState([]) //存放id
 
-  const [params, setParams] = useState<any>({
-    pageNum: 1,
-    pageSize: defaultPageSize,
-    externalProduceOrderId: getDetailsId
-  })
-
   const [usedList, setUsedList] = useState([]) //老数据
   const [allList, setAllList] = useState<any>([]) //全部-工艺数据
 
   const [localData, setLocalData] = useState<any>([]) //工艺数据-修改保存
   const [list, setList] = useState([]) //修改后-数据-展示
   const [allSaveList, setAllSaveList] = useState<any>([]) //全部-工艺数据-保存
-
-  const [allData, setAllData] = useState<any>([]) //外发全部数据-初始
-  const [processedData, setProcessedData] = useState<any>([]) //外发全部数据-修改
 
   const [data, setData] = useState() //form的单个数据
 
@@ -71,27 +62,8 @@ function Popup(props: any) {
   }, [externalProduceOrder])
   //外发
 
-  // const getAllData = async () => {
-  //   const res = await processOutsourcing({
-  //     pageNum: 1,
-  //     pageSize: 1000,
-  //     externalProduceOrderId: externalProduceOrder.externalProduceOrderId
-  //   })
-  //   if (!isEmpty(res.records)) {
-  //     // 添加 状态判断是否选中
-  //     res.records.map(
-  //       (item: { need: boolean; section: string; outTime: null }) => {
-  //         item.need =
-  //           item.section === '5' ? true : item.outTime !== null ? true : false
-  //       }
-  //     )
-  //     setAllData(res.records)
-  //     setProcessedData(res.records)
-  //   }
-  // }
   const getDetails = async (type, params: any) => {
     const res: any = await workingProcedure(params)
-    console.log('接口的数据', res)
 
     res.records.map((item) => {
       item.section = map.get(item.section)
@@ -163,16 +135,12 @@ function Popup(props: any) {
       section: externalProduceOrder.section
     })
     if (res) setOperation(false)
+    message.success('保存成功')
   }
 
   const handleCancel = () => {
     setOperation(false)
   }
-  // useEffect(() => {
-  //   if (params.externalProduceOrderId !== undefined) {
-  //     getDetails('1', params)
-  //   }
-  // }, [params])
   //子项的分页数据
   const pagingData = (e, v) => {
     const sum = {
@@ -190,9 +158,19 @@ function Popup(props: any) {
         title={'编辑工序'}
         visible={operation}
         maskClosable={false}
-        onOk={handleOk}
         onCancel={handleCancel}
         centered={true}
+        footer={
+          types === true ? null : (
+            <>
+              <Button onClick={handleCancel}>取消</Button>
+
+              <Button type="primary" onClick={handleOk}>
+                保存
+              </Button>
+            </>
+          )
+        }
       >
         <Tables
           total={total}

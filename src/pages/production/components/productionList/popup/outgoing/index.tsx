@@ -1,4 +1,4 @@
-import { Button, Checkbox, Input, Table } from 'antd'
+import { Button, Checkbox, Input, Popconfirm, Table } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -27,7 +27,8 @@ const Outgoing = (props: any) => {
     whetherEditor,
     allData
   } = props
-  const { processOutsourcing, wholeOrder } = productionSingleApis
+  const { processOutsourcing, wholeOrder, wholeSingleOugoing } =
+    productionSingleApis
 
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
@@ -290,6 +291,14 @@ const Outgoing = (props: any) => {
       setEdited(true)
     }
   }, [whetherEditor])
+  const confirm = async (e: React.MouseEvent<HTMLElement>) => {
+    const arr = await wholeSingleOugoing({ id: externalProduceOrderId })
+    setEdited(false)
+  }
+
+  const cancel = (e: React.MouseEvent<HTMLElement>) => {
+    console.log('取消')
+  }
   return (
     <div className={styles.table}>
       <div className={styles.top}>生产单外发管理</div>
@@ -323,7 +332,19 @@ const Outgoing = (props: any) => {
         >
           整单外发
         </Button>
-        {edited ? <div className={styles.edit}>已编辑</div> : null}
+        {edited ? (
+          <>
+            <Popconfirm
+              title="确定要删除整单外发内容？"
+              onConfirm={confirm}
+              onCancel={cancel}
+              okText="确认"
+              cancelText="取消"
+            >
+              <div className={styles.edit}>已编辑</div>
+            </Popconfirm>
+          </>
+        ) : null}
       </div>
       {/* 弹窗 */}
       <Popup
