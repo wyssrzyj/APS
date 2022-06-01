@@ -8,7 +8,7 @@ export const menus = [
       {
         label: '系统参数设置',
         key: 'systemSettingsWork',
-        icon: 'jack-yonghu3',
+        icon: 'jack-xitongcanshupeizhi',
         url: '/systemSettingsWork'
       },
       {
@@ -111,7 +111,7 @@ export const menus = [
       {
         label: '班组工作日历',
         key: 'workCalendar',
-        icon: 'jack-wuliaoguanli',
+        icon: 'jack-rili',
         url: '/workCalendar'
       },
       {

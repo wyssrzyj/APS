@@ -20,115 +20,148 @@ const SystemSettingsWork = React.lazy(
 )
 // 用户管理
 const UserManage = React.lazy(() => import('@/pages/systemSettings/userManage'))
+
 //-------基础数据 开始
 // 工作
-const Work = React.lazy(
-  () => import('@/pages/practice/calendar/components/work')
-)
+const Work = React.lazy(() => import('@/pages/basicData/components/work'))
 //加班
 const Overtime = React.lazy(
-  () => import('@/pages/practice/calendar/components/overtime')
+  () => import('@/pages/basicData/components/overtime')
 )
 //节假日
 const Vacations = React.lazy(
-  () => import('@/pages/practice/calendar/components/vacations')
+  () => import('@/pages/basicData/components/vacations')
 )
-//-------基础数据 结束
 //产能效率管理
 const Rule = React.lazy(
-  () => import('@/pages/practice/administration/components/rule')
+  () => import('@/pages/basicData/components/administration/components/rule')
 )
 
 // ---业务单数据管理 开始
 const ProductionList = React.lazy(
-  () => import('@/pages/practice/production/components/productionList')
+  () => import('@/pages/production/components/productionList')
 )
-// ---业务单数据管理 结束
 
-//----------生产管理开始
 // 班组工作日历
 const WorkCalendar = React.lazy(
-  () => import('@/pages/practice/administration/components/workCalendar')
+  () => import('@/pages/management/components/workCalendar')
 )
-
-//生产管理 生产单排程
-const Scheduling = React.lazy(
-  () => import('@/pages/practice/administration/components/scheduling')
-)
-
 //生产管理 物料齐套检查
 const Materials = React.lazy(
-  () => import('@/pages/practice/administration/components/materials')
+  () => import('@/pages/management/components/materials')
 )
-
-// ----------------生产管理结束
+//生产管理 生产单排程
+const Scheduling = React.lazy(
+  () => import('@/pages/management/components/scheduling')
+)
 
 //进度跟踪 生产计划
 const DispatchPan = React.lazy(
-  () => import('@/pages/practice/progressTracking/dispatchPan')
+  () => import('@/pages/progressTracking/dispatchPan')
 )
 //排程结果 - 资源甘特图
 const ResourcedMap = React.lazy(
-  () => import('@/pages/practice/progressTracking/resourcemMap')
+  () => import('@/pages/progressTracking/resourcemMap')
 )
 //排程结果 - 订单甘特图
 const OrderChart = React.lazy(
-  () => import('@/pages/practice/progressTracking/orderChart')
+  () => import('@/pages/progressTracking/orderChart')
 )
 //排程结果 - 资源负荷图
 const SchedulingResults = React.lazy(
-  () => import('@/pages/practice/progressTracking/schedulingResults')
+  () => import('@/pages/progressTracking/schedulingResults')
 )
 //排程结果 - 生产实绩
 const ActualProduction = React.lazy(() => import('@/pages/actualProduction'))
-/* ------------------------//测试 */
 
+const route = [
+  { path: 'home/:id', element: <Home /> },
+  { path: 'login', element: <Login /> },
+  //系统参数设置
+  { path: '/systemSettingsWork', element: <SystemSettingsWork /> },
+  //用户管理
+  { path: '/userManage', element: <UserManage /> },
+  // 日历-工作
+  { path: '/work', element: <Work /> },
+  // 日历-加班
+  { path: '/overtime', element: <Overtime /> },
+  // 日历-节假日
+  { path: '/vacations', element: <Vacations /> },
+  //生产单列表
+  { path: '/productionList', element: <ProductionList /> },
+  //工作班组日历
+  { path: '/materials', element: <Materials /> },
+  //物料齐套检查
+  { path: '/workCalendar', element: <WorkCalendar /> },
+  //生产单排程
+  { path: '/scheduling', element: <Scheduling /> },
+  //规则排程
+  { path: '/rule', element: <Rule /> },
+  //生产计划查看
+  { path: '/dispatchPan', element: <DispatchPan /> },
+  //资源甘特图
+  { path: '/resourcedMap', element: <ResourcedMap /> },
+  //订单甘特图
+  { path: '/orderChart', element: <OrderChart /> },
+  //资源负荷图
+  { path: '/schedulingResults', element: <SchedulingResults /> },
+  //生产实绩
+  { path: '/actualProduction', element: <ActualProduction /> },
+  // 无匹配路由 放置在最后一个路由的位置
+  { path: '*', element: <Home /> }
+]
 const RouteList = () => {
   return (
     <Routes>
-      <Route path="home/:id" element={<Home />} />
-      <Route path="demo" element={<Demo />} />
-      <Route path="note" element={<Note />} />
-      <Route path="departmentManage" element={<DepartmentManage />} />
-      <Route path="roleManage" element={<RoleManage />} />
-      <Route path="login" element={<Login />} />
+      {route.map((item) => (
+        // eslint-disable-next-line react/jsx-key
+        <Route path={item.path} element={item.element} />
+      ))}
+      {/* <Route path="home/:id" element={<Home />} /> */}
+      {/* <Route path="demo" element={<Demo />} /> */}
+      {/* <Route path="note" element={<Note />} /> */}
+
+      {/* <Route path="departmentManage" element={<DepartmentManage />} /> */}
+      {/* <Route path="roleManage" element={<RoleManage />} /> */}
+      {/* <Route path="login" element={<Login />} /> */}
       {/* <Route path="register" element={<Register />} />
         <Route path="reset" element={<Reset />} /> */}
+
       {/* 系统参数设置 */}
-      <Route path="/systemSettingsWork" element={<SystemSettingsWork />} />
-      <Route path="/userManage" element={<UserManage />} />
+      {/* <Route path="/systemSettingsWork" element={<SystemSettingsWork />} /> */}
+      {/* <Route path="/userManage" element={<UserManage />} /> */}
+
       {/* 日历-工作 */}
-      <Route path="/work" element={<Work />} />
+      {/* <Route path="/work" element={<Work />} /> */}
       {/* 日历-加班 */}
-      <Route path="/overtime" element={<Overtime />} />
+      {/* <Route path="/overtime" element={<Overtime />} /> */}
       {/* 日历-节假日 */}
-      <Route path="/vacations" element={<Vacations />} />
+      {/* <Route path="/vacations" element={<Vacations />} /> */}
       {/* 业务单数据管理-生产单列表 */}
-      <Route path="/productionList" element={<ProductionList />} />
+      {/* <Route path="/productionList" element={<ProductionList />} /> */}
       {/* 生产管理-工作班组日历 */}
-      <Route path="/materials" element={<Materials />} />
+      {/* <Route path="/materials" element={<Materials />} /> */}
       {/* 生产管理-物料齐套检查 */}
-      <Route path="/workCalendar" element={<WorkCalendar />} />
+      {/* <Route path="/workCalendar" element={<WorkCalendar />} /> */}
       {/* 生产管理-生产单排程 */}
-      <Route path="/scheduling" element={<Scheduling />} />
-      {/* 生产管理-生产单排程 */}
+      {/* <Route path="/scheduling" element={<Scheduling />} /> */}
 
       {/* 生产管理-规则排程 */}
-      <Route path="/rule" element={<Rule />} />
+      {/* <Route path="/rule" element={<Rule />} /> */}
       {/* 进度跟踪 生产计划查看 */}
-      <Route path="/dispatchPan" element={<DispatchPan />} />
+      {/* <Route path="/dispatchPan" element={<DispatchPan />} /> */}
 
       {/* 排程结果 -资源甘特图 */}
-      <Route path="/resourcedMap" element={<ResourcedMap />} />
+      {/* <Route path="/resourcedMap" element={<ResourcedMap />} /> */}
       {/* 排程结果 -订单甘特图 */}
-      <Route path="/orderChart" element={<OrderChart />} />
+      {/* <Route path="/orderChart" element={<OrderChart />} /> */}
       {/* 排程结果 -资源负荷图 */}
-      <Route path="/schedulingResults" element={<SchedulingResults />} />
+      {/* <Route path="/schedulingResults" element={<SchedulingResults />} /> */}
       {/* 生产实绩 */}
-      <Route path="/actualProduction" element={<ActualProduction />} />
+      {/* <Route path="/actualProduction" element={<ActualProduction />} /> */}
 
       {/* 无匹配路由 放置在最后一个路由的位置 */}
-      <Route path="*" element={<Home />} />
+      {/* <Route path="*" element={<Home />} /> */}
     </Routes>
   )
 }
