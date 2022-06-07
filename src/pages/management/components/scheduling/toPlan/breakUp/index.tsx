@@ -171,7 +171,7 @@ const BreakUp = (props: any) => {
       setInitialTeamList([...res])
     } else {
       //初始空数组 添加key防止报错
-      // delete data.id //防止 id和父级一样
+      // delete data.id //防止 id和父级一样.
       const res = cloneDeep(data)
       // res.children = []
       res.id = 1
