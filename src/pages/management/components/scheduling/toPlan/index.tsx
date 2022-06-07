@@ -249,11 +249,16 @@ function ToPlan(props: {
       data.map((i: any) => {
         i.key = i.externalProduceOrderId //用于校验排程
         i.title = sewing(i, 4)
-
         !isEmpty(i.children) &&
           i.children.map((item: any) => {
             item.disableCheckbox = true
-            item.key = item.section === '2' ? item.id : item.detailList[0].id
+            item.key =
+              item.section === '2'
+                ? item.id
+                : !isEmpty(item.detailList)
+                ? item.detailList[0].id
+                : undefined
+
             item.type = item.title === '缝制工段' ? 1 : 0 //用于判断
             item.popover = false
             //添加 生产单号	产品名称
@@ -306,7 +311,9 @@ function ToPlan(props: {
       }
       //非缝制
       if (item.section !== '2') {
-        NewData.push(item.detailList[0])
+        if (!isEmpty(item.detailList)) {
+          NewData.push(item.detailList[0])
+        }
       }
     })
     return NewData.flat(Infinity)

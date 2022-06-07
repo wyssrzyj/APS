@@ -131,6 +131,10 @@ const FormNode = (props: FormNodeProps) => {
   }, [treeData])
 
   useEffect(() => {
+    setNodeValue(value)
+  }, [value])
+
+  useEffect(() => {
     if (['img', 'annex'].includes(type)) {
       !Array.isArray(value) && setNodeValue([])
       console.log(value, 'value')

@@ -307,7 +307,7 @@ const Outgoing = (props: any) => {
 
       <Table
         rowKey={'idx'}
-        scroll={{ y: 'calc(100vh - 500px)' }}
+        scroll={{ y: 300 }}
         bordered
         dataSource={data}
         columns={columns}

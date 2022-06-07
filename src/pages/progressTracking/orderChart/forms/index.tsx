@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2022-04-13 15:47:01
- * @LastEditTime: 2022-05-16 19:11:09
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @LastEditTime: 2022-06-07 11:12:03
+ * @LastEditors: lyj
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \jack-aps\src\pages\practice\progressTracking\resourcemMap\forms\index.tsx
  */
@@ -25,10 +25,13 @@ const HeaderForm = (props: { FormData: any }) => {
   const getData = async () => {
     const res: any = await factoryList()
     const arr: any = res.data
+    const factoryId = JSON.parse(localStorage.getItem('currentUser')).user
+      .factoryId
+    const exhibition = arr.filter((item) => item.id === factoryId)[0]
     if (res.code === 200) {
       //  默认展示第2条数据
-      setTheDefault(arr[0])
-      FormData && FormData(arr[0].id)
+      setTheDefault(exhibition)
+      FormData && FormData(factoryId)
       arr.map((item: { name: any; deptName: any }) => {
         item.name = item.deptName
       })
