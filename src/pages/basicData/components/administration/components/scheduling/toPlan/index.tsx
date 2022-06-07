@@ -249,7 +249,7 @@ function ToPlan(props: {
       data.map((i: any) => {
         i.key = i.externalProduceOrderId //用于校验排程
         i.title = sewing(i, 4)
-
+        console.log('子项1', i.children)
         !isEmpty(i.children) &&
           i.children.map((item: any) => {
             item.disableCheckbox = true

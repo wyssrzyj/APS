@@ -1,6 +1,6 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, message, Modal, Tag } from 'antd'
-import { isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import {
   Key,
   ReactChild,
@@ -11,10 +11,11 @@ import {
   useState
 } from 'react'
 
-import { CusDragTable } from '@/components'
+import { CusDragTable, SearchBar } from '@/components'
 import { workingModeApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
+import { searchConfigs, tableColumns } from './conifgs'
 import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
@@ -32,8 +33,11 @@ const Index = () => {
     workingModes,
     factoryList,
     listModesDelete,
+    teamList,
     operatingModeDetailsData
   } = workingModeApis
+
+  const [configs, setConfigs] = useState<any[]>(searchConfigs)
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
@@ -41,6 +45,7 @@ const Index = () => {
   const [edit, setEdit] = useState() //编辑数据
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
+  const [facList, setFacList] = useState([]) // 选中的值
 
   const {
     tableChange,
@@ -61,9 +66,11 @@ const Index = () => {
     const res: any = await factoryList()
     const arr: any = res.data
     if (res.code === 200) {
-      arr.map((item: { name: any; deptName: any }) => {
-        item.name = item.deptName
+      arr.map((item: any) => {
+        item.label = item.deptName
+        item.value = item.id
       })
+      setFacList(arr)
       setFactoryData(arr)
     }
   }
@@ -281,13 +288,53 @@ const Index = () => {
       }
     })
   }
+  //---替换----开始-
+  const searchFactoryChange = () => {
+    const nConfigs: any[] = cloneDeep(configs)
+    nConfigs[0]['options'] = facList
+    setConfigs(nConfigs)
+  }
+  useEffect(() => {
+    searchFactoryChange()
+  }, [facList])
+
+  const changeTeamConfig = async (factoryId?: string) => {
+    const nConfigs: any[] = cloneDeep(configs)
+    const list: any = factoryId ? await teamList({ factoryId }) : [] //班组数据
+    list.forEach((item: any) => {
+      item.label = item.teamName
+      item.value = item.id
+    })
+    nConfigs[1]['options'] = list
+    // if (isEmpty(list)) {
+    //   nConfigs[1]['field'] = '6366'
+    // }
+
+    setConfigs(nConfigs)
+  }
+
+  const paramsChange = (values: Record<string, any>) => {
+    const oldParams = cloneDeep(params)
+    if (oldParams.factoryId !== values.factoryId) {
+      values.teamId = undefined
+      changeTeamConfig(values.factoryId)
+    }
+    setParams({ ...values })
+  }
+  //---替换----结束-
+
   const content = { isModalVisible, setIsModalVisible, type, edit, factoryData }
   return (
     <div className={styles.qualification}>
       <div>{/* <Title title={'工作模式'} /> */}</div>
       <div>
         <div className={styles.content}>
-          <Forms factoryData={factoryData} FormData={FormData}></Forms>
+          <SearchBar
+            configs={configs}
+            params={params}
+            callback={paramsChange}
+          ></SearchBar>
+          {/* <Forms factoryData={factoryData} FormData={FormData}></Forms> */}
 
           <CusDragTable
             storageField={'work'}

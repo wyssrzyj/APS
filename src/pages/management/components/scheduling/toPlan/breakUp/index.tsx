@@ -28,19 +28,17 @@ const BreakUp = (props: any) => {
     formData,
     empty
   } = props
+
   const { workshopList, teamList, capacityListID } = dockingDataApis
-  const { splitMethod, breakQuery } = schedulingApis
+  const { splitMethod, breakQuery, calculateCompletionTime } = schedulingApis
 
   const { Option } = Select
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
-  const [data, setData] = useState<any>([])
-
+  const [data, setData] = useState<any>([]) //查询的数据
   const [initialTeamList, setInitialTeamList] = useState<any>([]) //处理初始班组
-
   const [factoryName, setFactoryName] = useState<any>([]) //车间
-  // const [capacityData, setCapacityData] = useState<any>([]) //效率模板
 
   useEffect(() => {
     if (formData !== undefined) {
@@ -93,6 +91,7 @@ const BreakUp = (props: any) => {
   //**处理班组 效率 初始值问题
   const initialHandleChange = async (shopId, teamId, record, teamDate) => {
     // const sum = cloneDeep(teamLis)
+
     const sum = teamDate
 
     //班组
@@ -105,7 +104,6 @@ const BreakUp = (props: any) => {
     // 效率
     const capacity = await capacityListID({ teamId: teamId })
     record.efficiency = initiaTeam(capacity, 'templateName', 'teamId')
-
     //全部赋值完成在进行数据更新
     updateData(record, sum)
   }
@@ -138,6 +136,7 @@ const BreakUp = (props: any) => {
 
       //效率是独立的
       const capacity = await capacityListID({ teamId: e })
+
       if (capacity) {
         capacity.map((item: any) => {
           item.name = item.templateName
@@ -162,6 +161,7 @@ const BreakUp = (props: any) => {
         //拆分数量
         // item.productionAmount = item.productionAmount ? 0 : 0
         item.orderSum = data.orderSum
+        item.used = item.planEndTime
         item.ids = index + 1 //用于时间更改时的判断条件
         item.key = index + 1
       })
@@ -178,7 +178,7 @@ const BreakUp = (props: any) => {
       res.key = 2
       res.productionAmount = 0
       res.completedAmount = 0
-
+      res.additionalTime = '0'
       setData([res])
     }
   }
@@ -186,7 +186,7 @@ const BreakUp = (props: any) => {
   //处理班组 效率 初始值问题
   useEffect(() => {
     if (!isEmpty(initialTeamList)) {
-      initialTeamList.map((item: any) => {
+      initialTeamList.forEach((item: any) => {
         initialHandleChange(item.shopId, item.teamId, item, initialTeamList)
       })
     }
@@ -252,6 +252,40 @@ const BreakUp = (props: any) => {
       updateData(record, sum)
     }
   }
+
+  //获取结束时间
+  const endTime = async (e, record) => {
+    if (e) {
+      // c重新更改
+
+      const assignmentId = workSplitList.id
+      const capacityId = record.templateId
+      const teamId = record.teamId //班组id
+      const orderNum = record.productionAmount - record.completedAmount
+      const startDate = moment(e).format('YYYY-MM-DD HH:mm:ss')
+      const additionalTime = Number(record.additionalTime)
+
+      //算
+      const arr = await calculateCompletionTime({
+        assignmentId,
+        orderNum,
+        startDate,
+        teamId,
+        additionalTime,
+        capacityId
+      })
+      if (arr.code === 200) {
+        const sum = cloneDeep(data)
+        //需要获取当前行~~~~~~
+        record.planStartTime = moment(e).valueOf()
+        record.planEndTime = arr.data
+        record.automatic = arr.data
+
+        updateData(record, sum)
+      }
+    }
+  }
+
   //时间的处理
   const time = (
     type: number,
@@ -274,8 +308,12 @@ const BreakUp = (props: any) => {
       updateData(record, sum)
     }
     if (type === 2) {
-      record.planEndTime = moment(e).valueOf()
-      updateData(record, sum)
+      if (record.planStartTime > moment(e).valueOf()) {
+        message.error('开始时间不能大于结束时间')
+      } else {
+        record.planEndTime = moment(e).valueOf()
+        updateData(record, sum)
+      }
     }
   }
   //增加
@@ -338,7 +376,7 @@ const BreakUp = (props: any) => {
     }
     // 拆分数量
     const res = arr.reduce((total: any, current: { productionAmount: any }) => {
-      total += current.productionAmount
+      total += Math.abs(current.productionAmount)
       return total
     }, 0)
     const value = res - arr[0].orderSum
@@ -378,9 +416,16 @@ const BreakUp = (props: any) => {
       state.number === true &&
       state.teamType === true
     ) {
-      arr.map((item: any) => {
+      arr.map((item: any, index: any) => {
         item.isLocked = item.isLocked === true ? 1 : 0
         item.id = null
+        if (item.automatic === undefined || item.automatic <= 0) {
+          //手动 -旧值
+          item.additionalTime = item.planEndTime - item.used
+        } else {
+          //手动 -自动
+          item.additionalTime = item.planEndTime - item.automatic
+        }
       })
       const sum = await splitMethod({
         assignmentId: workSplitList.id,
@@ -453,7 +498,7 @@ const BreakUp = (props: any) => {
       title: '拆分数量',
       align: 'center',
       width: 120,
-      dataIndex: 'productionAmount', //
+      dataIndex: 'productionAmount',
       key: 'productionAmount',
 
       render: (_value: any, _row: any) => {
@@ -554,53 +599,6 @@ const BreakUp = (props: any) => {
         )
       }
     },
-    ,
-    {
-      title: '计划开始时间',
-      align: 'center',
-      width: 200,
-      key: 'planStartTime',
-      dataIndex: 'planStartTime',
-      render: (_value: any, _row: any) => {
-        return (
-          <div>
-            <DatePicker
-              allowClear={false}
-              format="YYYY-MM-DD HH:mm"
-              showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
-              onChange={(e) => {
-                time(1, e, _row)
-              }}
-              defaultValue={_value ? moment(_value) : undefined}
-            />
-          </div>
-        )
-      }
-    },
-    ,
-    {
-      title: '计划结束时间',
-      align: 'center',
-      width: 200,
-      key: 'planEndTime',
-      dataIndex: 'planEndTime',
-      render: (_value: any, _row: any) => {
-        return (
-          <div>
-            <DatePicker
-              allowClear={false}
-              format="YYYY-MM-DD HH:mm"
-              showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
-              // defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
-              defaultValue={_value ? moment(_value) : undefined}
-              onChange={(e) => {
-                time(2, e, _row)
-              }}
-            />
-          </div>
-        )
-      }
-    },
     {
       title: '选择效率模板',
       align: 'center',
@@ -630,6 +628,53 @@ const BreakUp = (props: any) => {
         )
       }
     },
+    {
+      title: '计划开始时间',
+      align: 'center',
+      width: 200,
+      key: 'planStartTime',
+      dataIndex: 'planStartTime',
+      render: (_value: any, _row: any) => {
+        return (
+          <div>
+            <DatePicker
+              allowClear={false}
+              format="YYYY-MM-DD HH:mm"
+              showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
+              onChange={(e) => {
+                endTime(e, _row)
+              }}
+              value={_value ? moment(_value) : undefined}
+            />
+          </div>
+        )
+      }
+    },
+
+    {
+      title: '计划结束时间',
+      align: 'center',
+      width: 200,
+      key: 'planEndTime',
+      dataIndex: 'planEndTime',
+      render: (_value: any, _row: any) => {
+        return (
+          <div>
+            <DatePicker
+              allowClear={false}
+              format="YYYY-MM-DD HH:mm"
+              showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
+              // defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('11:59:59', 'HH:mm:ss')],
+              value={_value ? moment(_value) : undefined}
+              onChange={(e) => {
+                time(2, e, _row)
+              }}
+            />
+          </div>
+        )
+      }
+    },
+
     {
       title: '是否锁定',
       align: 'center',

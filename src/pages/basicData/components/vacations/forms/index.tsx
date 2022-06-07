@@ -1,15 +1,22 @@
+/*
+ * @Author: lyj
+ * @Date: 2022-06-01 17:37:07
+ * @LastEditTime: 2022-06-02 16:46:31
+ * @Description:
+ * @LastEditors: lyj
+ */
 import { Form, Input, Row } from 'antd'
 import { debounce } from 'lodash'
 import React from 'react'
 
-const layout = {
-  labelCol: {
-    span: 7
-  },
-  wrapperCol: {
-    span: 16
-  }
-}
+// const layout = {
+//   labelCol: {
+//     span: 7
+//   },
+//   wrapperCol: {
+//     span: 16
+//   }
+// }
 
 const HeaderForm = (props: { FormData: any }) => {
   const { FormData } = props
@@ -36,7 +43,7 @@ const HeaderForm = (props: { FormData: any }) => {
       <Form form={form}>
         <Row>
           <Form.Item
-            {...layout}
+            // {...layout}
             name="name"
             label="节假日名称"
             getValueFromEvent={(event: InputEvent) =>

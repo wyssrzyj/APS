@@ -35,6 +35,11 @@ const useTableChange = (
     })()
   }, [params, pageNum, pageSize, sorterField, order])
 
+  useEffect(() => {
+    setPageNum(params.pageNum)
+    setPageSize(params.pageSize)
+  }, [params])
+
   const getDataList = async () => {
     setLoading(true)
     let target: Target = {}
@@ -44,6 +49,7 @@ const useTableChange = (
     if (keys.length > 0) {
       target = { ...params, ...target }
     }
+    // console.log('接口的数据', target)
     let res = await getData(target)
 
     if (Array.isArray(res)) {

@@ -58,6 +58,7 @@ function ProductionOrder(props: { content: any }) {
         item.key = index
       })
       setList(arr)
+
       setAllSaveList(arr)
     } else {
       setList([])
@@ -69,10 +70,10 @@ function ProductionOrder(props: { content: any }) {
     {
       title: '序号',
       align: 'center',
-      dataIndex: 'idx',
+      dataIndex: 'sectionSn',
       width: 100,
       render: (_value, _row, index) => {
-        return <div>{index + 1}</div>
+        return <div>{_value}</div>
       }
     },
     {
@@ -155,7 +156,9 @@ function ProductionOrder(props: { content: any }) {
   }
   const updateData = (record, list) => {
     const sum = cloneDeep(list)
-    const subscript = sum.findIndex((item: any) => item.id === record.id)
+    const subscript = sum.findIndex(
+      (item: any) => item.sectionSn === record.sectionSn
+    )
     if (subscript !== -1) {
       sum.splice(subscript, 1, record)
       setAllSaveList(sum)
@@ -278,6 +281,7 @@ function ProductionOrder(props: { content: any }) {
         <Tabs type="card">
           <TabPane tab="工艺路线" key="1">
             <Table
+              scroll={{ y: 300 }}
               columns={columns}
               dataSource={list || []}
               rowKey={'key'}
