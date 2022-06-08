@@ -35,8 +35,6 @@ const FormTable = (props: any) => {
 
   useEffect(() => {
     if (!isEmpty(data)) {
-      console.log('是否更改', data)
-      console.log('保存的时间', moment(data[0].bottomTime).format('YYYY-MM-DD'))
       saveData && saveData(data)
     }
     //给后台传递的数据

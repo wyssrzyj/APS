@@ -75,7 +75,6 @@ function Material(props: {
     const time = []
     if (!isEmpty(v)) {
       const arr = []
-      console.log(v)
 
       v.forEach((item) => {
         if (!isEmpty(item.children)) {
@@ -105,9 +104,7 @@ function Material(props: {
         externalProduceOrderId: data.externalProduceOrderId,
         produceOrderNum: data.externalProduceOrderNum
       })
-
       console.log('我是未检查')
-
       if (!isEmpty(resData)) {
         resData[0].bottomTime = getMaxTime(resData)
       }
@@ -201,8 +198,6 @@ function Material(props: {
     if (type === '已检查') {
       return true
     } else {
-      console.log('是否传递', data)
-
       if (!isEmpty(data)) {
         if (data[0].bottomTime !== null) {
           return true

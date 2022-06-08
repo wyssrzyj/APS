@@ -31,9 +31,7 @@ function Index() {
   const [notWork, setNotWork] = useState<any[]>([]) //不可工作时间
   const [checkIDs, setCheckIDs] = useState<any[]>([]) //校验id
   const [promptList, setPromptList] = useState<any[]>([]) //提示数据
-  const [release, setRelease] = useState<any[]>() //发布
   const [time, setTime] = useState<any>({}) //最大时间 最小时间
-  const [refreshTree, setRefreshTree] = useState<any>() //
   const [treeSelection, setTreeSelection] = useState<any>() //树选中
 
   const { figureData, productionView, workingDate } = schedulingApis
@@ -123,9 +121,7 @@ function Index() {
     }
 
     setTime(time)
-
     const cloneArr = cloneDeep(arr)
-
     setGunterData(cloneArr) //图
   }
   useEffect(() => {
@@ -250,12 +246,13 @@ function Index() {
     setGunterType(value)
   }
   const update = () => {
-    setRelease(formData)
+    refresh()
   }
+
   // 树刷新
   const refresh = () => {
     const cloneFormData = cloneDeep(formData)
-    setRefreshTree(cloneFormData)
+    setFormData(cloneFormData)
   }
   // 树选中
   const treeSelect = (e) => {
@@ -272,14 +269,11 @@ function Index() {
             <div className={styles.leftContent}>
               <ToPlan
                 treeSelect={treeSelect}
-                setRefreshTree={setRefreshTree}
-                refreshTree={refreshTree}
                 checkSchedule={checkSchedule}
                 updateMethod={updateMethod}
                 gunterType={gunterType}
                 formData={formData}
                 remind={remind}
-                release={release}
               />
               <div className={styles.schedule}>
                 <Button

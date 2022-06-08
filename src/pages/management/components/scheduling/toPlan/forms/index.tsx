@@ -1,15 +1,15 @@
 /*
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-25 10:09:18
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-25 10:20:05
+ * @LastEditors: lyj
+ * @LastEditTime: 2022-06-08 12:52:10
  * @FilePath: \jack-aps\src\pages\practice\administration\components\scheduling\toPlan\forms\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import { Col, DatePicker, Form, Input, Row, Select } from 'antd'
 import { debounce } from 'lodash' //防抖
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 const { RangePicker } = DatePicker
 const layout = {
   labelCol: {
@@ -20,12 +20,18 @@ const layout = {
   }
 }
 
-const HeaderForm = (props: { FormData: any }) => {
-  const { FormData } = props
+const HeaderForm = (props: { FormData: any; formData: any }) => {
+  const { FormData, formData } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const { validateFields } = form
   const { Option } = Select
+  useEffect(() => {
+    if (formData) {
+      form.setFieldsValue({ productName: '' })
+      // FormData && FormData({ productName: '' })
+    }
+  }, [formData])
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()

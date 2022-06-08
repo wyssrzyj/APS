@@ -1,8 +1,8 @@
 /*
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-17 19:58:45
+ * @LastEditors: lyj
+ * @LastEditTime: 2022-06-08 16:06:08
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -164,7 +164,7 @@ export const calculateEndTimeAfterMove = async (params: any) => {
       message.error(res.msg)
     }
     if (res) {
-      return res.data || []
+      return res || []
     }
     return []
   } catch (e) {

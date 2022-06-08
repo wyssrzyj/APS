@@ -275,12 +275,16 @@ const Dhx = (props: {
     detailId: any,
     teamId: any
   ) => {
-    await calculateEndTimeAfterMove({
+    const arr = await calculateEndTimeAfterMove({
       planStartTime,
       detailId,
       teamId
     })
-    message.success(`更新完成`)
+    if (arr.code === 200) {
+      message.success(`更新完成`)
+    } else {
+      updateMethod && updateMethod()
+    }
   }
 
   const choose = (type: any) => {

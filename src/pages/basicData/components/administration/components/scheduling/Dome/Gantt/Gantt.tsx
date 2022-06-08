@@ -231,7 +231,7 @@ const Gantt = (props: any) => {
         //   console.log('点击----------------------', data)
         // },
         update: function (data: any, id: any) {
-          console.log('更新任务----------------------', data)
+          // console.log('更新任务----------------------', data)
 
           //防止重复提交
           clearTimeout(timeout)
