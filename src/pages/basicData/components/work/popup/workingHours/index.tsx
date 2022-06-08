@@ -22,20 +22,8 @@ function WorkingHours(props: {
           { name: '1', startDateTime: undefined, endDateTime: undefined }
         ])
       : setData(edit.times)
-
-    console.log('状态', type)
   }, [type, edit])
 
-  // const start = (index: string | number, e: moment.MomentInput) => {
-  //   const time = moment(e).format('YYYY-MM-DD HH:mm')
-  //   data[index].startDateTime = moment(time).valueOf()
-  //   setData([...data])
-  // }
-  // const end = (index: string | number, e: moment.MomentInput) => {
-  //   const time = moment(e).format('YYYY-MM-DD HH:mm')
-  //   data[index].endDateTime = moment(time).valueOf()
-  //   setData([...data])
-  // }
   const time = (index, e) => {
     const startTime = moment(e[0]).format('YYYY-MM-DD HH:mm')
     const endTime = moment(e[1]).format('YYYY-MM-DD HH:mm')
@@ -64,7 +52,6 @@ function WorkingHours(props: {
         }
       }
     }
-    console.log(data)
   }, [data])
 
   const executionMethod = (type: string, index: number) => {

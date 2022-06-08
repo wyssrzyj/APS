@@ -51,7 +51,6 @@ function Popup(props: { content: any; newlyAdded: any }) {
         item.key = item.id
       }
     )
-    console.log('班组为啥will')
 
     setTreeData(teamData)
   }

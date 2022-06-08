@@ -128,7 +128,7 @@ function Popup(props: { content: any }) {
       setLargestNumber(cloneList.productionAmount)
       cloneList.remaining =
         cloneList.productionAmount - cloneList.completedAmount
-      setType(cloneList.isLocked)
+      setType(cloneList.isLocked === 1 ? true : false)
 
       form.setFieldsValue(cloneList)
     }
@@ -216,8 +216,6 @@ function Popup(props: { content: any }) {
   }
   //获取结束时间
   const endTime = async (e) => {
-    console.log(list)
-
     if (e) {
       const assignmentId = list.assignmentId
 

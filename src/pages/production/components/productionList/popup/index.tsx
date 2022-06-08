@@ -65,7 +65,13 @@ function ProductionOrder(props: { content: any }) {
       setAllSaveList([])
     }
   }
-
+  const available = (type, currentRow) => {
+    if (type === true) {
+      return true
+    } else {
+      return currentRow.section === '5' ? true : false
+    }
+  }
   const columns: any = [
     {
       title: '序号',
@@ -94,10 +100,10 @@ function ProductionOrder(props: { content: any }) {
         return (
           <>
             <Input
-              disabled={types ? true : false}
+              disabled={available(types, v)}
               type="number"
               min={0}
-              defaultValue={_item}
+              value={_item}
               onBlur={(e) => {
                 quantity(e.target.value, v)
               }}

@@ -177,6 +177,7 @@ function Rule() {
 
       return isExcel
     },
+
     onChange(info) {
       const { status, response } = info.file
       if (status !== 'uploading') {

@@ -62,7 +62,6 @@ function Popup(props: { content: any; newlyAdded: any }) {
         ? moment(list.timeList[0].startDateTime)
         : undefined
 
-      console.log(list)
       form.setFieldsValue(list) //回显
       setListID(list.factoryId)
     }
