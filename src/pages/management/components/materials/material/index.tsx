@@ -75,6 +75,7 @@ function Material(props: {
     const time = []
     if (!isEmpty(v)) {
       const arr = []
+
       v.forEach((item) => {
         if (!isEmpty(item.children)) {
           arr.push(item.children)
@@ -103,6 +104,7 @@ function Material(props: {
         externalProduceOrderId: data.externalProduceOrderId,
         produceOrderNum: data.externalProduceOrderNum
       })
+      console.log('我是未检查')
       if (!isEmpty(resData)) {
         resData[0].bottomTime = getMaxTime(resData)
       }
@@ -115,8 +117,9 @@ function Material(props: {
         externalProduceOrderId: data.externalProduceOrderId,
         produceOrderNum: data.externalProduceOrderNum
       })
+      console.log('我是已经检查')
       //插入第一条数据中...
-      if (!isEmpty(resData)) {
+      if (!isEmpty(resData.tableContent)) {
         resData.tableContent[0].bottomTime = resData.prepareTime
       }
 
@@ -131,6 +134,9 @@ function Material(props: {
           externalProduceOrderId: data.externalProduceOrderId,
           produceOrderNum: data.externalProduceOrderNum
         })
+        if (!isEmpty(resData.tableContent)) {
+          resData.tableContent[0].bottomTime = resData.prepareTime
+        }
 
         setTableList(resData.tableContent)
       }
@@ -140,6 +146,9 @@ function Material(props: {
           externalProduceOrderId: data.externalProduceOrderId,
           produceOrderNum: data.externalProduceOrderNum
         })
+        if (!isEmpty(resData)) {
+          resData[0].bottomTime = getMaxTime(resData)
+        }
 
         setTableList(resData)
       }
@@ -184,7 +193,6 @@ function Material(props: {
   }
 
   //重新
-
   const meetConditionsAgain = (data: any[], type) => {
     //只要底部有时间就可以提交
     if (type === '已检查') {
@@ -216,6 +224,8 @@ function Material(props: {
     //重新检查保存
     if (current.name === '已检查' || current.name === '重新检查') {
       const type: any = meetConditionsAgain(recheck, current.name) //判断当前是否全部填写
+      console.log('判断当前是否全部填写', type)
+
       if (type === true) {
         if (current.name === '已检查') {
           setMaterialModal(false)
@@ -235,7 +245,6 @@ function Material(props: {
       } else {
         message.error('物料齐料日期未录入')
       }
-      console.log('重新家产')
     } else {
       console.log('正常')
       save('2', activeKey)
@@ -281,15 +290,18 @@ function Material(props: {
   //保存
   const added = async (current: any, next: any, methods: any, key: any) => {
     const type: any = meetConditions(modifyData) //判断当前是否满足条件
-
     if (type === true) {
       //确认保存
 
-      current.tableContent = modifyData
       if (!isEmpty(modifyData)) {
         current.prepareTime = modifyData[0].bottomTime
+        console.log(
+          '保存的时间',
+          moment(modifyData[0].bottomTime).format('YYYY-MM-DD')
+        )
       }
-      console.log('boos---保存的数据', current)
+      current.tableContent = modifyData
+      console.log('保存的值', current)
       // const externalProduceOrderId = materialList.externalProduceOrderId //添加
       const res = await materialSaved(current)
       if (res) {
@@ -346,7 +358,6 @@ function Material(props: {
           setActiveKey(key)
           tableData(next)
         } else {
-          console.log('重新检查')
           added(current, next, '切换', key)
         }
       } else {

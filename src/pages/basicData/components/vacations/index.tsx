@@ -1,16 +1,19 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, message, Modal, Tag } from 'antd'
+import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { CusDragTable } from '@/components'
+import { CusDragTable, SearchBar } from '@/components'
 import { holidaySeasonApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
+import { searchConfigs, tableColumns } from './conifgs'
 import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
 import Popup from './popup'
+
 function Vacations() {
   const { confirm } = Modal
   const { holidayList, holidayID, holidayListMov } = holidaySeasonApis
@@ -19,6 +22,8 @@ function Vacations() {
     pageNum: 1,
     pageSize: 10
   })
+  const [configs, setConfigs] = useState<any[]>(searchConfigs)
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [type, setType] = useState(1) //编辑或者新增
@@ -203,10 +208,20 @@ function Vacations() {
       </>
     )
   }
+  //---替换----开始-
+  const paramsChange = (values: Record<string, any>) => {
+    setParams({ ...values })
+  }
+  //---替换----结束-
   return (
     <div className={styles.qualification}>
       <div>
         <div className={styles.content}>
+          {/* <SearchBar
+            configs={configs}
+            params={params}
+            callback={paramsChange}
+          ></SearchBar> */}
           <Forms FormData={FormData}></Forms>
 
           <CusDragTable

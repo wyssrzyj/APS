@@ -18,29 +18,20 @@ function ToPlan(props: {
   gunterType: any
   updateMethod: any
   checkSchedule: any
-  release: any
-  refreshTree
-  setRefreshTree
   treeSelect
 }) {
-  const {
-    remind,
-    formData,
-    updateMethod,
-    checkSchedule,
-    release,
-    refreshTree,
-    setRefreshTree,
-    treeSelect
-  } = props
+  const { remind, formData, updateMethod, checkSchedule, treeSelect } = props
   const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
     schedulingApis
   const { workshopList, teamList, capacityList } = dockingDataApis
+
   const [list, setList] = useState<any>([]) //总
   const [editWindow, setEditWindow] = useState(false) //编辑窗
   const [editWindowList, setEditWindowList] = useState() //编辑窗数据
+
   const [treeData, setTreeData] = useState([]) //处理后的待计划
   const [WaitingTreeData, setWaitingTreeData] = useState([]) //处理后的已计划
+
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [efficiencyData, setEfficiencyData] = useState(false) //效率
   const [workSplitList, setWorkSplitList] = useState<any>() //工作拆分
@@ -50,7 +41,6 @@ function ToPlan(props: {
   const [selectedKeys, setSelectedKeys] = useState<any>() //树传图
 
   const [equal, setEqual] = useState<any>('1')
-  const [currentItem, setCurrentItem] = useState<any>() //点击的值.
   const [toPlanID, setToPlanID] = useState<any>([]) //待计划选中的id
   const [plannedID, setPlannedID] = useState<any>([]) //已计划的id
 
@@ -61,7 +51,6 @@ function ToPlan(props: {
   const [capacityData, setCapacityData] = useState<any>([]) //效率模板
   const [efficiencyID, setEfficiencyID] = useState<any>()
   const [templateId, setTemplateId] = useState<any>() //效率模板数据
-  const [factoryData, setFactoryData] = useState<any>([]) //工厂
 
   useEffect(() => {
     if (selectedKeys !== null && selectedKeys !== undefined) {
@@ -83,29 +72,14 @@ function ToPlan(props: {
   useEffect(() => {
     checkSchedule && checkSchedule(toPlanID, plannedID, stateAdd)
   }, [plannedID, toPlanID, stateAdd])
-
+  //初始
   useEffect(() => {
     if (formData !== undefined) {
       dataAcquisition(formData)
       //车间/班组
-      workshopTeam(formData)
+      // workshopTeam(formData)
     }
   }, [formData])
-
-  //图移动  树刷新
-  useEffect(() => {
-    if (refreshTree !== undefined && refreshTree !== '') {
-      dataAcquisition(refreshTree)
-      setRefreshTree('')
-    }
-  }, [refreshTree])
-
-  useEffect(() => {
-    if (release !== undefined) {
-      dataAcquisition(release)
-    }
-  }, [release])
-
   //效率模板
   useEffect(() => {
     efficiency()
@@ -213,6 +187,7 @@ function ToPlan(props: {
       })
     return data
   }
+  //获取数据
   const dataAcquisition = async (id: any) => {
     //已计划假数据
     // 0未计划  1已计划
@@ -220,6 +195,7 @@ function ToPlan(props: {
       factoryId: id,
       isPlanned: 0
     })
+
     const planned = await listProductionOrders({
       factoryId: id,
       isPlanned: 1
@@ -231,16 +207,28 @@ function ToPlan(props: {
       })
       setPlannedID(plannedData)
     }
+
     //添加字段
     const sum = [fieldChanges(notPlan), fieldChanges(planned)]
+    //先清除 后添加
+    setWaitingTreeData([])
+    setTreeData([])
 
     setList(sum)
-    getData(sum[Number(current)], current) //初始展示
+    //获取数据把数据全部处理好
+    getData(sum[Number('0')], '0') //初始展示
+    getData(sum[Number('1')], '1') //初始展示
   }
 
   //Tabs 状态切换
   useEffect(() => {
-    getData(list[Number(current)], current)
+    //只做切换展示
+    if (current === '0') {
+      setTreeData([...treeData])
+    }
+    if (current === '1') {
+      setWaitingTreeData([...WaitingTreeData])
+    }
   }, [current])
 
   //处理数据
@@ -249,11 +237,16 @@ function ToPlan(props: {
       data.map((i: any) => {
         i.key = i.externalProduceOrderId //用于校验排程
         i.title = sewing(i, 4)
-
         !isEmpty(i.children) &&
           i.children.map((item: any) => {
             item.disableCheckbox = true
-            item.key = item.section === '2' ? item.id : item.detailList[0].id
+            item.key =
+              item.section === '2'
+                ? item.id
+                : !isEmpty(item.detailList)
+                ? item.detailList[0].id
+                : undefined
+
             item.type = item.title === '缝制工段' ? 1 : 0 //用于判断
             item.popover = false
             //添加 生产单号	产品名称
@@ -281,6 +274,7 @@ function ToPlan(props: {
             }
           })
       })
+
       if (type === '0') {
         setTreeData(data)
       } else {
@@ -306,7 +300,9 @@ function ToPlan(props: {
       }
       //非缝制
       if (item.section !== '2') {
-        NewData.push(item.detailList[0])
+        if (!isEmpty(item.detailList)) {
+          NewData.push(item.detailList[0])
+        }
       }
     })
     return NewData.flat(Infinity)
@@ -575,7 +571,6 @@ function ToPlan(props: {
     }
   }
   const onSelect = (e: React.Key[], info: any) => {
-    setCurrentItem(info.node)
     setSelectedKeys(e)
     setKeys(e)
   }
@@ -605,17 +600,21 @@ function ToPlan(props: {
       }
     }
   }
-
+  //搜索
   const FormData = async (e, type) => {
+    //先清除 后添加
+    setWaitingTreeData([])
+    setTreeData([])
     if (type === 'stay') {
       const notPlan = await listProductionOrders({
         factoryId: formData,
         isPlanned: 0,
         externalProduceOrderNum: e.productName
       })
+
       const sum = [fieldChanges(notPlan), list[1]]
       setList(sum)
-      getData(sum[Number(current)], current)
+      getData(sum[Number('0')], '0')
     }
     if (type === 'already') {
       const planned = await listProductionOrders({
@@ -633,8 +632,9 @@ function ToPlan(props: {
       //添加字段
       const sum = [list[0], fieldChanges(planned)]
       setList(sum)
-      getData(sum[Number(current)], current)
+      getData(sum[Number('1')], '1')
     }
+    // }
   }
   return (
     <div className={styles.tree}>
@@ -642,15 +642,17 @@ function ToPlan(props: {
         <Tabs onChange={callback} activeKey={current} type="card">
           <TabPane tab="待计划" key="0">
             <Forms
+              formData={formData}
               FormData={(e) => {
                 FormData(e, 'stay')
+                // setProductName(e)
               }}
             ></Forms>
             {treeData !== undefined && treeData.length > 0 ? (
               <div>
                 <Tree
                   checkable
-                  height={600}
+                  height={500}
                   selectedKeys={keys}
                   defaultExpandAll={true}
                   onSelect={onSelect}
@@ -662,14 +664,16 @@ function ToPlan(props: {
           </TabPane>
           <TabPane tab="已计划" key="1">
             <Forms
+              formData={formData}
               FormData={(e) => {
                 FormData(e, 'already')
+                // setProductName(e)
               }}
             ></Forms>
             {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
               <div>
                 <Tree
-                  height={600}
+                  height={500}
                   selectedKeys={keys}
                   defaultExpandAll={true}
                   onSelect={onSelect}

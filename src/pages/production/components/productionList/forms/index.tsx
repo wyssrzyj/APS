@@ -12,10 +12,10 @@ const layout = {
   }
 }
 const arr = [
-  { name: '待计划', id: '1' },
-  { name: '已计划', id: '2' },
-  { name: '生产中', id: '3' },
-  { name: '生产完成', id: '4' }
+  { name: '待计划', id: 1 },
+  { name: '已计划', id: 2 },
+  { name: '生产中', id: 3 },
+  { name: '生产完成', id: 4 }
 ]
 const HeaderForm = (props: { FormData: any; factoryData: any }) => {
   const { FormData, factoryData } = props

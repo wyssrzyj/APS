@@ -98,9 +98,11 @@ function Rule() {
   const paramsChange = (values: Record<string, any>) => {
     const oldParams = cloneDeep(params)
     if (oldParams.factoryId !== values.factoryId) {
-      values.teamId = undefined
+      values.teamId = null
       changeTeamConfig(values.factoryId)
     }
+
+    console.log(values, 'values')
 
     setParams({ ...values })
   }
@@ -175,6 +177,7 @@ function Rule() {
 
       return isExcel
     },
+
     onChange(info) {
       const { status, response } = info.file
       if (status !== 'uploading') {

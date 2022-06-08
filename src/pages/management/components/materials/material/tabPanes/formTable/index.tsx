@@ -29,12 +29,14 @@ const FormTable = (props: any) => {
   const [loading, setLoading] = useState<any>(true) //加载
   const [renderData, setRenderData] = useState<any>()
 
-  const [cloneData, setCloneData] = useState<any>([]) //修改存取来
   const [defaultExpandedRow, setDefaultExpandedRow] = useState<any>([]) //全部展开
-  const [materialDate, setMaterialDate] = useState<any>() //全部展开
   const [time, setTime] = useState<any>() //最大的齐套日期
+  const [cloneData, setCloneData] = useState<any>([]) // 重新检查修改后的数据
+
   useEffect(() => {
-    saveData && saveData(data)
+    if (!isEmpty(data)) {
+      saveData && saveData(data)
+    }
     //给后台传递的数据
   }, [data])
   //添加最后一层的时间
@@ -230,6 +232,7 @@ const FormTable = (props: any) => {
           recheckData && recheckData(cloneData)
         } else {
           setData(notData)
+          recheckData && recheckData(notData)
         }
       }
 
@@ -242,10 +245,10 @@ const FormTable = (props: any) => {
       }
     }
     if (!isEmpty(renderData)) {
-      setList(renderData) //渲染结构
       setLoading(false)
+      setList(renderData) //渲染结构
     }
-  }, [renderData, notData, cloneData, select])
+  }, [renderData, notData, select])
 
   //处理建值对
   const conversion = (data: any[]) => {
@@ -313,8 +316,7 @@ const FormTable = (props: any) => {
         item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
-
-      setTime(getMaxTime(tableData))
+      setTime(tableData[0].bottomTime)
       setNotData([...tableData])
       setDefaultExpandedRow([...defaultExpandedRow])
     }
@@ -389,9 +391,10 @@ const FormTable = (props: any) => {
         }
       })
       current[0].bottomTime = getMaxTime(current) //添加物料齐套日期的时间
-      setTime(getMaxTime(current))
       let arr = cloneDeep(current)
-      setCloneData([...arr])
+      setNotData([...arr])
+
+      setCloneData([...arr]) //重新检查使用
     }
   }
 
@@ -433,7 +436,22 @@ const FormTable = (props: any) => {
   const MaterialDateBottom = (e) => {
     let arr = cloneDeep(data)
     arr[0].bottomTime = moment(e).valueOf()
-    setData(arr)
+    setData([...arr])
+
+    setTime(moment(e).valueOf())
+    setCloneData([...arr])
+  }
+
+  const displayTime = (v, i) => {
+    if (v !== null && v !== undefined) {
+      if (v > i) {
+        return moment(v)
+      } else {
+        return moment(i)
+      }
+    } else {
+      return undefined
+    }
   }
   //底部
   const Dome = (e, data) => {
@@ -455,8 +473,10 @@ const FormTable = (props: any) => {
             <DatePicker
               disabled={whetherAvailable(select)}
               allowClear={false}
-              disabledDate={(current) => disabledEndDate(current, time)}
-              value={getMaxTime(data) ? moment(data[0].bottomTime) : undefined}
+              disabledDate={(current) =>
+                disabledEndDate(current, getMaxTime(notData))
+              }
+              value={displayTime(time, data[0].bottomTime)}
               onChange={(e) => {
                 MaterialDateBottom(e)
               }}

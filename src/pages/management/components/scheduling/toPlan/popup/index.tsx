@@ -36,7 +36,7 @@ function Popup(props: { content: any }) {
 
   const [form] = Form.useForm()
   const [list, setList] = useState<any>() //总数据
-  const [type, setType] = useState<any>()
+  const [type, setType] = useState<any>(false)
   const [largestNumber, setLargestNumber] = useState<any>(0)
 
   const [factoryData, setFactoryData] = useState<any>([])
@@ -128,7 +128,7 @@ function Popup(props: { content: any }) {
       setLargestNumber(cloneList.productionAmount)
       cloneList.remaining =
         cloneList.productionAmount - cloneList.completedAmount
-      setType(cloneList.isLocked)
+      setType(cloneList.isLocked === 1 ? true : false)
 
       form.setFieldsValue(cloneList)
     }
@@ -218,10 +218,15 @@ function Popup(props: { content: any }) {
   const endTime = async (e) => {
     if (e) {
       const assignmentId = list.assignmentId
+
       const orderNum = list.productionAmount - list.completedAmount
+
       const startDate = moment(e).format('YYYY-MM-DD HH:mm:ss')
+
       const teamId = list.teamId //班组id
+
       const additionalTime = Number(list.additionalTime)
+
       const capacityId = list.templateId
       //算
       const arr = await calculateCompletionTime({
