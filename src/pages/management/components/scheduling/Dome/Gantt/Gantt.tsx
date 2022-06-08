@@ -40,7 +40,7 @@ const Gantt = (props: any) => {
       gantt.attachEvent('onGanttScroll', function (left, top) {
         locationRef.current = { x: left, y: top }
       })
-      ganttShow(tasks) //渲染数据   勿动
+      ganttShow(tasks) //渲染数据   勿动.
 
       // console.log('渲染的距离', newLeft, newTop)
       gantt.scrollTo(newLeft, newTop) //定位
