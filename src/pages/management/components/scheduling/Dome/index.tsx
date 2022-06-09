@@ -421,7 +421,7 @@ const Dhx = (props: {
       y: distanceY(treeSelection)
     })
   }, [treeSelection])
-  // 更新
+  // 更新.
   const updateList = (e: any) => {
     setUpdateData(e)
   }
