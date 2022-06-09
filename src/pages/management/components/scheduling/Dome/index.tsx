@@ -407,7 +407,7 @@ const Dhx = (props: {
     }
   }
 
-  //** 点击事件 点击父节点 传递 不可用时间
+  //** 点击事件 点击父节点 传递 不可用时间.
   const leftData = async (id: string) => {
     if (id !== null) {
       setSelect(id)
