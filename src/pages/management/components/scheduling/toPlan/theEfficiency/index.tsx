@@ -71,21 +71,23 @@ const BreakUp = (props: any) => {
           <div className={styles.selectLeft}>
             <div>效率模板:　</div>
             <div>
-              {!isEmpty(capacityData) ? (
-                <Select
-                  placeholder={'请选择效率模板'}
-                  defaultValue={templateId.templateId}
-                  onChange={(e) => handleChange(e)}
-                >
-                  {capacityData.map((item: any) => (
-                    // eslint-disable-next-line react/jsx-key
-                    // eslint-disable-next-line react/jsx-key
-                    <Option key={item.id} value={item.id}>
-                      {item.name}
-                    </Option>
-                  ))}
-                </Select>
-              ) : null}
+              <Select
+                placeholder={'请选择效率模板'}
+                defaultValue={templateId.templateId}
+                onChange={(e) => handleChange(e)}
+              >
+                {!isEmpty(capacityData) ? (
+                  <>
+                    {capacityData.map((item: any) => (
+                      // eslint-disable-next-line react/jsx-key
+                      // eslint-disable-next-line react/jsx-key
+                      <Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Option>
+                    ))}
+                  </>
+                ) : null}
+              </Select>
             </div>
           </div>
         </Modal>
