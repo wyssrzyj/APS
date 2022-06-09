@@ -25,7 +25,7 @@ function Index() {
   const [visibleRule, setVisibleRule] = useState(false) //规则排程弹窗
   const [visibleVerify, setVisibleVerify] = useState(false) //校验排程弹窗
   const [remind, setRemind] = useState() //甘特图高亮..
-  const [formData, setFormData] = useState() //form数据
+  const [formData, setFormData] = useState<any>() //form数据
   const [gunterType, setGunterType] = useState('1') //班组、订单
   const [gunterData, setGunterData] = useState<any[]>([]) //甘特图数据-班组
   const [notWork, setNotWork] = useState<any[]>([]) //不可工作时间
@@ -251,8 +251,7 @@ function Index() {
 
   // 树刷新
   const refresh = () => {
-    const cloneFormData = cloneDeep(formData)
-    setFormData(cloneFormData)
+    getChart(formData, gunterType)
   }
   // 树选中
   const treeSelect = (e) => {

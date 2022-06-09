@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-03-10 15:20:21
  * @LastEditors: lyj
- * @LastEditTime: 2022-06-09 14:59:07
+ * @LastEditTime: 2022-06-09 16:14:22
  * @FilePath: \jack-aps\src\pages\practice\progressTracking\schedulingResults\forms\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%A
  */
@@ -25,7 +25,11 @@ const HeaderForm = (props: { FormData: any }) => {
   const getCurrentUser = (arr) => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'))
     if (currentUser) {
-      return currentUser.user.factoryId
+      if (currentUser.user.factoryId !== null) {
+        return currentUser.user.factoryId
+      } else {
+        return arr[0].id
+      }
     } else {
       return arr[0].id
     }
@@ -35,6 +39,7 @@ const HeaderForm = (props: { FormData: any }) => {
     const res: any = await factoryList()
     const arr: any = res.data
     const factoryId = getCurrentUser(arr)
+
     const exhibition = arr.filter((item) => item.id === factoryId)[0]
     if (res.code === 200) {
       //  默认展示第2条数据
