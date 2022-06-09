@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-30 13:27:13
- * @LastEditTime: 2022-05-31 10:49:19
+ * @LastEditTime: 2022-06-09 15:02:18
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: lyj
  */
 import 'moment/locale/zh-cn'
 
@@ -39,6 +39,14 @@ const WorkCalendar = (props) => {
       } catch (err) {}
     })()
   }, [])
+  const getCurrentUser = (arr) => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'))
+    if (currentUser) {
+      return currentUser.user.factoryId
+    } else {
+      return arr[0].id
+    }
+  }
 
   useEffect(() => {
     if (facList && facList.length) {
@@ -48,7 +56,8 @@ const WorkCalendar = (props) => {
       setFacSelectOptions(options)
 
       const nParams = cloneDeep(params)
-      nParams.factoryId = facList[0].id
+      nParams.factoryId = getCurrentUser(facList)
+
       paramsChange({ factoryId: facList[0].id || undefined }, nParams)
     }
   }, [facList])
@@ -82,6 +91,7 @@ const WorkCalendar = (props) => {
       values.teamId = undefined
       changeTeamConfig(values.factoryId)
     }
+    console.log({ ...oldParams, ...values })
 
     setParams({ ...oldParams, ...values })
   }
@@ -155,7 +165,7 @@ const WorkCalendar = (props) => {
             {facSelectOptions}
           </Select>
         </Form.Item>
-        <Form.Item name="teamId" label="工厂名称">
+        <Form.Item name="teamId" label="班组名称">
           <Select placeholder="请选择" style={{ width: '200px' }}>
             {teamSelectOptions}
           </Select>
