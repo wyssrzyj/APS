@@ -79,7 +79,79 @@ const Dhx = (props: {
   useEffect(() => {
     if (!isEmpty(gunterData) && !isEmpty(notWork)) {
       setChart(gunterData)
+      // console.log(gunterData)
     } else {
+      //对比测试
+      // const data = [
+      //   {
+      //     id: 1,
+      //     type: true, //判断是否可以移动
+      //     text: '生产单', //名称
+      //     // color: 'red', //控制颜色
+      //     open: true
+      //   },
+
+      //   {
+      //     id: 11,
+      //     type: true, //判断是否可以移动
+      //     text: '缝制1-盒子', //名称
+      //     // color: 'red', //控制颜色
+      //     open: true,
+      //     render: 'split',
+      //     parent: 1
+      //     // eslint-disable-next-line jsx-a11y/alt-text
+      //   },
+      //   {
+      //     id: 111,
+      //     type: true, //判断是否可以移动
+      //     text: '班组1正', //名称
+      //     parent: 11,
+      //     start_date: '2020-04-05',
+      //     end_date: '2020-04-6'
+
+      //     // color: 'red', //控制颜色
+      //   },
+      //   {
+      //     id: 112,
+      //     type: true, //判断是否可以移动
+      //     text: '班组1反', //名称
+      //     parent: 11,
+      //     start_date: '2020-04-07',
+      //     end_date: '2020-04-8',
+      //     color: 'red' //控制颜色+
+      //     // render: 'split'
+      //   },
+
+      //   {
+      //     id: 22,
+      //     type: true, //判断是否可以移动
+      //     text: '缝制2-盒子', //名称
+      //     // color: 'red', //控制颜色
+      //     open: true,
+      //     parent: 1,
+      //     render: 'split'
+      //   },
+      //   {
+      //     id: 221,
+      //     type: true, //判断是否可以移动
+      //     text: '缝制2正', //名称
+      //     // color: 'red', //控制颜色
+      //     start_date: '2020-04-05',
+      //     end_date: '2020-04-6',
+      //     parent: 22
+      //   },
+      //   {
+      //     id: 222,
+      //     type: true, //判断是否可以移动
+      //     text: '缝制2反', //名称
+      //     color: 'red', //控制颜色
+      //     start_date: '2020-04-07',
+      //     end_date: '2020-04-8',
+      //     parent: 22
+      //   }
+      // ]
+      // setChart(data)
+
       setChart([])
     }
 
@@ -335,7 +407,7 @@ const Dhx = (props: {
     }
   }
 
-  //** 点击事件 点击父节点 传递 不可用时间
+  //** 点击事件 点击父节点 传递 不可用时间.
   const leftData = async (id: string) => {
     if (id !== null) {
       setSelect(id)
@@ -413,7 +485,7 @@ const Dhx = (props: {
             <Gantt
               select={select}
               movingDistance={movingDistance}
-              name={'lyj'}
+              name={'lyj1'}
               leftData={leftData}
               rightData={rightData}
               tasks={subjectData}

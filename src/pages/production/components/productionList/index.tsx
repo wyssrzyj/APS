@@ -49,6 +49,8 @@ function Production() {
         item.key = item.externalProduceOrderId
       })
       setData(cloneDataSource)
+    } else {
+      setData([])
     }
   }, [dataSource])
 

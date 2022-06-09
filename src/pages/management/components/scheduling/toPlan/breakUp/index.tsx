@@ -174,7 +174,7 @@ const BreakUp = (props: any) => {
       // delete data.id //防止 id和父级一样.
       const res = cloneDeep(data)
       // res.children = []
-      res.id = 1
+      res.id = 1008611
       res.key = 2
       res.productionAmount = 0
       res.completedAmount = 0
@@ -369,6 +369,7 @@ const BreakUp = (props: any) => {
       (item: { planStartTime: undefined; planEndTime: undefined }) =>
         item.planStartTime === undefined || item.planEndTime === undefined
     )
+
     if (Time.length > 0) {
       message.warning(`时间不能为空`)
     } else {
@@ -418,7 +419,6 @@ const BreakUp = (props: any) => {
     ) {
       arr.map((item: any, index: any) => {
         item.isLocked = item.isLocked === true ? 1 : 0
-        item.id = null
         if (item.automatic === undefined || item.automatic <= 0) {
           //手动 -旧值
           item.additionalTime = item.planEndTime - item.used
@@ -427,6 +427,12 @@ const BreakUp = (props: any) => {
           item.additionalTime = item.planEndTime - item.automatic
         }
       })
+      if (arr[0].id === 1008611) {
+        arr.map((item) => {
+          item.id = null
+        })
+      }
+      console.log(arr)
       const sum = await splitMethod({
         assignmentId: workSplitList.id,
         data: arr

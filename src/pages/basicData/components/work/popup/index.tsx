@@ -1,5 +1,5 @@
 import { Checkbox, Form, Input, message, Modal, Select, TreeSelect } from 'antd'
-import { isElement, isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 
 import { getChild } from '@/components/getChild/index'
@@ -18,7 +18,16 @@ function Popup(props: { content: any; newlyAdded: any }) {
 
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
-
+  const [factory, setFactory] = useState<any>() //班组列表
+  useEffect(() => {
+    if (!isEmpty(factoryData)) {
+      const res = cloneDeep(factoryData)
+      res.map((item) => {
+        item.name = item.deptName
+      })
+      setFactory(res)
+    }
+  }, [factoryData])
   useEffect(() => {
     if (type !== 1) {
       if (edit !== undefined) {
@@ -232,8 +241,8 @@ function Popup(props: { content: any; newlyAdded: any }) {
               placeholder="请选择工厂名称"
               allowClear
             >
-              {factoryData !== undefined
-                ? factoryData.map(
+              {factory !== undefined
+                ? factory.map(
                     (item: {
                       id: React.Key | null | undefined
                       name:
