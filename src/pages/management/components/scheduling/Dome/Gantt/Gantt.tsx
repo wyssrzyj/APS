@@ -347,6 +347,7 @@ const Gantt = (props: any) => {
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
     gantt.parse(list) //渲染数据
+    // const ganttChart = Gantt.getGanttInstance()
   }
   // "main"
   return <div id={name} style={{ width: '100%', height: '100%' }}></div>

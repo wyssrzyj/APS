@@ -107,7 +107,6 @@ function Popup(props: { content: any }) {
   //获取数据
   const interfaceData = async (id: any) => {
     const arr = await getIndividualDetails({ id })
-
     setShopName(arr.shopId)
     //所属工段
     arr.sectionDome = map.get(arr.section)

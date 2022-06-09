@@ -77,7 +77,7 @@ function ToPlan(props: {
     if (formData !== undefined) {
       dataAcquisition(formData)
       //车间/班组
-      // workshopTeam(formData)
+      workshopTeam(formData)
     }
   }, [formData])
   //效率模板
