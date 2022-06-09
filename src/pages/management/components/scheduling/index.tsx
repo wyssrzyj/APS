@@ -33,6 +33,7 @@ function Index() {
   const [promptList, setPromptList] = useState<any[]>([]) //提示数据
   const [time, setTime] = useState<any>({}) //最大时间 最小时间
   const [treeSelection, setTreeSelection] = useState<any>() //树选中
+  const [treeUpdate, setTreeUpdate] = useState<any>() //树刷新
 
   const { figureData, productionView, workingDate } = schedulingApis
 
@@ -72,7 +73,6 @@ function Index() {
     if (type === '0') {
       const chart: any = await figureData({ factoryId: id })
       const arr = cloneDeep(chart.data)
-
       if (chart.code === 200) {
         dateFormat(arr, type)
       }
@@ -138,7 +138,6 @@ function Index() {
     })
     setNotWork(sum)
   }
-
   //  图刷新
   const updateMethod = () => {
     getChart(formData, gunterType)
@@ -251,7 +250,7 @@ function Index() {
 
   // 树刷新
   const refresh = () => {
-    getChart(formData, gunterType)
+    setTreeUpdate(formData)
   }
   // 树选中
   const treeSelect = (e) => {
@@ -267,6 +266,7 @@ function Index() {
           <div className={styles.team}>
             <div className={styles.leftContent}>
               <ToPlan
+                treeUpdate={treeUpdate}
                 treeSelect={treeSelect}
                 checkSchedule={checkSchedule}
                 updateMethod={updateMethod}

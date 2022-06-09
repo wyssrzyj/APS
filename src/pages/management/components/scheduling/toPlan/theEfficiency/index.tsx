@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-04-18 09:48:41
  * @LastEditors: lyj
- * @LastEditTime: 2022-05-30 09:17:37
+ * @LastEditTime: 2022-06-09 16:47:58
  * @FilePath: \jack-aps\src\pages\practice\administration\components\scheduling\toPlan\theEfficiency\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -59,39 +59,37 @@ const BreakUp = (props: any) => {
 
   return (
     <div className={styles.popup}>
-      {efficiencyData ? (
-        <Modal
-          destroyOnClose={true}
-          width={300}
-          visible={efficiencyData}
-          centered={true}
-          onOk={handleOk}
-          onCancel={handleCancel}
-        >
-          <div className={styles.selectLeft}>
-            <div>效率模板:　</div>
-            <div>
-              <Select
-                placeholder={'请选择效率模板'}
-                defaultValue={templateId.templateId}
-                onChange={(e) => handleChange(e)}
-              >
-                {!isEmpty(capacityData) ? (
-                  <>
-                    {capacityData.map((item: any) => (
-                      // eslint-disable-next-line react/jsx-key
-                      // eslint-disable-next-line react/jsx-key
-                      <Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Option>
-                    ))}
-                  </>
-                ) : null}
-              </Select>
-            </div>
+      <Modal
+        destroyOnClose={true}
+        width={300}
+        visible={efficiencyData}
+        centered={true}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <div className={styles.selectLeft}>
+          <div>效率模板:　</div>
+          <div>
+            <Select
+              placeholder={'请选择效率模板'}
+              defaultValue={templateId.templateId}
+              onChange={(e) => handleChange(e)}
+            >
+              {!isEmpty(capacityData) ? (
+                <>
+                  {capacityData.map((item: any) => (
+                    // eslint-disable-next-line react/jsx-key
+                    // eslint-disable-next-line react/jsx-key
+                    <Option key={item.id} value={item.id}>
+                      {item.name}
+                    </Option>
+                  ))}
+                </>
+              ) : null}
+            </Select>
           </div>
-        </Modal>
-      ) : null}
+        </div>
+      </Modal>
     </div>
   )
 }

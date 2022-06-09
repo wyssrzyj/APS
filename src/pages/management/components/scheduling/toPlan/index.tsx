@@ -13,6 +13,7 @@ import TheEfficiency from './theEfficiency'
 
 const { TabPane } = Tabs
 function ToPlan(props: {
+  treeUpdate: any
   remind: any
   formData: any
   gunterType: any
@@ -20,7 +21,14 @@ function ToPlan(props: {
   checkSchedule: any
   treeSelect
 }) {
-  const { remind, formData, updateMethod, checkSchedule, treeSelect } = props
+  const {
+    remind,
+    formData,
+    updateMethod,
+    checkSchedule,
+    treeSelect,
+    treeUpdate
+  } = props
   const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
     schedulingApis
   const { workshopList, teamList, capacityList } = dockingDataApis
@@ -79,7 +87,13 @@ function ToPlan(props: {
       //车间/班组
       workshopTeam(formData)
     }
-  }, [formData])
+    if (treeUpdate !== undefined) {
+      dataAcquisition(formData)
+      //车间/班组
+      workshopTeam(formData)
+    }
+    console.log('是否执行', treeUpdate)
+  }, [formData, treeUpdate])
   //效率模板
   useEffect(() => {
     efficiency()
@@ -700,14 +714,17 @@ function ToPlan(props: {
         />
       )}
       {/* 效率模板 */}
-      <TheEfficiency
-        templateId={templateId}
-        efficiencyID={efficiencyID}
-        capacityData={capacityData}
-        dataUpdate={dataUpdate}
-        setEfficiencyData={setEfficiencyData}
-        efficiencyData={efficiencyData}
-      />
+      {efficiencyData && (
+        <TheEfficiency
+          templateId={templateId}
+          efficiencyID={efficiencyID}
+          capacityData={capacityData}
+          dataUpdate={dataUpdate}
+          setEfficiencyData={setEfficiencyData}
+          efficiencyData={efficiencyData}
+        />
+      )}
+
       {/* 编辑工作 */}
       <Popup content={contents} />
     </div>
