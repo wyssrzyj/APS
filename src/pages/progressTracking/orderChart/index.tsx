@@ -1,3 +1,4 @@
+import { Button, Modal } from 'antd'
 import { cloneDeep, isEmpty, keys } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -22,7 +23,7 @@ const SchedulingResults = () => {
   const [chart, setChart] = useState<any>([]) //图
   const [line, setLine] = useState<any>([]) //线
   const { productionSingleView, getLine } = orderApis
-
+  const [isModalVisible, setIsModalVisible] = useState(false)
   // 甘特图数据
   useEffect(() => {
     if (formData !== undefined) {
@@ -76,7 +77,73 @@ const SchedulingResults = () => {
   // 设置图 线数据
   useEffect(() => {
     if (!isEmpty(gunterData)) {
-      setChart(gunterData)
+      // setChart(gunterData)
+      const data = [
+        {
+          id: 1,
+          type: true, //判断是否可以移动
+          text: '生产单', //名称
+          // color: 'red', //控制颜色
+          open: true
+        },
+        {
+          id: 11,
+          type: true, //判断是否可以移动
+          text: '缝制1-盒子', //名称
+          // color: 'red', //控制颜色
+          open: true,
+          render: 'split',
+          parent: 1
+          // eslint-disable-next-line jsx-a11y/alt-text
+        },
+        {
+          id: 111,
+          type: true, //判断是否可以移动
+          text: '班组1正', //名称
+          parent: 11,
+          start_date: '2020-06-8',
+          end_date: '2020-06-9'
+          // color: 'red', //控制颜色
+        },
+        {
+          id: 112,
+          type: true, //判断是否可以移动
+          text: '班组1反', //名称
+          parent: 11,
+          start_date: '2020-06-9',
+          end_date: '2020-06-10',
+          color: 'red' //控制颜色+
+          // render: 'split'
+        },
+        {
+          id: 22,
+          type: true, //判断是否可以移动
+          text: '缝制2-盒子', //名称
+          // color: 'red', //控制颜色
+          open: true,
+          parent: 1,
+          render: 'split'
+        },
+        {
+          id: 221,
+          type: true, //判断是否可以移动
+          text: '缝制2正', //名称
+          // color: 'red', //控制颜色
+          start_date: '2020-06-8',
+          end_date: '2020-06-9',
+          parent: 22
+        },
+        {
+          id: 222,
+          type: true, //判断是否可以移动
+          text: '缝制2反', //名称
+          color: 'red', //控制颜色
+          start_date: '2020-06-9',
+          end_date: '2020-06-10',
+          parent: 22
+        }
+      ]
+      setChart(data)
     }
     setLine([]) //线 //初始的时候传空
   }, [gunterData])
@@ -104,6 +171,18 @@ const SchedulingResults = () => {
   const FormData = (e: any) => {
     setFormData(e)
   }
+
+  const showModal = () => {
+    setIsModalVisible(true)
+  }
+
+  const handleOk = () => {
+    setIsModalVisible(false)
+  }
+
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
   return (
     <div className={styles.qualification}>
       {/* <div>
@@ -111,11 +190,33 @@ const SchedulingResults = () => {
       </div> */}
       <Forms FormData={FormData}></Forms>
       <div id="c1"></div>
+      <Button type="primary" onClick={showModal}>
+        Open Modal
+      </Button>
+      <Modal
+        width={600}
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        {/* <div className={styles.ganttContent}>
+          <Gantt
+            select={select}
+            name={'test'}
+            leftData={leftData} //左键
+            rightData={rightData} //左键
+            tasks={subjectData} //甘特图主体数据 { data: [], links: [] }
+            zoom={currentZoom} // 缩放的状态  Days
+            updateList={updateList} // 更新
+            // restDate={restDate}
+          />
+        </div> */}
+      </Modal>
 
       <div className={styles.ganttContent}>
         <Gantt
           select={select}
-          name={'test'}
+          name={'test2'}
           leftData={leftData} //左键
           rightData={rightData} //左键
           tasks={subjectData} //甘特图主体数据 { data: [], links: [] }
@@ -124,7 +225,6 @@ const SchedulingResults = () => {
           // restDate={restDate}
         />
       </div>
-
       {/* <GattChart /> */}
     </div>
   )

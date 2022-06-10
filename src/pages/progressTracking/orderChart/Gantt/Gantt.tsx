@@ -1,11 +1,14 @@
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 
 import { gantt } from 'dhtmlx-gantt'
+import * as G from 'dhtmlx-gantt'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
 
 const Gantt = (props: any) => {
+  console.log(G)
+
   const { zoom, tasks, updateList, leftData, restDate, name } = props
   const chartDom = document.getElementById(name) //获取id
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
@@ -104,6 +107,16 @@ const Gantt = (props: any) => {
     //点击了空白
     // gantt.attachEvent('onEmptyClick', function (e: any) {
     //   console.log(e)
+    // })
+    // const dateToStr = gantt.date.date_to_str(gantt.config.task_date)
+    // console.log('~~~~~~~~~~~~~', dateToStr)
+
+    // const start = new Date(2018, 2, 28)
+    // gantt.addMarker({
+    //   start_date: start,
+    //   css: 'status_line',
+    //   text: 'Start project',
+    //   title: 'Start project: ' + dateToStr(start)
     // })
 
     // 可以通过此控制 是否可以拖动 当前的状态=1不可拖动
@@ -268,6 +281,7 @@ const Gantt = (props: any) => {
       //   //any custom logic here
       //   return true
       // })
+
       gantt.ext.zoom.init(zoomConfig)
     }
   }
@@ -285,6 +299,32 @@ const Gantt = (props: any) => {
   const ganttShow = async (list: any) => {
     gantt.clearAll() //缓存问题 先清楚后添加
     gantt.config.date_format = '%Y-%m-%d %H:%i'
+
+    //标记 （战旗）
+
+    gantt.plugins({
+      marker: true
+    })
+    const dateToStr = gantt.date.date_to_str(gantt.config.task_date)
+    const markerId = gantt.addMarker({
+      start_date: new Date('2020-06-8'),
+      css: 'today',
+      text: '战旗兵',
+      title: dateToStr(new Date('2020-06-10'))
+    })
+
+    gantt.getMarker(markerId).css = 'today_new'
+    gantt.updateMarker(markerId)
+
+    // const dateToStr = gantt.date.date_to_str(gantt.config.task_date)
+    // const markerId = gantt.addMarker({
+    //   start_date: '2020-06-9',
+    //   css: 'today',
+    //   text: '战旗兵',
+    //   title: dateToStr(new Date())
+    // })
+    // gantt.getMarker(markerId)
+
     gantt.init(chartDom) //根据 id
     initGanttDataProcessor()
     gantt.parse(list) //渲染数据
