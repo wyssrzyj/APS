@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2022-03-10 15:20:21
- * @LastEditTime: 2022-05-18 11:10:52
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @LastEditTime: 2022-06-13 13:49:01
+ * @LastEditors: lyj
  * @Description: 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  * @FilePath: \jack-aps\src\pages\practice\progressTracking\schedulingResults\index.tsx
  */
@@ -42,15 +42,13 @@ const SchedulingResults = () => {
   const executionMethod = async (e) => {
     const res = await teamLoadDiagram({ factoryId: e })
     if (res.code === 200) {
-      setList(res.data)
+      setList([...res.data])
     }
   }
 
   return (
     <div className={styles.qualification}>
-      <div>{/* <Title title={'资源负荷图'} /> */}</div>
       <Forms FormData={FormData}></Forms>
-      <div id="c1"></div>
       <Tbale load={list} />
     </div>
   )

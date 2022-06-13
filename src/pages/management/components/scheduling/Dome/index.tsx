@@ -42,16 +42,12 @@ const Dhx = (props: {
   const [subjectData, setSubjectData] = useState<any>({ data: [], links: [] }) //甘特图主体数据
   const [chart, setChart] = useState<any>([]) //图
   const [line, setLine] = useState<any>([]) //线
-  // const [linek, setLinek] = useState<any>([]) //线
 
   const [notWorking, setNotWorking] = useState<any>([]) //所有不可工作时间
 
-  //初始拖动
-  const [InitialDrag, setInitialDrag] = useState<any>([]) //初始拖动数据
-  const [restDate, setRestDate] = useState<any>() //单个班组的不可用日期
+  // const [restDate, setRestDate] = useState<any>() //单个班组的不可用日期
 
   const [select, setSelect] = useState<any>() //用于展示 线和不可用时间、给树传递id判断
-  const [getLink, setGetLink] = useState<any>() //右键获取线
 
   const [isModalVisible, setIsModalVisible] = useState(false) //添加加班
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
@@ -79,79 +75,7 @@ const Dhx = (props: {
   useEffect(() => {
     if (!isEmpty(gunterData) && !isEmpty(notWork)) {
       setChart(gunterData)
-      // console.log(gunterData)
     } else {
-      //对比测试
-      // const data = [
-      //   {
-      //     id: 1,
-      //     type: true, //判断是否可以移动
-      //     text: '生产单', //名称
-      //     // color: 'red', //控制颜色
-      //     open: true
-      //   },
-
-      //   {
-      //     id: 11,
-      //     type: true, //判断是否可以移动
-      //     text: '缝制1-盒子', //名称
-      //     // color: 'red', //控制颜色
-      //     open: true,
-      //     render: 'split',
-      //     parent: 1
-      //     // eslint-disable-next-line jsx-a11y/alt-text
-      //   },
-      //   {
-      //     id: 111,
-      //     type: true, //判断是否可以移动
-      //     text: '班组1正', //名称
-      //     parent: 11,
-      //     start_date: '2020-04-05',
-      //     end_date: '2020-04-6'
-
-      //     // color: 'red', //控制颜色
-      //   },
-      //   {
-      //     id: 112,
-      //     type: true, //判断是否可以移动
-      //     text: '班组1反', //名称
-      //     parent: 11,
-      //     start_date: '2020-04-07',
-      //     end_date: '2020-04-8',
-      //     color: 'red' //控制颜色+
-      //     // render: 'split'
-      //   },
-
-      //   {
-      //     id: 22,
-      //     type: true, //判断是否可以移动
-      //     text: '缝制2-盒子', //名称
-      //     // color: 'red', //控制颜色
-      //     open: true,
-      //     parent: 1,
-      //     render: 'split'
-      //   },
-      //   {
-      //     id: 221,
-      //     type: true, //判断是否可以移动
-      //     text: '缝制2正', //名称
-      //     // color: 'red', //控制颜色
-      //     start_date: '2020-04-05',
-      //     end_date: '2020-04-6',
-      //     parent: 22
-      //   },
-      //   {
-      //     id: 222,
-      //     type: true, //判断是否可以移动
-      //     text: '缝制2反', //名称
-      //     color: 'red', //控制颜色
-      //     start_date: '2020-04-07',
-      //     end_date: '2020-04-8',
-      //     parent: 22
-      //   }
-      // ]
-      // setChart(data)
-
       setChart([])
     }
 
@@ -254,23 +178,21 @@ const Dhx = (props: {
       getLineData(select, gunterType)
     }
 
-    // 获取对应的不可用时间
-    // if (type === '0') {
-    //点击
-    if (!isEmpty(chart)) {
-      const arr = chart.filter((item: { id: any }) => item.id === select)
-      const teamId = !isEmpty(arr) ? arr[0].teamId : null
-      if (teamId !== null) {
-        const unavailable: any = notWorking.filter(
-          (item: { id: any }) => item.id === teamId
-        )
-        if (unavailable !== undefined && !isEmpty(unavailable)) {
-          setRestDate(unavailable[0].time)
-        }
-      } else {
-        setRestDate(['2000-06-06'])
-      }
-    }
+    //点击 获取的单个不可用时间  黑色的（防止后续迭代添加--勿删）
+    // if (!isEmpty(chart)) {
+    //   const arr = chart.filter((item: { id: any }) => item.id === select)
+    //   const teamId = !isEmpty(arr) ? arr[0].teamId : null
+    //   if (teamId !== null) {
+    //     const unavailable: any = notWorking.filter(
+    //       (item: { id: any }) => item.id === teamId
+    //     )
+    //     if (unavailable !== undefined && !isEmpty(unavailable)) {
+    //       setRestDate(unavailable[0].time)
+    //     }
+    //   } else {
+    //     setRestDate(['2000-06-06'])
+    //   }
+    // }
     // }
   }, [select, gunterType])
 
@@ -428,10 +350,13 @@ const Dhx = (props: {
 
   //右键
   const rightData = (e: any) => {
+    console.log('右键事件')
     if (e !== null) {
       // setGetLink(e)
       setOvertimeType(false)
     } else {
+      console.log('展开哦')
+
       setOvertimeType(true)
     }
   }
@@ -482,18 +407,20 @@ const Dhx = (props: {
             overlay={overtimeType ? rightClick : dontShow}
             trigger={['contextMenu']}
           >
-            <Gantt
-              select={select}
-              movingDistance={movingDistance}
-              name={'lyj1'}
-              leftData={leftData}
-              rightData={rightData}
-              tasks={subjectData}
-              zoom={currentZoom}
-              updateList={updateList}
-              expandOperation={expandOperation}
-              // restDate={restDate} //不可用时间
-            />
+            <div className={styles.ganttContainer}>
+              <Gantt
+                select={select}
+                movingDistance={movingDistance}
+                name={'lyj1'}
+                leftData={leftData}
+                rightData={rightData}
+                tasks={subjectData}
+                zoom={currentZoom}
+                updateList={updateList}
+                expandOperation={expandOperation}
+                // restDate={restDate} //不可用时间
+              />
+            </div>
           </Dropdown>
         </>
       </div>

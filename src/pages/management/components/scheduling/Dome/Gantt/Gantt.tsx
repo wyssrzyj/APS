@@ -1,13 +1,10 @@
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 
-// import 'dhtmlx-gantt/codebase/ext/dhtmlxgantt_marker'
-// import 'dhtmlx-gantt/codebase/skins/dhtmlxgantt_material.css'
-// import 'dhtmlxgantt.css'
 //****外层必须设置宽高 否则不会展示
 import { gantt } from 'dhtmlx-gantt'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 const Gantt = (props: any) => {
   const {
     select,
@@ -25,8 +22,6 @@ const Gantt = (props: any) => {
   const chartDom = document.getElementById(name) //获取id....
 
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
-  // const [select, setSelect] = useState<any>() //选中项
-  // const [treeSelection, setTreeSelection] = useState<any>() //选中项..
   const locationRef = useRef({ x: 0, y: 0 })
   const treeSelection = useRef({ select: '' })
 
@@ -41,8 +36,6 @@ const Gantt = (props: any) => {
         locationRef.current = { x: left, y: top }
       })
       ganttShow(tasks) //渲染数据   勿动
-
-      // console.log('渲染的距离', newLeft, newTop)
       gantt.scrollTo(newLeft, newTop) //定位
       //选中项
       if (selectRef !== undefined) {
@@ -52,9 +45,9 @@ const Gantt = (props: any) => {
       ganttShow({ data: [], links: [] })
     }
   }, [tasks])
+
   useEffect(() => {
     if (movingDistance !== undefined) {
-      // console.log('移动距离', movingDistance)
       locationRef.current = { x: movingDistance.x, y: movingDistance.y }
     }
   }, [movingDistance])
@@ -64,12 +57,6 @@ const Gantt = (props: any) => {
       treeSelection.current.select = select
     }
   }, [select])
-
-  useEffect(() => {
-    if (!isEmpty(restDate)) {
-      setRest(restDate)
-    }
-  }, [restDate])
 
   useEffect(() => {
     setZoom(zoom)
@@ -84,10 +71,17 @@ const Gantt = (props: any) => {
     gantt.ext.zoom.setLevel(value)
   }
 
+  //不可用时间样式展示
+  useEffect(() => {
+    if (!isEmpty(restDate)) {
+      setRest(restDate)
+    }
+  }, [restDate])
+
   // **需用和动态数据交互的方法
   useEffect(() => {
     if (!gantt.$initialized) {
-      color()
+      color() //设置不可用时间样式
     }
     gantt.ext.zoom.setLevel(zoom)
   }, [rest, zoom])
@@ -95,10 +89,6 @@ const Gantt = (props: any) => {
   // 主要参数设置
   const initZoom = () => {
     // gantt.config.preserve_scroll = false
-
-    // gantt.templates.grid_header_class = function (columnName, column) {
-    //   if (columnName == 'duration' || columnName == 'text') return 'updColor'
-    // }
     gantt.i18n.setLocale('cn') //设置中文
     // gantt.config.readonly = true//只读
     gantt.config.autoscroll = true //如果线超出屏幕可以x滚动
@@ -118,28 +108,7 @@ const Gantt = (props: any) => {
       multiselect: true
     })
 
-    // 重置皮肤
-    // function changeSkin(name) {
-    //   const file = name != 'terrace' ? '_' + name : ''
-    //   const link = document.createElement('link')
-    //   link.onload = function () {
-    //     gantt.resetSkin()
-    //   }
-
-    //   link.rel = 'stylesheet'
-    //   link.type = 'text/css'
-    //   link.id = 'skin'
-    //   link.href = '../../codebase/dhtmlxgantt' + file + '.css'
-    //   document.head.replaceChild(link, document.querySelector('#skin'))
-    // }
-
-    // gantt.eachTask(function (task) {
-    //   task.$open = true
-    // })
-    // gantt.render()
-
     // 指定日期不可拖动
-
     //表头
     gantt.config.columns = [
       { name: 'text', label: '名称', tree: true, width: '250' },
@@ -155,11 +124,6 @@ const Gantt = (props: any) => {
     gantt.attachEvent('onContextMenu', function (id: any) {
       rightData && rightData(id)
     })
-
-    // //拖拽时
-    // gantt.attachEvent('onTaskDrag', function (id: any, v: any, item: any) {
-    //   drag(item)
-    // })
 
     gantt.attachEvent('onTaskOpened', function (e: any) {
       // console.log('分支被打开时(任务打开)', e)
@@ -224,24 +188,14 @@ const Gantt = (props: any) => {
     let timeout
     const dp = gantt.createDataProcessor({
       task: {
-        // create: function (data: any) {
-        //   console.log('新增任务----------------------', data)
-        // },
-        // click: function (data: any) {
-        //   console.log('点击----------------------', data)
-        // },
         update: function (data: any, id: any) {
           // console.log('更新任务----------------------', data)
-
           //防止重复提交
           clearTimeout(timeout)
           timeout = setTimeout(() => {
             updateList && updateList(data)
           }, 500)
         }
-        // delete: function (id: any) {
-        //   console.log('删除任务----------------------', id)
-        // }
       },
       link: {
         create: function (data: any) {
@@ -347,7 +301,7 @@ const Gantt = (props: any) => {
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
     gantt.parse(list) //渲染数据
-    // const ganttChart = Gantt.getGanttInstance()
+    // const ganttChart = Gantt.getGanttInstance()//页面展示多个
   }
   // "main"
   return <div id={name} style={{ width: '100%', height: '100%' }}></div>
