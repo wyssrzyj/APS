@@ -1,6 +1,6 @@
 import { Menu } from 'antd'
 import classNames from 'classnames'
-import { get, isArray, isEmpty } from 'lodash'
+import { cloneDeep, get, isArray, isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -29,7 +29,7 @@ const MenuBox = () => {
   const navigate = useNavigate()
 
   const [currentMenu, setCurrentMenu] = useState<Array<string>>([])
-  const [openKey, setOpenKey] = useState<Array<string>>(['basicConfiguration'])
+  const [openKey, setOpenKey] = useState<any>([])
   const location = useLocation()
 
   // TODO 效果待更改
@@ -91,6 +91,8 @@ const MenuBox = () => {
   }
 
   const changePage = (event: any) => {
+    console.log(event)
+
     const { key } = event
     const target = findRoute(menus, key) || '/home'
     navigate(target)
@@ -107,9 +109,8 @@ const MenuBox = () => {
       }
     })
   }
-
   const onOpenChange = (keys: any) => {
-    setOpenKey(keys)
+    setOpenKey([keys[keys.length - 1]])
   }
 
   useEffect(() => {
@@ -141,7 +142,7 @@ const MenuBox = () => {
     // <div className={classNames(styles.menu, collapsed && styles.miniMenu)}>
     <Menu
       selectedKeys={currentMenu}
-      // openKeys={openKey}
+      openKeys={openKey}
       // defaultSelectedKeys={['classification']}
       // defaultOpenKeys={[openKey]}
       mode="inline"
