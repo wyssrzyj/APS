@@ -6,6 +6,7 @@ export const searchConfig = [
     field: 'factoryId',
     type: 'select',
     allowClear: true,
+    width: 250,
     placeholder: '请选择工厂名称',
     options: []
   }

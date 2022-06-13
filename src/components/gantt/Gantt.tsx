@@ -6,11 +6,27 @@ import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
 
 const Gantt = (props: any) => {
-  const { zoom, tasks, updateList, leftData, restDate, name } = props
+  const { zoom, tasks, updateList, leftData, restDate, name, select, update } =
+    props
   const chartDom = document.getElementById(name) //获取id
+
   const [rest, setRest] = useState<any>([]) //单个班组的休息日期
+  const [iframeType, setIframeType] = useState<any>(false) //单个班组的休息日期
+
   const locationRef = useRef({ x: 0, y: 0 })
-  const [select, setSelect] = useState<any>() //选中项
+  const treeSelection = useRef({ select: '' })
+  useEffect(() => {
+    if (update !== undefined) {
+      if (update.type === '1' || update.type === '2') {
+        setIframeType(true)
+      } else {
+        setIframeType(false)
+      }
+    } else {
+      setIframeType(false)
+    }
+  }, [update])
+
   useEffect(() => {
     if (!isEmpty(restDate)) {
       setRest(restDate)
@@ -18,31 +34,39 @@ const Gantt = (props: any) => {
   }, [restDate])
 
   useEffect(() => {
-    setZoom(zoom)
-  }, [zoom])
+    setZoom(zoom, iframeType)
+  }, [zoom, iframeType])
 
   useEffect(() => {
-    //添加判断防止报错
     if (!isEmpty(tasks.data)) {
+      //获取滚动的距离
       const newLeft = locationRef.current.x || 0
       const newTop = locationRef.current.y || 0
+      const selectRef = treeSelection.current.select || 0
+
       gantt.attachEvent('onGanttScroll', function (left, top) {
         locationRef.current = { x: left, y: top }
       })
-
-      ganttShow(tasks)
+      ganttShow(tasks) //渲染数据   勿动
       gantt.scrollTo(newLeft, newTop) //定位
       //选中项
       if (select !== undefined) {
-        gantt.selectTask(select)
+        gantt.selectTask(selectRef)
       }
     } else {
       ganttShow({ data: [], links: [] })
     }
   }, [tasks])
+
+  useEffect(() => {
+    if (select !== null) {
+      treeSelection.current.select = select
+    }
+  }, [select])
   // 静态方法
-  const setZoom = (value: any) => {
+  const setZoom = (value: any, iframeType: any) => {
     if (!gantt.$initialized) {
+      gantt.config.readonly = iframeType //只读
       initZoom()
     }
     //缩放-不可修该 勿动
@@ -61,16 +85,17 @@ const Gantt = (props: any) => {
   // 主要参数设置
   const initZoom = () => {
     gantt.i18n.setLocale('cn') //设置中文
-    // gantt.config.readonly = true//只读
+    // gantt.config.readonly = iframeType.current.select //只读
     gantt.config.autoscroll = true //如果线超出屏幕可以x滚动
     gantt.config.order_branch = false // 左侧可以拖动
-    // gantt.config.sort = true //左侧点击表头排序
+    gantt.config.sort = false //左侧点击表头排序
     gantt.config.drag_move = true //是否可以移动
     gantt.config.drag_progress = false //拖放进度
     gantt.config.drag_resize = false //控制大小
     // gantt.config.show_links = false //控制两端的线是否可以拖动
     gantt.config.details_on_dblclick = false //双击出弹窗
     gantt.config.show_errors = false //发生异常时，允许弹出警告到UI界面
+
     // 指定日期不可拖动
 
     //表头
@@ -82,8 +107,6 @@ const Gantt = (props: any) => {
     ]
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
-      setSelect(id)
-
       //折叠所有任务：
       // gantt.eachTask(function (task) {
       //   task.$open = true
@@ -111,7 +134,6 @@ const Gantt = (props: any) => {
       'onBeforeTaskDrag',
       function (id: any, mode: any, e: any) {
         const task = gantt.getTask(id)
-        console.log('可以通过此控制 是否可以拖动', task)
         if (task.type === '1') {
           return false
         } else {

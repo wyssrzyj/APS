@@ -7,6 +7,7 @@ export const searchConfigs = [
     label: '工厂名称',
     field: 'factoryId',
     type: 'select',
+    width: 250,
     allowClear: true,
     placeholder: '请选择工厂名称',
     options: []
@@ -15,6 +16,8 @@ export const searchConfigs = [
     label: '工作班组',
     field: 'teamId',
     allowClear: true,
+    width: 250,
+
     placeholder: '请选择工作班组',
     type: 'select',
     options: []

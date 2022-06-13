@@ -8,6 +8,7 @@ export const searchConfigs = [
     field: 'factoryId',
     type: 'select',
     allowClear: true,
+    width: 250,
     placeholder: '请选择工厂名称',
     options: []
   },
@@ -15,12 +16,15 @@ export const searchConfigs = [
     label: '工作班组',
     field: 'teamId',
     allowClear: true,
+    width: 250,
+
     placeholder: '请选择工作班组',
     type: 'select',
     options: []
   },
   {
     label: '工作模式',
+    width: 250,
     field: 'workModeName',
     type: 'input',
     allowClear: true,

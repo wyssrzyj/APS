@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-05-30 15:30:18
+ * @LastEditTime: 2022-06-13 08:40:06
  * @Description:
  * @LastEditors: lyj
  */
@@ -67,8 +67,8 @@ const Header = () => {
       <div className={styles.logo}>
         <img
           className={styles.logImg}
-          src="http://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/20210722/5a113adbb7a24ecc8ebedef760019f84.png"
-          alt="优产云平台"
+          src="https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/aps_logo.png"
+          alt="APS"
         />
       </div>
       <div className={styles.headerR}>

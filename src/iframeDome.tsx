@@ -99,7 +99,7 @@ const route = [
   { path: '/rule', element: <Rule /> },
   //生产计划查看
   { path: '/dispatchPan', element: <DispatchPan /> },
-  //班组甘特图
+  //资源甘特图
   { path: '/resourcedMap', element: <ResourcedMap /> },
   //订单甘特图
   { path: '/orderChart', element: <OrderChart /> },
@@ -107,7 +107,6 @@ const route = [
   { path: '/schedulingResults', element: <SchedulingResults /> },
   //生产实绩
   { path: '/actualProduction', element: <ActualProduction /> },
-  //空白例子
   // 无匹配路由 放置在最后一个路由的位置
   { path: '*', element: <Home /> }
 ]
@@ -116,8 +115,53 @@ const RouteList = () => {
     <Routes>
       {route.map((item) => (
         // eslint-disable-next-line react/jsx-key
-        <Route key={item.path} path={item.path} element={item.element} />
+        <Route path={item.path} element={item.element} />
       ))}
+      {/* <Route path="home/:id" element={<Home />} /> */}
+      {/* <Route path="demo" element={<Demo />} /> */}
+      {/* <Route path="note" element={<Note />} /> */}
+
+      {/* <Route path="departmentManage" element={<DepartmentManage />} /> */}
+      {/* <Route path="roleManage" element={<RoleManage />} /> */}
+      {/* <Route path="login" element={<Login />} /> */}
+      {/* <Route path="register" element={<Register />} />
+        <Route path="reset" element={<Reset />} /> */}
+
+      {/* 系统参数设置 */}
+      {/* <Route path="/systemSettingsWork" element={<SystemSettingsWork />} /> */}
+      {/* <Route path="/userManage" element={<UserManage />} /> */}
+
+      {/* 日历-工作 */}
+      {/* <Route path="/work" element={<Work />} /> */}
+      {/* 日历-加班 */}
+      {/* <Route path="/overtime" element={<Overtime />} /> */}
+      {/* 日历-节假日 */}
+      {/* <Route path="/vacations" element={<Vacations />} /> */}
+      {/* 业务单数据管理-生产单列表 */}
+      {/* <Route path="/productionList" element={<ProductionList />} /> */}
+      {/* 生产管理-工作班组日历 */}
+      {/* <Route path="/materials" element={<Materials />} /> */}
+      {/* 生产管理-物料齐套检查 */}
+      {/* <Route path="/workCalendar" element={<WorkCalendar />} /> */}
+      {/* 生产管理-生产单排程 */}
+      {/* <Route path="/scheduling" element={<Scheduling />} /> */}
+
+      {/* 生产管理-规则排程 */}
+      {/* <Route path="/rule" element={<Rule />} /> */}
+      {/* 进度跟踪 生产计划查看 */}
+      {/* <Route path="/dispatchPan" element={<DispatchPan />} /> */}
+
+      {/* 排程结果 -资源甘特图 */}
+      {/* <Route path="/resourcedMap" element={<ResourcedMap />} /> */}
+      {/* 排程结果 -订单甘特图 */}
+      {/* <Route path="/orderChart" element={<OrderChart />} /> */}
+      {/* 排程结果 -资源负荷图 */}
+      {/* <Route path="/schedulingResults" element={<SchedulingResults />} /> */}
+      {/* 生产实绩 */}
+      {/* <Route path="/actualProduction" element={<ActualProduction />} /> */}
+
+      {/* 无匹配路由 放置在最后一个路由的位置 */}
+      {/* <Route path="*" element={<Home />} /> */}
     </Routes>
   )
 }

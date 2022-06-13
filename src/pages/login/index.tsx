@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 10:02:54
- * @LastEditTime: 2022-05-25 15:45:14
+ * @LastEditTime: 2022-06-13 08:56:24
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: lyj
  */
 import { Button, Form, Input, message, Tabs } from 'antd'
 import React, { useState } from 'react'
@@ -42,54 +42,62 @@ const LoginContent = () => {
 
   return (
     <div className={styles.container}>
-      <section>
-        <div className={styles.imgContainer}>
+      <div className={styles.logoContainer}>
+        <div className={styles.imgContainerLeft}>
           <img
-            src="https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/logo.png"
+            src="https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/aps_left.png"
             alt="logo"
           />
         </div>
-        <Form
-          form={form}
-          scrollToFirstError={true}
-          className={styles.form}
-          size="large"
-        >
-          <Form.Item
-            name="loginAccount"
-            label=""
-            rules={[{ required: true, message: '请输入用户名' }]}
-          >
-            <Input
-              prefix={<UserIcon />}
-              placeholder="请输入用户名"
-              onPressEnter={submit}
+        <div className={styles.section}>
+          <div className={styles.imgContainer}>
+            <img
+              src="https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/aps_logo.png"
+              alt="logo"
             />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            label=""
-            rules={[
-              {
-                required: true,
-                message: '请输入密码'
-              }
-            ]}
+          </div>
+          <Form
+            form={form}
+            scrollToFirstError={true}
+            className={styles.form}
+            size="large"
           >
-            <Input.Password
-              prefix={<PwdIcon />}
-              placeholder="请输入密码"
-              onPressEnter={submit}
-            />
-          </Form.Item>
-          <Form.Item label="">
-            {/* <Button type={'primary'} onClick={submit} block loading={loadings}> */}
-            <Button type={'primary'} onClick={submit} block>
-              登录
-            </Button>
-          </Form.Item>
-        </Form>
-      </section>
+            <Form.Item
+              name="loginAccount"
+              label=""
+              rules={[{ required: true, message: '请输入用户名' }]}
+            >
+              <Input
+                prefix={<UserIcon />}
+                placeholder="请输入用户名"
+                onPressEnter={submit}
+              />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              label=""
+              rules={[
+                {
+                  required: true,
+                  message: '请输入密码'
+                }
+              ]}
+            >
+              <Input.Password
+                prefix={<PwdIcon />}
+                placeholder="请输入密码"
+                onPressEnter={submit}
+              />
+            </Form.Item>
+            <Form.Item label="">
+              {/* <Button type={'primary'} onClick={submit} block loading={loadings}> */}
+              <Button type={'primary'} onClick={submit} block>
+                登录
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      </div>
     </div>
   )
 }
