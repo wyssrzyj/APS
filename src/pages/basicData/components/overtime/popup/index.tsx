@@ -222,7 +222,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
                   ? factoryData.map(
                       (item: {
                         id: React.Key | null | undefined
-                        name:
+                        label:
                           | boolean
                           | React.ReactChild
                           | React.ReactFragment
@@ -231,7 +231,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
                           | undefined
                       }) => (
                         <Option key={item.id} value={item.id}>
-                          {item.name}
+                          {item.label}
                         </Option>
                       )
                     )
