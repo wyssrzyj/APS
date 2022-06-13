@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-03-10 15:20:21
  * @LastEditors: lyj
- * @LastEditTime: 2022-06-09 16:14:20
+ * @LastEditTime: 2022-06-13 14:25:30
  * @FilePath: \jack-aps\src\pages\practice\administration\components\scheduling\forms\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -15,13 +15,30 @@ import { practice } from '@/recoil/apis'
 const { Option } = Select
 
 const HeaderForm = (props: { FormData: any }) => {
+  const [form] = Form.useForm()
+  const { validateFields } = form
+
   const { FormData } = props
   const { factoryList } = practice
   const [list, setList] = useState<any>([])
   const [theDefault, setTheDefault] = useState<any>() //默认展示
+  const [initialValues, setInitialValues] = useState<any>()
   useEffect(() => {
     getData()
   }, [])
+
+  useEffect(() => {
+    if (theDefault) {
+      setInitialValues({ keyword: theDefault.id })
+    }
+  }, [theDefault])
+
+  useEffect(() => {
+    if (initialValues) {
+      form.resetFields() //重置form中的数据
+    }
+  }, [initialValues])
+
   const getCurrentUser = (arr) => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'))
     if (currentUser) {
@@ -41,6 +58,8 @@ const HeaderForm = (props: { FormData: any }) => {
     const exhibition = arr.filter((item) => item.id === factoryId)[0]
     if (res.code === 200) {
       //  默认展示第2条数据
+      console.log(exhibition)
+
       setTheDefault(exhibition)
       FormData && FormData(factoryId)
       arr.map((item: { name: any; deptName: any }) => {
@@ -51,11 +70,10 @@ const HeaderForm = (props: { FormData: any }) => {
   }
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [form] = Form.useForm()
-  const { validateFields } = form
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
+    console.log(values.keyword)
     FormData && FormData(values.keyword)
   }, 500)
 
@@ -70,7 +88,7 @@ const HeaderForm = (props: { FormData: any }) => {
 
   return (
     <div>
-      <Form form={form}>
+      <Form form={form} initialValues={initialValues}>
         <Form.Item
           name="keyword"
           label="选择工厂"
@@ -81,7 +99,6 @@ const HeaderForm = (props: { FormData: any }) => {
           {theDefault ? (
             <Select
               allowClear
-              defaultValue={theDefault.deptName}
               style={{ width: 300 }}
               // onChange={handleChange}
             >

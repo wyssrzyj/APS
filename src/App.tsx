@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-30 15:59:04
- * @LastEditTime: 2022-05-30 16:42:33
+ * @LastEditTime: 2022-06-10 13:51:59
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: lyj
  */
 import './css/reset.css'
 import 'antd/dist/antd.min.css'
@@ -15,6 +15,7 @@ import { Suspense } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { RecoilRoot } from 'recoil'
 
+import IframeDome from './iframe'
 import Layout from './layout'
 import { Loading } from './pages/loading'
 import RouteList from './route'
@@ -26,6 +27,7 @@ const App = () => {
         {/* 页面loading状态设置 配合路由动态懒加载 */}
         <Suspense fallback={<Loading></Loading>}>
           <Router>
+            <IframeDome></IframeDome>
             <Layout>
               <RouteList />
             </Layout>

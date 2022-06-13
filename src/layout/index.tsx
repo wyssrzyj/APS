@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-05-23 17:43:39
+ * @LastEditTime: 2022-06-13 13:59:13
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: lyj
  */
 import { Layout } from 'antd'
 import classNames from 'classnames'
@@ -19,7 +19,7 @@ import styles from './index.module.less'
 import Menu from './menu'
 const { Sider, Content } = Layout
 interface LayoutProps {
-  children?: ReactElement<ReactNode>
+  items?: ReactElement<ReactNode>
   [key: string]: any
 }
 
@@ -30,6 +30,7 @@ const MyLayout = (props: LayoutProps) => {
     '/login',
     '/register',
     '/reset'
+    // '/iframeDate'
     // '/control-panel'
   ]
 
@@ -38,6 +39,7 @@ const MyLayout = (props: LayoutProps) => {
   const headerFlag = noUseHeaders.some((item) => pathname.includes(item))
   const setAreaData = useSetRecoilState(areaState.areaInfo)
   const [collapsed, setCollapsed] = useState(false)
+  const [iframeType, setIframeType] = useState(true)
 
   const onCollapse = (collapsed: boolean) => {
     setCollapsed(collapsed)
@@ -48,34 +50,46 @@ const MyLayout = (props: LayoutProps) => {
       // setAreaData(res)
     })()
   }, [collapsed])
-
+  //甘特图
+  useEffect(() => {
+    if (pathname === '/iframeDate') {
+      setIframeType(false)
+    } else {
+      setIframeType(true)
+    }
+  }, [pathname])
   return (
     // <Layout className={styles.container}>
-    <Layout>
-      {/*  */}
-      {!headerFlag && <Header />}
-      <Layout>
-        {!headerFlag && (
-          <Sider
-            theme="light"
-            width={200}
-            style={{
-              minHeight: 'calc(100vh - 50px)'
-            }}
-            collapsible
-            collapsed={collapsed}
-            onCollapse={onCollapse}
-          >
-            <Menu />
-          </Sider>
-        )}
-        <Content
-          className={headerFlag ? styles.fullHeight : styles.outBoxContainer}
-        >
-          {props.children}
-        </Content>
-      </Layout>
-    </Layout>
+    <div>
+      {iframeType ? (
+        <Layout>
+          {!headerFlag && <Header />}
+          <Layout>
+            {!headerFlag && (
+              <Sider
+                theme="light"
+                width={200}
+                style={{
+                  minHeight: 'calc(100vh - 50px)'
+                }}
+                collapsible
+                collapsed={collapsed}
+                onCollapse={onCollapse}
+              >
+                <Menu />
+              </Sider>
+            )}
+            <Content
+              className={
+                headerFlag ? styles.fullHeight : styles.outBoxContainer
+              }
+            >
+              {props.children}
+            </Content>
+          </Layout>
+        </Layout>
+      ) : null}{' '}
+    </div>
   )
 }
 

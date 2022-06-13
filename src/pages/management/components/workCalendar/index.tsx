@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-30 13:27:13
- * @LastEditTime: 2022-06-09 15:02:18
+ * @LastEditTime: 2022-06-13 13:48:35
  * @Description:
  * @LastEditors: lyj
  */
@@ -91,7 +91,6 @@ const WorkCalendar = (props) => {
       values.teamId = undefined
       changeTeamConfig(values.factoryId)
     }
-    console.log({ ...oldParams, ...values })
 
     setParams({ ...oldParams, ...values })
   }

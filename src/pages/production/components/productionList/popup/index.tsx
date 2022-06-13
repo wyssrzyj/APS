@@ -104,7 +104,7 @@ function ProductionOrder(props: { content: any }) {
               type="number"
               min={0}
               value={_item}
-              onBlur={(e) => {
+              onChange={(e) => {
                 quantity(e.target.value, v)
               }}
             />

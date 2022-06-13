@@ -92,7 +92,6 @@ function ToPlan(props: {
       //车间/班组
       workshopTeam(formData)
     }
-    console.log('是否执行', treeUpdate)
   }, [formData, treeUpdate])
   //效率模板
   useEffect(() => {
