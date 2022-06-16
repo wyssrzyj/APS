@@ -159,11 +159,14 @@ function ActualProductionList() {
   return (
     <div className={styles.outContainer}>
       {/* <Title title={'生产实绩'}></Title> */}
-      <SearchBar
-        configs={configs}
-        params={params}
-        callback={paramsChange}
-      ></SearchBar>
+      <div className={styles.forms}>
+        <SearchBar
+          configs={configs}
+          params={params}
+          callback={paramsChange}
+        ></SearchBar>
+      </div>
+
       {columns && columns.length ? (
         <CusDragTable
           rowKey={'id'}

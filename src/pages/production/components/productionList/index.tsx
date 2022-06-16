@@ -230,7 +230,9 @@ function Production() {
     <div className={styles.qualification}>
       <div>
         <div className={styles.content}>
-          <Forms factoryData={factoryData} FormData={FormData}></Forms>
+          <div className={styles.forms}>
+            <Forms factoryData={factoryData} FormData={FormData}></Forms>
+          </div>
           <CusDragTable
             storageField={'productionList'}
             columns={columns}

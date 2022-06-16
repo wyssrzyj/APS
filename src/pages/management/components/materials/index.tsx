@@ -383,7 +383,10 @@ function Materials() {
       <div>{/* <Title title={'物料齐套检查'} /> */}</div>
       <div>
         <div className={styles.content}>
-          <Forms factoryData={factoryData} FormData={FormData}></Forms>
+          <div className={styles.forms}>
+            <Forms factoryData={factoryData} FormData={FormData}></Forms>
+          </div>
+
           <CusDragTable
             storageField={'materials'}
             cusBarLeft={TableLeft}

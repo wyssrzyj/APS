@@ -239,11 +239,13 @@ function Rule() {
     <div className={styles.qualification}>
       <div>{/* <Title title={'产能效率模板'} /> */}</div>
       <div>
-        <SearchBar
-          configs={configs}
-          params={params}
-          callback={paramsChange}
-        ></SearchBar>
+        <div className={styles.forms}>
+          <SearchBar
+            configs={configs}
+            params={params}
+            callback={paramsChange}
+          ></SearchBar>
+        </div>
 
         <div className={styles.content}>
           <CusDragTable

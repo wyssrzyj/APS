@@ -210,34 +210,34 @@ function ProductionPlan() {
 
   return (
     <div className={styles.qualification}>
-      <div>{/* <Title title={'生产计划'} /> */}</div>
-      <div>
+      <div className={styles.forms}>
         <SearchBar
           configs={configs}
           params={params}
           callback={searchParamsChange}
         ></SearchBar>
-        <div>
-          <CusDragTable
-            storageField={'productionPlan'}
-            rowSelection={rowSelection}
-            cusBarLeft={TableLeft}
-            columns={tableColumns}
-            dataSource={dataSource}
-            rowKey={'id'}
-            scroll={{ x: 1000 }}
-            onChange={tableChange}
-            pagination={{
-              //分页
-              showSizeChanger: true,
-              // showQuickJumper: true, //是否快速查找
-              pageSize, //每页条数
-              current: pageNum, //	当前页数
-              total, //数据总数
-              pageSizeOptions: ['10', '20', '50']
-            }}
-          />
-        </div>
+      </div>
+
+      <div>
+        <CusDragTable
+          storageField={'productionPlan'}
+          rowSelection={rowSelection}
+          cusBarLeft={TableLeft}
+          columns={tableColumns}
+          dataSource={dataSource}
+          rowKey={'id'}
+          scroll={{ x: 1000 }}
+          onChange={tableChange}
+          pagination={{
+            //分页
+            showSizeChanger: true,
+            // showQuickJumper: true, //是否快速查找
+            pageSize, //每页条数
+            current: pageNum, //	当前页数
+            total, //数据总数
+            pageSizeOptions: ['10', '20', '50']
+          }}
+        />
       </div>
       {isModalVisible ? (
         <CustomModal
