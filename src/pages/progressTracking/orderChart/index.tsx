@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-01 17:37:07
- * @LastEditTime: 2022-06-16 15:21:57
+ * @LastEditTime: 2022-06-16 16:04:28
  * @Description:
  * @LastEditors: lyj
  */
@@ -37,9 +37,9 @@ const SchedulingResults = () => {
     <div className={styles.qualification}>
       <Forms FormData={FormData}></Forms>
       <div id="c1"></div>
-      <Button type="primary" onClick={showModal}>
+      {/* <Button type="primary" onClick={showModal}>
         对比测试
-      </Button>
+      </Button> */}
       <Modal
         width={2000}
         visible={isModalVisible}
