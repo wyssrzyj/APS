@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-05-27 09:26:17
+ * @LastEditTime: 2022-06-16 15:05:03
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: lyj
  */
 
 import { Empty } from 'antd'
@@ -18,20 +18,26 @@ const { proSingleDynamic, proTaskDynamic } = productionSingleApis
 const DynamicContent = (props: Record<string, any>) => {
   const { title, type } = props
   const [dataList, setDataList] = useState<any>(null)
+  const currentUser = localStorage.getItem('currentUser')
+
   useEffect(() => {
-    ;(async () => {
-      const params = { pageSize: 7, pageNum: 1 }
-      try {
-        const res: any =
-          type === 'manufactureOrder'
-            ? await proSingleDynamic(params)
-            : await proTaskDynamic(params)
-        setDataList(res.records || [])
-      } catch (err) {
-        setDataList([])
-      }
-    })()
-  }, [])
+    console.log('currentUser', currentUser)
+
+    if (currentUser != null) {
+      ;(async () => {
+        const params = { pageSize: 7, pageNum: 1 }
+        try {
+          const res: any =
+            type === 'manufactureOrder'
+              ? await proSingleDynamic(params)
+              : await proTaskDynamic(params)
+          setDataList(res.records || [])
+        } catch (err) {
+          setDataList([])
+        }
+      })()
+    }
+  }, [currentUser])
   return (
     <div className={styles.dynamicContent}>
       <header>{title}</header>

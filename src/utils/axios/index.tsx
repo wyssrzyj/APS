@@ -45,7 +45,7 @@ customAxios.interceptors.response.use(
     const noTokenList = ['/login']
     const pathFlag = !noTokenList.includes(location.pathname)
 
-    if (pathFlag && !getToken()) {
+    if (pathFlag && !getToken() && location.pathname !== '/home') {
       clearLocalStorage()
       location.replace('/login')
     }
@@ -60,7 +60,11 @@ customAxios.interceptors.response.use(
       })
       return retryOriginalRequest
     }
-    if (location.pathname !== '/login' && code === 401) {
+    if (
+      location.pathname !== '/login' &&
+      location.pathname !== '/home' &&
+      code === 401
+    ) {
       // token失效
       message.warning('登录过期，请重新登录')
       clearLocalStorage()

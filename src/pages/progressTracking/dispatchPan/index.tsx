@@ -40,12 +40,11 @@ function ProductionPlan() {
         <Button type="link" onClick={() => handleDetailInfo(record)}>
           查看
         </Button>
-
-        {record.section === '缝制' ? (
+        {/* {record.section === '缝制' ? (
           <Button type="link" onClick={() => showSewing(record)}>
             {map.get(record.auditStatus)}
           </Button>
-        ) : null}
+        ) : null} */}
       </div>
     )
   }

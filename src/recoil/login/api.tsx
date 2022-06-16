@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-05-24 10:07:16
+ * @LastEditTime: 2022-06-16 15:21:49
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: lyj
  */
 import { message } from 'antd'
 
@@ -38,6 +38,7 @@ export const login = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post('/aps/sys/user/login', params)
     const { data = {} } = res
+
     if (data) {
       localStorage.setItem('token', JSON.stringify(data.token))
       // localStorage.setItem('refresh', data.refresh_token)
@@ -68,4 +69,21 @@ export const resetPwd = async (params: any) => {
   } catch (e) {
     console.log(e)
   }
+}
+
+// 用户ID登录
+export const signID = async (params: any) => {
+  const res: ResponseProps = await axios.post(
+    '/aps/sys/user/login-by-id',
+    params
+  )
+  const { data = {} } = res
+  if (data) {
+    localStorage.setItem('token', JSON.stringify(data.token))
+    localStorage.setItem('currentUser', JSON.stringify(data))
+  }
+  if (res.code !== 200) {
+    message.error(res.msg)
+  }
+  return res
 }
