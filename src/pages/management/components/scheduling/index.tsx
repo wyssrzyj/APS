@@ -62,7 +62,7 @@ function Index() {
      * duration 天数
      * progress 控制完成百分比 范围0-1
      *  color控制颜色
-     * start_date 开始时间
+     * start_date 开始时间..
      * end_date 结束时间
      *  render: 'split' 添加同一行 只有儿子用
      * parent ***谁是自己的父亲*** 儿子和父亲用
@@ -70,132 +70,20 @@ function Index() {
   }, [formData, gunterType])
 
   const getChart = async (id: undefined, type: any) => {
-    const arr = [
-      {
-        id: '1526030305658425345',
-        open: true,
-        isHead: 1,
-        type: null,
-        text: 'PD20220516104280222',
-        progress: null,
-        startDate: 1655096700000,
-        endDate: 1655544600000,
-        render: null,
-        parent: null,
-        teamId: null,
-        section: null,
-        assignmentId: null,
-        externalProduceOrderId: null,
-        externalProduceOrderNum: null,
-        color: '#F8AE01'
-      },
-      {
-        id: '4843689624877547591',
-        open: false,
-        isHead: 0,
-        type: '0',
-        text: '裁剪',
-        progress: 0.0,
-        startDate: 1655096700000,
-        endDate: 1655096760000,
-        render: null,
-        parent: '1526030305658425345',
-        teamId: '1516650776477310977',
-        section: '1',
-        assignmentId: '1534800683131797506',
-        externalProduceOrderId: '1524211836323483650',
-        externalProduceOrderNum: 'PD20220511101421720',
-        color: '#F8AE01'
-      },
-      {
-        id: '5882080704133837321',
-        open: true,
-        isHead: 1,
-        type: null,
-        text: '缝制',
-        progress: null,
-        startDate: 1655096760000,
-        endDate: 1655451060000,
-        render: null,
-        parent: '1526030305658425345',
-        teamId: null,
-        section: null,
-        assignmentId: null,
-        externalProduceOrderId: null,
-        externalProduceOrderNum: null,
-        color: '#F8AE01'
-      },
-      {
-        id: '8037669506012986144',
-        open: false,
-        isHead: 0,
-        type: null,
-        text: '缝制班组1516651023672811522',
-        progress: 0.0,
-        startDate: 1655096760000,
-        endDate: 1655451060000,
-        render: null,
-        parent: '5882080704133837321',
-        teamId: '1516651023672811522',
-        section: '2',
-        assignmentId: '1534800683140186114',
-        externalProduceOrderId: '1524211836323483650',
-        externalProduceOrderNum: 'PD20220511101421720',
-        color: '#F8AE01'
-      },
-      {
-        id: '6150004913847382486',
-        open: false,
-        isHead: 0,
-        type: '1',
-        text: '后整',
-        progress: 1.0,
-        startDate: 1655451060000,
-        endDate: 1655454720000,
-        render: null,
-        parent: '1526030305658425345',
-        teamId: '1516651094258753537',
-        section: '3',
-        assignmentId: '1534800683140186115',
-        externalProduceOrderId: '1524211836323483650',
-        externalProduceOrderNum: 'PD20220511101421720',
-        color: '#F8AE01'
-      },
-      {
-        id: '2387640287010665685',
-        open: false,
-        isHead: 0,
-        type: '0',
-        text: '外发',
-        progress: 0.0,
-        startDate: 1655454720000,
-        endDate: 1655544600000,
-        render: null,
-        parent: '1526030305658425345',
-        teamId: null,
-        section: '5',
-        assignmentId: '1534800683140186116',
-        externalProduceOrderId: '1524211836323483650',
-        externalProduceOrderNum: 'PD20220511101421720',
-        color: '#F8AE01'
+    if (type === '0') {
+      const chart: any = await figureData({ factoryId: id })
+      const arr = cloneDeep(chart.data)
+      if (chart.code === 200) {
+        dateFormat(arr, type)
       }
-    ]
-    dateFormat(arr, type)
-
-    // if (type === '0') {
-    //   const chart: any = await figureData({ factoryId: id })
-    //   const arr = cloneDeep(chart.data)
-    //   if (chart.code === 200) {
-    //     dateFormat(arr, type)
-    //   }
-    // }
-    // if (type === '1') {
-    //   const chart: any = await productionView({ factoryId: id })
-    //   const arr = cloneDeep(chart.data)
-    //   if (chart.code === 200) {
-    //     dateFormat(arr, type)
-    //   }
-    // }
+    }
+    if (type === '1') {
+      const chart: any = await productionView({ factoryId: id })
+      const arr = cloneDeep(chart.data)
+      if (chart.code === 200) {
+        dateFormat(arr, type)
+      }
+    }
 
     //班组不可工作时间
   }
