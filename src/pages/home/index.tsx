@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-06-16 15:17:27
+ * @LastEditTime: 2022-06-16 15:50:32
  * @Description:
  * @LastEditors: lyj
  */
@@ -45,6 +45,7 @@ const Home = () => {
   const api = async (id) => {
     clearLocalStorage() //清空数据
     await signID({ id: id }) //存登录数据
+    navigate('/home', { replace: true })
     setType(true)
   }
   return (
