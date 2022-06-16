@@ -1,7 +1,11 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-06-16 15:23:59
+<<<<<<< HEAD
+ * @LastEditTime: 2022-06-16 15:53:04
+=======
+ * @LastEditTime: 2022-06-16 15:50:32
+>>>>>>> dev_lyj
  * @Description:
  * @LastEditors: lyj
  */
@@ -43,8 +47,9 @@ const Home = () => {
   //mes跳转到aps页面
 
   const api = async (id) => {
-    clearLocalStorage() //清空数据.
+    clearLocalStorage() //清空数据..
     await signID({ id: id }) //存登录数据
+    navigate('/home', { replace: true })
     setType(true)
   }
   return (
