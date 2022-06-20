@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-03-10 15:20:21
  * @LastEditors: lyj
- * @LastEditTime: 2022-06-01 09:16:49
+ * @LastEditTime: 2022-06-20 09:01:25
  * @FilePath: \jack-aps\src\pages\practice\production\components\productionList\popup\tables\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -12,7 +12,6 @@ import React, { useEffect, useState } from 'react'
 import styles from './index.module.less'
 function Tables(props: any) {
   const { getFormData, list, pagingData, total, types } = props
-
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(5)
 
@@ -20,7 +19,10 @@ function Tables(props: any) {
     {
       title: '序号',
       align: 'center',
-      dataIndex: 'idx'
+      dataIndex: 'order',
+      render: (_value: any, _row: any) => {
+        return <div>{_value + 1}</div>
+      }
     },
     {
       title: '工序名称',
@@ -69,7 +71,7 @@ function Tables(props: any) {
   ) => {
     setPageNum(page)
     setPageSize(pageSize)
-    pagingData && pagingData(page, pageSize)
+    // pagingData && pagingData(page, pageSize)
   }
   return (
     <div className={styles.table}>
