@@ -1,3 +1,10 @@
+/*
+ * @Author: lyj
+ * @Date: 2022-05-19 08:38:27
+ * @LastEditTime: 2022-06-20 17:34:38
+ * @Description:
+ * @LastEditors: lyj
+ */
 import {
   Button,
   Form,
@@ -17,7 +24,9 @@ import { commonState } from '@/recoil'
 import { systemParametersApis } from '@/recoil/apis'
 
 import Color from './Color/index'
+import SingleColor from './Color/singleColor'
 import DeliveryWeight from './deliveryWeight'
+import EarlyWarning from './earlyWarning'
 import styles from './index.module.less'
 import Inputs from './inputs'
 
@@ -32,6 +41,7 @@ function Vacations() {
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [type, setType] = useState(false) //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗+
+  const [InputNumberValue, setInputNumberValue] = useState()
   const [list, setlist] = useState([]) //接口数据
 
   const [form] = Form.useForm()
@@ -133,6 +143,9 @@ function Vacations() {
   }
 
   const onFinish = async (values: any) => {
+    console.log(values)
+    console.log(InputNumberValue)
+
     const arr: any = {}
     //重新排程时锁定
     // arr.lockTime = values.lockTime.delay
@@ -163,10 +176,12 @@ function Vacations() {
     arr.expireColorConfigs = values.expireColorConfigs
 
     if (repeat(arr.expireColorConfigs) !== true) {
-      const res = await systemParameters(arr)
-      if (res === true) {
-        message.success('保存成功')
-      }
+      // console.log(arr)
+
+      // const res = await systemParameters(arr)
+      // if (res === true) {
+      //   message.success('保存成功')
+      // }
       api()
     } else {
       message.warning('时间不能重复')
@@ -195,6 +210,11 @@ function Vacations() {
   const preservation = () => {
     form.submit()
   }
+  const getInputNumberValue = (e) => {
+    console.log(e.target.value)
+    setInputNumberValue(e.target.value)
+  }
+
   return (
     <div className={styles.qualification}>
       <div>{/* <Title title={'系统参数设置'} /> */}</div>
@@ -206,25 +226,53 @@ function Vacations() {
           onFinish={onFinish}
           autoComplete="off"
         >
-          <Form.Item
-            label="交期权重"
-            name="deliveryWeight"
-            rules={[{ required: true, message: '请输入交期权重!' }]}
-          >
-            <DeliveryWeight onChange={undefined} list={list} />
-          </Form.Item>
-
-          {sum.map((item) => (
-            // eslint-disable-next-line react/jsx-key
-            <Form.Item key={item.name} label={item.label} name={item.name}>
-              <Inputs onChange={undefined} list={list} item={item} />
+          <div>
+            显示设置
+            <div className={styles.border}></div>
+            {sum.map((item) => (
+              // eslint-disable-next-line react/jsx-key
+              <Form.Item key={item.name} label={item.label} name={item.name}>
+                <Inputs onChange={undefined} list={list} item={item} />
+              </Form.Item>
+            ))}
+            <Form.Item label="预警显示颜色" name="color">
+              {/* 颜色 */}
+              <SingleColor onChange={undefined} list={null} />
             </Form.Item>
-          ))}
+            <Form.Item label="延期显示颜色" name="expireColorConfigs">
+              {/* 颜色 */}
+              <Color onChange={undefined} list={list}></Color>
+            </Form.Item>
+          </div>
 
-          <Form.Item label="延期显示颜色" name="expireColorConfigs">
-            {/* 颜色 */}
-            <Color onChange={undefined} list={list}></Color>
-          </Form.Item>
+          <div>
+            规则设置
+            <div className={styles.border}></div>
+            <Form.Item label="承诺交期计算" name="6666">
+              承诺交期 = 销售订单交期-{' '}
+              <InputNumber
+                value={data[1].weight}
+                style={{ width: 70 }}
+                min={1}
+                onBlur={getInputNumberValue}
+              />
+              天
+            </Form.Item>
+            <Form.Item
+              label="交期权重"
+              name="deliveryWeight"
+              rules={[{ required: true, message: '请输入交期权重!' }]}
+            >
+              <DeliveryWeight onChange={undefined} list={list} />
+            </Form.Item>
+          </div>
+          <div>
+            预警设置
+            <div className={styles.border}></div>
+            <Form.Item label="未完成生产单预警" name="earlyWarning">
+              <EarlyWarning onChange={undefined} list={null} />
+            </Form.Item>
+          </div>
         </Form>
         <div className={styles.executionMethod}>
           <Button type="primary" htmlType="submit" onClick={preservation}>

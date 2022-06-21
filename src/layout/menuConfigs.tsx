@@ -10,13 +10,13 @@ export const menus = [
         key: 'systemSettingsWork',
         icon: 'jack-xitongcanshupeizhi',
         url: '/systemSettingsWork'
+      },
+      {
+        label: '用户管理',
+        key: 'userManage',
+        icon: 'jack-yonghu3',
+        url: '/userManage'
       }
-      // {
-      //   label: '用户管理',
-      //   key: 'userManage',
-      //   icon: 'jack-yonghu3',
-      //   url: '/userManage'
-      // }
 
       // {
       //   label: '部门管理',
@@ -134,6 +134,12 @@ export const menus = [
     icon: 'jack-jindutiao',
     url: '/',
     children: [
+      {
+        label: '日排程管理',
+        key: 'dailySchedule',
+        icon: 'jack-paigong',
+        url: '/dailySchedule'
+      },
       {
         label: '生产计划',
         key: 'dispatchPan',

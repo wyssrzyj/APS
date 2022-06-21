@@ -71,16 +71,6 @@ function WorkingHours(props: { onChange: any; list: any }) {
         ) => (
           <div className={styles.timePicker} key={index}>
             <Row className={styles.NoExtended}>
-              <InputNumber
-                className={styles.inputText}
-                min={0}
-                style={{ width: 150 }}
-                value={data[index].expireTime}
-                onChange={(e) => inputValue(e, index)}
-              />
-              <Select value={'1'} style={{ width: 60 }}>
-                <Option value="1">天</Option>
-              </Select>
               　
               <Popover
                 content={
@@ -101,21 +91,6 @@ function WorkingHours(props: { onChange: any; list: any }) {
                   style={{ background: `${item.color}` }}
                 ></div>
               </Popover>
-              <div className={styles.executionMethod}>
-                {index === 0 ? (
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => executionMethod('push', index)}
-                  />
-                ) : (
-                  <Button
-                    type="primary"
-                    icon={<MinusOutlined />}
-                    onClick={() => executionMethod('mov', index)}
-                  />
-                )}
-              </div>
             </Row>
           </div>
         )

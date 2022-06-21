@@ -49,7 +49,6 @@ const useTableChange = (
     if (keys.length > 0) {
       target = { ...params, ...target }
     }
-    // console.log('接口的数据', target)
     let res = await getData(target)
 
     if (Array.isArray(res)) {
@@ -87,6 +86,7 @@ const useTableChange = (
     const { current, pageSize } = pagination
     setPageNum(current as number)
     setPageSize(pageSize as number)
+    console.log(sorter)
 
     const { field, order } = sorter as SorterResult<any>
     setSorterField(field as string)

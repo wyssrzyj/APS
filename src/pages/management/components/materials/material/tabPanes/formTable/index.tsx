@@ -1,26 +1,19 @@
 /* eslint-disable prefer-const */
-import { DatePicker, Input, InputNumber, Space, Table } from 'antd'
+import { DatePicker, Input, Select, Space, Table } from 'antd'
 // import Virtual from './virtual'
 import classNames from 'classnames'
-import { cloneDeep, divide, isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
-import ResizeObserver from 'rc-resize-observer'
-import React, { memo, useEffect, useRef, useState } from 'react'
-import { VariableSizeGrid as Grid } from 'react-window'
+import React, { useEffect, useState } from 'react'
 
 import { Icon } from '@/components'
+import { materialSetApis } from '@/recoil/apis'
 
+import Forms from './forms'
 import styles from './index.module.less'
 const FormTable = (props: any) => {
-  const {
-    tableData,
-    materialList,
-    index,
-    sizeList,
-    saveData,
-    select,
-    recheckData
-  } = props
+  const { tableData, sizeList, saveData, select, recheckData } = props
+  const { Option } = Select
   const scrollBox = React.createRef()
   const [expandedRowKeys, setExpandedRowKeys] = useState<any>([])
   const [notData, setNotData] = useState<any>([]) //接口数据
@@ -32,6 +25,8 @@ const FormTable = (props: any) => {
   const [defaultExpandedRow, setDefaultExpandedRow] = useState<any>([]) //全部展开
   const [time, setTime] = useState<any>() //最大的齐套日期
   const [cloneData, setCloneData] = useState<any>([]) // 重新检查修改后的数据
+
+  const { getTheSize, materialData, materialSaved, checked } = materialSetApis
 
   useEffect(() => {
     if (!isEmpty(data)) {
@@ -317,6 +312,7 @@ const FormTable = (props: any) => {
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
       setTime(tableData[0].bottomTime)
+
       setNotData([...tableData])
       setDefaultExpandedRow([...defaultExpandedRow])
     }
@@ -487,8 +483,75 @@ const FormTable = (props: any) => {
     } else {
     }
   }
+  // 获取table接口数据 - 只需要传当前项就可以
+  const getTableData = async (data: any) => {
+    //  未检查
+    if (data.checkStatus === 2) {
+      const resData = await materialData({
+        externalProduceOrderId: data.externalProduceOrderId,
+        produceOrderNum: data.externalProduceOrderNum
+      })
+      console.log('我是未检查')
+      if (!isEmpty(resData)) {
+        resData[0].bottomTime = getMaxTime(resData)
+      }
+      // setTableList(resData)
+    }
+    //  已检查.
+    if (data.checkStatus === 1) {
+      const resData = await checked({
+        externalProduceOrderId: data.externalProduceOrderId,
+        produceOrderNum: data.externalProduceOrderNum
+      })
+      console.log('我是已经检查')
+      //插入第一条数据中...
+      if (!isEmpty(resData.tableContent)) {
+        resData.tableContent[0].bottomTime = resData.prepareTime
+      }
+
+      // setTableList(resData.tableContent)
+    }
+    //  重新检查 特殊处理-待定
+
+    if (data.checkStatus === 3) {
+      //已检查
+      if (data.type === 1) {
+        const resData = await checked({
+          externalProduceOrderId: data.externalProduceOrderId,
+          produceOrderNum: data.externalProduceOrderNum
+        })
+        if (!isEmpty(resData.tableContent)) {
+          resData.tableContent[0].bottomTime = resData.prepareTime
+        }
+
+        // setTableList(resData.tableContent)
+      }
+      if (data.type === 2) {
+        //重新检查
+        const resData = await materialData({
+          externalProduceOrderId: data.externalProduceOrderId,
+          produceOrderNum: data.externalProduceOrderNum
+        })
+        if (!isEmpty(resData)) {
+          resData[0].bottomTime = getMaxTime(resData)
+        }
+
+        // setTableList(resData)
+      }
+    }
+  }
+
+  const FormData = (e: any) => {
+    console.log('form数据', e)
+    console.log('当前选中项', select)
+    // checkStatus
+  }
   return (
     <div>
+      {/* form  */}
+      <div>
+        <Forms factoryData={null} FormData={FormData}></Forms>
+      </div>
       <Table
         expandedRowKeys={defaultExpandedRow}
         loading={loading}

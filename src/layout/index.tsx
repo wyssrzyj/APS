@@ -11,6 +11,7 @@ import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useSetRecoilState } from 'recoil'
 
+import { Icon } from '@/components' //路径
 import { areaState } from '@/recoil'
 import { areaApis } from '@/recoil/apis'
 

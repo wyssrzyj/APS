@@ -20,28 +20,28 @@ export const searchConfigs = [
     placeholder: '请输入生产单号'
   },
   {
-    label: '所属工段',
-    field: 'section',
+    label: '产品名称',
+    field: 'productName',
     allowClear: true,
-    placeholder: '请选择所属工段',
-    type: 'select',
+    placeholder: '请输入产品名称',
+    type: 'input',
     options: []
   },
   {
-    label: '计划开始时间',
-    field: 'startTime',
-    type: 'rangePicker',
+    label: '产品款号',
+    field: 'productModelNo',
     allowClear: true,
-    placeholder: '请选择计划开始时间'
-    // showTime: true
+    placeholder: '请输入产品款号',
+    type: 'input',
+    options: []
   },
   {
-    label: '计划结束时间',
-    field: 'endTime',
+    label: '生产状态',
+    field: 'productStatus',
+    type: 'select',
     allowClear: true,
-    placeholder: '请选择计划结束时间',
-    type: 'rangePicker'
-    // showTime: true
+    placeholder: '请选择生产状态',
+    options: []
   }
 ]
 
@@ -53,7 +53,7 @@ type Column = {
   fixed: 'left' | 'right'
   render: ReactNode
 }
-export const tableColumns: Array<Partial<Column>> = [
+export const tableColumns: any = [
   {
     title: '生产单号',
     align: 'center',
@@ -61,21 +61,15 @@ export const tableColumns: Array<Partial<Column>> = [
     width: 200
   },
   {
+    title: '款图',
+    align: 'center',
+    dataIndex: 'img',
+    width: 200
+  },
+  {
     title: '工厂名称',
     align: 'center',
     dataIndex: 'factoryName',
-    width: 200
-  },
-  {
-    title: '车间名称',
-    align: 'center',
-    dataIndex: 'shopName',
-    width: 200
-  },
-  {
-    title: '班组名称',
-    align: 'center',
-    dataIndex: 'teamName',
     width: 200
   },
   {
@@ -91,15 +85,28 @@ export const tableColumns: Array<Partial<Column>> = [
     width: 200
   },
   {
-    title: '生产量',
+    title: '客户款号',
     align: 'center',
-    dataIndex: 'productionAmount',
-    width: 100
+    dataIndex: 'productNum',
+    width: 200
   },
   {
-    title: '工段名称',
+    title: '生产单总量',
     align: 'center',
-    dataIndex: 'section',
+    dataIndex: 'shopName',
+    width: 200
+  },
+  {
+    title: '承诺交期',
+    align: 'center',
+    dataIndex: 'teamName',
+    width: 200
+  },
+
+  {
+    title: '剩余工期',
+    align: 'center',
+    dataIndex: 'productionAmount',
     width: 100
   },
   {
@@ -111,12 +118,34 @@ export const tableColumns: Array<Partial<Column>> = [
       date ? moment(date).format(FORMAT_DATE) : null
   },
   {
-    title: '计划结束时间',
+    title: '计划完成时间',
     align: 'center',
     dataIndex: 'planEndTime',
     width: 170,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
+  },
+  {
+    title: '实际开始时间',
+    align: 'center',
+    dataIndex: 'planStartTime',
+    width: 170,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
+  },
+  {
+    title: '实际完成时间',
+    align: 'center',
+    dataIndex: 'planEndTime',
+    width: 170,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
+  },
+  {
+    title: '备注',
+    align: 'center',
+    dataIndex: 'productionAmount',
+    width: 100
   },
   {
     title: '操作',
