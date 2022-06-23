@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-10 13:28:44
- * @LastEditTime: 2022-06-13 11:12:38
+ * @LastEditTime: 2022-06-23 10:55:01
  * @Description:
  * @LastEditors: lyj
  */
@@ -150,7 +150,7 @@ function IframeDome() {
         <Gantt
           select={select}
           update={iframeType}
-          name={'test1'}
+          name={'iframe'}
           leftData={leftData} //左键
           rightData={rightData} //左键
           tasks={subjectData} //甘特图主体数据 { data: [], links: [] }

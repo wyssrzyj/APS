@@ -67,6 +67,7 @@ const Gantt = (props: any) => {
   const setZoom = (value: any, iframeType: any) => {
     if (!gantt.$initialized) {
       gantt.config.readonly = iframeType //只读
+
       initZoom()
     }
     //缩放-不可修该 勿动
@@ -85,7 +86,7 @@ const Gantt = (props: any) => {
   // 主要参数设置
   const initZoom = () => {
     gantt.i18n.setLocale('cn') //设置中文
-    // gantt.config.readonly = iframeType.current.select //只读
+    // gantt.config.readonly =  //只读
     gantt.config.autoscroll = true //如果线超出屏幕可以x滚动
     gantt.config.order_branch = false // 左侧可以拖动
     gantt.config.sort = false //左侧点击表头排序
@@ -97,14 +98,27 @@ const Gantt = (props: any) => {
     gantt.config.show_errors = false //发生异常时，允许弹出警告到UI界面
 
     // 指定日期不可拖动
+    console.log('id', iframeType)
 
     //表头
-    gantt.config.columns = [
-      { name: 'text', label: '名称', tree: true, width: '250' },
-      { name: 'start_date', label: '时间', align: 'center' }
-      // { name: 'duration', label: 'Duration', align: 'center' }
-      // { name: 'add', label: '' },
-    ]
+    if (iframeType) {
+      // 对比测试
+      gantt.config.columns = [
+        {
+          name: 'text',
+          label: '名称',
+          tree: true,
+          width: '100',
+          align: 'center'
+        }
+      ]
+    } else {
+      gantt.config.columns = [
+        { name: 'text', label: '名称', tree: true, width: '250' },
+        { name: 'start_date', label: '时间', align: 'center' }
+      ]
+    }
+
     //单击事件
     gantt.attachEvent('onTaskSelected', function (id: any) {
       //折叠所有任务：

@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-06-23 10:27:58
+ * @LastEditTime: 2022-06-23 10:39:40
  * @Description:
  * @LastEditors: lyj
  */
@@ -12,16 +12,18 @@ import React, { useEffect, useState } from 'react'
 
 import { practice } from '@/recoil/apis'
 
+import ContrastGantt from './contrastGantt'
 import Forms from './forms/index'
 import RulesTables from './tables/index'
 function RuleScheduling(props: Record<string, any>) {
-  const { visibleRule, onCancel, checkIDs } = props
+  const { visibleRule, onCancel, checkIDs, formData } = props
   const [searchParams, setSearchParams] = useState<Record<string, number>>({
     customerPriorityWeight: 1,
     orderPriorityWeight: 1,
     deliveryDatePriorityWeight: 1
   })
   const [dataSource, setDataSource] = useState<Record<string, any>>([])
+  const [isModalVisible, setIsModalVisible] = useState(false)
   // 搜索框
   useEffect(() => {
     getTableList({ ...searchParams, produceOrderIdList: checkIDs })
@@ -47,7 +49,14 @@ function RuleScheduling(props: Record<string, any>) {
   const startSchedule = () => {
     console.log('dataSource', dataSource)
     message.success(`保存完成.`)
+    setIsModalVisible(true)
     // onCancel()
+  }
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
+  const handleOk = () => {
+    setIsModalVisible(false)
   }
   return (
     <div>
@@ -69,6 +78,14 @@ function RuleScheduling(props: Record<string, any>) {
             开始排程
           </Button>
         </footer>
+        <Modal
+          width={2000}
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <ContrastGantt formData={formData} />
+        </Modal>
       </Modal>
     </div>
   )
