@@ -6,6 +6,7 @@ import { CusDragTable } from '@/components'
 import { productionSingleApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
+import { tableColumns } from './conifgs'
 import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
@@ -13,6 +14,7 @@ import Popup from './popup'
 
 function Production() {
   const { productionList, factoryList } = productionSingleApis
+
   const map = new Map()
   map.set(1, '待计划')
   map.set(2, '已计划')
@@ -32,6 +34,7 @@ function Production() {
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
   const [whetherEditor, setWhetherEditor] = useState<any>()
   const [data, setData] = useState<any>([])
+
   const {
     tableChange,
     dataSource,
@@ -53,6 +56,32 @@ function Production() {
       setData([])
     }
   }, [dataSource])
+  //操作
+  tableColumns[tableColumns.length - 1].render = (_value: any, _row: any) => {
+    return (
+      <div className={styles.flex}>
+        <div
+          className={styles.operation_item}
+          onClick={() => editUser(false, _row)}
+        >
+          查看
+        </div>
+        {_row.status === 1 ? (
+          <div
+            className={styles.operation}
+            onClick={() => editUser(true, _row)}
+          >
+            <div> 工艺外发</div>
+          </div>
+        ) : null}
+      </div>
+    )
+  }
+  //剩余工期
+  tableColumns[7].render = (_text: any, record: any, index: number) => {
+    return <div key={index}>{8848}</div>
+  }
+  tableColumns[7].sorter = true
 
   //工厂名称
   useEffect(() => {
@@ -75,120 +104,6 @@ function Production() {
   }
 
   // eslint-disable-next-line no-sparse-arrays
-  const columns: any = [
-    {
-      title: '生产单号',
-      align: 'center',
-      key: 'externalProduceOrderNum',
-      dataIndex: 'externalProduceOrderNum'
-    },
-    // {
-    //   title: '销售单号',
-    //   key: 'orderNum',
-    //   align: 'center',
-    //   dataIndex: 'orderNum'
-    // },
-    {
-      title: '接单工厂',
-      key: 'factoryName',
-      align: 'center',
-      width: 100,
-      dataIndex: 'factoryName'
-    },
-    {
-      title: '产品名称',
-      key: 'productName',
-      align: 'center',
-      width: 250,
-      dataIndex: 'productName'
-    },
-    {
-      title: '产品款号',
-      key: 'productNum',
-      align: 'center',
-      dataIndex: 'productNum',
-      width: 200
-    },
-    {
-      title: '客户款号',
-      key: 'productClientNum',
-      align: 'center',
-      dataIndex: 'productClientNum'
-    },
-    {
-      title: '生产单总量',
-      key: 'orderSum',
-      align: 'center',
-      dataIndex: 'orderSum',
-      width: 100
-    },
-    {
-      title: '计划完成日期',
-      key: 'planEndDate',
-      align: 'center',
-      dataIndex: 'planEndDate',
-      width: 170,
-
-      render: (v: any) => {
-        return <div>{moment(v).format('YYYY-MM-DD')}</div>
-      }
-    },
-    {
-      title: '外发情况',
-      key: 'outsourceType',
-      align: 'center',
-      dataIndex: 'outsourceType',
-      render: (v: any) => {
-        return <div>{v === 1 ? '工序外发' : v === 2 ? '整单外发' : null}</div>
-      }
-    },
-    ,
-    {
-      title: '延期情况',
-      key: 'delayType',
-      align: 'center',
-      dataIndex: 'delayType',
-      render: (v: any) => {
-        return <div>{v === 1 ? '正常' : v === 2 ? '已延期' : null}</div>
-      }
-    },
-    ,
-    {
-      title: '生产单状态',
-      key: 'status',
-      align: 'center',
-      dataIndex: 'status',
-      render: (v: any) => {
-        return <div>{map.get(v)}</div>
-      }
-    },
-    ,
-    {
-      title: '操作',
-      align: 'center',
-      dataIndex: 'address',
-      render: (_value: any, _row: any) => {
-        return (
-          <div className={styles.flex}>
-            <div
-              className={styles.operation_item}
-              onClick={() => editUser(false, _row)}
-            >
-              查看
-            </div>
-            {_row.status === 1 ? (
-              <div
-                className={styles.operation}
-                onClick={() => editUser(true, _row)}
-              >
-                <div> 工艺外发</div>
-              </div>
-            ) : null}
-          </div>
-        )
-      }
-    }
-  ]
 
   //头部form的数据
   const FormData = (e: any) => {
@@ -226,6 +141,15 @@ function Production() {
     externalProduceOrderId
   }
 
+  const getSort = (_pagination, _filters, sorter) => {
+    const sortType =
+      sorter.order === 'ascend'
+        ? { sortType: 'asc' }
+        : sorter.order === 'descend'
+        ? { sortType: 'desc' }
+        : { sortType: '' }
+    setParams({ ...params, ...sortType })
+  }
   return (
     <div className={styles.qualification}>
       <div>
@@ -235,12 +159,12 @@ function Production() {
           </div>
           <CusDragTable
             storageField={'productionList'}
-            columns={columns}
+            columns={tableColumns}
             dataSource={data}
             rowKey={'key'}
             scroll={{ x: 1000 }}
             loading={loading}
-            onChange={tableChange}
+            onChange={getSort}
             pagination={{
               //分页
               showSizeChanger: true,

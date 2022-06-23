@@ -121,7 +121,7 @@ function Index() {
     }
 
     setTime(time)
-    console.log('图', arr)
+
     const cloneArr = cloneDeep(arr)
     setGunterData(cloneArr) //图
   }

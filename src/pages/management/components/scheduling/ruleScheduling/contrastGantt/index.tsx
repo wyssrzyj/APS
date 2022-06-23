@@ -1,39 +1,41 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 09:14:45
- * @LastEditTime: 2022-06-23 11:07:09
+ * @LastEditTime: 2022-06-23 16:05:37
  * @Description:
  * @LastEditors: lyj
  */
 import { Select } from 'antd'
+import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 
 import styles from './index.module.less'
 
 const ContrastGantt = (props) => {
   const { Option } = Select
-  const { formData } = props
+  const { formData, checkIDs } = props
 
   const [id, setID] = useState<any>()
+  const [type, setType] = useState<any>('2')
   useEffect(() => {
-    setID(formData)
-  }, [formData])
+    if (!isEmpty(checkIDs)) {
+      console.log('checkIDs', checkIDs)
+      setID(checkIDs)
+    }
+  }, [checkIDs])
 
   const handleChange = (value: string) => {
-    setID(value)
+    // setID(value)
+    setType(value)
   }
 
   return (
     <>
       <div className={styles.iframeRight}>
-        <Select
-          defaultValue="1516640636965494785"
-          style={{ width: 120 }}
-          onChange={handleChange}
-        >
-          <Option value="1516640636965494785">APS测试</Option>
-          <Option value="1481903393613139970">盛宝丽</Option>
-          <Option value="Yiminghe">3</Option>
+        <Select defaultValue="2" style={{ width: 120 }} onChange={handleChange}>
+          <Option value="2">算法1</Option>
+          <Option value="3">算法2</Option>
+          <Option value="4">算法3</Option>
         </Select>
       </div>
       <div className={styles.iframeContainer}>
@@ -51,7 +53,7 @@ const ContrastGantt = (props) => {
             frameBorder="0"
             title={'afterUpdate'}
             className={styles.domeLeft}
-            src={`/iframeDate?id=${id}&type=2&state=contrast`}
+            src={`/iframeDate?id=${id}&type=${type}&state=contrast`}
           ></iframe>
         </>
       </div>

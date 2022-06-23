@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-10 13:28:44
- * @LastEditTime: 2022-06-23 10:55:01
+ * @LastEditTime: 2022-06-23 16:11:42
  * @Description:
  * @LastEditors: lyj
  */
@@ -26,7 +26,8 @@ function IframeDome() {
   const [chart, setChart] = useState<any>([]) //图
   const [line, setLine] = useState<any>([]) //线
   const [iframeType, setIframeType] = useState<any>() //iframe类型
-  const { productionSingleView, resourceMap, getLine } = orderApis
+  const { productionSingleView, resourceMap, getLine, comparisonChart } =
+    orderApis
 
   function parse(search) {
     if (typeof search !== 'string') {
@@ -51,15 +52,12 @@ function IframeDome() {
 
   // 获取api数据
   const getGanttData = async (type: any, id: any) => {
+    // 普通
     if (type === '1') {
       const res = await productionSingleView({ factoryId: id })
+      return res
+    }
 
-      return res
-    }
-    if (type === '2') {
-      const res = await productionSingleView({ factoryId: id })
-      return res
-    }
     //班组
     if (type === 'resourcedMap') {
       const res = await resourceMap({ factoryId: id })
@@ -70,11 +68,36 @@ function IframeDome() {
       const res = await productionSingleView({ factoryId: id })
       return res
     }
+
+    //对比图
+    if (type === '2') {
+      console.log('对比图 2')
+      const newID = id.split(',')
+      const res = await comparisonChart({ idList: newID })
+
+      return res
+    }
+    //对比图
+    if (type === '3') {
+      console.log(' 对比图 3')
+
+      const newID = id.split(',')
+      const res = await comparisonChart({ idList: newID })
+      return res
+    }
+    //对比图
+    if (type === '4') {
+      console.log(' 对比图4')
+      const newID = id.split(',')
+      const res = await comparisonChart({ idList: newID })
+      return res
+    }
   }
 
   // 甘特图数据
   const getChart = async (v) => {
     const id = v.id
+    console.log('🚀 ~ file: index.tsx ~ line 82 ~ getChart ~ v.id', v.id)
     const type = v.type
     const chart: any = await getGanttData(type, id)
     const arr = cloneDeep(chart.data)

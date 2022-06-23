@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-06-23 10:39:40
+ * @LastEditTime: 2022-06-23 15:43:44
  * @Description:
  * @LastEditors: lyj
  */
@@ -36,6 +36,7 @@ function RuleScheduling(props: Record<string, any>) {
   )
   const getTableList = async (params: Record<string, number | string>) => {
     const data = await practice.rulesScheduling(params)
+
     setDataSource(data)
   }
   // 表格数据
@@ -47,8 +48,7 @@ function RuleScheduling(props: Record<string, any>) {
   }
   // 开始排程
   const startSchedule = () => {
-    console.log('dataSource', dataSource)
-    message.success(`保存完成.`)
+    // message.success(`保存完成.`)
     setIsModalVisible(true)
     // onCancel()
   }
@@ -84,7 +84,7 @@ function RuleScheduling(props: Record<string, any>) {
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <ContrastGantt formData={formData} />
+          <ContrastGantt checkIDs={checkIDs} formData={formData} />
         </Modal>
       </Modal>
     </div>

@@ -57,7 +57,34 @@ function Overtime() {
       title: '班组名称',
       align: 'center',
       width: 200,
-
+      dataIndex: 'teamName',
+      render: (value: string, row: any) => {
+        const chars = value !== null ? value.split(',') : []
+        return (
+          <div>
+            {chars.map(
+              (
+                item:
+                  | boolean
+                  | React.ReactChild
+                  | React.ReactFragment
+                  | React.ReactPortal
+                  | null
+                  | undefined,
+                index: any | null | undefined
+              ) => (
+                // eslint-disable-next-line react/jsx-key
+                <Tag key={index}>{item}</Tag>
+              )
+            )}
+          </div>
+        )
+      }
+    },
+    {
+      title: '班组人数',
+      align: 'center',
+      width: 200,
       dataIndex: 'teamName',
       render: (value: string, row: any) => {
         const chars = value !== null ? value.split(',') : []
@@ -143,31 +170,31 @@ function Overtime() {
       align: 'center',
       dataIndex: 'remark'
     },
-    {
-      title: '创建人',
-      align: 'center',
-      dataIndex: 'createBy',
-      render: (value: string, row: any) => {
-        return (
-          <div>
-            <Tag key={value}>{value}</Tag>
-          </div>
-        )
-      }
-    },
-    {
-      title: '创建时间',
-      align: 'center',
-      dataIndex: 'createTime',
-      render: (value: string, row: any) => {
-        return (
-          <div>
-            <Tag key={value}>{moment(value).format('YYYY-MM-DD HH:ss')}</Tag>
-          </div>
-        )
-      }
-    },
     ,
+    // {
+    //   title: '创建人',
+    //   align: 'center',
+    //   dataIndex: 'createBy',
+    //   render: (value: string, row: any) => {
+    //     return (
+    //       <div>
+    //         <Tag key={value}>{value}</Tag>
+    //       </div>
+    //     )
+    //   }
+    // },
+    // {
+    //   title: '创建时间',
+    //   align: 'center',
+    //   dataIndex: 'createTime',
+    //   render: (value: string, row: any) => {
+    //     return (
+    //       <div>
+    //         <Tag key={value}>{moment(value).format('YYYY-MM-DD HH:ss')}</Tag>
+    //       </div>
+    //     )
+    //   }
+    // },
     {
       title: '操作',
       align: 'center',

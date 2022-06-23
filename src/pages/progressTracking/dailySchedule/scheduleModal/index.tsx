@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-21 13:18:16
- * @LastEditTime: 2022-06-21 13:33:03
+ * @LastEditTime: 2022-06-23 15:32:25
  * @Description:
  * @LastEditors: lyj
  */
@@ -23,10 +23,13 @@ const index = () => {
       tags: ['nice', 'developer']
     }
   ]
+  const onChang = (e) => {
+    console.log('处理后的数据-用于保存', e)
+  }
   return (
     <div>
       <Table columns={tableColumns} dataSource={data} />
-      <MultistageTable />
+      <MultistageTable onChang={onChang} />
     </div>
   )
 }

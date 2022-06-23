@@ -96,20 +96,20 @@ const Gantt = (props: any) => {
     // gantt.config.show_links = false //控制两端的线是否可以拖动
     gantt.config.details_on_dblclick = false //双击出弹窗
     gantt.config.show_errors = false //发生异常时，允许弹出警告到UI界面
-
     // 指定日期不可拖动
-    console.log('id', iframeType)
 
     //表头
     if (iframeType) {
       // 对比测试
+
       gantt.config.columns = [
         {
           name: 'text',
-          label: '名称',
           tree: true,
-          width: '100',
-          align: 'center'
+          align: 'center',
+          label: '名称',
+          width: 180,
+          resize: true
         }
       ]
     } else {
@@ -323,6 +323,7 @@ const Gantt = (props: any) => {
     gantt.config.date_format = '%Y-%m-%d %H:%i'
     gantt.init(chartDom) //根据 id
     initGanttDataProcessor()
+
     gantt.parse(list) //渲染数据
   }
   // "main"
