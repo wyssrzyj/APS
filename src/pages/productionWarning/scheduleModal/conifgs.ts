@@ -3,111 +3,42 @@ import { ReactNode } from 'react'
 
 const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
 
-export const searchConfigs = [
-  {
-    label: '工厂名称',
-    field: 'factoryId',
-    type: 'select',
-    allowClear: true,
-    placeholder: '请选择工厂名称',
-    options: []
-  },
-  {
-    label: '生产单号',
-    field: 'externalProduceOrderNum',
-    type: 'input',
-    allowClear: true,
-    placeholder: '请输入生产单号'
-  },
-  {
-    label: '产品名称',
-    field: 'productName',
-    allowClear: true,
-    placeholder: '请输入产品名称',
-    type: 'input',
-    options: []
-  },
-  {
-    label: '产品款号',
-    field: 'productModelNo',
-    allowClear: true,
-    placeholder: '请输入产品款号',
-    type: 'input',
-    options: []
-  },
-  {
-    label: '生产状态',
-    field: 'productStatus',
-    type: 'select',
-    allowClear: true,
-    placeholder: '请选择生产状态',
-    options: []
-  }
-]
-
-type Column = {
-  title: string
-  align: 'center' | 'left' | 'right'
-  dataIndex: string
-  width: number
-  fixed: 'left' | 'right'
-  render: ReactNode
-}
 export const tableColumns: any = [
   {
-    title: '生产单号',
+    title: '序号',
     align: 'center',
-    dataIndex: 'externalProduceOrderNum',
+    dataIndex: 'serial',
     width: 200
   },
   {
-    title: '款图',
+    title: '所属工段',
     align: 'center',
     dataIndex: 'img',
     width: 200
   },
   {
-    title: '工厂名称',
+    title: '总计划量',
     align: 'center',
     dataIndex: 'factoryName',
     width: 200
   },
   {
-    title: '产品名称',
+    title: '前工段计划完成日',
     align: 'center',
     dataIndex: 'productName',
     width: 250
   },
   {
-    title: '产品款号',
+    title: '前工段实际完成日',
     align: 'center',
     dataIndex: 'productNum',
     width: 200
   },
   {
-    title: '客户款号',
+    title: '工段物料齐套日',
     align: 'center',
-    dataIndex: 'img',
+    dataIndex: 'productNum',
     width: 200
-  },
-  {
-    title: '生产单总量',
-    align: 'center',
-    dataIndex: 'shopName',
-    width: 200
-  },
-  {
-    title: '承诺交期',
-    align: 'center',
-    dataIndex: 'teamName',
-    width: 200
-  },
-
-  {
-    title: '剩余工期',
-    align: 'center',
-    dataIndex: 'productionAmount',
-    width: 100
   },
   {
     title: '计划开始时间',
@@ -126,33 +57,10 @@ export const tableColumns: any = [
       date ? moment(date).format(FORMAT_DATE) : null
   },
   {
-    title: '实际开始时间',
-    align: 'center',
-    dataIndex: 'planStartTime',
-    width: 170,
-    render: (date: moment.MomentInput) =>
-      date ? moment(date).format(FORMAT_DATE) : null
-  },
-  {
-    title: '实际完成时间',
-    align: 'center',
-    dataIndex: 'planEndTime',
-    width: 170,
-    render: (date: moment.MomentInput) =>
-      date ? moment(date).format(FORMAT_DATE) : null
-  },
-  {
     title: '备注',
     align: 'center',
     dataIndex: 'productionAmount',
     width: 100
-  },
-  {
-    title: '操作',
-    align: 'center',
-    dataIndex: 'operate',
-    width: 200,
-    fixed: 'right'
   }
 ]
 type viewFormConfig = {

@@ -58,6 +58,7 @@ const Scheduling = React.lazy(
 const DailySchedule = React.lazy(
   () => import('@/pages/progressTracking/dailySchedule')
 )
+
 //进度跟踪 生产计划
 const DispatchPan = React.lazy(
   () => import('@/pages/progressTracking/dispatchPan')
@@ -78,6 +79,8 @@ const SchedulingResults = React.lazy(
 //进度跟踪 - 生产实绩
 const ActualProduction = React.lazy(() => import('@/pages/actualProduction'))
 
+//生产预警
+const ProductionWarning = React.lazy(() => import('@/pages/productionWarning'))
 const route = [
   { path: 'home/:id', element: <Home /> },
   { path: 'login', element: <Login /> },
@@ -101,6 +104,7 @@ const route = [
   { path: '/scheduling', element: <Scheduling /> },
   //规则排程
   { path: '/rule', element: <Rule /> },
+
   //日排程
   { path: '/dailySchedule', element: <DailySchedule /> },
   //生产计划
@@ -113,6 +117,9 @@ const route = [
   { path: '/schedulingResults', element: <SchedulingResults /> },
   //生产实绩
   { path: '/actualProduction', element: <ActualProduction /> },
+
+  //生产预警
+  { path: '/productionWarning', element: <ProductionWarning /> },
   //空白例子
   // 无匹配路由 放置在最后一个路由的位置
   { path: '*', element: <Home /> }

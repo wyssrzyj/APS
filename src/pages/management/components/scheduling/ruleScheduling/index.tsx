@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-05-19 13:55:53
+ * @LastEditTime: 2022-06-23 10:27:58
  * @Description:
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @LastEditors: lyj
  */
 import { getAttribute } from '@antv/g2/lib/dependents'
 import { Button, message, Modal, Space } from 'antd'
@@ -46,8 +46,8 @@ function RuleScheduling(props: Record<string, any>) {
   // 开始排程
   const startSchedule = () => {
     console.log('dataSource', dataSource)
-    message.success(`保存完成`)
-    onCancel()
+    message.success(`保存完成.`)
+    // onCancel()
   }
   return (
     <div>

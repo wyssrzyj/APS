@@ -1,6 +1,6 @@
 // import './animate.css'
 
-import { Button, message, Modal } from 'antd'
+import { Button, message, Modal, Popover, Tag } from 'antd'
 import { cloneDeep } from 'lodash'
 import moment from 'moment'
 import { SetStateAction, useEffect, useState } from 'react'
@@ -11,12 +11,14 @@ import useTableChange from '@/utils/useTableChange'
 
 import { searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
+import Popup from './popup'
 import ScheduleModal from './scheduleModal/index'
 
 const {
   productList,
   exportProductList,
   productDetail,
+
   factoryList,
   getWorkshopSectionList,
   makeSewingPlan
@@ -32,25 +34,6 @@ const productStatus = [
 ]
 
 function ProductionPlan() {
-  tableColumns[tableColumns.length - 1].render = (
-    _text: any,
-    record: any,
-    index: number
-  ) => {
-    return (
-      <div key={index}>
-        <Button type="link" onClick={() => handleDetailInfo(record)}>
-          编辑
-        </Button>
-      </div>
-    )
-  }
-  //剩余工期
-  tableColumns[8].render = (_text: any, record: any, index: number) => {
-    return <div key={index}>{8848}</div>
-  }
-  tableColumns[8].sorter = true
-
   const [params, setParams] = useState({
     pageSize: 10,
     pageNum: 1
@@ -58,7 +41,10 @@ function ProductionPlan() {
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
+  const [newlyAdded, setNewlyAdded] = useState(false) //新增
+
   const [rowInfo, setRowInfo] = useState() //展示弹窗
+
   const [facList, setFacList] = useState([])
   const [workshopSectionList, setWorkshopSectionList] = useState([])
   const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
@@ -73,6 +59,48 @@ function ProductionPlan() {
     loading,
     getDataList
   } = useTableChange(params, productList)
+
+  const handle = (
+    <div className={styles.operation}>
+      <Tag
+        color="green"
+        onClick={() => {
+          setNewlyAdded(true)
+        }}
+      >
+        添加加班
+      </Tag>
+      <Tag
+        className={styles.modifySchedule}
+        color="gold"
+        onClick={() => {
+          setIsModalVisible(true)
+        }}
+      >
+        修改日排程
+      </Tag>
+      {/* <Tag color="blue">修改交期</Tag>  后续版本开发 */}
+    </div>
+  )
+
+  tableColumns[tableColumns.length - 1].render = (
+    _text: any,
+    record: any,
+    index: number
+  ) => {
+    return (
+      <div key={index} className={styles.operation}>
+        <Popover placement="rightTop" content={handle}>
+          <Button type="link">处理</Button>
+        </Popover>
+      </div>
+    )
+  }
+  //剩余工期
+  tableColumns[8].render = (_text: any, record: any, index: number) => {
+    return <div key={index}>{8848}</div>
+  }
+  tableColumns[8].sorter = true
 
   useEffect(() => {
     ;(async () => {
@@ -176,24 +204,7 @@ function ProductionPlan() {
       setSelectedRowKeys(selectedRowKeys)
     }
   }
-  const showSewing = async (v: any) => {
-    //只有 -1才走这个接口
-    if (v.auditStatus === -1) {
-      const res = await makeSewingPlan({
-        produceOrderNum: v.externalProduceOrderNum,
-        teamManagerId: v.teamId
-      })
-      if (res.data) {
-        message.warning(' 已生成过缝制计划')
-      } else {
-        setEditData({ ...v })
-        setDetailsPopup(true)
-      }
-    } else {
-      setEditData({ ...v })
-      setDetailsPopup(true)
-    }
-  }
+
   const update = async () => {
     console.log('更新数据')
 
@@ -221,9 +232,19 @@ function ProductionPlan() {
   const handleCancel = () => {
     setIsModalVisible(false)
   }
+  const updateMethod = (e) => {
+    console.log(e)
+  }
+  const content = {
+    // formData,
+    updateMethod,
+    newlyAdded,
+    setNewlyAdded
+    // setEdit
+  }
   return (
     <div className={styles.qualification}>
-      <div>日排程</div>
+      <div>生产预警9</div>
       <div className={styles.forms}>
         <SearchBar
           configs={configs}
@@ -234,12 +255,12 @@ function ProductionPlan() {
 
       <div>
         <CusDragTable
-          storageField={'dailySchedule'}
+          storageField={'productionWarning'}
           rowSelection={rowSelection}
           cusBarLeft={TableLeft}
           columns={tableColumns}
           dataSource={dataSource}
-          rowKey={'id'}
+          rowKey={'key'}
           scroll={{ x: 1000 }}
           onChange={getSort}
           // onChange={}
@@ -258,7 +279,7 @@ function ProductionPlan() {
         <Modal
           width={1000}
           centered={true}
-          title="日排程计划"
+          title="生产预警"
           visible={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}
@@ -266,6 +287,8 @@ function ProductionPlan() {
           <ScheduleModal />
         </Modal>
       ) : null}
+
+      {newlyAdded ? <Popup content={content} /> : null}
     </div>
   )
 }

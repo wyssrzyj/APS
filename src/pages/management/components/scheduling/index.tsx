@@ -276,14 +276,14 @@ function Index() {
                 remind={remind}
               />
               <div className={styles.schedule}>
-                {/* <Button
+                <Button
                   className={styles.rules}
                   ghost
                   type="primary"
                   onClick={() => toggleRuleVisible(true)}
                 >
                   规则排程
-                </Button> */}
+                </Button>
                 <Button
                   ghost
                   className={styles.heckSchedule}

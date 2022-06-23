@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-05-19 08:38:27
- * @LastEditTime: 2022-06-20 17:34:38
+ * @LastEditTime: 2022-06-21 13:47:11
  * @Description:
  * @LastEditors: lyj
  */
@@ -258,11 +258,7 @@ function Vacations() {
               />
               天
             </Form.Item>
-            <Form.Item
-              label="交期权重"
-              name="deliveryWeight"
-              rules={[{ required: true, message: '请输入交期权重!' }]}
-            >
+            <Form.Item label="交期权重" name="deliveryWeight">
               <DeliveryWeight onChange={undefined} list={list} />
             </Form.Item>
           </div>

@@ -220,7 +220,7 @@ function ProductionPlan() {
 
       <div>
         <CusDragTable
-          storageField={'productionPlan'}
+          storageField={'dispatchPan'}
           rowSelection={rowSelection}
           cusBarLeft={TableLeft}
           columns={tableColumns}

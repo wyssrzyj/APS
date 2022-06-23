@@ -171,6 +171,12 @@ export const menus = [
         url: '/actualProduction'
       }
     ]
+  },
+  {
+    label: '生产预警管理',
+    key: 'productionWarning',
+    icon: 'jack-jindutiao',
+    url: '/productionWarning'
   }
 ]
 

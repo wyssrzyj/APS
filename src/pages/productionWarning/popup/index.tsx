@@ -17,14 +17,8 @@ import WorkingHours from './workingHours/index'
 function Popup(props: { content: any }) {
   const { content } = props
   const type = 1
-  const {
-    isModalVisible,
-    setIsModalVisible,
-    edit,
-    factoryData,
-    updateMethod,
-    formData
-  } = content
+  const { newlyAdded, setNewlyAdded, edit, updateMethod, formData } = content
+
   const layout = {
     labelCol: {
       span: 4
@@ -33,17 +27,33 @@ function Popup(props: { content: any }) {
       span: 13
     }
   }
-
   const { teamList } = dockingDataApis
-  const { overtimeAddition, teamId } = workOvertimeApis
+  const { overtimeAddition, teamId, factoryList } = workOvertimeApis
   const { SHOW_PARENT } = TreeSelect
   const { RangePicker } = DatePicker
   const { Option } = Select
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
+
   const [list, setList] = useState<any>() //总数据
+  const [factoryData, setFactoryData] = useState<any>([]) //工厂
   const [listID, setListID] = useState<any>() //工厂ID
   const [treeData, setTreeData] = useState<any>() //班组列表
+  useEffect(() => {
+    getData()
+  }, [])
+
+  const getData = async () => {
+    const res: any = await factoryList()
+    const arr: any = res.data
+    if (res.code === 200) {
+      arr.map((item: { name: any; deptName: any }) => {
+        item.name = item.deptName
+      })
+      setFactoryData(arr)
+    }
+  }
+
   //班组
   useEffect(() => {
     if (!isEmpty(listID)) {
@@ -88,7 +98,7 @@ function Popup(props: { content: any }) {
 
   const handleCancel = () => {
     // form.resetFields()
-    setIsModalVisible(false)
+    setNewlyAdded(false)
   }
   const times = (item: any, e: any) => {
     if (typeof e === 'number') {
@@ -119,17 +129,9 @@ function Popup(props: { content: any }) {
       return false
     }
   }
-  const onOk = async (
-    values: {
-      teamIds: any[]
-      timeList: any
-      createTime: moment.MomentInput
-      date: any
-    },
-    type: number
-  ) => {
-    //编辑
+  // 处理接口报错时间清空问题
 
+  const onOk = async (values: any, type: number) => {
     //时间的处理.
     if (values.date) {
       const arr = moment(values.date).format('YYYY-MM-DD')
@@ -142,7 +144,6 @@ function Popup(props: { content: any }) {
         item.endDateTime = times(values.date, item.endDateTime)
       })
     }
-
     if (values.createTime) {
       values.createTime = moment(values.createTime).valueOf()
     }
@@ -158,10 +159,9 @@ function Popup(props: { content: any }) {
         const res = await overtimeAddition(list)
         if (res === true) {
           // newlyAdded()
-
-          form.resetFields()
-          setIsModalVisible(false)
-          updateMethod && updateMethod()
+          // form.resetFields()
+          setNewlyAdded(false)
+          // updateMethod && updateMethod()
         }
       }
     }
@@ -196,7 +196,7 @@ function Popup(props: { content: any }) {
         destroyOnClose={true}
         width={700}
         title={type === 1 ? '新增加班' : type === 2 ? '编辑加班' : '查看加班'}
-        visible={isModalVisible}
+        visible={newlyAdded}
         onOk={handleOk}
         maskClosable={false}
         onCancel={handleCancel}
