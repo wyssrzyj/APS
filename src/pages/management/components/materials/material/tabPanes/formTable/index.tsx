@@ -504,11 +504,11 @@ const FormTable = (props: any) => {
   return (
     <div>
       <div>
-        <Forms
+        {/* <Forms
           type={whetherAvailable(select)}
           factoryData={null}
           FormData={FormData}
-        ></Forms>
+        ></Forms> */}
       </div>
       <Table
         expandedRowKeys={defaultExpandedRow}
