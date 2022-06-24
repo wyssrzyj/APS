@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-06-20 14:29:04
+ * @LastEditTime: 2022-06-24 13:59:12
  * @Description:
  * @LastEditors: lyj
  */
@@ -74,7 +74,7 @@ const Header = () => {
       </div>
       <div className={styles.headerR}>
         {/* 预警信息 */}
-        <EarlyWarning />
+        {/* <EarlyWarning /> */}
         <div className={styles.userInfo}>
           <div className={styles.user}>
             <Avatar

@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-06-20 14:31:30
+ * @LastEditTime: 2022-06-24 13:56:51
  * @Description:
  * @LastEditors: lyj
  */
@@ -67,7 +67,7 @@ const Home = () => {
       {type ? (
         <div>
           <div className={styles.outContainer} ref={containerRef}>
-            <HomePage newestHomePage={newestHomePage} />
+            {/* <HomePage newestHomePage={newestHomePage} /> */}
             {/* <Title title={'首页'}></Title> */}
             <Row gutter={24}>
               {homePage.upper[0].type === true ? (
