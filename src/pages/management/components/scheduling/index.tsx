@@ -71,6 +71,8 @@ function Index() {
 
   const getChart = async (id: undefined, type: any) => {
     if (type === '0') {
+      console.log('我是0')
+
       const chart: any = await figureData({ factoryId: id })
       const arr = cloneDeep(chart.data)
       if (chart.code === 200) {
@@ -121,7 +123,7 @@ function Index() {
     }
 
     setTime(time)
-    console.log('图', arr)
+
     const cloneArr = cloneDeep(arr)
     setGunterData(cloneArr) //图
   }
@@ -276,14 +278,14 @@ function Index() {
                 remind={remind}
               />
               <div className={styles.schedule}>
-                {/* <Button
+                <Button
                   className={styles.rules}
                   ghost
                   type="primary"
                   onClick={() => toggleRuleVisible(true)}
                 >
                   规则排程
-                </Button> */}
+                </Button>
                 <Button
                   ghost
                   className={styles.heckSchedule}

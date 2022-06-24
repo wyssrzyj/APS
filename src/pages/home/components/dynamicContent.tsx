@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-06-16 15:05:03
+ * @LastEditTime: 2022-06-20 14:01:43
  * @Description:
  * @LastEditors: lyj
  */
@@ -41,6 +41,7 @@ const DynamicContent = (props: Record<string, any>) => {
   return (
     <div className={styles.dynamicContent}>
       <header>{title}</header>
+
       <section>
         {type === 'manufactureOrder' &&
           dataList !== null &&

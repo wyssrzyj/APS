@@ -1,27 +1,34 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-05-19 13:55:53
+ * @LastEditTime: 2022-06-24 13:45:33
  * @Description:
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
+ * @LastEditors: lyj
  */
 import { getAttribute } from '@antv/g2/lib/dependents'
 import { Button, message, Modal, Space } from 'antd'
 import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
+import { useRecoilState } from 'recoil'
 
 import { practice } from '@/recoil/apis'
 
+import ContrastGantt from './contrastGantt'
 import Forms from './forms/index'
 import RulesTables from './tables/index'
 function RuleScheduling(props: Record<string, any>) {
-  const { visibleRule, onCancel, checkIDs } = props
+  const { visibleRule, onCancel, checkIDs, formData } = props
+  const [data, setData] = useState<any>([]) //保存数据
+
   const [searchParams, setSearchParams] = useState<Record<string, number>>({
     customerPriorityWeight: 1,
     orderPriorityWeight: 1,
     deliveryDatePriorityWeight: 1
   })
   const [dataSource, setDataSource] = useState<Record<string, any>>([])
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const { saveAlgorithm } = practice
+
   // 搜索框
   useEffect(() => {
     getTableList({ ...searchParams, produceOrderIdList: checkIDs })
@@ -34,6 +41,7 @@ function RuleScheduling(props: Record<string, any>) {
   )
   const getTableList = async (params: Record<string, number | string>) => {
     const data = await practice.rulesScheduling(params)
+
     setDataSource(data)
   }
   // 表格数据
@@ -45,9 +53,21 @@ function RuleScheduling(props: Record<string, any>) {
   }
   // 开始排程
   const startSchedule = () => {
-    console.log('dataSource', dataSource)
-    message.success(`保存完成`)
-    onCancel()
+    // message.success(`保存完成.`)
+    setIsModalVisible(true)
+    // onCancel()
+  }
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
+  const handleOk = async (async) => {
+    const res = await saveAlgorithm({ ganttViewList: data.data })
+    if (res.code === 200) {
+      setIsModalVisible(false)
+    }
+  }
+  const getIframe = (e) => {
+    setData(e)
   }
   return (
     <div>
@@ -69,6 +89,19 @@ function RuleScheduling(props: Record<string, any>) {
             开始排程
           </Button>
         </footer>
+        <Modal
+          width={2000}
+          centered={true}
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <ContrastGantt
+            getIframe={getIframe}
+            checkIDs={checkIDs}
+            formData={formData}
+          />
+        </Modal>
       </Modal>
     </div>
   )

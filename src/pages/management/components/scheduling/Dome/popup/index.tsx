@@ -91,6 +91,10 @@ function Popup(props: { content: any }) {
     setIsModalVisible(false)
   }
   const times = (item: any, e: any) => {
+    if (typeof e === 'number') {
+      //更新的时候 变成 时间戳了 重新处理一下
+      e = moment(e).format('YYYY-MM-DD HH:mm').substring(10)
+    }
     const timeStamp = item.concat(e)
     return moment(timeStamp).valueOf()
   }
@@ -180,6 +184,7 @@ function Popup(props: { content: any }) {
   }
   //工厂
   const getFactoryName = (e: any) => {
+    list.factoryId = e
     const cloneList = cloneDeep(list)
     setListID(e)
     cloneList.teamIds = []

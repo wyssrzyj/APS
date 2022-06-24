@@ -30,13 +30,27 @@
 }
 
 .left-container {
-  height: 800px;
+  height: 100px;
+}
+/* .gantt_grid_scale {
+  width: 50px !important;
+} */
+
+/* .grid_cell */
+/* .gantt_layout_outer_scroll */
+/* .gantt_layout_outer_scroll_vertical */
+.gantt_layout_outer_scroll
+  .gantt_layout_outer_scroll_horizontal
+  .gantt_layout_cell_border_right {
+  width: 20vw;
+  background: red;
 }
 /* 左侧菜单字 */
 .gantt_grid_head_cell {
   font-size: 14px;
   font-weight: bold;
 }
+
 .gantt_grid_scale .gantt_grid_head_cell {
   color: rgb(28, 160, 127);
 }

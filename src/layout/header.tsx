@@ -1,12 +1,12 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-06-16 15:49:58
+ * @LastEditTime: 2022-06-20 14:29:04
  * @Description:
  * @LastEditors: lyj
  */
 import { UserOutlined } from '@ant-design/icons'
-import { Avatar, message } from 'antd'
+import { Avatar, message, Popover } from 'antd'
 import { userInfo } from 'os'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -16,6 +16,7 @@ import Icon from '@/components/Icon'
 import { loginApis, systemSettingsApis } from '@/recoil/apis'
 import { clearLocalStorage } from '@/utils/tool'
 
+import EarlyWarning from './earlyWarning'
 import styles from './index.module.less'
 import { editPwdModalConfig } from './menuConfigs'
 const KeyIcon = () => <Icon type="jack-yuechi" className={styles.icon} />
@@ -72,6 +73,8 @@ const Header = () => {
         />
       </div>
       <div className={styles.headerR}>
+        {/* 预警信息 */}
+        <EarlyWarning />
         <div className={styles.userInfo}>
           <div className={styles.user}>
             <Avatar

@@ -54,26 +54,33 @@ const Materials = React.lazy(
 const Scheduling = React.lazy(
   () => import('@/pages/management/components/scheduling')
 )
+//进度跟踪 日排程
+const DailySchedule = React.lazy(
+  () => import('@/pages/progressTracking/dailySchedule')
+)
 
 //进度跟踪 生产计划
 const DispatchPan = React.lazy(
   () => import('@/pages/progressTracking/dispatchPan')
 )
-//排程结果 - 资源甘特图
+
+//进度跟踪 - 资源甘特图
 const ResourcedMap = React.lazy(
   () => import('@/pages/progressTracking/resourcemMap')
 )
-//排程结果 - 订单甘特图
+//进度跟踪 - 订单甘特图
 const OrderChart = React.lazy(
   () => import('@/pages/progressTracking/orderChart')
 )
-//排程结果 - 资源负荷图
+//进度跟踪 - 资源负荷图
 const SchedulingResults = React.lazy(
   () => import('@/pages/progressTracking/schedulingResults')
 )
-//排程结果 - 生产实绩
+//进度跟踪 - 生产实绩
 const ActualProduction = React.lazy(() => import('@/pages/actualProduction'))
 
+//生产预警
+const ProductionWarning = React.lazy(() => import('@/pages/productionWarning'))
 const route = [
   { path: 'home/:id', element: <Home /> },
   { path: 'login', element: <Login /> },
@@ -97,7 +104,10 @@ const route = [
   { path: '/scheduling', element: <Scheduling /> },
   //规则排程
   { path: '/rule', element: <Rule /> },
-  //生产计划查看
+
+  //日排程
+  { path: '/dailySchedule', element: <DailySchedule /> },
+  //生产计划
   { path: '/dispatchPan', element: <DispatchPan /> },
   //班组甘特图
   { path: '/resourcedMap', element: <ResourcedMap /> },
@@ -107,6 +117,9 @@ const route = [
   { path: '/schedulingResults', element: <SchedulingResults /> },
   //生产实绩
   { path: '/actualProduction', element: <ActualProduction /> },
+
+  //生产预警
+  { path: '/productionWarning', element: <ProductionWarning /> },
   //空白例子
   // 无匹配路由 放置在最后一个路由的位置
   { path: '*', element: <Home /> }

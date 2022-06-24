@@ -77,12 +77,6 @@ const Index = () => {
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
-      title: '工厂名称',
-      align: 'center',
-      dataIndex: 'factoryName',
-      width: 200
-    },
-    {
       title: '工作模式',
       align: 'center',
       dataIndex: 'name'
@@ -146,7 +140,13 @@ const Index = () => {
       }
     },
     {
-      title: '工作班组',
+      title: '工厂名称',
+      align: 'center',
+      dataIndex: 'factoryName',
+      width: 200
+    },
+    {
+      title: '班组名称',
       align: 'center',
       dataIndex: 'teams',
       width: 150,
@@ -172,6 +172,11 @@ const Index = () => {
           </div>
         )
       }
+    },
+    {
+      title: '班组人数',
+      align: 'center',
+      dataIndex: 'remark'
     },
     {
       title: '备注',

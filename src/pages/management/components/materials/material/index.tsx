@@ -111,7 +111,6 @@ function Material(props: {
       setTableList(resData)
     }
     //  已检查.
-
     if (data.checkStatus === 1) {
       const resData = await checked({
         externalProduceOrderId: data.externalProduceOrderId,
@@ -295,13 +294,8 @@ function Material(props: {
 
       if (!isEmpty(modifyData)) {
         current.prepareTime = modifyData[0].bottomTime
-        console.log(
-          '保存的时间',
-          moment(modifyData[0].bottomTime).format('YYYY-MM-DD')
-        )
       }
       current.tableContent = modifyData
-      console.log('保存的值', current)
       // const externalProduceOrderId = materialList.externalProduceOrderId //添加
       const res = await materialSaved(current)
       if (res) {
@@ -345,7 +339,6 @@ function Material(props: {
       const current = selectedData.filter(
         (item: { id: any }) => item.id === activeKey
       )[0]
-
       // 下一个
       const next = selectedData.filter(
         (item: { id: any }) => item.id === key

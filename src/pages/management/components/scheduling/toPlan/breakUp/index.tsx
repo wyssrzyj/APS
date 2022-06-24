@@ -432,7 +432,7 @@ const BreakUp = (props: any) => {
           item.id = null
         })
       }
-      console.log(arr)
+
       const sum = await splitMethod({
         assignmentId: workSplitList.id,
         data: arr
