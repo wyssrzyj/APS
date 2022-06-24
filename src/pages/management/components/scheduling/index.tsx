@@ -259,6 +259,11 @@ function Index() {
   const treeSelect = (e) => {
     setTreeSelection(e)
   }
+  const ruleScheduling = () => {
+    toggleRuleVisible(false)
+    update()
+    updateMethod()
+  }
 
   return (
     <div className={styles.qualification}>
@@ -340,7 +345,9 @@ function Index() {
           formData={formData}
           visibleRule={visibleRule}
           checkIDs={checkIDs}
-          onCancel={() => toggleRuleVisible(false)}
+          onCancel={() => {
+            ruleScheduling()
+          }}
         />
       )}
       {visibleVerify && (

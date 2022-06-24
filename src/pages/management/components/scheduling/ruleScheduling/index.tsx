@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-06-24 13:45:33
+ * @LastEditTime: 2022-06-24 17:41:53
  * @Description:
  * @LastEditors: lyj
  */
@@ -53,7 +53,7 @@ function RuleScheduling(props: Record<string, any>) {
   }
   // 开始排程
   const startSchedule = () => {
-    // message.success(`保存完成.`)
+    // message.success(`保存完成..`)
     setIsModalVisible(true)
     // onCancel()
   }
@@ -63,7 +63,9 @@ function RuleScheduling(props: Record<string, any>) {
   const handleOk = async (async) => {
     const res = await saveAlgorithm({ ganttViewList: data.data })
     if (res.code === 200) {
+      message.success('保存成功')
       setIsModalVisible(false)
+      onCancel()
     }
   }
   const getIframe = (e) => {
@@ -94,6 +96,7 @@ function RuleScheduling(props: Record<string, any>) {
           centered={true}
           visible={isModalVisible}
           onOk={handleOk}
+          okText="保存"
           onCancel={handleCancel}
         >
           <ContrastGantt
