@@ -27,11 +27,69 @@ const FormTable = (props: any) => {
   const [time, setTime] = useState<any>() //手动设置的的齐套日期
   const [cloneData, setCloneData] = useState<any>([]) // 重新检查修改后的数据
 
+  const [section, setSection] = useState<any>([]) //所属工段
+
   const { getTheSize, materialData, materialSaved, checked } = materialSetApis
+  const map = new Map()
+  map.set('1', '裁剪')
+  map.set('2', '缝制')
+  map.set('3', '后整')
+  map.set('4', '包装')
+  map.set('5', '外发')
+  map.set('6', '缝制线外组')
+
+  // 获取最大值物料齐套时间
+  const getMaxCompletionTime = (list, section) => {
+    setSection(list)
+  }
   //初始赋值
   useEffect(() => {
     if (!isEmpty(tableData)) {
-      setInitialData(tableData)
+      //初始
+      // setInitialData(tableData)
+      let arr = [
+        {
+          externalProduceOrderId: 1,
+          externalProduceOrderNum: '1',
+          section: '1',
+          allReadyTime: ''
+        },
+        {
+          externalProduceOrderId: 2,
+          externalProduceOrderNum: '2',
+          section: '2',
+          allReadyTime: ''
+        },
+        {
+          externalProduceOrderId: 3,
+          externalProduceOrderNum: '3',
+          section: '3',
+          allReadyTime: ''
+        },
+        {
+          externalProduceOrderId: 4,
+          externalProduceOrderNum: '4',
+          section: '4',
+          allReadyTime: ''
+        },
+        {
+          externalProduceOrderId: 5,
+          externalProduceOrderNum: '5',
+          section: '5',
+          allReadyTime: ''
+        },
+        {
+          externalProduceOrderId: 6,
+          externalProduceOrderNum: '6',
+          section: '6',
+          allReadyTime: ''
+        }
+      ]
+      arr.map((item: any) => {
+        item.name = map.get(item.section)
+        item.id = item.section
+      })
+      getMaxCompletionTime(tableData, arr)
     }
   }, [tableData])
 
@@ -506,7 +564,7 @@ const FormTable = (props: any) => {
       <div>
         <Forms
           type={whetherAvailable(select)}
-          factoryData={null}
+          factoryData={section}
           FormData={FormData}
         ></Forms>
       </div>

@@ -31,25 +31,11 @@ const HeaderForm = (props: {
   const [workshop, setWorkshop] = useState<any>()
 
   useEffect(() => {
-    console.log(123)
-    getWorkshopSection()
-  }, [])
-  //获取 工段列表
-  const getWorkshopSection = async () => {
-    const res = await sectionList()
-    if (!isEmpty(res)) {
-      res.map((item) => {
-        item.name = item.dictLabel
-        item.id = item.dictValue
-      })
-      setWorkshop(res)
-    }
-  }
+    setWorkshop(factoryData)
+  }, [factoryData])
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
-    console.log(values)
-
     //处理时间格式
     const timeFormat = { ...values, ...values.planEndDate }
     FormData && FormData(timeFormat)
