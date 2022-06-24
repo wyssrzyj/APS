@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-05-19 08:38:27
- * @LastEditTime: 2022-06-24 14:16:24
+ * @LastEditTime: 2022-06-24 14:35:18
  * @Description:
  * @LastEditors: lyj
  */
@@ -178,10 +178,10 @@ function Vacations() {
     if (repeat(arr.expireColorConfigs) !== true) {
       // console.log(arr)
 
-      // const res = await systemParameters(arr)
-      // if (res === true) {
-      //   message.success('保存成功')
-      // }
+      const res = await systemParameters(arr)
+      if (res === true) {
+        message.success('保存成功')
+      }
       api()
     } else {
       message.warning('时间不能重复')
