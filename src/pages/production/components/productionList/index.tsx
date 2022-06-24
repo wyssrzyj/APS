@@ -78,10 +78,10 @@ function Production() {
     )
   }
   //剩余工期
-  tableColumns[7].render = (_text: any, record: any, index: number) => {
-    return <div key={index}>{8848}</div>
-  }
-  tableColumns[7].sorter = true
+  // tableColumns[7].render = (_text: any, record: any, index: number) => {
+  //   return <div key={index}>{8848}</div>
+  // }
+  // tableColumns[7].sorter = true
 
   //工厂名称
   useEffect(() => {

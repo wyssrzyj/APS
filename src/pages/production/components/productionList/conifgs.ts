@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-06-23 13:31:31
+ * @LastEditTime: 2022-06-24 14:24:13
  * @Description:
  * @LastEditors: lyj
  */
@@ -65,21 +65,21 @@ export const tableColumns: any = [
     width: 170,
     render: (v: any) => (v ? moment(v).format('YYYY-MM-DD') : null)
   },
-  {
-    title: '承诺交期',
-    align: 'center',
-    key: 'teamName',
-    dataIndex: 'teamName',
-    width: 100
-  },
+  // {
+  //   title: '承诺交期',
+  //   align: 'center',
+  //   key: 'teamName',
+  //   dataIndex: 'teamName',
+  //   width: 100
+  // },
 
-  {
-    title: '剩余工期',
-    align: 'center',
-    key: 'productionAmount',
-    dataIndex: 'productionAmount',
-    width: 100
-  },
+  // {
+  //   title: '剩余工期',
+  //   align: 'center',
+  //   key: 'productionAmount',
+  //   dataIndex: 'productionAmount',
+  //   width: 100
+  // },
   {
     title: '外发情况',
     key: 'outsourceType',
