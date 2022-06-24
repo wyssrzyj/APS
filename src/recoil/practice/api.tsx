@@ -184,3 +184,19 @@ export const getWorkCalendar = async (params: any) => {
     console.log(e)
   }
 }
+//保存算法排程明细
+export const saveAlgorithm = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment-detail/save-algorithm-detail`,
+      params
+    )
+
+    if (res.code !== 200) {
+      message.error(res.msg || '获取失败')
+    }
+    if (res) return res
+  } catch (e) {
+    console.log(e)
+  }
+}

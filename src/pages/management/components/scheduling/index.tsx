@@ -71,6 +71,8 @@ function Index() {
 
   const getChart = async (id: undefined, type: any) => {
     if (type === '0') {
+      console.log('我是0')
+
       const chart: any = await figureData({ factoryId: id })
       const arr = cloneDeep(chart.data)
       if (chart.code === 200) {

@@ -15,18 +15,25 @@ const FormTable = (props: any) => {
   const { tableData, sizeList, saveData, select, recheckData } = props
   const { Option } = Select
   const scrollBox = React.createRef()
-  const [expandedRowKeys, setExpandedRowKeys] = useState<any>([])
-  const [notData, setNotData] = useState<any>([]) //接口数据
-  const [list, setList] = useState<any>([]) //格式
-  const [data, setData] = useState<any>([]) //table 数据  防止为空
+  const [initialData, setInitialData] = useState<any>([]) //接口初始数据
+
+  const [notData, setNotData] = useState<any>([]) //操作数据
+  const [columnsList, setColumnsList] = useState<any>([]) //格式
+  const [data, setData] = useState<any>([]) //table 展示 数据
   const [loading, setLoading] = useState<any>(true) //加载
   const [renderData, setRenderData] = useState<any>()
 
   const [defaultExpandedRow, setDefaultExpandedRow] = useState<any>([]) //全部展开
-  const [time, setTime] = useState<any>() //最大的齐套日期
+  const [time, setTime] = useState<any>() //手动设置的的齐套日期
   const [cloneData, setCloneData] = useState<any>([]) // 重新检查修改后的数据
 
   const { getTheSize, materialData, materialSaved, checked } = materialSetApis
+  //初始赋值
+  useEffect(() => {
+    if (!isEmpty(tableData)) {
+      setInitialData(tableData)
+    }
+  }, [tableData])
 
   useEffect(() => {
     if (!isEmpty(data)) {
@@ -61,8 +68,12 @@ const FormTable = (props: any) => {
 
   //已检查且已计划 才不可用
   const whetherAvailable = (e) => {
-    if ((e.checkStatus === 1 && e.status === 2) || e.name === '已检查') {
-      return true
+    if (e !== undefined) {
+      if ((e.checkStatus === 1 && e.status === 2) || e.name === '已检查') {
+        return true
+      } else {
+        return false
+      }
     } else {
       return false
     }
@@ -241,7 +252,7 @@ const FormTable = (props: any) => {
     }
     if (!isEmpty(renderData)) {
       setLoading(false)
-      setList(renderData) //渲染结构
+      setColumnsList(renderData) //渲染结构
     }
   }, [renderData, notData, select])
 
@@ -296,12 +307,12 @@ const FormTable = (props: any) => {
       return []
     }
   }
-  //初始数据
+  //处理初始表格数据
   useEffect(() => {
     // 调取接口口添加 key和 counteractNum -半成品冲销数量的字段
     let defaultExpandedRow = []
-    if (!isEmpty(tableData)) {
-      tableData.map((item: any) => {
+    if (!isEmpty(initialData)) {
+      initialData.map((item: any) => {
         item.deliveredQty = item.deliveredQty === null ? 0 : item.deliveredQty //测试~~~已出库数量暂无 设置0
         item.id = item.materialCode //id是 materialCode
         item.key = `${item.materialCode}8848` //添加 key
@@ -311,12 +322,13 @@ const FormTable = (props: any) => {
         item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
-      setTime(tableData[0].bottomTime)
 
-      setNotData([...tableData])
+      setTime(initialData[0].bottomTime)
+
+      setNotData([...initialData])
       setDefaultExpandedRow([...defaultExpandedRow])
     }
-  }, [tableData])
+  }, [initialData])
 
   //计算总值
   const total = (count: any[], field: string) => {
@@ -394,10 +406,6 @@ const FormTable = (props: any) => {
     }
   }
 
-  const onExpandedRowsChange = (e: any) => {
-    setExpandedRowKeys(e)
-  }
-
   const show = (e, v) => {
     //e 是接口数据
     //v 重新数据
@@ -437,7 +445,7 @@ const FormTable = (props: any) => {
     setTime(moment(e).valueOf())
     setCloneData([...arr])
   }
-
+  //获取最大值
   const displayTime = (v, i) => {
     if (v !== null && v !== undefined) {
       if (v > i) {
@@ -483,79 +491,29 @@ const FormTable = (props: any) => {
     } else {
     }
   }
-  // 获取table接口数据 - 只需要传当前项就可以
-  const getTableData = async (data: any) => {
-    //  未检查
-    if (data.checkStatus === 2) {
-      const resData = await materialData({
-        externalProduceOrderId: data.externalProduceOrderId,
-        produceOrderNum: data.externalProduceOrderNum
-      })
-      console.log('我是未检查')
-      if (!isEmpty(resData)) {
-        resData[0].bottomTime = getMaxTime(resData)
-      }
-      // setTableList(resData)
-    }
-    //  已检查.
-    if (data.checkStatus === 1) {
-      const resData = await checked({
-        externalProduceOrderId: data.externalProduceOrderId,
-        produceOrderNum: data.externalProduceOrderNum
-      })
-      console.log('我是已经检查')
-      //插入第一条数据中...
-      if (!isEmpty(resData.tableContent)) {
-        resData.tableContent[0].bottomTime = resData.prepareTime
-      }
-
-      // setTableList(resData.tableContent)
-    }
-    //  重新检查 特殊处理-待定
-
-    if (data.checkStatus === 3) {
-      //已检查
-      if (data.type === 1) {
-        const resData = await checked({
-          externalProduceOrderId: data.externalProduceOrderId,
-          produceOrderNum: data.externalProduceOrderNum
-        })
-        if (!isEmpty(resData.tableContent)) {
-          resData.tableContent[0].bottomTime = resData.prepareTime
-        }
-
-        // setTableList(resData.tableContent)
-      }
-      if (data.type === 2) {
-        //重新检查
-        const resData = await materialData({
-          externalProduceOrderId: data.externalProduceOrderId,
-          produceOrderNum: data.externalProduceOrderNum
-        })
-        if (!isEmpty(resData)) {
-          resData[0].bottomTime = getMaxTime(resData)
-        }
-
-        // setTableList(resData)
-      }
-    }
-  }
 
   const FormData = (e: any) => {
+    // 1.默认不选择
     console.log('form数据', e)
-    console.log('当前选中项', select)
+    // 工段查询 前段来做
+    const arr = notData.filter((item) => item.id === '123344')
+    // id: '123344'
+    setData(arr)
     // checkStatus
   }
   return (
     <div>
-      {/* form  */}
       <div>
-        <Forms factoryData={null} FormData={FormData}></Forms>
+        <Forms
+          type={whetherAvailable(select)}
+          factoryData={null}
+          FormData={FormData}
+        ></Forms>
       </div>
       <Table
         expandedRowKeys={defaultExpandedRow}
         loading={loading}
-        columns={list}
+        columns={columnsList}
         dataSource={data}
         rowKey={'key'}
         scroll={{ x: 1500, y: 300 }}
@@ -563,7 +521,7 @@ const FormTable = (props: any) => {
         summary={() => (
           <Table.Summary fixed>
             {!isEmpty(data) ? (
-              <Table.Summary.Row>{Dome(list, data)}</Table.Summary.Row>
+              <Table.Summary.Row>{Dome(columnsList, data)}</Table.Summary.Row>
             ) : null}
           </Table.Summary>
         )}

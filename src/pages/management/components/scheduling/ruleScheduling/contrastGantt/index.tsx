@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 09:14:45
- * @LastEditTime: 2022-06-23 16:05:37
+ * @LastEditTime: 2022-06-24 13:33:18
  * @Description:
  * @LastEditors: lyj
  */
@@ -13,8 +13,9 @@ import styles from './index.module.less'
 
 const ContrastGantt = (props) => {
   const { Option } = Select
-  const { formData, checkIDs } = props
+  const { formData, checkIDs, getIframe } = props
 
+  const [data, setData] = useState<any>()
   const [id, setID] = useState<any>()
   const [type, setType] = useState<any>('2')
   useEffect(() => {
@@ -23,11 +24,19 @@ const ContrastGantt = (props) => {
       setID(checkIDs)
     }
   }, [checkIDs])
+  useEffect(() => {
+    if (!isEmpty(data)) {
+      getIframe && getIframe(data)
+    }
+  }, [data])
 
   const handleChange = (value: string) => {
-    // setID(value)
     setType(value)
   }
+  //获取子项的数据
+  window.addEventListener('message', function (e) {
+    setData(e.data)
+  })
 
   return (
     <>
@@ -50,6 +59,7 @@ const ContrastGantt = (props) => {
         <div className={styles.clearance}></div>
         <>
           <iframe
+            id="lyj"
             frameBorder="0"
             title={'afterUpdate'}
             className={styles.domeLeft}

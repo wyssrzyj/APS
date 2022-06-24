@@ -15,8 +15,12 @@ const layout = {
   }
 }
 
-const HeaderForm = (props: { FormData: any; factoryData: any }) => {
-  const { FormData, factoryData } = props
+const HeaderForm = (props: {
+  FormData: any
+  factoryData: any
+  type: boolean
+}) => {
+  const { FormData, factoryData, type } = props
   const { sectionList } = materialSetApis
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -44,6 +48,8 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
+    console.log(values)
+
     //处理时间格式
     const timeFormat = { ...values, ...values.planEndDate }
     FormData && FormData(timeFormat)
@@ -65,6 +71,11 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
         return null
       }
     }
+    if (type === 'select') {
+      console.log(event)
+
+      return event
+    }
 
     return event
   }
@@ -85,6 +96,7 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
               }
             >
               <Select
+                disabled={type}
                 allowClear={true}
                 onChange={getFactoryName}
                 placeholder="请选择工厂名称"
