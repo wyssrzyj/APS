@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-05-19 08:38:27
- * @LastEditTime: 2022-06-21 13:47:11
+ * @LastEditTime: 2022-06-24 14:16:24
  * @Description:
  * @LastEditors: lyj
  */
@@ -227,28 +227,9 @@ function Vacations() {
           autoComplete="off"
         >
           <div>
-            显示设置
-            <div className={styles.border}></div>
-            {sum.map((item) => (
-              // eslint-disable-next-line react/jsx-key
-              <Form.Item key={item.name} label={item.label} name={item.name}>
-                <Inputs onChange={undefined} list={list} item={item} />
-              </Form.Item>
-            ))}
-            <Form.Item label="预警显示颜色" name="color">
-              {/* 颜色 */}
-              <SingleColor onChange={undefined} list={null} />
-            </Form.Item>
-            <Form.Item label="延期显示颜色" name="expireColorConfigs">
-              {/* 颜色 */}
-              <Color onChange={undefined} list={list}></Color>
-            </Form.Item>
-          </div>
-
-          <div>
-            规则设置
-            <div className={styles.border}></div>
-            <Form.Item label="承诺交期计算" name="6666">
+            {/* 规则设置 */}
+            {/* <div className={styles.border}></div> */}
+            {/* <Form.Item label="承诺交期计算" name="6666">
               承诺交期 = 销售订单交期-{' '}
               <InputNumber
                 value={data[1].weight}
@@ -257,18 +238,36 @@ function Vacations() {
                 onBlur={getInputNumberValue}
               />
               天
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item label="交期权重" name="deliveryWeight">
               <DeliveryWeight onChange={undefined} list={list} />
             </Form.Item>
           </div>
           <div>
+            {/* 显示设置 */}
+            {/* <div className={styles.border}></div> */}
+            {sum.map((item) => (
+              // eslint-disable-next-line react/jsx-key
+              <Form.Item key={item.name} label={item.label} name={item.name}>
+                <Inputs onChange={undefined} list={list} item={item} />
+              </Form.Item>
+            ))}
+            {/* <Form.Item label="预警显示颜色" name="color">
+              <SingleColor onChange={undefined} list={null} />
+            </Form.Item> */}
+            <Form.Item label="延期显示颜色" name="expireColorConfigs">
+              {/* 颜色 */}
+              <Color onChange={undefined} list={list}></Color>
+            </Form.Item>
+          </div>
+
+          {/* <div>
             预警设置
             <div className={styles.border}></div>
             <Form.Item label="未完成生产单预警" name="earlyWarning">
               <EarlyWarning onChange={undefined} list={null} />
             </Form.Item>
-          </div>
+          </div> */}
         </Form>
         <div className={styles.executionMethod}>
           <Button type="primary" htmlType="submit" onClick={preservation}>
