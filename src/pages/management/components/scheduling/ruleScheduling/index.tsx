@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-06-24 17:41:53
+ * @LastEditTime: 2022-06-27 12:50:46
  * @Description:
  * @LastEditors: lyj
  */
@@ -17,7 +17,7 @@ import ContrastGantt from './contrastGantt'
 import Forms from './forms/index'
 import RulesTables from './tables/index'
 function RuleScheduling(props: Record<string, any>) {
-  const { visibleRule, onCancel, checkIDs, formData } = props
+  const { setVisibleRule, visibleRule, onCancel, checkIDs, formData } = props
   const [data, setData] = useState<any>([]) //保存数据
 
   const [searchParams, setSearchParams] = useState<Record<string, number>>({
@@ -78,7 +78,9 @@ function RuleScheduling(props: Record<string, any>) {
         visible={visibleRule}
         centered={true}
         footer={null}
-        onCancel={onCancel}
+        onCancel={() => {
+          setVisibleRule(false)
+        }}
         // maskClosable={false}
       >
         <Forms searchParams={searchParams} onChange={valuesChange} />
@@ -97,7 +99,7 @@ function RuleScheduling(props: Record<string, any>) {
           visible={isModalVisible}
           onOk={handleOk}
           okText="保存"
-          onCancel={handleCancel}
+          onCancel={onCancel}
         >
           <ContrastGantt
             getIframe={getIframe}

@@ -90,7 +90,7 @@ function Materials() {
     {
       title: '计划完成日期',
       align: 'center',
-      dataIndex: ' planEndDate',
+      dataIndex: 'planEndDate',
       render: (v: any) => {
         return moment(v).format('YYYY-MM-DD')
       }

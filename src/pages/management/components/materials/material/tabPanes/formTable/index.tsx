@@ -323,7 +323,7 @@ const FormTable = (props: any) => {
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
 
-      setTime(initialData[0].bottomTime)
+      // setTime(initialData[0].bottomTime)
 
       setNotData([...initialData])
       setDefaultExpandedRow([...defaultExpandedRow])
@@ -454,7 +454,7 @@ const FormTable = (props: any) => {
         return moment(i)
       }
     } else {
-      return undefined
+      return moment(i)
     }
   }
   //底部
@@ -477,10 +477,10 @@ const FormTable = (props: any) => {
             <DatePicker
               disabled={whetherAvailable(select)}
               allowClear={false}
-              disabledDate={(current) =>
-                disabledEndDate(current, getMaxTime(notData))
-              }
               value={displayTime(time, data[0].bottomTime)}
+              // disabledDate={(current) =>
+              //   disabledEndDate(current, getMaxTime(notData))
+              // }
               onChange={(e) => {
                 MaterialDateBottom(e)
               }}

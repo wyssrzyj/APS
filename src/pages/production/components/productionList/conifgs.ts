@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-06-24 14:24:13
+ * @LastEditTime: 2022-06-27 13:10:44
  * @Description:
  * @LastEditors: lyj
  */
@@ -93,7 +93,7 @@ export const tableColumns: any = [
     key: 'delayType',
     align: 'center',
     dataIndex: 'delayType',
-    render: (v: any) => (v === 1 ? '正常' : v === 2 ? '已延期' : null)
+    render: (v: any) => (v === 0 ? '未延期' : v === 1 ? '已延期' : null)
   },
   {
     title: '生产单状态',
