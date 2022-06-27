@@ -42,45 +42,46 @@ const FormTable = (props: any) => {
   const getMaxCompletionTime = (list, section) => {
     // setSection(section)
   }
-
+  useEffect(() => {
+    let arr = [
+      {
+        externalProduceOrderId: 1,
+        externalProduceOrderNum: '1',
+        section: '1',
+        allReadyTime: '1655740800000'
+      },
+      {
+        externalProduceOrderId: 2,
+        externalProduceOrderNum: '2',
+        section: '2',
+        allReadyTime: '1655827200000'
+      },
+      {
+        externalProduceOrderId: 3,
+        externalProduceOrderNum: '3',
+        section: '3',
+        allReadyTime: '1655913600000'
+      },
+      {
+        externalProduceOrderId: 4,
+        externalProduceOrderNum: '4',
+        section: '4',
+        allReadyTime: '1656000000000'
+      }
+    ]
+    arr.map((item: any) => {
+      item.name = map.get(item.section)
+      item.id = item.section
+      item.value = item.allReadyTime
+    })
+    setSection(arr) //所属工段
+  }, [])
   //初始赋值
   useEffect(() => {
     if (!isEmpty(tableData)) {
       //初始
       setInitialData(tableData)
-      let arr = [
-        {
-          externalProduceOrderId: 1,
-          externalProduceOrderNum: '1',
-          section: '1',
-          allReadyTime: '1656256300000'
-        },
-        {
-          externalProduceOrderId: 2,
-          externalProduceOrderNum: '2',
-          section: '2',
-          allReadyTime: '1656345800000'
-        },
-        {
-          externalProduceOrderId: 3,
-          externalProduceOrderNum: '3',
-          section: '3',
-          allReadyTime: '1656258100000'
-        },
-        {
-          externalProduceOrderId: 4,
-          externalProduceOrderNum: '4',
-          section: '4',
-          allReadyTime: '1656343600000'
-        }
-      ]
-      arr.map((item: any) => {
-        item.name = map.get(item.section)
-        item.id = item.section
-        item.value = item.allReadyTime
-      })
-      console.log(arr)
-      setSection(arr) //所属工段
+
       // getMaxCompletionTime(tableData, arr)
     }
   }, [tableData])

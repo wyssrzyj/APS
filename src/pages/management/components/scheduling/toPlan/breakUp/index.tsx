@@ -714,7 +714,7 @@ const BreakUp = (props: any) => {
       render: (_value: any, _row: any, index: number) => {
         return (
           <div className={styles.flex}>
-            {index !== 0 ? (
+            {data.length > 1 ? (
               <Button
                 onClick={() => reduce(_row.ids)}
                 type="primary"

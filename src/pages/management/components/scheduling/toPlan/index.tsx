@@ -219,6 +219,8 @@ function ToPlan(props: {
         return item.externalProduceOrderId
       })
       setPlannedID(plannedData)
+    } else {
+      setPlannedID([])
     }
 
     //添加字段
@@ -642,6 +644,8 @@ function ToPlan(props: {
           return item.externalProduceOrderId
         })
         setPlannedID(plannedData)
+      } else {
+        setPlannedID([])
       }
       //添加字段
       const sum = [list[0], fieldChanges(planned)]
