@@ -156,7 +156,7 @@ function Production() {
     //   pageNum: _pagination.current,
     //   pageSize: _pagination.pageSize,
     //   ...sortType
-    // })
+    // }).
     tableChange && tableChange(_pagination, _filters, sorter)
   }
   return (
