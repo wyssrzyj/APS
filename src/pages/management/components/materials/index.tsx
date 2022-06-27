@@ -90,7 +90,7 @@ function Materials() {
     {
       title: '计划完成日期',
       align: 'center',
-      dataIndex: ' planEndDate',
+      dataIndex: 'planEndDate',
       render: (v: any) => {
         return moment(v).format('YYYY-MM-DD')
       }
@@ -383,7 +383,10 @@ function Materials() {
       <div>{/* <Title title={'物料齐套检查'} /> */}</div>
       <div>
         <div className={styles.content}>
-          <Forms factoryData={factoryData} FormData={FormData}></Forms>
+          <div className={styles.forms}>
+            <Forms factoryData={factoryData} FormData={FormData}></Forms>
+          </div>
+
           <CusDragTable
             storageField={'materials'}
             cusBarLeft={TableLeft}

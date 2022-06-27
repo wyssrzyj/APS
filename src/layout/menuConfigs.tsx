@@ -134,6 +134,12 @@ export const menus = [
     icon: 'jack-jindutiao',
     url: '/',
     children: [
+      // {
+      //   label: '日排程管理',
+      //   key: 'dailySchedule',
+      //   icon: 'jack-paigong',
+      //   url: '/dailySchedule'
+      // },
       {
         label: '生产计划',
         key: 'dispatchPan',
@@ -166,6 +172,12 @@ export const menus = [
       }
     ]
   }
+  // {
+  //   label: '生产预警管理',
+  //   key: 'productionWarning',
+  //   icon: 'jack-jindutiao',
+  //   url: '/productionWarning'
+  // }
 ]
 
 type viewFormConfig = {

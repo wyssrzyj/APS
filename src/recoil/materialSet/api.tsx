@@ -1,8 +1,8 @@
 /*
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-09 10:23:51
+ * @LastEditors: lyj
+ * @LastEditTime: 2022-06-21 09:26:22
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -133,6 +133,21 @@ export const getTheSize = async (props: any) => {
       `/aps/check-product/get-size`,
       props
     )
+
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 工段列表
+export const sectionList = async () => {
+  try {
+    const res: ResponseProps = await axios.get(`/aps/mes/get-section-list`)
 
     if (res.code !== 200) {
       message.error(res.msg)

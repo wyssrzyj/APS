@@ -1,17 +1,22 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-01 17:37:07
- * @LastEditTime: 2022-06-13 11:00:11
+ * @LastEditTime: 2022-06-16 16:04:28
  * @Description:
  * @LastEditors: lyj
  */
 /* eslint-disable jsx-a11y/iframe-has-title */
+
 import { Button, Modal } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import Forms from './forms'
 import styles from './index.module.less'
 const SchedulingResults = () => {
+  const location = useLocation()
+  const { search } = location
+
   const [formData, setFormData] = useState()
   const [isModalVisible, setIsModalVisible] = useState(false)
 
@@ -32,9 +37,9 @@ const SchedulingResults = () => {
     <div className={styles.qualification}>
       <Forms FormData={FormData}></Forms>
       <div id="c1"></div>
-      <Button type="primary" onClick={showModal}>
+      {/* <Button type="primary" onClick={showModal}>
         对比测试
-      </Button>
+      </Button> */}
       <Modal
         width={2000}
         visible={isModalVisible}
@@ -51,7 +56,7 @@ const SchedulingResults = () => {
           <iframe
             frameBorder="0"
             title={'afterUpdate'}
-            className={styles.dome}
+            className={styles.domeLeft}
             src={`/iframeDate?id=${formData}&type=2`}
           ></iframe>
         </div>

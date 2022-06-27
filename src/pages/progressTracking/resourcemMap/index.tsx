@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-01 17:37:07
- * @LastEditTime: 2022-06-13 10:45:31
+ * @LastEditTime: 2022-06-13 16:42:24
  * @Description:
  * @LastEditors: lyj
  */
@@ -11,7 +11,7 @@ import { useState } from 'react'
 import Forms from './forms'
 import styles from './index.module.less'
 const SchedulingResults = () => {
-  const [formData, setFormData] = useState() //form数据
+  const [formData, setFormData] = useState() //form数据.
 
   const FormData = (e: any) => {
     setFormData(e)

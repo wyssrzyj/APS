@@ -1,37 +1,39 @@
 /* eslint-disable prefer-const */
-import { DatePicker, Input, InputNumber, Space, Table } from 'antd'
+import { DatePicker, Input, Select, Space, Table } from 'antd'
 // import Virtual from './virtual'
 import classNames from 'classnames'
-import { cloneDeep, divide, isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
-import ResizeObserver from 'rc-resize-observer'
-import React, { memo, useEffect, useRef, useState } from 'react'
-import { VariableSizeGrid as Grid } from 'react-window'
+import React, { useEffect, useState } from 'react'
 
 import { Icon } from '@/components'
+import { materialSetApis } from '@/recoil/apis'
 
+import Forms from './forms'
 import styles from './index.module.less'
 const FormTable = (props: any) => {
-  const {
-    tableData,
-    materialList,
-    index,
-    sizeList,
-    saveData,
-    select,
-    recheckData
-  } = props
+  const { tableData, sizeList, saveData, select, recheckData } = props
+  const { Option } = Select
   const scrollBox = React.createRef()
-  const [expandedRowKeys, setExpandedRowKeys] = useState<any>([])
-  const [notData, setNotData] = useState<any>([]) //接口数据
-  const [list, setList] = useState<any>([]) //格式
-  const [data, setData] = useState<any>([]) //table 数据  防止为空
+  const [initialData, setInitialData] = useState<any>([]) //接口初始数据
+
+  const [notData, setNotData] = useState<any>([]) //操作数据
+  const [columnsList, setColumnsList] = useState<any>([]) //格式
+  const [data, setData] = useState<any>([]) //table 展示 数据
   const [loading, setLoading] = useState<any>(true) //加载
   const [renderData, setRenderData] = useState<any>()
 
   const [defaultExpandedRow, setDefaultExpandedRow] = useState<any>([]) //全部展开
-  const [time, setTime] = useState<any>() //最大的齐套日期
+  const [time, setTime] = useState<any>() //手动设置的的齐套日期
   const [cloneData, setCloneData] = useState<any>([]) // 重新检查修改后的数据
+
+  const { getTheSize, materialData, materialSaved, checked } = materialSetApis
+  //初始赋值
+  useEffect(() => {
+    if (!isEmpty(tableData)) {
+      setInitialData(tableData)
+    }
+  }, [tableData])
 
   useEffect(() => {
     if (!isEmpty(data)) {
@@ -66,8 +68,12 @@ const FormTable = (props: any) => {
 
   //已检查且已计划 才不可用
   const whetherAvailable = (e) => {
-    if ((e.checkStatus === 1 && e.status === 2) || e.name === '已检查') {
-      return true
+    if (e !== undefined) {
+      if ((e.checkStatus === 1 && e.status === 2) || e.name === '已检查') {
+        return true
+      } else {
+        return false
+      }
     } else {
       return false
     }
@@ -246,7 +252,7 @@ const FormTable = (props: any) => {
     }
     if (!isEmpty(renderData)) {
       setLoading(false)
-      setList(renderData) //渲染结构
+      setColumnsList(renderData) //渲染结构
     }
   }, [renderData, notData, select])
 
@@ -301,12 +307,12 @@ const FormTable = (props: any) => {
       return []
     }
   }
-  //初始数据
+  //处理初始表格数据
   useEffect(() => {
     // 调取接口口添加 key和 counteractNum -半成品冲销数量的字段
     let defaultExpandedRow = []
-    if (!isEmpty(tableData)) {
-      tableData.map((item: any) => {
+    if (!isEmpty(initialData)) {
+      initialData.map((item: any) => {
         item.deliveredQty = item.deliveredQty === null ? 0 : item.deliveredQty //测试~~~已出库数量暂无 设置0
         item.id = item.materialCode //id是 materialCode
         item.key = `${item.materialCode}8848` //添加 key
@@ -316,11 +322,13 @@ const FormTable = (props: any) => {
         item.shortOfProductNum = total(item.children, 'shortOfProductNum') //物料缺少数量-头
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
-      setTime(tableData[0].bottomTime)
-      setNotData([...tableData])
+
+      // setTime(initialData[0].bottomTime)
+
+      setNotData([...initialData])
       setDefaultExpandedRow([...defaultExpandedRow])
     }
-  }, [tableData])
+  }, [initialData])
 
   //计算总值
   const total = (count: any[], field: string) => {
@@ -398,10 +406,6 @@ const FormTable = (props: any) => {
     }
   }
 
-  const onExpandedRowsChange = (e: any) => {
-    setExpandedRowKeys(e)
-  }
-
   const show = (e, v) => {
     //e 是接口数据
     //v 重新数据
@@ -441,7 +445,7 @@ const FormTable = (props: any) => {
     setTime(moment(e).valueOf())
     setCloneData([...arr])
   }
-
+  //获取最大值
   const displayTime = (v, i) => {
     if (v !== null && v !== undefined) {
       if (v > i) {
@@ -450,7 +454,7 @@ const FormTable = (props: any) => {
         return moment(i)
       }
     } else {
-      return undefined
+      return moment(i)
     }
   }
   //底部
@@ -473,10 +477,10 @@ const FormTable = (props: any) => {
             <DatePicker
               disabled={whetherAvailable(select)}
               allowClear={false}
-              disabledDate={(current) =>
-                disabledEndDate(current, getMaxTime(notData))
-              }
               value={displayTime(time, data[0].bottomTime)}
+              // disabledDate={(current) =>
+              //   disabledEndDate(current, getMaxTime(notData))
+              // }
               onChange={(e) => {
                 MaterialDateBottom(e)
               }}
@@ -487,12 +491,29 @@ const FormTable = (props: any) => {
     } else {
     }
   }
+
+  const FormData = (e: any) => {
+    // 1.默认不选择
+    console.log('form数据', e)
+    // 工段查询 前段来做
+    const arr = notData.filter((item) => item.id === '123344')
+    // id: '123344'
+    setData(arr)
+    // checkStatus
+  }
   return (
     <div>
+      <div>
+        {/* <Forms
+          type={whetherAvailable(select)}
+          factoryData={null}
+          FormData={FormData}
+        ></Forms> */}
+      </div>
       <Table
         expandedRowKeys={defaultExpandedRow}
         loading={loading}
-        columns={list}
+        columns={columnsList}
         dataSource={data}
         rowKey={'key'}
         scroll={{ x: 1500, y: 300 }}
@@ -500,7 +521,7 @@ const FormTable = (props: any) => {
         summary={() => (
           <Table.Summary fixed>
             {!isEmpty(data) ? (
-              <Table.Summary.Row>{Dome(list, data)}</Table.Summary.Row>
+              <Table.Summary.Row>{Dome(columnsList, data)}</Table.Summary.Row>
             ) : null}
           </Table.Summary>
         )}

@@ -167,30 +167,7 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     span: 12
     // options: []
   },
-  {
-    label: '车间名称',
-    name: 'shopName',
-    field: 'shopName',
-    value: '',
-    type: 'input',
-    disabled: true,
-    // options: [],
-    required: true,
-    placeholder: '请选择车间名称',
-    span: 12
-  },
-  {
-    label: '班组名称',
-    name: 'teamName',
-    field: 'teamName',
-    value: '',
-    type: 'input',
-    disabled: true,
-    // options: [],
-    required: true,
-    placeholder: '请选择班组名称',
-    span: 12
-  },
+
   {
     label: '产品名称',
     name: 'productName',
@@ -236,6 +213,30 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     span: 12
   },
   {
+    label: '车间名称',
+    name: 'shopName',
+    field: 'shopName',
+    value: '',
+    type: 'input',
+    disabled: true,
+    // options: [],
+    required: true,
+    placeholder: '请选择车间名称',
+    span: 12
+  },
+  {
+    label: '班组名称',
+    name: 'teamName',
+    field: 'teamName',
+    value: '',
+    type: 'input',
+    disabled: true,
+    // options: [],
+    required: true,
+    placeholder: '请选择班组名称',
+    span: 12
+  },
+  {
     label: '计划开始时间',
     name: 'planStartTime',
     field: 'planStartTime',
@@ -256,20 +257,21 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     placeholder: '请选择计划结束时间',
     allowClear: true,
     span: 12
-  },
-  {
-    label: '备注',
-    name: 'remark',
-    field: 'remark',
-    value: '',
-    type: 'textarea',
-    disabled: true,
-    placeholder: '请输入备注',
-    allowClear: true,
-    span: 24,
-    layout: {
-      labelCol: { span: '3' },
-      wrapperCol: { span: '21' }
-    }
   }
+
+  // {
+  //   label: '备注',
+  //   name: 'remark',
+  //   field: 'remark',
+  //   value: '',
+  //   type: 'textarea',
+  //   disabled: true,
+  //   placeholder: '请输入备注',
+  //   allowClear: true,
+  //   span: 24,
+  //   layout: {
+  //     labelCol: { span: '3' },
+  //     wrapperCol: { span: '21' }
+  //   }
+  // }
 ]

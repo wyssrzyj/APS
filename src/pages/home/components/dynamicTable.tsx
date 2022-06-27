@@ -1,12 +1,12 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-12 13:03:02
- * @LastEditTime: 2022-05-26 15:29:08
+ * @LastEditTime: 2022-06-20 08:49:14
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: lyj
  */
 import { Form, Input, Select } from 'antd'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 
 import { CusDragTable, SearchBar } from '@/components'
@@ -38,8 +38,12 @@ const DynamicTable = (props: Record<string, any>) => {
   }, [])
 
   useEffect(() => {
-    const options = facList.map((d) => <Option key={d.id}>{d.deptName}</Option>)
-    setSelectOptions(options)
+    if (!isEmpty(facList)) {
+      const options = facList.map((d) => (
+        <Option key={d.id}>{d.deptName}</Option>
+      ))
+      setSelectOptions(options)
+    }
   }, [facList])
 
   const getFacList = async () => {

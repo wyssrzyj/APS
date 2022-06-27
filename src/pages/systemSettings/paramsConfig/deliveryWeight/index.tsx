@@ -90,6 +90,41 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
           />
         </Col>
       </Row>
+      {/* <Row className={styles.firstRow}>
+        <Col span={13} className={styles.container}>
+          <div className={styles.innerContainer}>
+            <span className={styles.labelText}>预警延期:</span>
+            <InputNumber
+              value={data[0].delay}
+              style={{ width: 70 }}
+              onChange={(e) => {
+                inpout(e, 0)
+              }}
+            />
+          </div>
+          <Select
+            value={arr !== undefined ? arr : '1'}
+            style={{ width: 60 }}
+            onSelect={(e: any) => {
+              executionMethod(e, 0)
+            }}
+          >
+            <Option value="1">天</Option>
+            <Option value="2">周</Option>
+            <Option value="3">月</Option>
+          </Select>
+        </Col>
+        <Col span={10}>
+          权重:
+          <span className={styles.operationIcon}>-</span>
+          <InputNumber
+            value={data[0].weight}
+            onChange={(e) => {
+              weight(e, 0)
+            }}
+          />
+        </Col>
+      </Row> */}
       <Row>
         <Col span={13} className={styles.container}>
           <div className={styles.innerContainer}>

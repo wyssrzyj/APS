@@ -30,6 +30,8 @@ function Index() {
   const [gunterData, setGunterData] = useState<any[]>([]) //甘特图数据-班组
   const [notWork, setNotWork] = useState<any[]>([]) //不可工作时间
   const [checkIDs, setCheckIDs] = useState<any[]>([]) //校验id
+  const [schedulingIDs, setSchedulingIDs] = useState<any>([]) //规则排程使用的id
+
   const [promptList, setPromptList] = useState<any[]>([]) //提示数据
   const [time, setTime] = useState<any>({}) //最大时间 最小时间
   const [treeSelection, setTreeSelection] = useState<any>() //树选中
@@ -50,7 +52,9 @@ function Index() {
   const FormData = (e: any) => {
     setFormData(e)
     setCheckIDs([])
+    setSchedulingIDs([])
   }
+
   // 甘特图数据
   useEffect(() => {
     if (formData !== undefined) {
@@ -62,7 +66,7 @@ function Index() {
      * duration 天数
      * progress 控制完成百分比 范围0-1
      *  color控制颜色
-     * start_date 开始时间
+     * start_date 开始时间..
      * end_date 结束时间
      *  render: 'split' 添加同一行 只有儿子用
      * parent ***谁是自己的父亲*** 儿子和父亲用
@@ -71,6 +75,8 @@ function Index() {
 
   const getChart = async (id: undefined, type: any) => {
     if (type === '0') {
+      console.log('我是0')
+
       const chart: any = await figureData({ factoryId: id })
       const arr = cloneDeep(chart.data)
       if (chart.code === 200) {
@@ -121,6 +127,7 @@ function Index() {
     }
 
     setTime(time)
+
     const cloneArr = cloneDeep(arr)
     setGunterData(cloneArr) //图
   }
@@ -158,11 +165,12 @@ function Index() {
   //判断任务是否分派
   const toggleRuleVisible = (visible: boolean) => {
     if (visible) {
-      if (validateCheckId()) {
+      console.log(schedulingIDs)
+      if (schedulingIDs.length > 0) {
         setVisibleRule(visible)
+      } else {
+        message.warning('请至少选择一个')
       }
-    } else {
-      setVisibleRule(visible)
     }
   }
 
@@ -174,22 +182,23 @@ function Index() {
       arr.push(item.externalProduceOrderNum)
     })
 
-    //选中里有不满足的就进行提示
-    if (arr.length > 0) {
+    //选中里有不满足的就进行提示.  .
+    if (Number(arr.length) > 0) {
       message.warning(`生产单${arr.join('、')}任务未分派`)
       passflag = false
-    }
-
-    if (!isEmpty(checkIDs)) {
-      if (arr.length <= 0) {
-        passflag = true
-      }
     } else {
-      message.warning(`暂无已计划数据`)
-      passflag = false
+      if (!isEmpty(checkIDs)) {
+        if (arr.length <= 0) {
+          passflag = true
+        }
+      } else {
+        message.warning(`暂无已计划数据`)
+        passflag = false
+      }
+      return passflag
     }
-    return passflag
   }
+
   const toggleVerifyVisible = (visible: boolean) => {
     if (visible) {
       if (validateCheckId()) {
@@ -199,30 +208,56 @@ function Index() {
       setVisibleVerify(visible)
     }
   }
+  //获取选中项
+  const selected = (ids, stateAdd) => {
+    if (!isEmpty(ids)) {
+      const sum = []
+      ids.forEach((item) => {
+        sum.push(stateAdd.filter((v) => v.externalProduceOrderId === item))
+      })
+      return sum.flat(Infinity)
+    }
+
+    // return ['1524211836323483650']
+  }
   // 校验排程需要的数据
   const checkSchedule = (plannedID: any, toPlanID: any, stateAdd: any) => {
     if (!isError(stateAdd)) {
+      //规则排程--------------
+      //选中的id和已计划的id---规则排程使用的数据id
+      const ruleIds = selected(plannedID, stateAdd)
+
+      if (!isEmpty(ruleIds)) {
+        const ids = []
+        ruleIds.forEach((item) => {
+          ids.push(item.externalProduceOrderId)
+        })
+        setSchedulingIDs(ids.concat(toPlanID))
+      } else {
+        setSchedulingIDs(toPlanID)
+      }
+
       //判断选中里是否有不满足的
       const doNotUse = stateAdd.filter(
         (item: { type: boolean }) => item.type === false
       )
+
       const prompt = plannedID.map((item: any) => {
         return filterPrompt(item, doNotUse)
       })
+
       setPromptList(prompt.flat(Infinity))
 
       //可用
       const available = stateAdd.filter(
         (item: { type: boolean }) => item.type === true
       )
-
       //待计划数据
       const waiting = available
         .map((item: any) => {
           return filterList(plannedID, item)
         })
         .flat(Infinity)
-
       setCheckIDs(waiting.concat(toPlanID)) //把选中里可用的和已计划传递出去
     }
   }
@@ -255,6 +290,12 @@ function Index() {
   // 树选中
   const treeSelect = (e) => {
     setTreeSelection(e)
+  }
+  const ruleScheduling = () => {
+    setVisibleRule(false)
+    toggleRuleVisible(false)
+    update()
+    updateMethod()
   }
 
   return (
@@ -334,10 +375,13 @@ function Index() {
       {/* //规则排程 */}
       {visibleRule && (
         <RuleScheduling
+          setVisibleRule={setVisibleRule}
           formData={formData}
           visibleRule={visibleRule}
-          checkIDs={checkIDs}
-          onCancel={() => toggleRuleVisible(false)}
+          checkIDs={schedulingIDs}
+          onCancel={() => {
+            ruleScheduling()
+          }}
         />
       )}
       {visibleVerify && (

@@ -217,12 +217,9 @@ function Vacations() {
     <div className={styles.qualification}>
       <div>
         <div className={styles.content}>
-          {/* <SearchBar
-            configs={configs}
-            params={params}
-            callback={paramsChange}
-          ></SearchBar> */}
-          <Forms FormData={FormData}></Forms>
+          <div className={styles.forms}>
+            <Forms FormData={FormData}></Forms>
+          </div>
 
           <CusDragTable
             storageField={'vacations'}

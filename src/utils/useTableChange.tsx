@@ -2,7 +2,7 @@ import { TablePaginationConfig } from 'antd'
 import { FilterValue } from 'antd/es/table/interface'
 import { SorterResult } from 'antd/lib/table/interface'
 import { cloneDeep } from 'lodash'
-import { Key, useEffect, useState } from 'react'
+import { Key, useEffect, useRef, useState } from 'react'
 
 import { getTreeData } from '@/utils/tool'
 
@@ -36,8 +36,8 @@ const useTableChange = (
   }, [params, pageNum, pageSize, sorterField, order])
 
   useEffect(() => {
-    setPageNum(params.pageNum)
-    setPageSize(params.pageSize)
+    setPageNum(1)
+    setPageSize(10)
   }, [params])
 
   const getDataList = async () => {
@@ -46,10 +46,10 @@ const useTableChange = (
     target.pageNum = pageNum
     target.pageSize = pageSize
     const keys = Reflect.ownKeys(params)
+
     if (keys.length > 0) {
       target = { ...params, ...target }
     }
-    // console.log('接口的数据', target)
     let res = await getData(target)
 
     if (Array.isArray(res)) {
@@ -87,7 +87,6 @@ const useTableChange = (
     const { current, pageSize } = pagination
     setPageNum(current as number)
     setPageSize(pageSize as number)
-
     const { field, order } = sorter as SorterResult<any>
     setSorterField(field as string)
     setOrder(order as string)

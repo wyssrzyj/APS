@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-05-30 09:06:43
- * @LastEditTime: 2022-06-01 09:14:43
+ * @LastEditTime: 2022-06-20 09:01:33
  * @Description:
  * @LastEditors: lyj
  */
@@ -74,7 +74,11 @@ function Popup(props: any) {
     }
     if (type === '2') {
       setAllList(res.records)
-      setTotal(res.total)
+      if (!isEmpty(res.records)) {
+        const data = res.records
+        data.map((item, index) => (item.order = index))
+        setTotal(data)
+      }
     }
   }
   //判断本地是否有值 有的就重新处理
@@ -175,7 +179,7 @@ function Popup(props: any) {
         <Tables
           total={total}
           pagingData={pagingData}
-          list={list}
+          list={allList}
           getFormData={getFormData}
           types={types}
         />

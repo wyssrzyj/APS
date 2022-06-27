@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 10:02:54
- * @LastEditTime: 2022-06-13 08:56:24
+ * @LastEditTime: 2022-06-20 12:45:12
  * @Description:
  * @LastEditors: lyj
  */
@@ -31,7 +31,19 @@ const LoginContent = () => {
       setLoadings(true)
       const values = await validateFields()
       const res = await login(values)
-
+      const homePage = {
+        upper: [
+          { name: '生产单动态', type: true },
+          { name: '生产任务动态', type: true }
+        ],
+        lower: [
+          { name: '生产延期查询', type: true },
+          { name: '生产任务动态', type: true },
+          { name: '生产单剩余工期查询', type: false }
+        ]
+      }
+      //设置配置
+      localStorage.setItem('homePage', JSON.stringify(homePage))
       if (res && res.success) location.replace('/home')
       setLoadings(false)
     } catch (err) {

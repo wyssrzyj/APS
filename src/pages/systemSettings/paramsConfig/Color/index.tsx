@@ -15,8 +15,10 @@ function WorkingHours(props: { onChange: any; list: any }) {
   const [data, setData] = useState<any>(sum)
   // 回显
   useEffect(() => {
-    if (!isEmpty(list.expireColorConfigs)) {
-      setData(list.expireColorConfigs)
+    if (!isEmpty(list)) {
+      if (!isEmpty(list.expireColorConfigs)) {
+        setData(list.expireColorConfigs)
+      }
     }
   }, [list])
   //随机颜色
@@ -97,9 +99,7 @@ function WorkingHours(props: { onChange: any; list: any }) {
                 <div
                   className={styles.color}
                   style={{ background: `${item.color}` }}
-                >
-                  {/* {item.color} */}
-                </div>
+                ></div>
               </Popover>
               <div className={styles.executionMethod}>
                 {index === 0 ? (

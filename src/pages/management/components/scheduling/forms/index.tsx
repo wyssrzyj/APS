@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-03-10 15:20:21
  * @LastEditors: lyj
- * @LastEditTime: 2022-06-13 14:25:30
+ * @LastEditTime: 2022-06-23 16:12:23
  * @FilePath: \jack-aps\src\pages\practice\administration\components\scheduling\forms\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -58,8 +58,6 @@ const HeaderForm = (props: { FormData: any }) => {
     const exhibition = arr.filter((item) => item.id === factoryId)[0]
     if (res.code === 200) {
       //  默认展示第2条数据
-      console.log(exhibition)
-
       setTheDefault(exhibition)
       FormData && FormData(factoryId)
       arr.map((item: { name: any; deptName: any }) => {

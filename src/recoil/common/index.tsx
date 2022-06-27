@@ -1,3 +1,10 @@
+/*
+ * @Author: lyj
+ * @Date: 2022-03-02 15:41:46
+ * @LastEditTime: 2022-06-24 10:59:04
+ * @Description:
+ * @LastEditors: lyj
+ */
 import { atom, selector } from 'recoil'
 
 // 官网链接 https://www.recoiljs.cn/docs/basic-tutorial/atoms
@@ -43,7 +50,7 @@ const textState = atom({
 
 const lyj = atom({
   key: 'lyj', // unique ID (with respect to other atoms/selectors)
-  default: '123456789' // default value (aka initial value)
+  default: '884866669999' // default value (aka initial value)
 })
 // 同步设置数据
 const charCountState = selector({

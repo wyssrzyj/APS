@@ -34,6 +34,8 @@
     "react-dom": "^17.0.2",
     "react-gantt": "^2.1.8",
     "react-google-charts": "^4.0.0",
+    "react-router": "^6.2.1",
+    "react-router-dom": "^6.2.1",
     "react-window": "^1.8.7",
     "viser-react": "^2.4.8",
     "xlsx": "^0.18.4",

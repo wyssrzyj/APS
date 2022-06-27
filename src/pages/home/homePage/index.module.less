@@ -1,0 +1,183 @@
+.container {
+  width: 100%;
+  height: 100%;
+}
+.previous {
+  font-size: 20px;
+}
+
+.header {
+  box-sizing: border-box;
+  background: #fff;
+  display: flex;
+  width: 100%;
+  min-width: 1200px;
+  height: 50px;
+  border-bottom: 1px solid #d7d7d7;
+}
+.upper {
+  margin-right: 10px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+}
+.configureContainer {
+  margin-top: 10px;
+  display: flex;
+}
+.containerUpper {
+  margin-left: 15px;
+}
+
+.logImg {
+  width: 100px;
+}
+
+.headerR {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 32px;
+}
+
+.userInfo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  cursor: pointer;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // width: 40px;
+  // height: 40px;
+  // border: 1px solid #d7d7d7;
+  // border-radius: 50%;
+}
+
+.infoModal {
+  position: absolute;
+  top: 48px;
+  right: -20px;
+  z-index: 3;
+  display: none;
+  background: #fff;
+  border: 1px solid #d7d7d7;
+  border-radius: 4px;
+}
+
+.userInfo:hover {
+  .infoModal {
+    display: block;
+  }
+}
+
+.modalItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 32px;
+  margin: 4px 8px;
+
+  &:hover {
+    background: #eee;
+  }
+}
+
+.divider {
+  height: 1px;
+  margin: 4px 8px;
+  background: #d7d7d7;
+}
+
+.icon {
+  margin-right: 12px;
+  font-size: 18px;
+  color: #666 !important;
+}
+
+.outBoxContainer {
+  margin: 15px;
+  min-height: calc(100vh - 80px);
+  background: #fff;
+  border-radius: 5px;
+  min-width: 985px;
+  overflow-x: auto;
+}
+
+.fullHeight {
+  height: 100vh;
+}
+.menu {
+  color: #666;
+}
+
+.miniMenu {
+  // width: 80px;
+}
+
+.innerMenuBox {
+  flex: 1;
+}
+
+.menuIcon {
+  font-size: 20px !important;
+  color: inherit !important;
+  cursor: pointer;
+}
+
+// .menuSwitchBox {
+//   width: inherit;
+//   background: #001529;
+//   border-right: 1px solid #001529;
+// }
+
+// .menuSwitchIcon {
+//   position: absolute;
+//   bottom: 12px;
+//   left: 24px;
+//   font-size: 16px !important;
+//   color: #fff !important;
+//   cursor: pointer;
+//   transition: all 0.1s ease;
+// }
+
+// .centerSwitchIcon {
+//   left: 32px;
+// }
+
+.content {
+  flex: 1;
+  min-width: 1200px;
+  overflow: auto;
+  // background-color: #fff;
+}
+
+.fillContent {
+  overflow: inherit;
+}
+.earlyWarning {
+  position: relative;
+  margin-right: 30px;
+  cursor: pointer;
+}
+.pointer {
+  cursor: pointer;
+}
+.remind {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: red;
+}
