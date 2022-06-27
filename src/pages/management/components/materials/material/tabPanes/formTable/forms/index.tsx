@@ -29,6 +29,7 @@ const HeaderForm = (props: {
   const { Option } = Select
 
   const [workshop, setWorkshop] = useState<any>()
+  const [completionTime, setCompletionTime] = useState<any>(66666)
 
   useEffect(() => {
     setWorkshop(factoryData)
@@ -58,16 +59,20 @@ const HeaderForm = (props: {
       }
     }
     if (type === 'select') {
-      console.log(event)
-
       return event
     }
 
     return event
   }
-  const getFactoryName = (e: any) => {
-    // setListID(e)
+  const getFactoryName = (_e: any, item) => {
+    const current = workshop.filter((v) => v.id === item.key)[0]
+    form.setFieldsValue({
+      productNum: moment(Number(current.value)).format('YYYY-MM-DD')
+    })
   }
+  useEffect(() => {
+    console.log(completionTime)
+  }, [completionTime])
   return (
     <div>
       <Form form={form}>
@@ -88,22 +93,11 @@ const HeaderForm = (props: {
                 placeholder="请选择工厂名称"
               >
                 {workshop != undefined
-                  ? workshop.map(
-                      (item: {
-                        id: React.Key | null | undefined
-                        name:
-                          | boolean
-                          | React.ReactChild
-                          | React.ReactFragment
-                          | React.ReactPortal
-                          | null
-                          | undefined
-                      }) => (
-                        <Option key={item.id} value={item.id}>
-                          {item.name}
-                        </Option>
-                      )
-                    )
+                  ? workshop.map((item: any) => (
+                      <Option key={item.section} value={item.section}>
+                        {item.name}
+                      </Option>
+                    ))
                   : null}
               </Select>
             </Form.Item>

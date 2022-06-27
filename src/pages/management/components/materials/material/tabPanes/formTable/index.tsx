@@ -40,56 +40,48 @@ const FormTable = (props: any) => {
 
   // 获取最大值物料齐套时间
   const getMaxCompletionTime = (list, section) => {
-    setSection(list)
+    // setSection(section)
   }
+
   //初始赋值
   useEffect(() => {
     if (!isEmpty(tableData)) {
       //初始
-      // setInitialData(tableData)
+      setInitialData(tableData)
       let arr = [
         {
           externalProduceOrderId: 1,
           externalProduceOrderNum: '1',
           section: '1',
-          allReadyTime: ''
+          allReadyTime: '1656256300000'
         },
         {
           externalProduceOrderId: 2,
           externalProduceOrderNum: '2',
           section: '2',
-          allReadyTime: ''
+          allReadyTime: '1656345800000'
         },
         {
           externalProduceOrderId: 3,
           externalProduceOrderNum: '3',
           section: '3',
-          allReadyTime: ''
+          allReadyTime: '1656258100000'
         },
         {
           externalProduceOrderId: 4,
           externalProduceOrderNum: '4',
           section: '4',
-          allReadyTime: ''
-        },
-        {
-          externalProduceOrderId: 5,
-          externalProduceOrderNum: '5',
-          section: '5',
-          allReadyTime: ''
-        },
-        {
-          externalProduceOrderId: 6,
-          externalProduceOrderNum: '6',
-          section: '6',
-          allReadyTime: ''
+          allReadyTime: '1656343600000'
         }
       ]
       arr.map((item: any) => {
         item.name = map.get(item.section)
         item.id = item.section
+        item.value = item.allReadyTime
       })
-      getMaxCompletionTime(tableData, arr)
+      console.log(arr)
+      setSection(arr) //所属工段
+      // getMaxCompletionTime(tableData, arr)
     }
   }, [tableData])
 
@@ -553,10 +545,12 @@ const FormTable = (props: any) => {
   const FormData = (e: any) => {
     // 1.默认不选择
     console.log('form数据', e)
+    console.log(section)
+
     // 工段查询 前段来做
-    const arr = notData.filter((item) => item.id === '123344')
+    // const arr = notData.filter((item) => item.id === '123344')
     // id: '123344'
-    setData(arr)
+    // setData(arr)
     // checkStatus
   }
   return (
