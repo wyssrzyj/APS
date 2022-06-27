@@ -180,7 +180,7 @@ function Index() {
       arr.push(item.externalProduceOrderNum)
     })
 
-    //选中里有不满足的就进行提示.
+    //选中里有不满足的就进行提示.  .
     if (Number(arr.length) > 0) {
       message.warning(`生产单${arr.join('、')}任务未分派`)
       passflag = false
