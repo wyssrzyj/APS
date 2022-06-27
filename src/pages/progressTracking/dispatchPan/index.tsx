@@ -130,8 +130,6 @@ function ProductionPlan() {
         nParams[key] = values[key]
       }
     })
-    console.log('for的数据', nParams)
-
     setParams(nParams)
   }
 

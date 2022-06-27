@@ -110,7 +110,7 @@ function Production() {
   const FormData = (e: any) => {
     if (e.factoryId !== undefined) {
       setFormData(e)
-      setParams({ pageNum: 1, pageSize, ...e })
+      setParams({ pageNum: 1, pageSize: 10, ...e })
     } else {
       setFormData(e)
       setParams({ pageNum, pageSize, ...e })
@@ -151,12 +151,13 @@ function Production() {
         : sorter.order === 'descend'
         ? { sortType: 'desc' }
         : { sortType: '' }
-    setParams({
-      ...formData,
-      pageNum: _pagination.current,
-      pageSize: _pagination.pageSize,
-      ...sortType
-    })
+    // setParams({
+    //   ...formData,
+    //   pageNum: _pagination.current,
+    //   pageSize: _pagination.pageSize,
+    //   ...sortType
+    // })
+    tableChange && tableChange(_pagination, _filters, sorter)
   }
   return (
     <div className={styles.qualification}>
@@ -172,6 +173,7 @@ function Production() {
             rowKey={'key'}
             scroll={{ x: 1000 }}
             loading={loading}
+            // onChange={getSort}
             onChange={getSort}
             pagination={{
               //分页

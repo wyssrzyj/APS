@@ -26,30 +26,27 @@ const useTableChange = (
   const [pageNum, setPageNum] = useState<number>(params.pageNum || 1)
   const [pageSize, setPageSize] = useState<number>(params.pageSize || 10)
   const [loading, setLoading] = useState<boolean>(false)
-  const treeSelection = useRef({ pageNum: 1, pageSize: 10 }) //定义
 
   useEffect(() => {
     ;(async () => {
-      treeSelection.current = {
-        pageNum: params.pageNum,
-        pageSize: params.pageSize
-      }
       const keys = Reflect.ownKeys(params)
       const flag = required.every((item) => keys.includes(item))
       flag && (await getDataList())
     })()
-  }, [params, sorterField, order])
+  }, [params, pageNum, pageSize, sorterField, order])
+
   useEffect(() => {
-    setPageNum(params.pageNum)
-    setPageSize(params.pageSize)
+    setPageNum(1)
+    setPageSize(10)
   }, [params])
 
   const getDataList = async () => {
     setLoading(true)
     let target: Target = {}
-    target.pageNum = treeSelection.current.pageNum
-    target.pageSize = treeSelection.current.pageSize
+    target.pageNum = pageNum
+    target.pageSize = pageSize
     const keys = Reflect.ownKeys(params)
+
     if (keys.length > 0) {
       target = { ...params, ...target }
     }
@@ -90,8 +87,6 @@ const useTableChange = (
     const { current, pageSize } = pagination
     setPageNum(current as number)
     setPageSize(pageSize as number)
-    console.log(sorter)
-
     const { field, order } = sorter as SorterResult<any>
     setSorterField(field as string)
     setOrder(order as string)
