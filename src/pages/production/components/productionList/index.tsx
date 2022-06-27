@@ -23,7 +23,7 @@ function Production() {
 
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [types, setType] = useState(false) //编辑或者查看
-  const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
+  const [formData, setFormData] = useState({})
   const [params, setParams] = useState<any>({
     pageNum: 1,
     pageSize: 10
@@ -44,6 +44,7 @@ function Production() {
     loading,
     getDataList
   } = useTableChange(params, productionList)
+
   useEffect(() => {
     if (!isEmpty(dataSource)) {
       const cloneDataSource = cloneDeep(dataSource)
@@ -78,10 +79,10 @@ function Production() {
     )
   }
   //剩余工期
-  tableColumns[7].render = (_text: any, record: any, index: number) => {
-    return <div key={index}>{8848}</div>
-  }
-  tableColumns[7].sorter = true
+  // tableColumns[7].render = (_text: any, record: any, index: number) => {
+  //   return <div key={index}>{8848}</div>
+  // }
+  // tableColumns[7].sorter = true
 
   //工厂名称
   useEffect(() => {
@@ -108,8 +109,10 @@ function Production() {
   //头部form的数据
   const FormData = (e: any) => {
     if (e.factoryId !== undefined) {
+      setFormData(e)
       setParams({ pageNum: 1, pageSize, ...e })
     } else {
+      setFormData(e)
       setParams({ pageNum, pageSize, ...e })
     }
   }
@@ -148,7 +151,12 @@ function Production() {
         : sorter.order === 'descend'
         ? { sortType: 'desc' }
         : { sortType: '' }
-    setParams({ ...params, ...sortType })
+    setParams({
+      ...formData,
+      pageNum: _pagination.current,
+      pageSize: _pagination.pageSize,
+      ...sortType
+    })
   }
   return (
     <div className={styles.qualification}>

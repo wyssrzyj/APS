@@ -39,7 +39,7 @@ function Materials() {
   const [movIsModalVisible, setMovIsModalVisible] = useState<boolean>(false) //删除弹窗
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
   const [materialList, setMaterialList] = useState<any>() //物料齐套数据.
-  // const [queryData, setQueryData] = useState<any>({})
+  // const [queryData, setQueryData] = useState<any>({}).
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
   const {
     tableChange,
