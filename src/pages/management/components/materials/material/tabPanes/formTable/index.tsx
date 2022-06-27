@@ -28,6 +28,7 @@ const FormTable = (props: any) => {
   const [cloneData, setCloneData] = useState<any>([]) // 重新检查修改后的数据
 
   const [section, setSection] = useState<any>([]) //所属工段
+  const [sectionTime, setSectionTime] = useState<any>() //工段时间
 
   const { getTheSize, materialData, materialSaved, checked } = materialSetApis
   const map = new Map()
@@ -484,11 +485,26 @@ const FormTable = (props: any) => {
       setDefaultExpandedRow([...sum])
     }
   }
+
+  const FormData = (e: any) => {
+    // 1.默认不选择
+    console.log('form数据', e)
+    console.log(section)
+    const currentItem = section.filter((item) => item.id === e.factoryId)[0]
+    setSectionTime(Number(currentItem.value))
+    // 工段查询 前段来做
+    // const arr = notData.filter((item) => item.id === '123344')
+    // id: '123344'
+    // setData(arr)
+    // checkStatus
+  }
+
   const disabledEndDate = (current: any, startTime: any) => {
     return current && startTime && current < startTime
   }
 
   const MaterialDateBottom = (e) => {
+    setSectionTime(null) //清空工段时间
     let arr = cloneDeep(data)
     arr[0].bottomTime = moment(e).valueOf()
     setData([...arr])
@@ -497,15 +513,23 @@ const FormTable = (props: any) => {
     setCloneData([...arr])
   }
   //获取最大值
-  const displayTime = (v, i) => {
-    if (v !== null && v !== undefined) {
-      if (v > i) {
-        return moment(v)
-      } else {
-        return moment(i)
-      }
+  const displayTime = (v, i, sectionTime) => {
+    //先判断工段时间
+    console.log('是否更新', sectionTime)
+
+    if (sectionTime !== null && sectionTime !== undefined) {
+      return moment(sectionTime)
     } else {
-      return undefined
+      // 手动
+      if (v !== null && v !== undefined) {
+        if (v > i) {
+          return moment(v)
+        } else {
+          return moment(i)
+        }
+      } else {
+        return undefined
+      }
     }
   }
   //底部
@@ -528,10 +552,10 @@ const FormTable = (props: any) => {
             <DatePicker
               disabled={whetherAvailable(select)}
               allowClear={false}
-              disabledDate={(current) =>
-                disabledEndDate(current, getMaxTime(notData))
-              }
-              value={displayTime(time, data[0].bottomTime)}
+              // disabledDate={(current) =>
+              //   disabledEndDate(current, getMaxTime(notData))
+              // }
+              value={displayTime(time, data[0].bottomTime, sectionTime)}
               onChange={(e) => {
                 MaterialDateBottom(e)
               }}
@@ -543,17 +567,6 @@ const FormTable = (props: any) => {
     }
   }
 
-  const FormData = (e: any) => {
-    // 1.默认不选择
-    console.log('form数据', e)
-    console.log(section)
-
-    // 工段查询 前段来做
-    // const arr = notData.filter((item) => item.id === '123344')
-    // id: '123344'
-    // setData(arr)
-    // checkStatus
-  }
   return (
     <div>
       <div>
