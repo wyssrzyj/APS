@@ -179,21 +179,22 @@ function Index() {
     promptList.map((item: { externalProduceOrderNum: any }) => {
       arr.push(item.externalProduceOrderNum)
     })
+
     //选中里有不满足的就进行提示
-    if (Number(arr.length) < 0) {
+    if (Number(arr.length) > 0) {
       message.warning(`生产单${arr.join('、')}任务未分派`)
       passflag = false
-    }
-
-    if (!isEmpty(checkIDs)) {
-      if (arr.length <= 0) {
-        passflag = true
-      }
     } else {
-      message.warning(`暂无已计划数据`)
-      passflag = false
+      if (!isEmpty(checkIDs)) {
+        if (arr.length <= 0) {
+          passflag = true
+        }
+      } else {
+        message.warning(`暂无已计划数据`)
+        passflag = false
+      }
+      return passflag
     }
-    return passflag
   }
 
   const toggleVerifyVisible = (visible: boolean) => {
