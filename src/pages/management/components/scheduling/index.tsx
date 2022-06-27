@@ -52,7 +52,9 @@ function Index() {
   const FormData = (e: any) => {
     setFormData(e)
     setCheckIDs([])
+    setSchedulingIDs([])
   }
+
   // 甘特图数据
   useEffect(() => {
     if (formData !== undefined) {

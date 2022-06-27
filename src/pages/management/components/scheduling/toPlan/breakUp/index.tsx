@@ -714,12 +714,15 @@ const BreakUp = (props: any) => {
       render: (_value: any, _row: any, index: number) => {
         return (
           <div className={styles.flex}>
-            {index !== 0 ? (
-              <Button
-                onClick={() => reduce(_row.ids)}
-                type="primary"
-                icon={<MinusOutlined />}
-              />
+            {data.length > 1 ? (
+              <>
+                {console.log(data)}
+                <Button
+                  onClick={() => reduce(_row.ids)}
+                  type="primary"
+                  icon={<MinusOutlined />}
+                />
+              </>
             ) : null}
           </div>
         )
