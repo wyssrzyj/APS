@@ -205,14 +205,15 @@ function ProductionPlan() {
     return <></>
   }
   const getSort = (_pagination, _filters, sorter) => {
-    const sortType =
-      sorter.order === 'ascend'
-        ? { sortType: 'asc' }
-        : sorter.order === 'descend'
-        ? { sortType: 'desc' }
-        : { sortType: '' }
-    setParams({ ...params, ...sortType })
-    // tableChange()
+    // const sortType =
+    //   sorter.order === 'ascend'
+    //     ? { sortType: 'asc' }
+    //     : sorter.order === 'descend'
+    //     ? { sortType: 'desc' }
+    //     : { sortType: '' }
+    // setParams({ ...params, ...sortType })
+
+    tableChange && tableChange(_pagination, _filters, sorter)
   }
   const handleOk = () => {
     setIsModalVisible(false)

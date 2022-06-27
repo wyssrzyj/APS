@@ -38,10 +38,10 @@ const useTableChange = (
       const flag = required.every((item) => keys.includes(item))
       flag && (await getDataList())
     })()
-  }, [params, sorterField, order])
+  }, [params, pageNum, pageSize, sorterField, order])
   useEffect(() => {
-    setPageNum(params.pageNum)
-    setPageSize(params.pageSize)
+    setPageNum(1)
+    setPageSize(10)
   }, [params])
 
   const getDataList = async () => {

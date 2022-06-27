@@ -151,12 +151,14 @@ function Production() {
         : sorter.order === 'descend'
         ? { sortType: 'desc' }
         : { sortType: '' }
-    setParams({
-      ...formData,
-      pageNum: _pagination.current,
-      pageSize: _pagination.pageSize,
-      ...sortType
-    })
+
+    // setParams({
+    //   ...formData,
+    //   pageNum: _pagination.current,
+    //   pageSize: _pagination.pageSize,
+    //   ...sortType
+    // })..
+    tableChange && tableChange(_pagination, _filters, sorter)
   }
   return (
     <div className={styles.qualification}>
