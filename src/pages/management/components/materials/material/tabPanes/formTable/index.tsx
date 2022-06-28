@@ -4,7 +4,7 @@ import { DatePicker, Input, Select, Space, Table } from 'antd'
 import classNames from 'classnames'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { Icon } from '@/components'
 import { materialSetApis } from '@/recoil/apis'
@@ -14,7 +14,7 @@ import styles from './index.module.less'
 const FormTable = (props: any) => {
   const { tableData, sizeList, saveData, select, recheckData } = props
   const { Option } = Select
-  const scrollBox = React.createRef()
+
   const [initialData, setInitialData] = useState<any>([]) //接口初始数据
 
   const [notData, setNotData] = useState<any>([]) //操作数据
@@ -28,9 +28,14 @@ const FormTable = (props: any) => {
   const [cloneData, setCloneData] = useState<any>([]) // 重新检查修改后的数据
 
   const [section, setSection] = useState<any>([]) //所属工段
-  const [sectionTime, setSectionTime] = useState<any>() //工段时间
-
-  const { getTheSize, materialData, materialSaved, checked } = materialSetApis
+  const sectionType = useRef({ type: false, id: '0' }) //获取最新 的值
+  const {
+    getTheSize,
+    materialData,
+    materialSaved,
+    checked,
+    materialCompletionTimeList
+  } = materialSetApis
   const map = new Map()
   map.set('1', '裁剪')
   map.set('2', '缝制')
@@ -39,17 +44,22 @@ const FormTable = (props: any) => {
   map.set('5', '外发')
   map.set('6', '缝制线外组')
 
-  // 获取最大值物料齐套时间
-  const getMaxCompletionTime = (list, section) => {
-    // setSection(section)
-  }
   useEffect(() => {
+    sectionList()
+  }, [select])
+  let sectionList = async () => {
+    console.log(select)
+    let res = await materialCompletionTimeList({
+      id: select.externalProduceOrderId
+    })
+    console.log(res)
+
     let arr = [
       {
         externalProduceOrderId: 1,
         externalProduceOrderNum: '1',
         section: '1',
-        allReadyTime: '1655740800000'
+        allReadyTime: '1658970138000'
       },
       {
         externalProduceOrderId: 2,
@@ -76,23 +86,21 @@ const FormTable = (props: any) => {
       item.value = item.allReadyTime
     })
     setSection(arr) //所属工段
-  }, [])
+  }
+
   //初始赋值
   useEffect(() => {
     if (!isEmpty(tableData)) {
-      //初始
       setInitialData(tableData)
-
-      // getMaxCompletionTime(tableData, arr)
     }
   }, [tableData])
 
   useEffect(() => {
-    if (!isEmpty(data)) {
-      saveData && saveData(data)
+    if (!isEmpty(notData)) {
+      saveData && saveData(notData)
     }
     //给后台传递的数据
-  }, [data])
+  }, [notData])
   //添加最后一层的时间
   const getMaxTime = (v) => {
     let time = []
@@ -134,6 +142,14 @@ const FormTable = (props: any) => {
     if (!isEmpty(sizeList)) {
       const columns: any = [
         {
+          title: '物料类型',
+          width: 100,
+          dataIndex: 'materialKind',
+          fixed: 'left',
+          align: 'center',
+          key: 'materialKind'
+        },
+        {
           title: '物料代码',
           dataIndex: 'materialCode',
           width: 150,
@@ -150,12 +166,21 @@ const FormTable = (props: any) => {
           key: 'materialName'
         },
         {
-          title: '物料颜色代码',
-          dataIndex: 'skuCode',
+          title: '所属工段',
           width: 100,
+          dataIndex: 'section',
+          fixed: 'left',
           align: 'center',
-          key: 'materialColCode'
+          key: 'section',
+          render: (e) => <>{map.get(e)}</>
         },
+        // {
+        //   title: '物料颜色代码',
+        //   dataIndex: 'skuCode',
+        //   width: 100,
+        //   align: 'center',
+        //   key: 'materialColCode'
+        // },
         {
           title: '颜色',
           dataIndex: 'proColName',
@@ -282,31 +307,41 @@ const FormTable = (props: any) => {
 
   //渲染最终数据
   useEffect(() => {
-    if (select !== undefined) {
-      if (select.name === '重新检查') {
-        //判断修改中是否有值 有值就用老数据
-        if (!isEmpty(cloneData)) {
-          setData(cloneData)
-          recheckData && recheckData(cloneData)
-        } else {
+    if (sectionType.current.type === false) {
+      console.log('最终渲染', sectionType.current.type)
+
+      if (select !== undefined) {
+        if (select.name === '重新检查') {
+          //判断修改中是否有值 有值就用老数据
+          if (!isEmpty(cloneData)) {
+            setData(cloneData)
+            recheckData && recheckData(cloneData)
+          } else {
+            setData(notData)
+            recheckData && recheckData(notData)
+          }
+        }
+
+        if (select.name === '已检查') {
           setData(notData)
-          recheckData && recheckData(notData)
+        }
+
+        if (select.name !== '已检查' && select.name !== '重新检查') {
+          setData(notData)
         }
       }
-
-      if (select.name === '已检查') {
-        setData(notData)
+      if (!isEmpty(renderData)) {
+        setLoading(false)
+        setColumnsList(renderData) //渲染结构
       }
-
-      if (select.name !== '已检查' && select.name !== '重新检查') {
-        setData(notData)
-      }
-    }
-    if (!isEmpty(renderData)) {
-      setLoading(false)
-      setColumnsList(renderData) //渲染结构
     }
   }, [renderData, notData, select])
+  // useEffect(() => {
+  //   if (!isEmpty(data)) {
+  //     console.log('是否更新', data)
+  //     // getData.current.getData = data
+  //   }
+  // }, [data])
 
   //处理建值对
   const conversion = (data: any[]) => {
@@ -328,7 +363,7 @@ const FormTable = (props: any) => {
   const subitemProcessing = (e) => {
     if (!isEmpty(e)) {
       const arr = e.map((v: any) => {
-        v.id = v.skuCode
+        v.id = v.materialCode
         v.key = v.id
 
         v.deliveredQty = v.deliveredQty === null ? 0 : v.deliveredQty //测试~~~已出库数量暂无 设置0
@@ -375,7 +410,7 @@ const FormTable = (props: any) => {
         item.enoughFlag = item.shortOfProductNum > 0 ? 0 : 1 //物料缺少数量-头
       })
 
-      setTime(initialData[0].bottomTime)
+      // setTime(initialData[0].bottomTime)
 
       setNotData([...initialData])
       setDefaultExpandedRow([...defaultExpandedRow])
@@ -394,14 +429,17 @@ const FormTable = (props: any) => {
   }
 
   const onChange = (e: any, currentValue: any) => {
-    const cloneTime = data
+    // const cloneTime = getData.current.getData
+    const cloneTime = notData
     processingData(cloneTime, moment(e).valueOf(), currentValue, 'time')
   }
 
   // let timeout: NodeJS.Timeout
 
   const quantity = (e: any, currentValue: any) => {
-    const cloneNumber = data
+    // console.log('uef获取最新的值', getData.current.getData)
+    // const cloneNumber = getData.current.getData
+    const cloneNumber = notData
 
     processingData(cloneNumber, e, currentValue, 'number')
   }
@@ -454,6 +492,13 @@ const FormTable = (props: any) => {
       let arr = cloneDeep(current)
       setNotData([...arr])
 
+      //**判断是否选择 选择 所属工段 直接过滤显示
+      if (sectionType.current.type === true) {
+        const arrFilter = arr.filter(
+          (item) => item.section === sectionType.current.id
+        )
+        setData([...arrFilter])
+      }
       setCloneData([...arr]) //重新检查使用
     }
   }
@@ -487,48 +532,80 @@ const FormTable = (props: any) => {
   }
 
   const FormData = (e: any) => {
-    // 1.默认不选择
-    console.log('form数据', e)
-    console.log(section)
-    const currentItem = section.filter((item) => item.id === e.factoryId)[0]
-    setSectionTime(Number(currentItem.value))
-    // 工段查询 前段来做
-    // const arr = notData.filter((item) => item.id === '123344')
-    // id: '123344'
-    // setData(arr)
-    // checkStatus
+    if (e.factoryId !== undefined) {
+      sectionType.current = { type: true, id: e.factoryId }
+      const cloneNotData = cloneDeep(notData)
+      const arr = cloneNotData.filter((item) => item.section === e.factoryId)
+      setData([...arr])
+    } else {
+      sectionType.current.type = false
+      setData([...notData])
+    }
+  }
+
+  const updateSection = (e) => {
+    console.log('更新', e)
+    setSection(e)
+    let sum = []
+    if (!isEmpty(e)) {
+      e.forEach((item) => {
+        sum.push(Number(item.value))
+      })
+    }
+    let max = sum.sort().reverse()[0]
+    setTime(max)
+    console.log('🚀 ~ file: index.tsx ~ line 542 ~ updateSection ~ max', max)
   }
 
   const disabledEndDate = (current: any, startTime: any) => {
+    //sectionType 工段选中后 不再进行判断不可用时间
     return current && startTime && current < startTime
   }
 
-  const MaterialDateBottom = (e) => {
-    setSectionTime(null) //清空工段时间
+  const materialDateBottom = (e) => {
     let arr = cloneDeep(data)
     arr[0].bottomTime = moment(e).valueOf()
     setData([...arr])
-
     setTime(moment(e).valueOf())
     setCloneData([...arr])
   }
   //获取最大值
-  const displayTime = (v, i, sectionTime) => {
-    //先判断工段时间
-    console.log('是否更新', sectionTime)
+  const displayTime = (v, i, section) => {
+    //未选择工段
+    if (sectionType.current.type === false) {
+      let sum = []
+      if (!isEmpty(section)) {
+        section.forEach((item) => {
+          sum.push(Number(item.value))
+        })
+      }
+      let max = sum.sort().reverse()[0]
 
-    if (sectionTime !== null && sectionTime !== undefined) {
-      return moment(sectionTime)
-    } else {
-      // 手动
+      let maxMaterialDate = max > i ? max : i
+
       if (v !== null && v !== undefined) {
-        if (v > i) {
+        if (v > maxMaterialDate) {
           return moment(v)
         } else {
-          return moment(i)
+          return moment(maxMaterialDate)
         }
       } else {
-        return undefined
+        return moment(maxMaterialDate)
+      }
+    } else {
+      let sum = []
+      if (!isEmpty(section)) {
+        section.forEach((item) => {
+          sum.push(Number(item.value))
+        })
+      }
+      let max = sum.sort().reverse()[0]
+      // 展示数据不为空
+      if (!isEmpty(data)) {
+        let maxMaterialDate = max > getMaxTime(data) ? max : getMaxTime(data)
+        return moment(maxMaterialDate)
+      } else {
+        return moment(max)
       }
     }
   }
@@ -552,12 +629,12 @@ const FormTable = (props: any) => {
             <DatePicker
               disabled={whetherAvailable(select)}
               allowClear={false}
-              // disabledDate={(current) =>
-              //   disabledEndDate(current, getMaxTime(notData))
-              // }
-              value={displayTime(time, data[0].bottomTime, sectionTime)}
+              disabledDate={(current) =>
+                disabledEndDate(current, getMaxTime(notData))
+              }
+              value={displayTime(time, data[0].bottomTime, section)}
               onChange={(e) => {
-                MaterialDateBottom(e)
+                materialDateBottom(e)
               }}
             />
           </Table.Summary.Cell>
@@ -574,6 +651,7 @@ const FormTable = (props: any) => {
           type={whetherAvailable(select)}
           factoryData={section}
           FormData={FormData}
+          updateSection={updateSection}
         ></Forms>
       </div>
       <Table

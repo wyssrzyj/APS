@@ -19,8 +19,9 @@ const HeaderForm = (props: {
   FormData: any
   factoryData: any
   type: boolean
+  updateSection: any
 }) => {
-  const { FormData, factoryData, type } = props
+  const { FormData, factoryData, type, updateSection } = props
   const { sectionList } = materialSetApis
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -29,7 +30,7 @@ const HeaderForm = (props: {
   const { Option } = Select
 
   const [workshop, setWorkshop] = useState<any>()
-  const [completionTime, setCompletionTime] = useState<any>(66666)
+  const [selected, setSelected] = useState<any>() //选中
 
   useEffect(() => {
     setWorkshop(factoryData)
@@ -38,7 +39,7 @@ const HeaderForm = (props: {
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
     //处理时间格式
-    const timeFormat = { ...values, ...values.planEndDate }
+    const timeFormat = { ...values }
     FormData && FormData(timeFormat)
   }, 500)
 
@@ -46,33 +47,49 @@ const HeaderForm = (props: {
     setTimeout(async () => {
       await handleSubmit()
     })
+
     if (type === 'input') {
       return event.target.value
     }
-    if (type === 'picker') {
-      if (event !== null) {
-        event.startPlanEndDate = moment(event[0]).valueOf()
-        event.endPlanEndDate = moment(event[1]).valueOf()
-        return event
-      } else {
-        return null
-      }
-    }
+
     if (type === 'select') {
       return event
     }
 
     return event
   }
-  const getFactoryName = (_e: any, item) => {
-    const current = workshop.filter((v) => v.id === item.key)[0]
-    form.setFieldsValue({
-      productNum: moment(Number(current.value)).format('YYYY-MM-DD')
-    })
-  }
+  //切换展示
   useEffect(() => {
-    console.log(completionTime)
-  }, [completionTime])
+    if (selected !== undefined) {
+      const current = workshop.filter((v) => v.id === selected.key)[0]
+      form.setFieldsValue({
+        productNum: moment(Number(current.value))
+      })
+    } else {
+      form.setFieldsValue({ productNum: null })
+    }
+  }, [workshop, selected])
+
+  const getFactoryName = (_e: any, item) => {
+    setSelected(item)
+  }
+
+  //更新
+  const materialDateBottom = (e) => {
+    if (selected !== undefined) {
+      const current = workshop.filter((v) => v.id === selected.key)[0]
+      current.value = moment(e).valueOf()
+      const subscript = workshop.findIndex(
+        (item: any) => item.id === current.id
+      )
+      if (subscript !== -1) {
+        workshop.splice(subscript, 1, current)
+        setWorkshop(workshop)
+        updateSection && updateSection(workshop)
+      }
+    }
+  }
+
   return (
     <div>
       <Form form={form}>
@@ -104,7 +121,11 @@ const HeaderForm = (props: {
           </Col>
           <Col span={13}>
             <Form.Item {...layout} name="productNum" label="工段物料齐套日期">
-              <Input allowClear disabled={true} />
+              <DatePicker
+                onChange={(e) => {
+                  materialDateBottom(e)
+                }}
+              />
             </Form.Item>
           </Col>
         </Row>
