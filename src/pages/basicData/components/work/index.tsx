@@ -173,11 +173,7 @@ const Index = () => {
         )
       }
     },
-    {
-      title: '班组人数',
-      align: 'center',
-      dataIndex: 'remark'
-    },
+
     {
       title: '备注',
       align: 'center',

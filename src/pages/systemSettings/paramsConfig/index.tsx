@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-05-19 08:38:27
- * @LastEditTime: 2022-06-21 13:47:11
+ * @LastEditTime: 2022-06-28 18:22:23
  * @Description:
  * @LastEditors: lyj
  */
@@ -42,7 +42,7 @@ function Vacations() {
   const [type, setType] = useState(false) //编辑或者新增
   const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗+
   const [InputNumberValue, setInputNumberValue] = useState()
-  const [list, setlist] = useState([]) //接口数据
+  const [list, setList] = useState<any>({}) //接口数据
 
   const [form] = Form.useForm()
   const { systemParameter, systemParameters } = systemParametersApis
@@ -62,8 +62,8 @@ function Vacations() {
   }, [])
   const api = async () => {
     const arr = await systemParameter()
-
-    setlist(arr)
+    setList(arr)
+    setInputNumberValue(arr.deliveryDateDeductionDays)
   }
 
   // eslint-disable-next-line no-sparse-arrays
@@ -77,10 +77,7 @@ function Vacations() {
       address: `London, Park Lane no. ${i}`
     })
   }
-  //头部form的数据
-  const FormData = (e: any) => {
-    console.log(e)
-  }
+
   const onPaginationChange = (
     page: React.SetStateAction<number>,
     pageSize: React.SetStateAction<number>
@@ -104,10 +101,7 @@ function Vacations() {
       setMovIsModalVisible(true)
     }
   }
-  const movApi = () => {
-    console.log('删除逻辑')
-    console.log('选中的删除id', selectedRowKeys)
-  }
+
   const onSelectChange = (selectedRowKeys: React.SetStateAction<never[]>) => {
     setSelectedRowKeys(selectedRowKeys)
   }
@@ -143,9 +137,6 @@ function Vacations() {
   }
 
   const onFinish = async (values: any) => {
-    console.log(values)
-    console.log(InputNumberValue)
-
     const arr: any = {}
     //重新排程时锁定
     // arr.lockTime = values.lockTime.delay
@@ -164,24 +155,38 @@ function Vacations() {
     // arr.resourceTimeUnit = values.resourceTime.day
     arr.resourceTime = 30
     arr.resourceTimeUnit = '1'
-    //交期权重
+
+    arr.waringColor = values.waringColor[0].color
+
+    //规则设置
+    // 承诺交期计算
+    arr.deliveryDateDeductionDays = InputNumberValue
+
     //  未延期
     arr.unExpireTime = values.deliveryWeight[0].delay
     arr.unExpireTimeUnit = values.deliveryWeight[0].day
     arr.unExpireWeight = values.deliveryWeight[0].weight
+
+    // 预警延期
+    arr.earlyWaringTime = values.deliveryWeight[1].delay
+    arr.earlyWaringTimeUnit = values.deliveryWeight[1].day
+    arr.earlyWaringWeight = values.deliveryWeight[1].weight
+
     //  延期
-    arr.expireTime = values.deliveryWeight[1].delay
-    arr.expireTimeUnit = values.deliveryWeight[1].day
-    arr.expireWeight = values.deliveryWeight[1].weight
+    arr.expireTime = values.deliveryWeight[2].delay
+    arr.expireTimeUnit = values.deliveryWeight[2].day
+    arr.expireWeight = values.deliveryWeight[2].weight
+
     arr.expireColorConfigs = values.expireColorConfigs
 
-    if (repeat(arr.expireColorConfigs) !== true) {
-      // console.log(arr)
+    // 预警设置
+    arr.waringConfigs = values.waringConfigs
 
-      // const res = await systemParameters(arr)
-      // if (res === true) {
-      //   message.success('保存成功')
-      // }
+    if (repeat(arr.expireColorConfigs) !== true) {
+      const res = await systemParameters(arr)
+      if (res === true) {
+        message.success('保存成功')
+      }
       api()
     } else {
       message.warning('时间不能重复')
@@ -211,7 +216,6 @@ function Vacations() {
     form.submit()
   }
   const getInputNumberValue = (e) => {
-    console.log(e.target.value)
     setInputNumberValue(e.target.value)
   }
 
@@ -235,9 +239,9 @@ function Vacations() {
                 <Inputs onChange={undefined} list={list} item={item} />
               </Form.Item>
             ))}
-            <Form.Item label="预警显示颜色" name="color">
+            <Form.Item label="预警显示颜色" name="waringColor">
               {/* 颜色 */}
-              <SingleColor onChange={undefined} list={null} />
+              <SingleColor onChange={undefined} list={list} />
             </Form.Item>
             <Form.Item label="延期显示颜色" name="expireColorConfigs">
               {/* 颜色 */}
@@ -251,7 +255,7 @@ function Vacations() {
             <Form.Item label="承诺交期计算" name="6666">
               承诺交期 = 销售订单交期-{' '}
               <InputNumber
-                value={data[1].weight}
+                value={list.deliveryDateDeductionDays}
                 style={{ width: 70 }}
                 min={1}
                 onBlur={getInputNumberValue}
@@ -265,8 +269,8 @@ function Vacations() {
           <div>
             预警设置
             <div className={styles.border}></div>
-            <Form.Item label="未完成生产单预警" name="earlyWarning">
-              <EarlyWarning onChange={undefined} list={null} />
+            <Form.Item label="未完成生产单预警" name="waringConfigs">
+              <EarlyWarning onChange={undefined} list={list} />
             </Form.Item>
           </div>
         </Form>

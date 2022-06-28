@@ -1,3 +1,10 @@
+/*
+ * @Author: lyj
+ * @Date: 2022-03-02 15:41:46
+ * @LastEditTime: 2022-06-28 17:00:59
+ * @Description:
+ * @LastEditors: lyj
+ */
 import { message } from 'antd'
 
 import axios from '@/utils/axios'
@@ -42,6 +49,16 @@ export const moreOperation = async (staffId: string) => {
 export const operationUser = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post('/api/basic/staff/save', params)
+    return res
+  } catch (e) {
+    return e
+  }
+}
+export const newAlertMessage = async () => {
+  try {
+    const res: ResponseProps = await axios.post(
+      ' /aps/waring-order/new-waring-list'
+    )
     return res
   } catch (e) {
     return e

@@ -9,13 +9,13 @@ import styles from './index.module.less'
 function WorkingHours(props: { onChange: any; list: any }) {
   const { onChange, list } = props
 
-  const sum: any = [{ id: '1', front: 1, after: 2, advance: 1 }] //初始数据
+  const sum: any = [{ type: '1', id: '1', minNum: 1, maxNum: 2, daysAhead: 1 }] //初始数据
   const [data, setData] = useState<any>(sum)
   // 回显
   useEffect(() => {
     if (!isEmpty(list)) {
-      if (!isEmpty(list.expireColorConfigs)) {
-        setData(list.expireColorConfigs)
+      if (!isEmpty(list.waringConfigs)) {
+        setData(list.waringConfigs)
       }
     }
   }, [list])
@@ -24,10 +24,11 @@ function WorkingHours(props: { onChange: any; list: any }) {
   const executionMethod = (type: string, index: number) => {
     if (type === 'push') {
       data.push({
+        type: 1,
         id: index + new Date().valueOf() * Math.random(),
-        front: data[data.length - 1].after + 1,
-        after: data[data.length - 1].after + 2,
-        advance: data[data.length - 1].advance + 1
+        minNum: data[data.length - 1].maxNum + 1,
+        maxNum: data[data.length - 1].maxNum + 2,
+        daysAhead: data[data.length - 1].daysAhead + 1
       })
       setData([...data])
     } else {
@@ -42,23 +43,23 @@ function WorkingHours(props: { onChange: any; list: any }) {
   }
   // 修改数字输入框
   const inputValue = (value: any, index: number, type: string) => {
-    if (type === 'front') {
-      if (value < data[index].after) {
+    if (type === 'minNum') {
+      if (value < data[index].maxNum) {
         data[index][type] = value
         setData([...data])
       } else {
         message.error('第一个不能大于第二个')
       }
     }
-    if (type === 'after') {
-      if (value > data[index].front) {
+    if (type === 'maxNum') {
+      if (value > data[index].minNum) {
         data[index][type] = value
         setData([...data])
       } else {
         message.error('第二个必须大于第一个')
       }
     }
-    if (type === 'advance') {
+    if (type === 'daysAhead') {
       data[index][type] = value
       setData([...data])
     }
@@ -88,8 +89,8 @@ function WorkingHours(props: { onChange: any; list: any }) {
                   className={styles.inputText}
                   min={1}
                   style={{ width: 50 }}
-                  value={data[index].front}
-                  onChange={(e) => inputValue(e, index, 'front')}
+                  value={data[index].minNum}
+                  onChange={(e) => inputValue(e, index, 'minNum')}
                 />
                 (件)~
                 <InputNumber
@@ -97,8 +98,8 @@ function WorkingHours(props: { onChange: any; list: any }) {
                   className={styles.inputText}
                   min={1}
                   style={{ width: 50 }}
-                  value={data[index].after}
-                  onChange={(e) => inputValue(e, index, 'after')}
+                  value={data[index].maxNum}
+                  onChange={(e) => inputValue(e, index, 'maxNum')}
                 />
                 (件) 　
                 <div>
@@ -108,8 +109,8 @@ function WorkingHours(props: { onChange: any; list: any }) {
                     className={styles.inputText}
                     min={1}
                     style={{ width: 50 }}
-                    value={data[index].advance}
-                    onChange={(e) => inputValue(e, index, 'advance')}
+                    value={data[index].daysAhead}
+                    onChange={(e) => inputValue(e, index, 'daysAhead')}
                   />
                   天预警
                 </div>

@@ -16,9 +16,7 @@ function WorkingHours(props: { onChange: any; list: any }) {
   // 回显
   useEffect(() => {
     if (!isEmpty(list)) {
-      if (!isEmpty(list.expireColorConfigs)) {
-        setData(list.expireColorConfigs)
-      }
+      setData([{ id: '1', expireTime: 1, color: list.waringColor }])
     }
   }, [list])
   //随机颜色
