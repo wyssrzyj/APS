@@ -81,34 +81,34 @@ function Overtime() {
         )
       }
     },
-    {
-      title: '班组人数',
-      align: 'center',
-      width: 200,
-      dataIndex: 'teamName',
-      render: (value: string, row: any) => {
-        const chars = value !== null ? value.split(',') : []
-        return (
-          <div>
-            {chars.map(
-              (
-                item:
-                  | boolean
-                  | React.ReactChild
-                  | React.ReactFragment
-                  | React.ReactPortal
-                  | null
-                  | undefined,
-                index: any | null | undefined
-              ) => (
-                // eslint-disable-next-line react/jsx-key
-                <Tag key={index}>{item}</Tag>
-              )
-            )}
-          </div>
-        )
-      }
-    },
+    // {
+    //   title: '班组人数',
+    //   align: 'center',
+    //   width: 200,
+    //   dataIndex: 'teamName',
+    //   render: (value: string, row: any) => {
+    //     const chars = value !== null ? value.split(',') : []
+    //     return (
+    //       <div>
+    //         {chars.map(
+    //           (
+    //             item:
+    //               | boolean
+    //               | React.ReactChild
+    //               | React.ReactFragment
+    //               | React.ReactPortal
+    //               | null
+    //               | undefined,
+    //             index: any | null | undefined
+    //           ) => (
+    //             // eslint-disable-next-line react/jsx-key
+    //             <Tag key={index}>{item}</Tag>
+    //           )
+    //         )}
+    //       </div>
+    //     )
+    //   }
+    // },
     {
       title: '加班日期',
       align: 'center',
