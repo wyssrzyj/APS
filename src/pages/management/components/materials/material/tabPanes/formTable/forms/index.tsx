@@ -20,8 +20,9 @@ const HeaderForm = (props: {
   factoryData: any
   type: boolean
   updateSection: any
+  data: []
 }) => {
-  const { FormData, factoryData, type, updateSection } = props
+  const { FormData, factoryData, type, updateSection, data } = props
   const { sectionList } = materialSetApis
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -31,10 +32,21 @@ const HeaderForm = (props: {
 
   const [workshop, setWorkshop] = useState<any>()
   const [selected, setSelected] = useState<any>() //选中
+  const [timesType, setTimesType] = useState<any>(false)
 
   useEffect(() => {
     setWorkshop(factoryData)
   }, [factoryData])
+  useEffect(() => {
+    setTimesType(type)
+  }, [type])
+  useEffect(() => {
+    if (!isEmpty(data)) {
+      setTimesType(false)
+    } else {
+      setTimesType(true)
+    }
+  }, [data])
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
@@ -62,9 +74,17 @@ const HeaderForm = (props: {
   useEffect(() => {
     if (selected !== undefined) {
       const current = workshop.filter((v) => v.id === selected.key)[0]
-      form.setFieldsValue({
-        productNum: moment(Number(current.value))
-      })
+      console.log(current)
+
+      if (current.value !== null && current.value !== undefined) {
+        form.setFieldsValue({
+          productNum: moment(Number(current.value))
+        })
+      } else {
+        form.setFieldsValue({
+          productNum: undefined
+        })
+      }
     } else {
       form.setFieldsValue({ productNum: null })
     }
@@ -78,7 +98,8 @@ const HeaderForm = (props: {
   const materialDateBottom = (e) => {
     if (selected !== undefined) {
       const current = workshop.filter((v) => v.id === selected.key)[0]
-      current.value = moment(e).valueOf()
+      current.value = e !== null ? moment(e).valueOf() : undefined
+      current.allReadyTime = e !== null ? moment(e).valueOf() : undefined
       const subscript = workshop.findIndex(
         (item: any) => item.id === current.id
       )
@@ -122,6 +143,7 @@ const HeaderForm = (props: {
           <Col span={13}>
             <Form.Item {...layout} name="productNum" label="工段物料齐套日期">
               <DatePicker
+                disabled={timesType}
                 onChange={(e) => {
                   materialDateBottom(e)
                 }}

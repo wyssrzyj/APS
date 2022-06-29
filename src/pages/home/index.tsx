@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-06-20 14:31:30
+ * @LastEditTime: 2022-06-29 10:25:51
  * @Description:
  * @LastEditors: lyj
  */
@@ -102,6 +102,7 @@ const Home = () => {
                         title="生产延期查询"
                         isDelay={true}
                         key="productDelayTable"
+                        type="productDelayTable"
                       />
                     </div>
                   </Col>
@@ -112,7 +113,9 @@ const Home = () => {
                       <div className={styles.content}>
                         <DynamicTable
                           title="齐套生产单库存变动查询"
+                          isDelay={true}
                           key="productChangeTable"
+                          type="productChangeTable"
                         />
                       </div>
                     </Col>
@@ -128,7 +131,8 @@ const Home = () => {
                       <DynamicTable
                         title="生产单剩余工期查询"
                         isDelay={true}
-                        key="productDelayTable1"
+                        key="durationQuery"
+                        type="durationQuery"
                       />
                     </div>
                   </Col>

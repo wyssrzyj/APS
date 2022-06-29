@@ -12,7 +12,14 @@ import { materialSetApis } from '@/recoil/apis'
 import Forms from './forms'
 import styles from './index.module.less'
 const FormTable = (props: any) => {
-  const { tableData, sizeList, saveData, select, recheckData } = props
+  const {
+    tableData,
+    sizeList,
+    saveData,
+    select,
+    recheckData,
+    workshopSection
+  } = props
   const { Option } = Select
 
   const [initialData, setInitialData] = useState<any>([]) //接口初始数据
@@ -29,11 +36,14 @@ const FormTable = (props: any) => {
 
   const [section, setSection] = useState<any>([]) //所属工段
   const sectionType = useRef({ type: false, id: '0' }) //获取最新 的值
+
+  const [materialDate, setMaterialDate] = useState<any>() //物料齐套日期的时间
+
   const {
     getTheSize,
     materialData,
     materialSaved,
-    checked,
+    sectionList,
     materialCompletionTimeList
   } = materialSetApis
   const map = new Map()
@@ -45,48 +55,45 @@ const FormTable = (props: any) => {
   map.set('6', '缝制线外组')
 
   useEffect(() => {
-    sectionList()
-  }, [select])
-  let sectionList = async () => {
-    console.log(select)
-    let res = await materialCompletionTimeList({
-      id: select.externalProduceOrderId
-    })
-    console.log(res)
+    if (select) {
+      console.log(select)
 
-    let arr = [
-      {
-        externalProduceOrderId: 1,
-        externalProduceOrderNum: '1',
-        section: '1',
-        allReadyTime: '1658970138000'
-      },
-      {
-        externalProduceOrderId: 2,
-        externalProduceOrderNum: '2',
-        section: '2',
-        allReadyTime: '1655827200000'
-      },
-      {
-        externalProduceOrderId: 3,
-        externalProduceOrderNum: '3',
-        section: '3',
-        allReadyTime: '1655913600000'
-      },
-      {
-        externalProduceOrderId: 4,
-        externalProduceOrderNum: '4',
-        section: '4',
-        allReadyTime: '1656000000000'
-      }
-    ]
-    arr.map((item: any) => {
+      getSectionList()
+    }
+  }, [select])
+  //处理格式
+  const formatProcessing = (data) => {
+    data.map((item: any) => {
       item.name = map.get(item.section)
       item.id = item.section
       item.value = item.allReadyTime
     })
-    setSection(arr) //所属工段
+    return data
   }
+
+  let getSectionList = async () => {
+    let res = await materialCompletionTimeList({
+      id: select.externalProduceOrderId
+    })
+    console.log('是否有值', res)
+    if (!isEmpty(res)) {
+      setSection(formatProcessing(res))
+    } else {
+      let section = await sectionList()
+      section.map((item) => {
+        item.externalProduceOrderId = item.dictValue
+        item.externalProduceOrderNum = item.dictValue
+        item.section = item.dictValue
+        item.allReadyTime = null
+      })
+      setSection(formatProcessing(section))
+    }
+
+    //所属工段
+  }
+  useEffect(() => {
+    workshopSection && workshopSection(section)
+  }, [section])
 
   //初始赋值
   useEffect(() => {
@@ -97,10 +104,10 @@ const FormTable = (props: any) => {
 
   useEffect(() => {
     if (!isEmpty(notData)) {
-      saveData && saveData(notData)
+      saveData && saveData(notData, materialDate)
     }
     //给后台传递的数据
-  }, [notData])
+  }, [notData, materialDate])
   //添加最后一层的时间
   const getMaxTime = (v) => {
     let time = []
@@ -308,8 +315,6 @@ const FormTable = (props: any) => {
   //渲染最终数据
   useEffect(() => {
     if (sectionType.current.type === false) {
-      console.log('最终渲染', sectionType.current.type)
-
       if (select !== undefined) {
         if (select.name === '重新检查') {
           //判断修改中是否有值 有值就用老数据
@@ -411,6 +416,7 @@ const FormTable = (props: any) => {
       })
 
       // setTime(initialData[0].bottomTime)
+      console.log('吃', initialData)
 
       setNotData([...initialData])
       setDefaultExpandedRow([...defaultExpandedRow])
@@ -544,8 +550,7 @@ const FormTable = (props: any) => {
   }
 
   const updateSection = (e) => {
-    console.log('更新', e)
-    setSection(e)
+    setSection([...e])
     let sum = []
     if (!isEmpty(e)) {
       e.forEach((item) => {
@@ -554,7 +559,6 @@ const FormTable = (props: any) => {
     }
     let max = sum.sort().reverse()[0]
     setTime(max)
-    console.log('🚀 ~ file: index.tsx ~ line 542 ~ updateSection ~ max', max)
   }
 
   const disabledEndDate = (current: any, startTime: any) => {
@@ -609,6 +613,10 @@ const FormTable = (props: any) => {
       }
     }
   }
+  const setDisplayTime = (v, i, section) => {
+    setMaterialDate(displayTime(v, i, section).valueOf())
+    return displayTime(v, i, section)
+  }
   //底部
   const Dome = (e, data) => {
     const cloneData = cloneDeep(e)
@@ -632,7 +640,7 @@ const FormTable = (props: any) => {
               disabledDate={(current) =>
                 disabledEndDate(current, getMaxTime(notData))
               }
-              value={displayTime(time, data[0].bottomTime, section)}
+              value={setDisplayTime(time, data[0].bottomTime, section)}
               onChange={(e) => {
                 materialDateBottom(e)
               }}
@@ -651,6 +659,7 @@ const FormTable = (props: any) => {
           type={whetherAvailable(select)}
           factoryData={section}
           FormData={FormData}
+          data={data}
           updateSection={updateSection}
         ></Forms>
       </div>

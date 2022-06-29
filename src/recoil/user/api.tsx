@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-03-02 15:41:46
- * @LastEditTime: 2022-06-28 17:00:59
+ * @LastEditTime: 2022-06-29 09:58:20
  * @Description:
  * @LastEditors: lyj
  */
@@ -58,6 +58,17 @@ export const newAlertMessage = async () => {
   try {
     const res: ResponseProps = await axios.post(
       ' /aps/waring-order/new-waring-list'
+    )
+    return res
+  } catch (e) {
+    return e
+  }
+}
+export const closePrompt = async (params) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      '/aps/waring-order/close-tips',
+      params
     )
     return res
   } catch (e) {

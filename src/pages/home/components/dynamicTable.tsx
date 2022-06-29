@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-12 13:03:02
- * @LastEditTime: 2022-06-20 08:49:14
+ * @LastEditTime: 2022-06-29 10:25:56
  * @Description:
  * @LastEditors: lyj
  */
@@ -18,7 +18,7 @@ import styles from '../index.module.less'
 const { Option } = Select
 const { productionDelayList, productionChangeList } = productionSingleApis
 const DynamicTable = (props: Record<string, any>) => {
-  const { title, isDelay } = props
+  const { title, isDelay, type } = props
   const [facList, setFacList] = useState([])
   const [selectOptions, setSelectOptions] = useState([])
   const [form] = Form.useForm()
@@ -92,18 +92,20 @@ const DynamicTable = (props: Record<string, any>) => {
             allowClear
           />
         </Form.Item>
-        <Form.Item name="day" label="最近">
-          <Select
-            placeholder="请选择"
-            style={{ width: '100px' }}
-            allowClear
-            className={styles.mb18}
-          >
-            <Option value={7}>7天</Option>
-            <Option value={14}>14天</Option>
-            <Option value={30}>30天</Option>
-          </Select>
-        </Form.Item>
+        {type === 'durationQuery' ? null : (
+          <Form.Item name="day" label="最近">
+            <Select
+              placeholder="请选择"
+              style={{ width: '100px' }}
+              allowClear
+              className={styles.mb18}
+            >
+              <Option value={7}>7天</Option>
+              <Option value={14}>14天</Option>
+              <Option value={30}>30天</Option>
+            </Select>
+          </Form.Item>
+        )}
       </Form>
       <div className={styles.dynamicTable}>
         <CusDragTable

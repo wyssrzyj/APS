@@ -4,6 +4,7 @@ import { Button, message, Modal, Popover, Tag } from 'antd'
 import { cloneDeep } from 'lodash'
 import moment from 'moment'
 import { SetStateAction, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import { CusDragTable, SearchBar } from '@/components'
 import { productionPlanApis } from '@/recoil/apis'
@@ -32,9 +33,11 @@ const productStatus = [
   { label: '生产中', value: 3 },
   { label: '生产完成', value: 4 }
 ]
-
 function ProductionPlan() {
-  const [params, setParams] = useState({
+  const location = useLocation()
+  const { state }: any = location
+
+  const [params, setParams] = useState<any>({
     pageSize: 10,
     pageNum: 1
   })
@@ -49,7 +52,15 @@ function ProductionPlan() {
   const [workshopSectionList, setWorkshopSectionList] = useState([])
   const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
   const [editData, setEditData] = useState<any>() //编辑数据
-
+  // const [urlState, setUrlState] = useState<any>()
+  useEffect(() => {
+    // if()
+    if (state !== null) {
+      // setUrlState(state)
+      const id = state.id
+      setParams({ ...params, externalProduceOrderNum: id })
+    }
+  }, [state])
   const {
     tableChange,
     dataSource,
