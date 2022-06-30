@@ -15,6 +15,9 @@ import Popup from './popup'
 function Production() {
   const { productionList, factoryList } = productionSingleApis
 
+  const img =
+    'https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/img.jpg'
+
   const map = new Map()
   map.set(1, '待计划')
   map.set(2, '已计划')
@@ -57,6 +60,7 @@ function Production() {
       setData([])
     }
   }, [dataSource])
+
   //操作
   tableColumns[tableColumns.length - 1].render = (_value: any, _row: any) => {
     return (
@@ -78,11 +82,22 @@ function Production() {
       </div>
     )
   }
+  tableColumns[1].render = (v) => {
+    return (
+      <div key={v} className={styles.tableColumnsImg}>
+        <img
+          className={styles.tableColumnsImg}
+          src={v !== null ? v : img}
+          alt=""
+        />
+      </div>
+    )
+  }
   //剩余工期
-  // tableColumns[7].render = (_text: any, record: any, index: number) => {
-  //   return <div key={index}>{8848}</div>
-  // }
-  // tableColumns[7].sorter = true
+  tableColumns[9].render = (_text: any, record: any, index: number) => {
+    return <div key={index}>{_text}</div>
+  }
+  tableColumns[9].sorter = true
 
   //工厂名称
   useEffect(() => {
@@ -145,19 +160,15 @@ function Production() {
   }
 
   const getSort = (_pagination, _filters, sorter) => {
-    const sortType =
-      sorter.order === 'ascend'
-        ? { sortType: 'asc' }
-        : sorter.order === 'descend'
-        ? { sortType: 'desc' }
-        : { sortType: '' }
+    if (sorter.order !== undefined) {
+      const sortType = sorter.order === 'ascend' ? 'asc' : 'desc'
+      setParams({
+        ...formData,
+        sortField: 'orderDelivery',
+        sortType: sortType
+      })
+    }
 
-    // setParams({
-    //   ...formData,
-    //   pageNum: _pagination.current,
-    //   pageSize: _pagination.pageSize,
-    //   ...sortType
-    // })..
     tableChange && tableChange(_pagination, _filters, sorter)
   }
   return (

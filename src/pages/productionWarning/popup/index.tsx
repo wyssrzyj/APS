@@ -158,10 +158,8 @@ function Popup(props: { content: any }) {
       if (arr.success === true) {
         const res = await overtimeAddition(list)
         if (res === true) {
-          // newlyAdded()
-          // form.resetFields()
           setNewlyAdded(false)
-          // updateMethod && updateMethod()
+          message.success('新增成功')
         }
       }
     }

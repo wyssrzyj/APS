@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { ReactNode } from 'react'
 
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const FORMAT_DATE = 'YYYY-MM-DD '
 
 export const searchConfigs = [
   {
@@ -10,6 +10,7 @@ export const searchConfigs = [
     type: 'select',
     allowClear: true,
     placeholder: '请选择工厂名称',
+    width: 250,
     options: []
   },
   {
@@ -17,6 +18,7 @@ export const searchConfigs = [
     field: 'externalProduceOrderNum',
     type: 'input',
     allowClear: true,
+
     placeholder: '请输入生产单号'
   },
   {
@@ -29,19 +31,29 @@ export const searchConfigs = [
   },
   {
     label: '产品款号',
-    field: 'productModelNo',
+    field: 'productNum',
     allowClear: true,
     placeholder: '请输入产品款号',
     type: 'input',
     options: []
   },
   {
-    label: '生产状态',
-    field: 'productStatus',
+    label: '预警状态',
+    field: 'abnormalStatus',
+    type: 'select',
+    allowClear: true,
+    placeholder: '请选择预警状态',
+    options: [],
+    width: 250
+  },
+  {
+    label: '已处理',
+    field: 'disposeStatus',
     type: 'select',
     allowClear: true,
     placeholder: '请选择生产状态',
-    options: []
+    options: [],
+    width: 250
   }
 ]
 
@@ -51,7 +63,7 @@ export const tableColumns: any = [
     align: 'center',
     dataIndex: 'externalProduceOrderNum',
     key: 'externalProduceOrderNum',
-    width: 200
+    width: 100
   },
   {
     title: '款图',
@@ -59,14 +71,14 @@ export const tableColumns: any = [
     dataIndex: 'img',
     key: 'img',
 
-    width: 200
+    width: 100
   },
   {
     title: '工厂名称',
     align: 'center',
     dataIndex: 'factoryName',
     key: 'factoryName',
-    width: 200
+    width: 80
   },
   {
     title: '产品名称',
@@ -74,72 +86,83 @@ export const tableColumns: any = [
     dataIndex: 'productName',
     key: 'productName',
 
-    width: 250
+    width: 80
   },
   {
     title: '产品款号',
     align: 'center',
     dataIndex: 'productNum',
     key: 'productNum',
-    width: 200
+    width: 80
   },
   {
     title: '客户款号',
-    dataIndex: 'customerAccount',
-    key: 'customerAccount'
+    dataIndex: 'productClientNum',
+    key: 'productClientNum',
+    width: 80
   },
   {
     title: '生产单总量',
     align: 'center',
-    key: 'shopName',
-    dataIndex: 'shopName',
-    width: 200
+    key: 'orderSum',
+    dataIndex: 'orderSum',
+    width: 80
   },
   {
     title: '承诺交期',
     align: 'center',
-    key: 'teamName',
-    dataIndex: 'teamName',
-    width: 200
+    key: 'orderDelivery',
+    dataIndex: 'orderDelivery',
+    width: 80
   },
 
   {
     title: '剩余工期',
     align: 'center',
-    key: 'productionAmount',
-    dataIndex: 'productionAmount',
-    width: 100
+    key: 'remainingDuration',
+    dataIndex: 'remainingDuration',
+    width: 80
   },
   {
     title: '计划完成日期',
     align: 'center',
-    dataIndex: 'planStartTime',
-    key: 'planStartTime',
+    dataIndex: 'planEndDate',
+    key: 'planEndDate',
     width: 170,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
 
   {
-    title: '延期状态',
+    title: '预警状态',
     align: 'center',
-    key: 'deferredStatus',
-    dataIndex: 'deferredStatus',
-    width: 100
+    key: 'abnormalStatus',
+    dataIndex: 'abnormalStatus',
+    width: 100,
+    render: (v) => (v === '1' ? '预警' : '延期')
   },
 
   {
     title: '生产中工段',
     align: 'center',
-    key: 'productionSection',
-    dataIndex: 'productionSection',
-    width: 100
+    key: 'currentSection',
+    dataIndex: 'currentSection',
+    width: 80
   },
+  {
+    title: '已处理',
+    align: 'center',
+    key: 'disposeStatus',
+    dataIndex: 'disposeStatus',
+    width: 80,
+    render: (v) => (v === '0' ? '未处理' : '已处理')
+  },
+
   {
     title: '操作',
     align: 'center',
     dataIndex: 'operate',
-    width: 200,
+    width: 100,
     fixed: 'right'
   }
 ]

@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-06-27 14:17:36
+ * @LastEditTime: 2022-06-29 16:26:04
  * @Description:
  * @LastEditors: lyj
  */
@@ -24,7 +24,13 @@ export const tableColumns: any = [
     dataIndex: 'externalProduceOrderNum'
   },
   {
-    title: '接单工厂',
+    title: '款图',
+    align: 'center',
+    key: 'img',
+    dataIndex: 'img'
+  },
+  {
+    title: '工厂名称',
     key: 'factoryName',
     align: 'center',
     width: 100,
@@ -68,16 +74,17 @@ export const tableColumns: any = [
   {
     title: '承诺交期',
     align: 'center',
-    key: 'teamName',
-    dataIndex: 'teamName',
-    width: 100
+    key: 'committedDeliveryDate',
+    dataIndex: 'committedDeliveryDate',
+    width: 100,
+    render: (v: any) => (v ? moment(v).format('YYYY-MM-DD') : null)
   },
 
   {
     title: '剩余工期',
     align: 'center',
-    key: 'productionAmount',
-    dataIndex: 'productionAmount',
+    key: 'remainingDuration',
+    dataIndex: 'remainingDuration',
     width: 100
   },
   {

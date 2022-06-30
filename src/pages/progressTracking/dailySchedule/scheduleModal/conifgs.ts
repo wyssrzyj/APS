@@ -1,50 +1,67 @@
 import moment from 'moment'
 import { ReactNode } from 'react'
 
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const FORMAT_DATE = 'YYYY-MM-DD HH:mm'
+
+const map = new Map()
+map.set('1', '裁剪')
+map.set('2', '缝制')
+map.set('3', '后整')
+map.set('4', '包装')
+map.set('5', '外发')
+map.set('6', '缝制线外组')
 
 export const tableColumns: any = [
   {
     title: '序号',
     align: 'center',
-    dataIndex: 'serial',
-    width: 200
+    dataIndex: 'sn',
+    width: 100
   },
   {
     title: '所属工段',
     align: 'center',
-    dataIndex: 'img',
-    width: 200
+    dataIndex: 'section',
+    width: 100,
+    render: (v: any) => {
+      return map.get(v)
+    }
   },
   {
     title: '总计划量',
     align: 'center',
-    dataIndex: 'factoryName',
-    width: 200
+    dataIndex: 'orderSum',
+    width: 100
   },
   {
     title: '前工段计划完成日',
     align: 'center',
-    dataIndex: 'productName',
-    width: 250
+    dataIndex: 'preSectionPlanFinishTime',
+    width: 100,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
   {
     title: '前工段实际完成日',
     align: 'center',
-    dataIndex: 'productNum',
-    width: 200
+    dataIndex: 'preSectionRealityFinishTime',
+    width: 100,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
   {
     title: '工段物料齐套日',
     align: 'center',
-    dataIndex: 'productNum',
-    width: 200
+    dataIndex: 'sectionMaterialCompletenessTime',
+    width: 100,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
   {
     title: '计划开始时间',
     align: 'center',
     dataIndex: 'planStartTime',
-    width: 170,
+    width: 100,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
@@ -52,14 +69,13 @@ export const tableColumns: any = [
     title: '计划完成时间',
     align: 'center',
     dataIndex: 'planEndTime',
-    width: 170,
+    width: 100,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
   {
-    title: '备注',
+    title: '操作',
     align: 'center',
-    dataIndex: 'productionAmount',
     width: 100
   }
 ]
@@ -195,20 +211,4 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     allowClear: true,
     span: 12
   }
-
-  // {
-  //   label: '备注',
-  //   name: 'remark',
-  //   field: 'remark',
-  //   value: '',
-  //   type: 'textarea',
-  //   disabled: true,
-  //   placeholder: '请输入备注',
-  //   allowClear: true,
-  //   span: 24,
-  //   layout: {
-  //     labelCol: { span: '3' },
-  //     wrapperCol: { span: '21' }
-  //   }
-  // }
 ]

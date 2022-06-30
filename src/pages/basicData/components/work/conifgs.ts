@@ -24,7 +24,6 @@ export const searchConfigs = [
   },
   {
     label: '工作模式',
-    width: 250,
     field: 'workModeName',
     type: 'input',
     allowClear: true,

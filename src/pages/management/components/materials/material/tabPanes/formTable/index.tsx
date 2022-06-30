@@ -75,7 +75,6 @@ const FormTable = (props: any) => {
     let res = await materialCompletionTimeList({
       id: select.externalProduceOrderId
     })
-    console.log('是否有值', res)
     if (!isEmpty(res)) {
       setSection(formatProcessing(res))
     } else {
@@ -341,12 +340,6 @@ const FormTable = (props: any) => {
       }
     }
   }, [renderData, notData, select])
-  // useEffect(() => {
-  //   if (!isEmpty(data)) {
-  //     console.log('是否更新', data)
-  //     // getData.current.getData = data
-  //   }
-  // }, [data])
 
   //处理建值对
   const conversion = (data: any[]) => {
@@ -416,7 +409,6 @@ const FormTable = (props: any) => {
       })
 
       // setTime(initialData[0].bottomTime)
-      console.log('吃', initialData)
 
       setNotData([...initialData])
       setDefaultExpandedRow([...defaultExpandedRow])
@@ -574,7 +566,7 @@ const FormTable = (props: any) => {
     setCloneData([...arr])
   }
   //获取最大值
-  const displayTime = (v, i, section) => {
+  const displayTime = (v: any, i: any, section: any) => {
     //未选择工段
     if (sectionType.current.type === false) {
       let sum = []
@@ -586,15 +578,18 @@ const FormTable = (props: any) => {
       let max = sum.sort().reverse()[0]
 
       let maxMaterialDate = max > i ? max : i
-
-      if (v !== null && v !== undefined) {
-        if (v > maxMaterialDate) {
-          return moment(v)
+      if (maxMaterialDate === null) {
+        return undefined
+      } else {
+        if (v !== null && v !== undefined) {
+          if (v > maxMaterialDate) {
+            return moment(v)
+          } else {
+            return moment(maxMaterialDate)
+          }
         } else {
           return moment(maxMaterialDate)
         }
-      } else {
-        return moment(maxMaterialDate)
       }
     } else {
       let sum = []
@@ -614,8 +609,12 @@ const FormTable = (props: any) => {
     }
   }
   const setDisplayTime = (v, i, section) => {
-    setMaterialDate(displayTime(v, i, section).valueOf())
-    return displayTime(v, i, section)
+    if (displayTime(v, i, section) === undefined) {
+      return undefined
+    } else {
+      setMaterialDate(displayTime(v, i, section).valueOf())
+      return displayTime(v, i, section)
+    }
   }
   //底部
   const Dome = (e, data) => {

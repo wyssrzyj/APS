@@ -1,67 +1,110 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-17 08:41:26
- * @LastEditTime: 2022-06-21 15:12:30
+ * @LastEditTime: 2022-06-30 14:33:54
  * @Description:
  * @LastEditors: lyj
  */
-import { Table } from 'antd'
+import { Input, Table } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
-import { isEmpty } from 'lodash'
-import moment from 'moment'
+import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
-// plannedNumber  计划数
-//  Completed quantity  完成数量
 
-const TableDome = () => {
+import { productionWarning } from '@/recoil/apis'
+
+import styles from './index.module.less'
+const TableDome = (props) => {
+  const { onChang, current } = props
+  const { getDailyScheduleList } = productionWarning
+
   const columns: any = [
     {
       title: '班组',
       align: 'center',
-      dataIndex: 'materialName',
+      dataIndex: 'teamName',
       fixed: 'left',
       width: 150,
-      key: 'materialName'
+      key: 'teamName'
     }
   ]
   const [titleData, setTitleData] = useState([])
 
   const [newColumns, setNewColumns] = useState([])
+  const [list, setList] = useState([])
 
   useEffect(() => {
     api()
   }, [])
 
-  const api = () => {
-    const titleData = ['6.15', '6.16'] //接口数据
-    //获取头
-    const head = Number(
-      moment(moment(titleData[0]).valueOf() - 86400000).format('MM.DD')
-    )
-    const tail = Number(
-      moment(
-        moment(titleData[titleData.length - 1]).valueOf() + 86400000
-      ).format('MM.DD')
-    )
-    //  添加头尾
-    const newTitleData = [head.toString(), ...titleData, tail.toString()]
-    setTitleData(newTitleData)
+  const api = async () => {
+    // current.externalProduceOrderId
+    const res = await getDailyScheduleList({ assignmentId: 1 })
+    // const titleData = res.planDateTimeList //接口数据
+    const titleData = res.planDateTimeList //接口数据
+    const data = res.dailyScheduleVOS
+
+    //planAmount 计划数量
+    //completedAmount 完成数量
+    // const data: any = [
+    //   {
+    //     id: 2,
+    //     key: 2,
+    //     name: 2,
+    //     material: 21,
+    //     teamName: `班组2`,
+    //     age: 0 + 2,
+    //     detailVOS: [
+    //       {
+    //         name: '6.15',
+    //         planAmount: 30,
+    //         completedAmount: 40,
+    //         type: true
+    //       },
+    //       {
+    //         name: '6.16',
+    //         planAmount: 30,
+    //         completedAmount: 40,
+    //         type: false
+    //       }
+    //     ]
+    //   }
+    // ]
+    setList(data) //先渲染数据在渲染格式 防止拿不到数据
+    setTitleData(titleData)
   }
   //获取计划、完成数量
   const getQuantity = (title: any, row: any, type: any) => {
-    const filterDate = row.data.filter((item) => item.name === title)
+    const filterDate = row.detailVOS.filter((item) => item.name === title)
+    // if()
     if (!isEmpty(filterDate)) {
-      if (type === 'plan') {
-        return filterDate[0].plannedNumber
+      if (type === 'planAmount') {
+        return filterDate[0].planAmount
       }
-      if (type === 'complete') {
-        return filterDate[0].completedQuantity
+      if (type === 'completedAmount') {
+        return filterDate[0].completedAmount
       }
     } else {
       return 0
     }
   }
+  const available = (title: any, row) => {
+    const filterDate = row.detailVOS.filter((item) => item.name === title)
+    return !filterDate[0].type
+  }
 
+  //更新数据
+  const quantity = (e, v, index, type) => {
+    //没有进行深拷贝 待会重新处理一下 不然会有隐患
+    const current = list.filter((item) => item.id === v.id)[0]
+    current.detailVOS[index][type] = Number(e)
+    const subscript = list.findIndex((item) => {
+      return item.id === current.id
+    })
+    if (subscript !== -1) {
+      list.splice(subscript, 1, current)
+      setList([...list])
+    }
+  }
   useEffect(() => {
     if (!isEmpty(titleData)) {
       const sizeList = []
@@ -75,10 +118,18 @@ const TableDome = () => {
               dataIndex: 'name',
               align: 'center',
               key: 'name',
-              width: 150,
+              width: 100,
               render: (_s, row) => (
                 <>
-                  <div>{getQuantity(item, row, 'plan')}</div>
+                  <Input
+                    type="number"
+                    // disabled={available(item, row)}
+                    min={0}
+                    defaultValue={getQuantity(item, row, 'planAmount')}
+                    onBlur={(e) => {
+                      quantity(e.target.value, row, index, 'planAmount')
+                    }}
+                  />
                 </>
               )
             },
@@ -88,10 +139,18 @@ const TableDome = () => {
               dataIndex: 'age',
               align: 'center',
               key: 'age',
-              width: 150,
+              width: 100,
               render: (_s, row) => (
                 <>
-                  <div>{getQuantity(item, row, 'complete')}</div>
+                  <Input
+                    type="number"
+                    // disabled={available(item, row)}
+                    min={0}
+                    defaultValue={getQuantity(item, row, 'completedAmount')}
+                    onBlur={(e) => {
+                      quantity(e.target.value, row, index, 'completedAmount')
+                    }}
+                  />
                 </>
               )
             }
@@ -99,34 +158,23 @@ const TableDome = () => {
         })
       })
       const index = columns.findIndex(
-        (item: { dataIndex: string }) => item.dataIndex === 'materialName'
+        (item: { dataIndex: string }) => item.dataIndex === 'teamName'
       )
       columns.splice(index + 1, 0, sizeList)
       setNewColumns(columns.flat(Infinity))
     }
   }, [titleData])
 
-  const data: any = []
-  for (let i = 0; i < 6; i++) {
-    data.push({
-      key: i,
-      name: i + 2,
-      material: 11,
-      materialName: `班组${i + 1}`,
-      age: i + 1,
-
-      data: [
-        { name: '6.15', plannedNumber: 10, completedQuantity: 20 },
-        { name: '6.16', plannedNumber: 30, completedQuantity: 40 }
-      ]
-    })
-  }
+  useEffect(() => {
+    //传递给外部
+    onChang && onChang(list)
+  }, [list])
 
   return (
     <>
       <Table
         columns={newColumns}
-        dataSource={data}
+        dataSource={list}
         bordered
         size="middle"
         scroll={{ x: 'calc(700px + 50%)', y: 240 }}

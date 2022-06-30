@@ -6,34 +6,33 @@ import moment from 'moment'
 import { SetStateAction, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
+import { Icon } from '@/components'
 import { CusDragTable, SearchBar } from '@/components'
-import { productionPlanApis } from '@/recoil/apis'
+import { productionWarning } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
 import { searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
+import LineChart from './LineChart'
 import Popup from './popup'
 import ScheduleModal from './scheduleModal/index'
 
-const {
-  productList,
-  exportProductList,
-  productDetail,
+const { earlyWarningList, factoryList, updateDailyScheduleList } =
+  productionWarning
 
-  factoryList,
-  getWorkshopSectionList,
-  makeSewingPlan
-} = productionPlanApis
-
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const img =
+  'https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/img.jpg'
 
 const productStatus = [
-  { label: '待计划', value: 1 },
-  { label: '已计划', value: 2 },
-  { label: '生产中', value: 3 },
-  { label: '生产完成', value: 4 }
+  { label: '预警', value: '1' },
+  { label: '延期', value: '2' }
 ]
-function ProductionPlan() {
+const handleList = [
+  { label: '未处理', value: '0' },
+  { label: '已处理', value: '1' }
+]
+
+const ProductionPlan = () => {
   const location = useLocation()
   const { state }: any = location
 
@@ -45,22 +44,10 @@ function ProductionPlan() {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [newlyAdded, setNewlyAdded] = useState(false) //新增
-
-  const [rowInfo, setRowInfo] = useState() //展示弹窗
-
   const [facList, setFacList] = useState([])
-  const [workshopSectionList, setWorkshopSectionList] = useState([])
-  const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
-  const [editData, setEditData] = useState<any>() //编辑数据
-  // const [urlState, setUrlState] = useState<any>()
-  useEffect(() => {
-    // if()
-    if (state !== null) {
-      // setUrlState(state)
-      const id = state.id
-      setParams({ ...params, externalProduceOrderNum: id })
-    }
-  }, [state])
+  const [current, setCurrent] = useState() //当前行
+  const [saveData, setSaveData] = useState<any>([]) //保存数据
+
   const {
     tableChange,
     dataSource,
@@ -69,31 +56,47 @@ function ProductionPlan() {
     pageSize,
     loading,
     getDataList
-  } = useTableChange(params, productList)
+  } = useTableChange(params, earlyWarningList)
 
-  const handle = (
-    <div className={styles.operation}>
-      <Tag
-        color="green"
-        onClick={() => {
-          setNewlyAdded(true)
-        }}
-      >
-        添加加班
-      </Tag>
-      <Tag
-        className={styles.modifySchedule}
-        color="gold"
-        onClick={() => {
-          setIsModalVisible(true)
-        }}
-      >
-        修改日排程
-      </Tag>
-      {/* <Tag color="blue">修改交期</Tag>  后续版本开发 */}
-    </div>
-  )
+  useEffect(() => {
+    if (state !== null) {
+      const id = state.id
+      setParams({ ...params, externalProduceOrderNum: id })
+    }
+  }, [state])
 
+  const handle = (record) => {
+    return (
+      <>
+        <div className={styles.operation}>
+          <div>
+            <Tag
+              color="green"
+              onClick={() => {
+                setNewlyAdded(true)
+              }}
+            >
+              添加加班
+            </Tag>
+            {/* //record 根据某个值判断  */}
+            <Icon type="jack-icon-test" className={styles.previous} />
+          </div>
+
+          <Tag
+            className={styles.modifySchedule}
+            color="gold"
+            onClick={() => {
+              setIsModalVisible(true)
+              setCurrent(record)
+            }}
+          >
+            修改日排程
+          </Tag>
+          {/* <Tag color="blue">修改交期</Tag>  后续版本开发 */}
+        </div>
+      </>
+    )
+  }
   tableColumns[tableColumns.length - 1].render = (
     _text: any,
     record: any,
@@ -101,31 +104,42 @@ function ProductionPlan() {
   ) => {
     return (
       <div key={index} className={styles.operation}>
-        <Popover placement="rightTop" content={handle}>
+        <Popover placement="rightTop" content={handle(record)}>
           <Button type="link">处理</Button>
         </Popover>
       </div>
     )
   }
+  tableColumns[1].render = (v) => {
+    return (
+      <div key={v} className={styles.tableColumnsImg}>
+        <img
+          className={styles.tableColumnsImg}
+          src={v !== null ? v : img}
+          alt=""
+        />
+      </div>
+    )
+  }
+
   //剩余工期
   tableColumns[8].render = (_text: any, record: any, index: number) => {
-    return <div key={index}>{8848}</div>
+    return <div key={index}>{_text}</div>
   }
   tableColumns[8].sorter = true
-
   useEffect(() => {
     ;(async () => {
       getFacList()
-      getWorkshopSectionListInfo()
     })()
   }, [])
 
   useEffect(() => {
     const nConfigs: any[] = cloneDeep(configs)
-    nConfigs[0]['options'] = facList
-    nConfigs[4]['options'] = productStatus
+    nConfigs[0].options = facList
+    nConfigs[4].options = productStatus
+    nConfigs[5].options = handleList
     setConfigs(nConfigs)
-  }, [facList, workshopSectionList])
+  }, [facList])
 
   const getFacList = async () => {
     try {
@@ -139,19 +153,7 @@ function ProductionPlan() {
     } catch (err) {}
   }
 
-  const getWorkshopSectionListInfo = async () => {
-    try {
-      const data: any = await getWorkshopSectionList()
-      data.forEach((item: any) => {
-        item.label = item.dictLabel
-        item.value = item.dictValue
-      })
-      setWorkshopSectionList(data)
-    } catch (err) {}
-  }
-
   const dealDate = (date: any[], index: number) => {
-    // return date ? moment(date[index]).format(FORMAT_DATE) : null
     return date ? moment(date[index]).valueOf() : null
   }
 
@@ -172,32 +174,7 @@ function ProductionPlan() {
         nParams[key] = values[key]
       }
     })
-    console.log('for的数据', nParams)
-
     setParams(nParams)
-  }
-
-  const exportFile = () => {
-    exportProductList({
-      ...params
-    }).then((res: any) => {
-      const blob = new Blob([res], { type: 'application/octet-stream' })
-      const download = document.createElement('a')
-      download.href = window.URL.createObjectURL(blob)
-      download.download = `生产计划.xls`
-      download.click()
-      window.URL.revokeObjectURL(download.href)
-    })
-  }
-
-  const handleDetailInfo = async (rowInfo: any) => {
-    try {
-      const res = await productDetail({ id: rowInfo.id })
-      if (res) {
-        setRowInfo(res)
-        toggleModalVisible(true)
-      }
-    } catch (err) {}
   }
 
   const toggleModalVisible = (visible: boolean) => {
@@ -216,28 +193,16 @@ function ProductionPlan() {
     }
   }
 
-  const update = async () => {
-    console.log('更新数据')
-
-    getDataList && getDataList()
-    // const arr = await productList(params)
-  }
-
-  const TableLeft = () => {
-    return <></>
-  }
-  const getSort = (_pagination, _filters, sorter) => {
-    const sortType =
-      sorter.order === 'ascend'
-        ? { sortType: 'asc' }
-        : sorter.order === 'descend'
-        ? { sortType: 'desc' }
-        : { sortType: '' }
-    setParams({ ...params, ...sortType })
-    // tableChange()
-  }
-  const handleOk = () => {
-    setIsModalVisible(false)
+  const handleOk = async () => {
+    // current 当前行
+    const res = await updateDailyScheduleList({
+      dailyScheduleListVO: [...saveData],
+      assignmentId: 1
+    })
+    if (res.code === 200) {
+      message.success('保存成功')
+      setIsModalVisible(false)
+    }
   }
 
   const handleCancel = () => {
@@ -246,6 +211,24 @@ function ProductionPlan() {
   const updateMethod = (e) => {
     console.log(e)
   }
+
+  const getSort = (_pagination, _filters, sorter) => {
+    if (sorter.order !== undefined) {
+      const sortType = sorter.order === 'ascend' ? 'asc' : 'desc'
+      setParams({
+        ...params,
+        sortField: 'orderDelivery',
+        sortType: sortType
+      })
+    }
+
+    tableChange && tableChange(_pagination, _filters, sorter)
+  }
+
+  const TableLeft = () => {
+    return <></>
+  }
+
   const content = {
     // formData,
     updateMethod,
@@ -255,7 +238,7 @@ function ProductionPlan() {
   }
   return (
     <div className={styles.qualification}>
-      <div>生产预警9</div>
+      <LineChart />
       <div className={styles.forms}>
         <SearchBar
           configs={configs}
@@ -271,7 +254,7 @@ function ProductionPlan() {
           cusBarLeft={TableLeft}
           columns={tableColumns}
           dataSource={dataSource}
-          rowKey={'key'}
+          rowKey={'id'}
           scroll={{ x: 1000 }}
           onChange={getSort}
           // onChange={}
@@ -295,7 +278,7 @@ function ProductionPlan() {
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <ScheduleModal />
+          <ScheduleModal current={current} setSaveData={setSaveData} />
         </Modal>
       ) : null}
 

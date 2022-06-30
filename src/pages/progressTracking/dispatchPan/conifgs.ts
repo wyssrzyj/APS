@@ -8,6 +8,7 @@ export const searchConfigs = [
     label: '工厂名称',
     field: 'factoryId',
     type: 'select',
+    width: 250,
     allowClear: true,
     placeholder: '请选择工厂名称',
     options: []
@@ -24,6 +25,7 @@ export const searchConfigs = [
     field: 'section',
     allowClear: true,
     placeholder: '请选择所属工段',
+    width: 250,
     type: 'select',
     options: []
   },
@@ -32,6 +34,7 @@ export const searchConfigs = [
     field: 'startTime',
     type: 'rangePicker',
     allowClear: true,
+    width: 250,
     placeholder: '请选择计划开始时间'
     // showTime: true
   },
@@ -39,6 +42,8 @@ export const searchConfigs = [
     label: '计划结束时间',
     field: 'endTime',
     allowClear: true,
+    width: 250,
+
     placeholder: '请选择计划结束时间',
     type: 'rangePicker'
     // showTime: true

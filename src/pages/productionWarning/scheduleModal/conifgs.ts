@@ -3,41 +3,51 @@ import { ReactNode } from 'react'
 
 const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
 
+const map = new Map()
+map.set('1', '裁剪')
+map.set('2', '缝制')
+map.set('3', '后整')
+map.set('4', '包装')
+map.set('5', '外发')
+map.set('6', '缝制线外组')
 export const tableColumns: any = [
   {
     title: '序号',
     align: 'center',
-    dataIndex: 'serial',
+    dataIndex: 'sn',
     width: 200
   },
   {
     title: '所属工段',
     align: 'center',
-    dataIndex: 'img',
-    width: 200
+    dataIndex: 'section',
+    width: 200,
+    render: (v: any) => {
+      map.get(v)
+    }
   },
   {
     title: '总计划量',
     align: 'center',
-    dataIndex: 'factoryName',
+    dataIndex: 'orderSum',
     width: 200
   },
   {
     title: '前工段计划完成日',
     align: 'center',
-    dataIndex: 'productName',
+    dataIndex: 'preSectionPlanFinishTime',
     width: 250
   },
   {
     title: '前工段实际完成日',
     align: 'center',
-    dataIndex: 'productNum',
+    dataIndex: 'preSectionRealityFinishTime',
     width: 200
   },
   {
     title: '工段物料齐套日',
     align: 'center',
-    dataIndex: 'productNum',
+    dataIndex: 'sectionMaterialCompletenessTime',
     width: 200
   },
   {
@@ -55,12 +65,6 @@ export const tableColumns: any = [
     width: 170,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
-  },
-  {
-    title: '备注',
-    align: 'center',
-    dataIndex: 'productionAmount',
-    width: 100
   }
 ]
 type viewFormConfig = {
@@ -195,20 +199,4 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     allowClear: true,
     span: 12
   }
-
-  // {
-  //   label: '备注',
-  //   name: 'remark',
-  //   field: 'remark',
-  //   value: '',
-  //   type: 'textarea',
-  //   disabled: true,
-  //   placeholder: '请输入备注',
-  //   allowClear: true,
-  //   span: 24,
-  //   layout: {
-  //     labelCol: { span: '3' },
-  //     wrapperCol: { span: '21' }
-  //   }
-  // }
 ]

@@ -1,116 +1,104 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-17 08:41:26
- * @LastEditTime: 2022-06-23 15:31:57
+ * @LastEditTime: 2022-06-30 18:14:32
  * @Description:
  * @LastEditors: lyj
  */
-import { Input, Table } from 'antd'
+import { StockOutlined } from '@ant-design/icons'
+import { Input, Modal, Table } from 'antd'
 import type { ColumnsType } from 'antd/lib/table'
 import { cloneDeep, isEmpty } from 'lodash'
-import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
+import { productionWarning } from '@/recoil/apis'
+
 import styles from './index.module.less'
+import LineChart from './LineChart'
 const TableDome = (props) => {
-  const { onChang } = props
-  const columns: any = [
-    {
-      title: '班组',
-      align: 'center',
-      dataIndex: 'materialName',
-      fixed: 'left',
-      width: 150,
-      key: 'materialName'
-    }
-  ]
+  const { onChang, current } = props
+  const { getDailyScheduleList } = productionWarning
+
   const [titleData, setTitleData] = useState([])
 
   const [newColumns, setNewColumns] = useState([])
+  const [interfaceData, setInterfaceData] = useState<any>([])
   const [list, setList] = useState([])
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [selected, setSelected] = useState<any>()
+
+  const columns: any = [
+    {
+      title: '班组111',
+      align: 'center',
+      dataIndex: 'teamName',
+      fixed: 'left',
+      width: 150,
+      key: 'teamName',
+      render: (_text, v) => {
+        return (
+          <div
+            className={styles.lineChart}
+            onClick={() => {
+              setIsModalVisible(true)
+              setSelected(v)
+            }}
+          >
+            <div>{_text}</div>
+            <div className={styles.lineChartRight}>
+              <StockOutlined />
+            </div>
+          </div>
+        )
+      }
+    }
+  ]
 
   useEffect(() => {
     api()
-  }, [])
+  }, [current])
 
-  const api = () => {
-    const titleData = ['6.15', '6.16'] //接口数据
-    //plannedNumber 计划数量
-    //completedQuantity 完成数量
-    const data: any = [
-      {
-        id: 2,
-        key: 2,
-        name: 2,
-        material: 21,
-        materialName: `班组2`,
-        age: 0 + 2,
-        data: [
-          {
-            name: '6.15',
-            plannedNumber: 30,
-            completedQuantity: 40,
-            type: true
-          },
-          {
-            name: '6.16',
-            plannedNumber: 30,
-            completedQuantity: 40,
-            type: false
-          }
-        ]
-      },
-      {
-        id: 3,
-        key: 3,
-        name: 3,
-        material: 3,
-        materialName: `班组3`,
-        age: 0 + 3,
-        data: [
-          {
-            name: '6.15',
-            plannedNumber: 33,
-            completedQuantity: 44,
-            type: true
-          },
-          {
-            name: '6.16',
-            plannedNumber: 33,
-            completedQuantity: 44,
-            type: false
-          }
-        ]
-      }
-    ]
+  const api = async () => {
+    const res = await getDailyScheduleList({
+      assignmentId: current.assignmentId
+    })
+    setInterfaceData(res)
+
+    const titleData = res.planDateTimeList //接口数据
+    const data = res.dailyScheduleVOS
+    console.log(data)
+
+    setList(data) //先渲染数据在渲染格式 防止拿不到数据
     setTitleData(titleData)
-    setList(data)
   }
   //获取计划、完成数量
   const getQuantity = (title: any, row: any, type: any) => {
-    const filterDate = row.data.filter((item) => item.name === title)
-    // if()
+    const filterDate = row.detailVOS.filter(
+      (item) => item.planDateTimeStr === title
+    )
     if (!isEmpty(filterDate)) {
-      if (type === 'plannedNumber') {
-        return filterDate[0].plannedNumber
+      if (type === 'planAmount') {
+        return filterDate[0].planAmount
       }
-      if (type === 'completedQuantity') {
-        return filterDate[0].completedQuantity
+      if (type === 'completedAmount') {
+        return filterDate[0].completedAmount
       }
     } else {
       return 0
     }
   }
   const available = (title: any, row) => {
-    const filterDate = row.data.filter((item) => item.name === title)
-    return !filterDate[0].type
+    const filterDate = row.detailVOS.filter(
+      (item) => item.planDateTimeStr === title
+    )
+    return !filterDate[0].planDateTimeType
   }
 
   //更新数据
   const quantity = (e, v, index, type) => {
     //没有进行深拷贝 待会重新处理一下 不然会有隐患
     const current = list.filter((item) => item.id === v.id)[0]
-    current.data[index][type] = Number(e)
+    current.detailVOS[index][type] = Number(e)
     const subscript = list.findIndex((item) => {
       return item.id === current.id
     })
@@ -139,9 +127,9 @@ const TableDome = (props) => {
                     type="number"
                     disabled={available(item, row)}
                     min={0}
-                    defaultValue={getQuantity(item, row, 'plannedNumber')}
+                    defaultValue={getQuantity(item, row, 'planAmount')}
                     onBlur={(e) => {
-                      quantity(e.target.value, row, index, 'plannedNumber')
+                      quantity(e.target.value, row, index, 'planAmount')
                     }}
                   />
                 </>
@@ -160,9 +148,9 @@ const TableDome = (props) => {
                     type="number"
                     disabled={available(item, row)}
                     min={0}
-                    defaultValue={getQuantity(item, row, 'completedQuantity')}
+                    defaultValue={getQuantity(item, row, 'completedAmount')}
                     onBlur={(e) => {
-                      quantity(e.target.value, row, index, 'completedQuantity')
+                      quantity(e.target.value, row, index, 'completedAmount')
                     }}
                   />
                 </>
@@ -172,7 +160,7 @@ const TableDome = (props) => {
         })
       })
       const index = columns.findIndex(
-        (item: { dataIndex: string }) => item.dataIndex === 'materialName'
+        (item: { dataIndex: string }) => item.dataIndex === 'teamName'
       )
       columns.splice(index + 1, 0, sizeList)
       setNewColumns(columns.flat(Infinity))
@@ -181,18 +169,37 @@ const TableDome = (props) => {
 
   useEffect(() => {
     //传递给外部
-    onChang && onChang(list)
-  }, [list])
 
+    const CloneInterfaceData = cloneDeep(interfaceData)
+    CloneInterfaceData.dailyScheduleVOS = list
+    onChang && onChang(CloneInterfaceData)
+  }, [list, interfaceData])
+  const handleOk = () => {
+    setIsModalVisible(false)
+  }
+  const handleCancel = () => {
+    setIsModalVisible(false)
+  }
   return (
     <>
       <Table
+        scroll={{ y: 800 }}
         columns={newColumns}
         dataSource={list}
         bordered
         size="middle"
-        scroll={{ x: 'calc(700px + 50%)', y: 240 }}
       />
+      {isModalVisible && (
+        <Modal
+          width={1000}
+          centered={true}
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <LineChart selected={selected} />
+        </Modal>
+      )}
     </>
   )
 }

@@ -6,23 +6,19 @@ import moment from 'moment'
 import { SetStateAction, useEffect, useState } from 'react'
 
 import { CusDragTable, SearchBar } from '@/components'
-import { productionPlanApis } from '@/recoil/apis'
+import {
+  actualProductionApis,
+  dailySchedule,
+  productionPlanApis
+} from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
 import { searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
 import ScheduleModal from './scheduleModal/index'
 
-const {
-  productList,
-  exportProductList,
-  productDetail,
-  factoryList,
-  getWorkshopSectionList,
-  makeSewingPlan
-} = productionPlanApis
-
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const { factoryList, getWorkshopSectionList } = productionPlanApis
+const { pageList } = dailySchedule
 
 const productStatus = [
   { label: '待计划', value: 1 },
@@ -39,7 +35,13 @@ function ProductionPlan() {
   ) => {
     return (
       <div key={index}>
-        <Button type="link" onClick={() => handleDetailInfo(record)}>
+        <Button
+          type="link"
+          onClick={() => {
+            handleDetailInfo(record)
+            setCurrent(record)
+          }}
+        >
           编辑
         </Button>
       </div>
@@ -47,7 +49,7 @@ function ProductionPlan() {
   }
   //剩余工期
   tableColumns[8].render = (_text: any, record: any, index: number) => {
-    return <div key={index}>{8848}</div>
+    return <div key={index}>{_text}</div>
   }
   tableColumns[8].sorter = true
 
@@ -58,11 +60,9 @@ function ProductionPlan() {
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
-  const [rowInfo, setRowInfo] = useState() //展示弹窗
   const [facList, setFacList] = useState([])
   const [workshopSectionList, setWorkshopSectionList] = useState([])
-  const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
-  const [editData, setEditData] = useState<any>() //编辑数据
+  const [current, setCurrent] = useState() //当前行
 
   const {
     tableChange,
@@ -72,7 +72,7 @@ function ProductionPlan() {
     pageSize,
     loading,
     getDataList
-  } = useTableChange(params, productList)
+  } = useTableChange(params, pageList)
 
   useEffect(() => {
     ;(async () => {
@@ -112,7 +112,6 @@ function ProductionPlan() {
   }
 
   const dealDate = (date: any[], index: number) => {
-    // return date ? moment(date[index]).format(FORMAT_DATE) : null
     return date ? moment(date[index]).valueOf() : null
   }
 
@@ -133,31 +132,12 @@ function ProductionPlan() {
         nParams[key] = values[key]
       }
     })
-    console.log('for的数据', nParams)
-
     setParams(nParams)
-  }
-
-  const exportFile = () => {
-    exportProductList({
-      ...params
-    }).then((res: any) => {
-      const blob = new Blob([res], { type: 'application/octet-stream' })
-      const download = document.createElement('a')
-      download.href = window.URL.createObjectURL(blob)
-      download.download = `生产计划.xls`
-      download.click()
-      window.URL.revokeObjectURL(download.href)
-    })
   }
 
   const handleDetailInfo = async (rowInfo: any) => {
     try {
-      const res = await productDetail({ id: rowInfo.id })
-      if (res) {
-        setRowInfo(res)
-        toggleModalVisible(true)
-      }
+      toggleModalVisible(true)
     } catch (err) {}
   }
 
@@ -176,46 +156,14 @@ function ProductionPlan() {
       setSelectedRowKeys(selectedRowKeys)
     }
   }
-  const showSewing = async (v: any) => {
-    //只有 -1才走这个接口
-    if (v.auditStatus === -1) {
-      const res = await makeSewingPlan({
-        produceOrderNum: v.externalProduceOrderNum,
-        teamManagerId: v.teamId
-      })
-      if (res.data) {
-        message.warning(' 已生成过缝制计划')
-      } else {
-        setEditData({ ...v })
-        setDetailsPopup(true)
-      }
-    } else {
-      setEditData({ ...v })
-      setDetailsPopup(true)
-    }
-  }
-  const update = async () => {
-    console.log('更新数据')
-
-    getDataList && getDataList()
-    // const arr = await productList(params)
-  }
 
   const TableLeft = () => {
     return <></>
   }
   const getSort = (_pagination, _filters, sorter) => {
-    // const sortType =
-    //   sorter.order === 'ascend'
-    //     ? { sortType: 'asc' }
-    //     : sorter.order === 'descend'
-    //     ? { sortType: 'desc' }
-    //     : { sortType: '' }
-    // setParams({ ...params, ...sortType })
-
     tableChange && tableChange(_pagination, _filters, sorter)
   }
-  const handleOk = () => {
+  const handleOk = async () => {
     setIsModalVisible(false)
   }
 
@@ -263,8 +211,9 @@ function ProductionPlan() {
           visible={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}
+          maskClosable={false}
         >
-          <ScheduleModal />
+          <ScheduleModal current={current} />
         </Modal>
       ) : null}
     </div>

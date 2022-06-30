@@ -9,6 +9,7 @@ export const searchConfig = [
     field: 'factoryId',
     type: 'select',
     allowClear: true,
+    width: 250,
     placeholder: '请选择工厂名称',
     options: []
   },
@@ -23,6 +24,8 @@ export const searchConfig = [
     label: '所属工段',
     field: 'section',
     type: 'select',
+    width: 250,
+
     allowClear: true,
     placeholder: '请选择所属工段',
     option: []
@@ -31,6 +34,8 @@ export const searchConfig = [
     label: '生产状态',
     field: 'isFinished',
     type: 'select',
+    width: 250,
+
     allowClear: true,
     placeholder: '请选择生产状态',
     options: [
@@ -42,6 +47,8 @@ export const searchConfig = [
     label: '延期状态',
     field: 'delay',
     type: 'select',
+    width: 250,
+
     allowClear: true,
     placeholder: '请选择延期状态',
     options: [

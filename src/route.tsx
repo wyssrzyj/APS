@@ -81,6 +81,16 @@ const ActualProduction = React.lazy(() => import('@/pages/actualProduction'))
 
 //生产预警
 const ProductionWarning = React.lazy(() => import('@/pages/productionWarning'))
+
+//报表管理- 生产周期报表
+const ProductionCycle = React.lazy(
+  () => import('@/pages/reportManagement/productionCycle')
+)
+//报表管理- 班组日完成报表
+const DailyCompletion = React.lazy(
+  () => import('@/pages/reportManagement/dailyCompletion')
+)
+
 const route = [
   { path: 'home/:id', element: <Home /> },
   { path: 'login', element: <Login /> },
@@ -120,6 +130,11 @@ const route = [
 
   //生产预警
   { path: '/productionWarning', element: <ProductionWarning /> },
+  //报表管理
+  //  生产周期报表
+  { path: '/productionCycle', element: <ProductionCycle /> },
+  //  班组日完成报表
+  { path: '/dailyCompletion', element: <DailyCompletion /> },
   //空白例子
   // 无匹配路由 放置在最后一个路由的位置
   { path: '*', element: <Home /> }

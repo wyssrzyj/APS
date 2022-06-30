@@ -177,6 +177,26 @@ export const menus = [
     key: 'productionWarning',
     icon: 'jack-jindutiao',
     url: '/productionWarning'
+  },
+  {
+    label: '报表管理',
+    key: 'reportManagement',
+    icon: 'jack-jindutiao',
+    url: '/',
+    children: [
+      {
+        label: '生产周期报表',
+        key: 'productionCycle',
+        icon: 'jack-paigong',
+        url: '/productionCycle'
+      },
+      {
+        label: '班组日完成报表',
+        key: 'dailyCompletion',
+        icon: 'jack-paigong',
+        url: '/dailyCompletion'
+      }
+    ]
   }
 ]
 

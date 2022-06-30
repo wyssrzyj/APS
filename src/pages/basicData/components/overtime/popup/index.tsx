@@ -157,6 +157,7 @@ function Popup(props: { content: any; newlyAdded: any }) {
           newlyAdded()
           form.resetFields()
           setIsModalVisible(false)
+          message.success('保存成功')
         }
       }
     }

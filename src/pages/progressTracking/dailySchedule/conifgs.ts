@@ -8,6 +8,7 @@ export const searchConfigs = [
     label: '工厂名称',
     field: 'factoryId',
     type: 'select',
+    width: 250,
     allowClear: true,
     placeholder: '请选择工厂名称',
     options: []
@@ -39,6 +40,8 @@ export const searchConfigs = [
     label: '生产状态',
     field: 'productStatus',
     type: 'select',
+    width: 250,
+
     allowClear: true,
     placeholder: '请选择生产状态',
     options: []

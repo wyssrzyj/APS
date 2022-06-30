@@ -341,13 +341,11 @@ function Overtime() {
     <div className={styles.qualification}>
       <div>
         <div className={styles.content}>
-          <div className={styles.forms}>
-            <SearchBar
-              configs={configs}
-              params={params}
-              callback={paramsChange}
-            ></SearchBar>
-          </div>
+          <SearchBar
+            configs={configs}
+            params={params}
+            callback={paramsChange}
+          ></SearchBar>
 
           {/* <Forms factoryData={factoryData} FormData={FormData}></Forms> */}
           <CusDragTable
