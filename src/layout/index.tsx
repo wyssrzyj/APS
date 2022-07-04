@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-06-13 13:59:13
+ * @LastEditTime: 2022-07-04 18:25:09
  * @Description:
  * @LastEditors: lyj
  */
@@ -11,7 +11,7 @@ import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useSetRecoilState } from 'recoil'
 
-import { Icon } from '@/components' //路径
+import { Icon } from '@/components' //路径.
 import { areaState } from '@/recoil'
 import { areaApis } from '@/recoil/apis'
 
