@@ -279,6 +279,7 @@ export const transformStatus = (value: number) => {
 
 export const changeBolbToXls = (res: any, fileName: string) => {
   const blob = new Blob([res], { type: 'application/octet-stream' })
+
   const download = document.createElement('a')
   download.href = window.URL.createObjectURL(blob)
   download.download = `${fileName}.xls`

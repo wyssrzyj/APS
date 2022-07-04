@@ -3,6 +3,15 @@ import { ReactNode } from 'react'
 
 const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
 
+export const easySearch = [
+  {
+    label: '生产单号',
+    field: 'externalProduceOrderNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入生产单号'
+  }
+]
 export const searchConfigs = [
   {
     label: '工厂名称',
@@ -90,26 +99,28 @@ export const tableColumns: any = [
   {
     title: '客户款号',
     align: 'center',
-    dataIndex: 'img',
+    dataIndex: 'productClientNum',
     width: 200
   },
   {
     title: '生产单总量',
     align: 'center',
-    dataIndex: 'shopName',
+    dataIndex: 'orderSum',
     width: 200
   },
   {
     title: '承诺交期',
     align: 'center',
-    dataIndex: 'teamName',
-    width: 200
+    dataIndex: 'committedDeliveryDate',
+    width: 200,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
 
   {
     title: '剩余工期',
     align: 'center',
-    dataIndex: 'productionAmount',
+    dataIndex: 'remainingDuration',
     width: 100
   },
   {
@@ -144,12 +155,7 @@ export const tableColumns: any = [
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
-  {
-    title: '备注',
-    align: 'center',
-    dataIndex: 'productionAmount',
-    width: 100
-  },
+
   {
     title: '操作',
     align: 'center',

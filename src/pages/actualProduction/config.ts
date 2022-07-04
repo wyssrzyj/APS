@@ -3,6 +3,16 @@ import { number } from 'prop-types'
 import { ReactNode } from 'react'
 
 const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+
+export const easySearch = [
+  {
+    label: '生产单号',
+    field: 'externalProduceOrderNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入生产单号'
+  }
+]
 export const searchConfig = [
   {
     label: '工厂名称',

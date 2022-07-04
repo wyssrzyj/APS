@@ -6,56 +6,39 @@ import moment from 'moment'
 import { SetStateAction, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
+import { Icon } from '@/components'
 import { CusDragTable, SearchBar } from '@/components'
-import { actualProductionApis, productionPlanApis } from '@/recoil/apis'
+import { periodicReport, productionPlanApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
-import { searchConfigs, tableColumns } from './conifgs'
+import { easySearch, searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
 import Popup from './popup'
 import ScheduleModal from './scheduleModal/index'
 
-const {
-  productList,
-  exportProductList,
-  productDetail,
+const img =
+  'https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/img.jpg'
 
-  factoryList,
-  getWorkshopSectionList,
-  makeSewingPlan
-} = productionPlanApis
+const { factoryList } = productionPlanApis
+const { periodicReportList, periodicReportListExport } = periodicReport
 
-const { efficiencyList } = actualProductionApis
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
-
-const productStatus = [
-  { label: '待计划', value: 1 },
-  { label: '已计划', value: 2 },
-  { label: '生产中', value: 3 },
-  { label: '生产完成', value: 4 }
-]
-function ProductionPlan() {
+const ProductionPlan = () => {
   const location = useLocation()
   const { state }: any = location
-
+  const [searchStatus, setSearchStatus] = useState(false)
   const [params, setParams] = useState<any>({
     pageSize: 10,
     pageNum: 1
   })
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
   const [data, setData] = useState<any[]>() //表头数据
+  const [list, setList] = useState<any[]>() //表头数据
 
-  const [surfaceDataSource, setSurfaceDataSource] = useState<any[]>() //总数据
-  // const [dynamicMeter, setDynamicMeter] = useState<any[]>(tableColumns)
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [newlyAdded, setNewlyAdded] = useState(false) //新增
 
-  const [rowInfo, setRowInfo] = useState() //展示弹窗
-
   const [facList, setFacList] = useState([])
-  const [workshopSectionList, setWorkshopSectionList] = useState([])
-  const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
   const {
     tableChange,
     dataSource,
@@ -64,11 +47,32 @@ function ProductionPlan() {
     pageSize,
     loading,
     getDataList
-  } = useTableChange(params, efficiencyList)
-  const [editData, setEditData] = useState<any>() //编辑数据
-  // const [urlState, setUrlState] = useState<any>()
+  } = useTableChange(params, periodicReportList)
   useEffect(() => {
-    // if()
+    if (!isEmpty(dataSource)) {
+      dataSource.map((item, index) => {
+        item.id = index
+        item.key = index
+      })
+      setList(dataSource)
+    } else {
+      setList([])
+    }
+  }, [dataSource])
+
+  tableColumns[5].render = (v) => {
+    return (
+      <div key={v} className={styles.tableColumnsImg}>
+        <img
+          className={styles.tableColumnsImg}
+          src={v !== null ? v : img}
+          alt=""
+        />
+      </div>
+    )
+  }
+
+  useEffect(() => {
     if (state !== null) {
       const id = state.id
       setParams({ ...params, externalProduceOrderNum: id })
@@ -93,59 +97,18 @@ function ProductionPlan() {
     })
 
     setData(data)
-    // setDynamicMeter([...tableColumns])
   }
-  //处理数据格式
-  useEffect(() => {
-    const list = [
-      {
-        factoryName: '工厂名称',
-        externalProduceOrderNum: '生产单号',
-        customerName: '客户名称',
-        productName: '客户款号',
-        customerAccount: '产品名称',
-        productAccount: '产品款号',
-        img: '款图',
-        shopName: '订单数量',
-        teamName: '承诺交期',
-        planStartTime: '面料齐料日期',
-        cropStartDate: '裁剪-开始日期',
-        cropEndDate: '裁剪-结束日期',
-        completedQuantity: '裁剪-完成数量',
-        auxiliaryMaterialDate: '辅料齐料日期',
-        StartDate: '绣印花染色-开始日期',
-        EndDate: '绣印花染色-结束日期',
-        team: '裁剪-班组',
-        numberPersons: '裁剪-人数',
-        sewStartDate: '裁剪-开始日期',
-        sewEndDate: '裁剪-结束日期',
-        sewCompletedQuantity: '裁剪-完成数量',
-        sewCompletionRate: '裁剪-完成率',
-        adjustmentStartDate: '后整-开始日期',
-        adjustmentEndDate: '后整-结束日期',
-        adjustmentQuantity: '后整-完成数量',
-        adjustmentCompletionRate: '后整-完成率'
-      }
-    ]
-    setSurfaceDataSource(list)
-  }, [])
-
-  // 动态表头
-  // console.log(dynamicMeter)
-
   useEffect(() => {
     ;(async () => {
       getFacList()
-      getWorkshopSectionListInfo()
     })()
   }, [])
 
   useEffect(() => {
     const nConfigs: any[] = cloneDeep(configs)
-    // nConfigs[0]['options'] = facList
-    // nConfigs[4]['options'] = productStatus
+    nConfigs[0].options = facList
     setConfigs(nConfigs)
-  }, [facList, workshopSectionList])
+  }, [facList])
 
   const getFacList = async () => {
     try {
@@ -159,19 +122,7 @@ function ProductionPlan() {
     } catch (err) {}
   }
 
-  const getWorkshopSectionListInfo = async () => {
-    try {
-      const data: any = await getWorkshopSectionList()
-      data.forEach((item: any) => {
-        item.label = item.dictLabel
-        item.value = item.dictValue
-      })
-      setWorkshopSectionList(data)
-    } catch (err) {}
-  }
-
   const dealDate = (date: any[], index: number) => {
-    // return date ? moment(date[index]).format(FORMAT_DATE) : null
     return date ? moment(date[index]).valueOf() : null
   }
 
@@ -192,36 +143,22 @@ function ProductionPlan() {
         nParams[key] = values[key]
       }
     })
-    console.log('for的数据', nParams)
 
     setParams(nParams)
   }
 
   const exportFile = () => {
-    exportProductList({
+    periodicReportListExport({
       ...params
     }).then((res: any) => {
+      message.success('导出成功')
       const blob = new Blob([res], { type: 'application/octet-stream' })
       const download = document.createElement('a')
       download.href = window.URL.createObjectURL(blob)
-      download.download = `生产计划.xls`
+      download.download = `生产周期报表.xls`
       download.click()
       window.URL.revokeObjectURL(download.href)
     })
-  }
-
-  const handleDetailInfo = async (rowInfo: any) => {
-    try {
-      const res = await productDetail({ id: rowInfo.id })
-      if (res) {
-        setRowInfo(res)
-        toggleModalVisible(true)
-      }
-    } catch (err) {}
-  }
-
-  const toggleModalVisible = (visible: boolean) => {
-    setIsModalVisible(visible)
   }
 
   const rowSelection:
@@ -232,15 +169,9 @@ function ProductionPlan() {
     | any = {
     selectedRowKeys,
     onChange: (selectedRowKeys: SetStateAction<never[]>) => {
+      console.log(selectedRowKeys)
       setSelectedRowKeys(selectedRowKeys)
     }
-  }
-
-  const update = async () => {
-    console.log('更新数据')
-
-    getDataList && getDataList()
-    // const arr = await productList(params)
   }
 
   const TableLeft = () => {
@@ -281,23 +212,60 @@ function ProductionPlan() {
   }
   return (
     <div className={styles.qualification}>
-      <div>周期报表</div>
-      <div className={styles.forms}>
-        <SearchBar
-          configs={configs}
-          params={params}
-          callback={searchParamsChange}
-        ></SearchBar>
+      <div className={searchStatus ? styles.formDisplay : styles.formHide}>
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={configs}
+              params={params}
+              callback={searchParamsChange}
+            ></SearchBar>
+          </div>
+          <div
+            onClick={() => {
+              setSearchStatus(!searchStatus)
+            }}
+            className={styles.collect}
+          >
+            {searchStatus === true ? (
+              <Icon type="jack-Icon_up" className={styles.previous} />
+            ) : null}
+          </div>
+        </>
       </div>
+
+      {searchStatus === false ? (
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={easySearch}
+              params={params}
+              callback={searchParamsChange}
+            ></SearchBar>
+            <div className={styles.advancedSearch}>
+              <Button
+                type="primary"
+                ghost
+                onClick={() => {
+                  setSearchStatus(!searchStatus)
+                }}
+              >
+                高级搜索
+              </Button>
+            </div>
+          </div>
+        </>
+      ) : null}
       <div>
         <CusDragTable
           storageField={'productionCycle'}
-          rowSelection={rowSelection}
+          rowSelection={null}
           cusBarLeft={TableLeft}
           columns={tableColumns}
-          dataSource={surfaceDataSource}
+          dataSource={list}
           rowKey={'key'}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 2000 }}
+          // scroll={{ x: 2000, y: 500 }}
           onChange={getSort}
           pagination={{
             //分页

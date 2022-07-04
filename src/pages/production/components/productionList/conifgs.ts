@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-06-29 16:26:04
+ * @LastEditTime: 2022-07-01 15:32:10
  * @Description:
  * @LastEditors: lyj
  */
@@ -15,6 +15,16 @@ map.set(1, '待计划')
 map.set(2, '已计划')
 map.set(3, '生产中')
 map.set(4, '生产完成')
+
+export const easySearch = [
+  {
+    label: '生产单号',
+    field: 'externalProduceOrderNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入生产单号'
+  }
+]
 
 export const tableColumns: any = [
   {

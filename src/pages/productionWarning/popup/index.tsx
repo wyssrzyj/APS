@@ -14,10 +14,10 @@ import React, { useEffect, useState } from 'react'
 import { dockingDataApis, workOvertimeApis } from '@/recoil/apis'
 
 import WorkingHours from './workingHours/index'
-function Popup(props: { content: any }) {
-  const { content } = props
+function Popup(props: { content: any; factoryId: any }) {
+  const { content, factoryId } = props
   const type = 1
-  const { newlyAdded, setNewlyAdded, edit, updateMethod, formData } = content
+  const { newlyAdded, update, edit, formData } = content
 
   const layout = {
     labelCol: {
@@ -98,7 +98,7 @@ function Popup(props: { content: any }) {
 
   const handleCancel = () => {
     // form.resetFields()
-    setNewlyAdded(false)
+    update()
   }
   const times = (item: any, e: any) => {
     if (typeof e === 'number') {
@@ -148,6 +148,7 @@ function Popup(props: { content: any }) {
       values.createTime = moment(values.createTime).valueOf()
     }
 
+    values.waringId = factoryId
     if (determineTime(values.timeList)) {
       const list: any = type === 1 ? values : { ...values, id: edit.id }
       //班组为false才执行
@@ -158,7 +159,7 @@ function Popup(props: { content: any }) {
       if (arr.success === true) {
         const res = await overtimeAddition(list)
         if (res === true) {
-          setNewlyAdded(false)
+          update()
           message.success('新增成功')
         }
       }

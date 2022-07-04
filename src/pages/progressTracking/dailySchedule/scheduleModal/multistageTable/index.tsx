@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-17 08:41:26
- * @LastEditTime: 2022-06-30 18:14:32
+ * @LastEditTime: 2022-07-01 10:30:05
  * @Description:
  * @LastEditors: lyj
  */
@@ -91,20 +91,41 @@ const TableDome = (props) => {
     const filterDate = row.detailVOS.filter(
       (item) => item.planDateTimeStr === title
     )
-    return !filterDate[0].planDateTimeType
+    if (!isEmpty(filterDate)) {
+      return !filterDate[0].planDateTimeType
+    } else {
+      return true
+    }
   }
 
   //更新数据
-  const quantity = (e, v, index, type) => {
-    //没有进行深拷贝 待会重新处理一下 不然会有隐患
-    const current = list.filter((item) => item.id === v.id)[0]
-    current.detailVOS[index][type] = Number(e)
-    const subscript = list.findIndex((item) => {
-      return item.id === current.id
-    })
-    if (subscript !== -1) {
-      list.splice(subscript, 1, current)
-      setList([...list])
+  const quantity = (e, v, name, type) => {
+    const current = list.filter((item) => item.id === v.id)[0] //获取当前行
+
+    if (!isEmpty(current.detailVOS)) {
+      const currentFilter = current.detailVOS.filter(
+        (item) => item.planDateTimeStr === name
+      )[0]
+
+      currentFilter[type] = Number(e)
+
+      const subscript = current.detailVOS.findIndex((item) => {
+        return item.id === currentFilter.id
+      })
+
+      if (subscript !== -1) {
+        current.detailVOS.splice(subscript, 1, currentFilter)
+        //更新完当前行数据
+
+        const index = list.findIndex((item) => {
+          return item.id === v.id
+        })
+        if (index !== -1) {
+          //替换当前行数据
+          list.splice(index, 1, current)
+          setList([...list])
+        }
+      }
     }
   }
   useEffect(() => {
@@ -129,7 +150,7 @@ const TableDome = (props) => {
                     min={0}
                     defaultValue={getQuantity(item, row, 'planAmount')}
                     onBlur={(e) => {
-                      quantity(e.target.value, row, index, 'planAmount')
+                      quantity(e.target.value, row, item, 'planAmount')
                     }}
                   />
                 </>
@@ -150,7 +171,7 @@ const TableDome = (props) => {
                     min={0}
                     defaultValue={getQuantity(item, row, 'completedAmount')}
                     onBlur={(e) => {
-                      quantity(e.target.value, row, index, 'completedAmount')
+                      quantity(e.target.value, row, item, 'completedAmount')
                     }}
                   />
                 </>

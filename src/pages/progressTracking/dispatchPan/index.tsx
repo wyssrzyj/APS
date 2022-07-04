@@ -5,11 +5,17 @@ import { cloneDeep } from 'lodash'
 import moment, { Moment } from 'moment'
 import React, { SetStateAction, useCallback, useEffect, useState } from 'react'
 
+import { Icon } from '@/components'
 import { CusDragTable, CustomModal, SearchBar, Title } from '@/components'
 import { productionPlanApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
-import { formItemConfig, searchConfigs, tableColumns } from './conifgs'
+import {
+  easySearch,
+  formItemConfig,
+  searchConfigs,
+  tableColumns
+} from './conifgs'
 import Details from './details/index'
 import styles from './index.module.less'
 
@@ -40,11 +46,9 @@ function ProductionPlan() {
         <Button type="link" onClick={() => handleDetailInfo(record)}>
           查看
         </Button>
-        {/* {record.section === '缝制' ? (
-          <Button type="link" onClick={() => showSewing(record)}>
-            {map.get(record.auditStatus)}
-          </Button>
-        ) : null} */}
+        {/* <Button type="link" onClick={() => showSewing(record)}>
+          {map.get(record.auditStatus)}
+        </Button> */}
       </div>
     )
   }
@@ -54,13 +58,13 @@ function ProductionPlan() {
     pageNum: 1
   })
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [rowInfo, setRowInfo] = useState() //展示弹窗
   const [facList, setFacList] = useState([])
   const [workshopSectionList, setWorkshopSectionList] = useState([])
   const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
   const [editData, setEditData] = useState<any>() //编辑数据
+  const [searchStatus, setSearchStatus] = useState(false)
 
   const {
     tableChange,
@@ -162,17 +166,6 @@ function ProductionPlan() {
     setIsModalVisible(visible)
   }
 
-  const rowSelection:
-    | {
-        selectedRowKeys: never[]
-        onChange: (selectedRowKeys: SetStateAction<never[]>) => void
-      }
-    | any = {
-    selectedRowKeys,
-    onChange: (selectedRowKeys: SetStateAction<never[]>) => {
-      setSelectedRowKeys(selectedRowKeys)
-    }
-  }
   const showSewing = async (v: any) => {
     //只有 -1才走这个接口
     if (v.auditStatus === -1) {
@@ -210,18 +203,53 @@ function ProductionPlan() {
 
   return (
     <div className={styles.qualification}>
-      <div className={styles.forms}>
-        <SearchBar
-          configs={configs}
-          params={params}
-          callback={searchParamsChange}
-        ></SearchBar>
+      <div className={searchStatus ? styles.formDisplay : styles.formHide}>
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={configs}
+              params={params}
+              callback={searchParamsChange}
+            ></SearchBar>
+          </div>
+          <div
+            onClick={() => {
+              setSearchStatus(!searchStatus)
+            }}
+            className={styles.collect}
+          >
+            {searchStatus === true ? (
+              <Icon type="jack-Icon_up" className={styles.previous} />
+            ) : null}
+          </div>
+        </>
       </div>
+      {searchStatus === false ? (
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={easySearch}
+              params={params}
+              callback={searchParamsChange}
+            ></SearchBar>
+            <div className={styles.advancedSearch}>
+              <Button
+                type="primary"
+                ghost
+                onClick={() => {
+                  setSearchStatus(!searchStatus)
+                }}
+              >
+                高级搜索
+              </Button>
+            </div>
+          </div>
+        </>
+      ) : null}
 
       <div>
         <CusDragTable
           storageField={'dispatchPan'}
-          rowSelection={rowSelection}
           cusBarLeft={TableLeft}
           columns={tableColumns}
           dataSource={dataSource}

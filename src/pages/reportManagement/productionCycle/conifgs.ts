@@ -2,7 +2,17 @@ import { Input, Table } from 'antd'
 import moment from 'moment'
 import { ReactNode } from 'react'
 
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const FORMAT_DATE = 'YYYY-MM-DD'
+
+export const easySearch = [
+  {
+    label: '生产单号',
+    field: 'externalProduceOrderNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入生产单号'
+  }
+]
 
 export const searchConfigs = [
   {
@@ -16,7 +26,7 @@ export const searchConfigs = [
   },
   {
     label: '生产单号',
-    field: 'externalProduceOrderNum',
+    field: 'produceOrderNum',
     type: 'input',
     allowClear: true,
     placeholder: '请输入生产单号'
@@ -31,7 +41,7 @@ export const searchConfigs = [
   },
   {
     label: '产品款号',
-    field: 'productModelNo',
+    field: 'productNum',
     allowClear: true,
     placeholder: '请输入产品款号',
     type: 'input',
@@ -44,25 +54,18 @@ export const tableColumns: any = [
     title: '工厂名称',
     align: 'center',
     dataIndex: 'factoryName',
-    key: 'factoryName',
-    width: 200
+    key: 'factoryName'
   },
   {
     title: '生产单号',
     align: 'center',
     dataIndex: 'externalProduceOrderNum',
-    key: 'externalProduceOrderNum',
-    width: 200
-  },
-  {
-    title: '客户名称',
-    dataIndex: 'customerName',
-    key: 'customerName'
+    key: 'externalProduceOrderNum'
   },
   {
     title: '客户款号',
-    dataIndex: 'customerAccount',
-    key: 'customerAccount'
+    dataIndex: 'productClientNum',
+    key: 'productClientNum'
   },
   {
     title: '产品名称',
@@ -73,8 +76,8 @@ export const tableColumns: any = [
   {
     title: '产品款号',
     align: 'center',
-    dataIndex: 'productAccount',
-    key: 'productAccount'
+    dataIndex: 'productNum',
+    key: 'productNum'
   },
   {
     title: '款图',
@@ -87,20 +90,22 @@ export const tableColumns: any = [
   {
     title: '订单数量',
     align: 'center',
-    key: 'shopName',
-    dataIndex: 'shopName'
+    key: 'orderSum',
+    dataIndex: 'orderSum'
   },
   {
     title: '承诺交期',
     align: 'center',
-    key: 'teamName',
-    dataIndex: 'teamName'
+    key: 'committedDeliveryDate',
+    dataIndex: 'committedDeliveryDate',
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
   {
     title: '面料齐料日期',
     align: 'center',
-    dataIndex: 'planStartTime',
-    key: 'planStartTime',
+    dataIndex: 'fabricPrepareTime',
+    key: 'fabricPrepareTime',
     width: 170,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
@@ -115,30 +120,34 @@ export const tableColumns: any = [
     children: [
       {
         title: '开始日期',
-        dataIndex: 'cropStartDate',
+        dataIndex: 'tailoringStartDate',
         align: 'center',
-        key: 'cropStartDate',
-        width: 100
+        key: 'tailoringStartDate',
+        width: 100,
+        render: (date: moment.MomentInput) =>
+          date ? moment(date).format(FORMAT_DATE) : null
       },
       {
         title: '结束日期',
-        dataIndex: 'cropEndDate',
+        dataIndex: 'tailoringEndDate',
         align: 'center',
-        key: 'cropStartDate',
-        width: 100
+        key: 'tailoringEndDate',
+        width: 100,
+        render: (date: moment.MomentInput) =>
+          date ? moment(date).format(FORMAT_DATE) : null
       },
       {
         title: '完成数量',
-        dataIndex: 'completedQuantity',
+        dataIndex: 'tailoringCompletedAmount',
         align: 'center',
-        key: 'completedQuantity',
+        key: 'tailoringCompletedAmount',
         width: 100
       },
       {
         title: '完成率',
-        dataIndex: 'completionRate',
+        dataIndex: 'tailoringCompletedRate',
         align: 'center',
-        key: 'completionRate',
+        key: 'tailoringCompletedRate',
         width: 100
       }
     ]
@@ -147,9 +156,11 @@ export const tableColumns: any = [
   {
     title: '辅料齐料日期',
     align: 'center',
-    key: 'auxiliaryMaterialDate',
-    dataIndex: 'auxiliaryMaterialDate',
-    width: 100
+    key: 'accessoryPrepareTime',
+    dataIndex: 'accessoryPrepareTime',
+    width: 100,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
 
   {
@@ -161,17 +172,21 @@ export const tableColumns: any = [
     children: [
       {
         title: '开始日期',
-        dataIndex: 'StartDate',
+        dataIndex: 'outsourceStartDate',
         align: 'center',
-        key: 'StartDate',
-        width: 100
+        key: 'outsourceStartDate',
+        width: 100,
+        render: (date: moment.MomentInput) =>
+          date ? moment(date).format(FORMAT_DATE) : null
       },
       {
         title: '结束日期',
-        dataIndex: 'EndDate',
+        dataIndex: 'outsourceEndDate',
         align: 'center',
-        key: 'EndDate',
-        width: 100
+        key: 'outsourceEndDate',
+        width: 100,
+        render: (date: moment.MomentInput) =>
+          date ? moment(date).format(FORMAT_DATE) : null
       }
     ]
   },
@@ -184,44 +199,48 @@ export const tableColumns: any = [
     children: [
       {
         title: '班组',
-        dataIndex: 'team',
+        dataIndex: 'sewingTeam',
         align: 'center',
-        key: 'team',
+        key: 'sewingTeam',
         width: 100
       },
       {
         title: '人数',
-        dataIndex: 'numberPersons',
+        dataIndex: 'sewingWorkernum',
         align: 'center',
-        key: 'numberPersons',
+        key: 'sewingWorkernum',
         width: 100
       },
       {
         title: '开始日期',
-        dataIndex: 'sewStartDate',
+        dataIndex: 'sewingStartDate',
         align: 'center',
-        key: 'sewStartDate',
-        width: 100
+        key: 'sewingStartDate',
+        width: 100,
+        render: (date: moment.MomentInput) =>
+          date ? moment(date).format(FORMAT_DATE) : null
       },
       {
         title: '结束日期',
-        dataIndex: 'sewEndDate',
+        dataIndex: 'sewingEndDate',
         align: 'center',
-        key: 'sewEndDate',
-        width: 100
+        key: 'sewingEndDate',
+        width: 100,
+        render: (date: moment.MomentInput) =>
+          date ? moment(date).format(FORMAT_DATE) : null
       },
       {
         title: '完成数量',
-        dataIndex: 'sewCompletedQuantity',
+        dataIndex: 'sewingCompletedAmount',
         align: 'center',
-        key: 'sewCompletedQuantity',
+        key: 'sewingCompletedAmount',
         width: 100
       },
       {
         title: '完成率',
-        dataIndex: 'sewCompletionRate',
+        dataIndex: 'sewingCompletedRate',
         align: 'center',
-        key: 'sewCompletionRate',
+        key: 'sewingCompletedRate',
         width: 100
       }
     ]
@@ -235,30 +254,34 @@ export const tableColumns: any = [
     children: [
       {
         title: '开始日期',
-        dataIndex: 'adjustmentStartDate',
+        dataIndex: 'trimStartDate',
         align: 'center',
-        key: 'adjustmentStartDate',
-        width: 100
+        key: 'trimStartDate',
+        width: 100,
+        render: (date: moment.MomentInput) =>
+          date ? moment(date).format(FORMAT_DATE) : null
       },
       {
         title: '结束日期',
-        dataIndex: 'adjustmentEndDate',
+        dataIndex: 'trimEndDate',
         align: 'center',
-        key: 'adjustmentEndDate',
-        width: 100
+        key: 'trimEndDate',
+        width: 100,
+        render: (date: moment.MomentInput) =>
+          date ? moment(date).format(FORMAT_DATE) : null
       },
       {
         title: '完成数量',
-        dataIndex: 'adjustmentQuantity',
+        dataIndex: 'trimCompletedAmount',
         align: 'center',
-        key: 'adjustmentQuantity',
+        key: 'trimCompletedAmount',
         width: 100
       },
       {
         title: '完成率',
-        dataIndex: 'adjustmentCompletionRate',
+        dataIndex: 'trimCompletedRate',
         align: 'center',
-        key: 'adjustmentCompletionRate',
+        key: 'trimCompletedRate',
         width: 100
       }
     ]

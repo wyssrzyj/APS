@@ -6,138 +6,58 @@ import moment from 'moment'
 import { SetStateAction, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
+import { Icon } from '@/components'
 import { CusDragTable, SearchBar } from '@/components'
-import { actualProductionApis, productionPlanApis } from '@/recoil/apis'
-import useTableChange from '@/utils/useTableChange'
+import { dailyCompletionApis, productionPlanApis } from '@/recoil/apis'
 
-import { searchConfigs, tableColumns } from './conifgs'
+import { easySearch, searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
 import Popup from './popup'
 import ScheduleModal from './scheduleModal/index'
+const img =
+  'https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/img.jpg'
 
-const {
-  productList,
-  exportProductList,
-  productDetail,
+const { factoryList } = productionPlanApis
 
-  factoryList,
-  getWorkshopSectionList,
-  makeSewingPlan
-} = productionPlanApis
+const { teamDayCompletion, teamDayCompletionExport } = dailyCompletionApis
 
-const { efficiencyList } = actualProductionApis
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
-
-const productStatus = [
-  { label: '待计划', value: 1 },
-  { label: '已计划', value: 2 },
-  { label: '生产中', value: 3 },
-  { label: '生产完成', value: 4 }
-]
 function ProductionPlan() {
   const location = useLocation()
   const { state }: any = location
 
+  tableColumns[2].render = (v) => {
+    return (
+      <div key={v} className={styles.tableColumnsImg}>
+        <img
+          className={styles.tableColumnsImg}
+          src={v !== null ? v : img}
+          alt=""
+        />
+      </div>
+    )
+  }
+  const [searchStatus, setSearchStatus] = useState(false) //高级搜索状态
+  const [facList, setFacList] = useState([])
   const [params, setParams] = useState<any>({
     pageSize: 10,
     pageNum: 1
   })
-  const [configs, setConfigs] = useState<any[]>(searchConfigs)
-  const [data, setData] = useState<any[]>() //表头数据
+  const [total, setTotal] = useState<any>()
 
+  const [configs, setConfigs] = useState<any[]>(searchConfigs)
+
+  const [dynamicMeter, setDynamicMeter] = useState<any[]>() //表头
   const [surfaceDataSource, setSurfaceDataSource] = useState<any[]>() //总数据
-  const [dynamicMeter, setDynamicMeter] = useState<any[]>()
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [newlyAdded, setNewlyAdded] = useState(false) //新增
 
-  const [rowInfo, setRowInfo] = useState() //展示弹窗
-
-  const [facList, setFacList] = useState([])
-  const [workshopSectionList, setWorkshopSectionList] = useState([])
-  const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
-  const {
-    tableChange,
-    dataSource,
-    total,
-    pageNum,
-    pageSize,
-    loading,
-    getDataList
-  } = useTableChange(params, efficiencyList)
-  const [editData, setEditData] = useState<any>() //编辑数据
-  // const [urlState, setUrlState] = useState<any>()
-  useEffect(() => {
-    // if()
-    if (state !== null) {
-      const id = state.id
-      setParams({ ...params, externalProduceOrderNum: id })
-    }
-  }, [state])
-
-  useEffect(() => {
-    getHeaderData()
-  }, [])
-  //动态表头
-  const getHeaderData = () => {
-    const sum = [1, 2]
-    const list = []
-    sum.forEach((item) => {
-      list.push({
-        title: `${item}`,
-        align: 'center',
-        dataIndex: `${item}`,
-        key: `${item}`,
-        width: 100
-      })
-    })
-    const data = [
-      { '1': 1, '2': 2 },
-      { '1': 1, '2': 2 },
-      { '1': 1, '2': 2 },
-      { '1': 1, '2': 2 },
-      { '1': 1, '2': 2 },
-      { '1': 1, '2': 2 },
-      { '1': 1, '2': 2 },
-      { '1': 1, '2': 2 },
-      { '1': 1, '2': 2 }
-    ]
-    setData(data)
-    setDynamicMeter([...tableColumns, ...list])
-  }
-  //处理数据格式
-  useEffect(() => {
-    if (!isEmpty(dataSource) && !isEmpty(data)) {
-      console.log(data)
-      console.log(dataSource)
-      const sum = []
-      dataSource.forEach((item, index) => {
-        sum.push({ ...item, ...data[index] })
-      })
-      console.log('~~~~~~~~~~~~~', sum)
-      setSurfaceDataSource([...sum])
-    }
-  }, [data, dataSource])
-  useEffect(() => {
-    console.log('是否更新', dynamicMeter)
-  }, [dynamicMeter])
-  // 动态表头
-  // console.log(dynamicMeter)
-
   useEffect(() => {
     ;(async () => {
       getFacList()
-      getWorkshopSectionListInfo()
     })()
   }, [])
-
-  useEffect(() => {
-    const nConfigs: any[] = cloneDeep(configs)
-    nConfigs[0]['options'] = facList
-    // nConfigs[4]['options'] = productStatus
-    setConfigs(nConfigs)
-  }, [facList, workshopSectionList])
-
   const getFacList = async () => {
     try {
       const res: any = await factoryList()
@@ -149,16 +69,82 @@ function ProductionPlan() {
       setFacList(data)
     } catch (err) {}
   }
+  useEffect(() => {
+    const nConfigs: any[] = cloneDeep(configs)
+    nConfigs[0]['options'] = facList
+    setConfigs(nConfigs)
+  }, [facList])
 
-  const getWorkshopSectionListInfo = async () => {
+  useEffect(() => {
+    getReportData()
+  }, [params])
+
+  const getReportData = async () => {
     try {
-      const data: any = await getWorkshopSectionList()
-      data.forEach((item: any) => {
-        item.label = item.dictLabel
-        item.value = item.dictValue
+      const res = await teamDayCompletion({ ...params })
+      setTotal(res.total)
+      // 处理数据格式
+      getHeaderData(res.dailyCompleteItemVOList, res.dayList)
+    } catch (error) {}
+  }
+
+  useEffect(() => {
+    if (state !== null) {
+      const id = state.id
+      setParams({ ...params, externalProduceOrderNum: id })
+    }
+  }, [state])
+
+  const processingFormat = (header, arr) => {
+    // const header = ['1', '2', '3', '4', '5', '6', '7'] //表头
+    // const arr = [10, 12, 33, 54, 15] //数据
+    if (!isEmpty(arr)) {
+      const b = header //表头
+      const sum1 = [] //数据
+      arr.forEach((item, index) => {
+        sum1.push({ sizeCode: b[index], quantity: arr[index] })
       })
-      setWorkshopSectionList(data)
-    } catch (err) {}
+      const conversion = (data: any[]) => {
+        //data 数据
+        const obj: any = {}
+        data.map((e: { sizeCode: string | number; quantity: any }) => {
+          //键名=建值
+          obj[e.sizeCode] = e.quantity
+        })
+        return obj
+      }
+      return conversion(sum1)
+    }
+  }
+
+  //动态表头格式设置
+  const getHeaderData = (data, dayList) => {
+    const list = []
+    const header = [] //表头
+    dayList.forEach((item) => {
+      header.push(`${item}`)
+      list.push({
+        title: `${item}天`,
+        align: 'center',
+        dataIndex: `${item}`,
+        id: `${item}`,
+        key: `${item}`,
+        width: 100
+      })
+    })
+    setDynamicMeter([...tableColumns, ...list])
+    // 处理数据
+    if (!isEmpty(data)) {
+      const sums = data.map((item, index) => {
+        item.id = index
+        item.key = index
+        const processed = processingFormat(header, item.completeAmountList)
+        return { ...item, ...processed }
+      })
+      setSurfaceDataSource(sums)
+    } else {
+      setSurfaceDataSource([])
+    }
   }
 
   const dealDate = (date: any[], index: number) => {
@@ -183,36 +169,21 @@ function ProductionPlan() {
         nParams[key] = values[key]
       }
     })
-    console.log('for的数据', nParams)
-
     setParams(nParams)
   }
 
   const exportFile = () => {
-    exportProductList({
+    teamDayCompletionExport({
       ...params
     }).then((res: any) => {
+      message.success('导出成功')
       const blob = new Blob([res], { type: 'application/octet-stream' })
       const download = document.createElement('a')
       download.href = window.URL.createObjectURL(blob)
-      download.download = `生产计划.xls`
+      download.download = `班组日完成.xls`
       download.click()
       window.URL.revokeObjectURL(download.href)
     })
-  }
-
-  const handleDetailInfo = async (rowInfo: any) => {
-    try {
-      const res = await productDetail({ id: rowInfo.id })
-      if (res) {
-        setRowInfo(res)
-        toggleModalVisible(true)
-      }
-    } catch (err) {}
-  }
-
-  const toggleModalVisible = (visible: boolean) => {
-    setIsModalVisible(visible)
   }
 
   const rowSelection:
@@ -223,15 +194,10 @@ function ProductionPlan() {
     | any = {
     selectedRowKeys,
     onChange: (selectedRowKeys: SetStateAction<never[]>) => {
+      console.log(selectedRowKeys)
+
       setSelectedRowKeys(selectedRowKeys)
     }
-  }
-
-  const update = async () => {
-    console.log('更新数据')
-
-    getDataList && getDataList()
-    // const arr = await productList(params)
   }
 
   const TableLeft = () => {
@@ -243,15 +209,8 @@ function ProductionPlan() {
       </>
     )
   }
-  const getSort = (_pagination, _filters, sorter) => {
-    const sortType =
-      sorter.order === 'ascend'
-        ? { sortType: 'asc' }
-        : sorter.order === 'descend'
-        ? { sortType: 'desc' }
-        : { sortType: '' }
-    setParams({ ...params, ...sortType })
-    // tableChange()
+  const getSort = (_pagination, _filters) => {
+    setParams({ ...params })
   }
   const handleOk = () => {
     setIsModalVisible(false)
@@ -264,39 +223,74 @@ function ProductionPlan() {
     console.log(e)
   }
   const content = {
-    // formData,
     updateMethod,
     newlyAdded,
     setNewlyAdded
-    // setEdit
   }
   return (
     <div className={styles.qualification}>
-      <div>班组日完成报表</div>
-      <div className={styles.forms}>
-        <SearchBar
-          configs={configs}
-          params={params}
-          callback={searchParamsChange}
-        ></SearchBar>
+      <div className={searchStatus ? styles.formDisplay : styles.formHide}>
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={configs}
+              params={params}
+              callback={searchParamsChange}
+            ></SearchBar>
+          </div>
+          <div
+            onClick={() => {
+              setSearchStatus(!searchStatus)
+            }}
+            className={styles.collect}
+          >
+            {searchStatus === true ? (
+              <Icon type="jack-Icon_up" className={styles.previous} />
+            ) : null}
+          </div>
+        </>
       </div>
+
+      {searchStatus === false ? (
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={easySearch}
+              params={params}
+              callback={searchParamsChange}
+            ></SearchBar>
+            <div className={styles.advancedSearch}>
+              <Button
+                type="primary"
+                ghost
+                onClick={() => {
+                  setSearchStatus(!searchStatus)
+                }}
+              >
+                高级搜索
+              </Button>
+            </div>
+          </div>
+        </>
+      ) : null}
       <div>
         {!isEmpty(dynamicMeter) ? (
           <CusDragTable
+            noNeedDropdown={true}
             storageField={'dailyCompletion'}
-            rowSelection={rowSelection}
+            rowSelection={null}
             cusBarLeft={TableLeft}
             columns={dynamicMeter}
             dataSource={surfaceDataSource}
             rowKey={'key'}
-            scroll={{ x: 1000 }}
+            scroll={{ x: 2000, y: 500 }}
             onChange={getSort}
             pagination={{
               //分页
               showSizeChanger: true,
               // showQuickJumper: true, //是否快速查找
-              pageSize, //每页条数
-              current: pageNum, //	当前页数
+              pageSize: params.pageSize, //每页条数
+              current: params.pageNum, //	当前页数
               total, //数据总数
               pageSizeOptions: ['10', '20', '50']
             }}

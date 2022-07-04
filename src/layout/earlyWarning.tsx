@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-06-29 10:16:58
+ * @LastEditTime: 2022-07-01 13:14:18
  * @Description:
  * @LastEditors: lyj
  */
@@ -19,9 +19,11 @@ const EarlyWarning = () => {
   const navigate = useNavigate()
   const [list, setList] = useState([])
   const [ids, setIds] = useState([])
+
   const warning = async (id) => {
     const res = await closePrompt({ idList: ids })
     if (res.code === 200) {
+      setList([])
       navigate('/productionWarning', {
         replace: true,
         state: { id: id }
@@ -45,7 +47,7 @@ const EarlyWarning = () => {
   const arr = (
     <>
       <div className={styles.pointer}>
-        <div className={styles.scrollbar}>
+        <div className={styles.todoContent}>
           {!isEmpty(list) &&
             list.map((item, index) => (
               <>
@@ -76,12 +78,12 @@ const EarlyWarning = () => {
         {list.length > 0 ? (
           <>
             <Popover placement="top" content={arr} trigger="hover">
-              <Icon type="jack-left-copy" className={styles.previous} />
+              <Icon type="jack-swyx" className={styles.previous} />
               {list.length > 0 ? <div className={styles.remind}></div> : null}
             </Popover>
           </>
         ) : (
-          <Icon type="jack-left-copy" className={styles.previous} />
+          <Icon type="jack-swyx" className={styles.previous} />
         )}
       </div>
     </div>

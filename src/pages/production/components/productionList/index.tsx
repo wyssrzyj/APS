@@ -1,12 +1,14 @@
+import { Button } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 
 import { CusDragTable } from '@/components'
+import { Icon } from '@/components'
 import { productionSingleApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
-import { tableColumns } from './conifgs'
+import { easySearch, tableColumns } from './conifgs'
 import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
@@ -24,6 +26,7 @@ function Production() {
   map.set(3, '生产中')
   map.set(4, '生产完成')
 
+  const [searchStatus, setSearchStatus] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [types, setType] = useState(false) //编辑或者查看
   const [formData, setFormData] = useState({})
@@ -173,39 +176,75 @@ function Production() {
   }
   return (
     <div className={styles.qualification}>
-      <div>
-        <div className={styles.content}>
-          <div className={styles.forms}>
-            <Forms factoryData={factoryData} FormData={FormData}></Forms>
-          </div>
-          <CusDragTable
-            storageField={'productionList'}
-            columns={tableColumns}
-            dataSource={data}
-            rowKey={'key'}
-            scroll={{ x: 1000 }}
-            loading={loading}
-            onChange={getSort}
-            pagination={{
-              //分页
-              showSizeChanger: true,
-              // showQuickJumper: true, //是否快速查找.
-              pageSize: pageSize, //每页条数
-              current: pageNum, //	当前页数
-              total, //数据总数
-              // position: ['bottomCenter'], //居中
-              pageSizeOptions: ['10', '20', '50']
-            }}
-          />
-          {isModalVisible && <Popup content={content} />}
+      <div className={styles.content}>
+        <div className={searchStatus ? styles.formDisplay : styles.formHide}>
+          <>
+            <div className={styles.forms}>
+              <Forms
+                factoryData={factoryData}
+                FormData={FormData}
+                display="formDisplay"
+              ></Forms>
+            </div>
+            <div
+              onClick={() => {
+                setSearchStatus(!searchStatus)
+              }}
+              className={styles.collect}
+            >
+              {searchStatus === true ? (
+                <Icon type="jack-Icon_up" className={styles.previous} />
+              ) : null}
+            </div>
+          </>
         </div>
+
+        {searchStatus === false ? (
+          <>
+            <div className={styles.forms}>
+              <div className={styles.forms}>
+                <Forms
+                  factoryData={factoryData}
+                  FormData={FormData}
+                  display="formHide"
+                ></Forms>
+              </div>
+              <div className={styles.advancedSearch}>
+                <Button
+                  type="primary"
+                  ghost
+                  onClick={() => {
+                    setSearchStatus(!searchStatus)
+                  }}
+                >
+                  高级搜索
+                </Button>
+              </div>
+            </div>
+          </>
+        ) : null}
+
+        <CusDragTable
+          storageField={'productionList'}
+          columns={tableColumns}
+          dataSource={data}
+          rowKey={'key'}
+          scroll={{ x: 1000 }}
+          loading={loading}
+          onChange={getSort}
+          pagination={{
+            //分页
+            showSizeChanger: true,
+            // showQuickJumper: true, //是否快速查找.
+            pageSize: pageSize, //每页条数
+            current: pageNum, //	当前页数
+            total, //数据总数
+            // position: ['bottomCenter'], //居中
+            pageSizeOptions: ['10', '20', '50']
+          }}
+        />
+        {isModalVisible && <Popup content={content} />}
       </div>
-      {/* <MovPopup
-        type="mov"
-        movIsModalVisible={movIsModalVisible}
-        setMovIsModalVisible={setMovIsModalVisible}
-        movApi={movApi}
-      /> */}
     </div>
   )
 }

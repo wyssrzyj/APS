@@ -1,11 +1,12 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-21 13:18:16
- * @LastEditTime: 2022-06-30 17:25:22
+ * @LastEditTime: 2022-07-04 17:57:02
  * @Description:
  * @LastEditors: lyj
  */
 import { Button, message, Modal, Table } from 'antd'
+import { isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 
 import { dailySchedule, productionWarning } from '@/recoil/apis'
@@ -58,15 +59,56 @@ const WarningModal = (props) => {
   const onChang = (e) => {
     setSaveData(e)
   }
+  //计划数量总合必须 =总计划数量
+  const totalQuantity = (e) => {
+    if (!isEmpty(e.dailyScheduleVOS)) {
+      const sumList = []
+      e.dailyScheduleVOS.forEach((item) => {
+        const res = item.detailVOS.reduce(
+          (total, current, currentIndex, arr) => {
+            total += current.planAmount
+            return total
+          },
+          0
+        )
+        sumList.push(res)
+      })
+
+      const sum = sumList.reduce((total, current, currentIndex, arr) => {
+        total += current
+        return total
+      }, 0)
+      if (current.orderSum === sum) {
+        return true
+      } else {
+        if (sum > current.orderSum) {
+          message.warning(
+            `详情数量 【${sum}】大于 总计划数量【${current.orderSum}】`
+          )
+        }
+        if (sum < current.orderSum) {
+          message.warning(
+            `详情数量 【${sum}】小于 总计划数量【${current.orderSum}】`
+          )
+        }
+
+        return false
+      }
+    } else {
+      return true
+    }
+  }
 
   const handleOk = async () => {
-    const res = await updateDailyScheduleList({
-      ...saveData
-    })
+    if (totalQuantity(saveData)) {
+      const res = await updateDailyScheduleList({
+        ...saveData
+      })
 
-    if (res.code === 200) {
-      message.success('保存成功')
-      setIsModalVisible(false)
+      if (res.code === 200) {
+        message.success('保存成功')
+        setIsModalVisible(false)
+      }
     }
   }
   const handleCancel = () => {

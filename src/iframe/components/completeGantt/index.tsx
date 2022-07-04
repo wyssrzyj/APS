@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-10 13:28:44
- * @LastEditTime: 2022-06-24 13:28:42
+ * @LastEditTime: 2022-07-04 16:17:58
  * @Description:
  * @LastEditors: lyj
  */
@@ -109,7 +109,6 @@ function IframeDome() {
   // 甘特图数据
   const getChart = async (v) => {
     const id = v.id
-    console.log('🚀 ~ file: index.tsx ~ line 82 ~ getChart ~ v.id', v.id)
     const type = v.type
     const chart: any = await getGanttData(type, id)
     const arr = cloneDeep(chart.data)

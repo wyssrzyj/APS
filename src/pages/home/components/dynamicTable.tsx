@@ -1,11 +1,11 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-12 13:03:02
- * @LastEditTime: 2022-06-29 10:25:56
+ * @LastEditTime: 2022-07-04 13:25:43
  * @Description:
  * @LastEditors: lyj
  */
-import { Form, Input, Select } from 'antd'
+import { Form, Input, InputNumber, Select } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 
@@ -13,10 +13,15 @@ import { CusDragTable, SearchBar } from '@/components'
 import { commonApis, productionSingleApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 const { factoryList } = commonApis
-import { delayTableColumns, inventoryTableColumns } from '../configs'
+import {
+  delayTableColumns,
+  durationQuery,
+  inventoryTableColumns
+} from '../configs'
 import styles from '../index.module.less'
 const { Option } = Select
-const { productionDelayList, productionChangeList } = productionSingleApis
+const { productionDelayList, productionChangeList, listRemainingDuration } =
+  productionSingleApis
 const DynamicTable = (props: Record<string, any>) => {
   const { title, isDelay, type } = props
   const [facList, setFacList] = useState([])
@@ -29,7 +34,11 @@ const DynamicTable = (props: Record<string, any>) => {
   })
   const { tableChange, dataSource } = useTableChange(
     params,
-    isDelay ? productionDelayList : productionChangeList
+    type === 'productDelayTable'
+      ? productionDelayList
+      : type === 'productChangeTable'
+      ? productionChangeList
+      : listRemainingDuration
   )
   useEffect(() => {
     ;(async () => {
@@ -57,14 +66,16 @@ const DynamicTable = (props: Record<string, any>) => {
   const onChange = (values) => {
     const key = Object.keys(values)[0]
     const nParams = cloneDeep(params)
-    console.log(typeof values[key])
     nParams[key] = values[key]
-
     setParams(nParams)
   }
 
   const changeTableColumn = () => {
-    return isDelay ? delayTableColumns : inventoryTableColumns
+    return type === 'productDelayTable'
+      ? delayTableColumns
+      : type === 'productChangeTable'
+      ? inventoryTableColumns
+      : durationQuery
   }
 
   return (
@@ -92,7 +103,11 @@ const DynamicTable = (props: Record<string, any>) => {
             allowClear
           />
         </Form.Item>
-        {type === 'durationQuery' ? null : (
+        {type === 'durationQuery' ? (
+          <Form.Item name="day" label="剩余">
+            <InputNumber addonAfter="天" className={styles.durationQuery} />
+          </Form.Item>
+        ) : (
           <Form.Item name="day" label="最近">
             <Select
               placeholder="请选择"

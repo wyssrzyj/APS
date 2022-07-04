@@ -1,6 +1,7 @@
 import { message, Popover, Tabs, Tag, Tree } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import { Icon } from '@/components' //路径
 import { dockingDataApis, schedulingApis } from '@/recoil/apis'
@@ -29,6 +30,8 @@ function ToPlan(props: {
     treeSelect,
     treeUpdate
   } = props
+  const location = useLocation()
+  const { state }: any = location
   const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
     schedulingApis
   const { workshopList, teamList, capacityList } = dockingDataApis
@@ -59,6 +62,16 @@ function ToPlan(props: {
   const [capacityData, setCapacityData] = useState<any>([]) //效率模板
   const [efficiencyID, setEfficiencyID] = useState<any>()
   const [templateId, setTemplateId] = useState<any>() //效率模板数据
+
+  const [productName, setProductName] = useState<any>() //订单号
+
+  useEffect(() => {
+    if (state !== null) {
+      const id = state.id
+      setCurrent('1')
+      setProductName(id)
+    }
+  }, [state])
 
   useEffect(() => {
     if (selectedKeys !== null && selectedKeys !== undefined) {
@@ -652,57 +665,57 @@ function ToPlan(props: {
       setList(sum)
       getData(sum[Number('1')], '1')
     }
-    // }
   }
   return (
     <div className={styles.tree}>
-      {!isModalVisible ? (
-        <Tabs onChange={callback} activeKey={current} type="card">
-          <TabPane tab="待计划" key="0">
-            <Forms
-              formData={formData}
-              FormData={(e) => {
-                FormData(e, 'stay')
-                // setProductName(e)
-              }}
-            ></Forms>
-            {treeData !== undefined && treeData.length > 0 ? (
-              <div>
-                <Tree
-                  checkable
-                  height={500}
-                  selectedKeys={keys}
-                  defaultExpandAll={true}
-                  onSelect={onSelect}
-                  onCheck={onCheck}
-                  treeData={treeData}
-                />
-              </div>
-            ) : null}
-          </TabPane>
-          <TabPane tab="已计划" key="1">
-            <Forms
-              formData={formData}
-              FormData={(e) => {
-                FormData(e, 'already')
-                // setProductName(e)
-              }}
-            ></Forms>
-            {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
-              <div>
-                <Tree
-                  height={500}
-                  selectedKeys={keys}
-                  defaultExpandAll={true}
-                  onSelect={onSelect}
-                  onCheck={onCheck}
-                  treeData={WaitingTreeData}
-                />
-              </div>
-            ) : null}
-          </TabPane>
-        </Tabs>
-      ) : null}
+      {/* {!isModalVisible ? ( */}
+      <Tabs onChange={callback} activeKey={current} type="card">
+        <TabPane tab="待计划" key="0">
+          <Forms
+            formData={formData}
+            FormData={(e) => {
+              FormData(e, 'stay')
+              // setProductName(e)
+            }}
+          ></Forms>
+          {treeData !== undefined && treeData.length > 0 ? (
+            <div>
+              <Tree
+                checkable
+                height={500}
+                selectedKeys={keys}
+                defaultExpandAll={true}
+                onSelect={onSelect}
+                onCheck={onCheck}
+                treeData={treeData}
+              />
+            </div>
+          ) : null}
+        </TabPane>
+        <TabPane tab="已计划" key="1">
+          <Forms
+            formData={formData}
+            productName={productName}
+            FormData={(e) => {
+              FormData(e, 'already')
+              // setProductName(e)
+            }}
+          ></Forms>
+          {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
+            <div>
+              <Tree
+                height={500}
+                selectedKeys={keys}
+                defaultExpandAll={true}
+                onSelect={onSelect}
+                onCheck={onCheck}
+                treeData={WaitingTreeData}
+              />
+            </div>
+          ) : null}
+        </TabPane>
+      </Tabs>
+      {/* ) : null} */}
       {/* 拆分 */}
       {isModalVisible && (
         <BreakUp

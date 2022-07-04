@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-29 17:32:33
- * @LastEditTime: 2022-06-29 17:59:32
+ * @LastEditTime: 2022-07-04 14:01:34
  * @Description:
  * @LastEditors: lyj
  */
@@ -10,6 +10,16 @@ import { ReactNode } from 'react'
 
 const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
 
+export const easySearch = [
+  {
+    label: '生产单号',
+    field: 'externalProduceOrderNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入生产单号'
+  }
+]
+
 export const searchConfigs = [
   {
     label: '工厂名称',
@@ -17,17 +27,20 @@ export const searchConfigs = [
     type: 'select',
     allowClear: true,
     placeholder: '请选择工厂名称',
-    options: []
+    options: [],
+    width: 250
   },
   {
     label: '生产单号',
-    field: 'externalProduceOrderNum',
+    field: 'produceOrderNum',
     type: 'input',
     allowClear: true,
+    width: 250,
     placeholder: '请输入生产单号'
   },
   {
     label: '产品名称',
+    width: 250,
     field: 'productName',
     allowClear: true,
     placeholder: '请输入产品名称',
@@ -36,7 +49,8 @@ export const searchConfigs = [
   },
   {
     label: '产品款号',
-    field: 'productModelNo',
+    field: 'productNum',
+    width: 250,
     allowClear: true,
     placeholder: '请输入产品款号',
     type: 'input',
@@ -50,19 +64,22 @@ export const tableColumns: any = [
     align: 'center',
     dataIndex: 'factoryName',
     key: 'factoryName',
-    width: 200
+    width: 200,
+    fixed: 'left'
   },
   {
     title: '生产单号',
     align: 'center',
     dataIndex: 'externalProduceOrderNum',
     key: 'externalProduceOrderNum',
+    fixed: 'left',
     width: 200
   },
   {
     title: '款图',
     align: 'center',
     dataIndex: 'img',
+    fixed: 'left',
     key: 'img',
     width: 200
   },
@@ -70,20 +87,24 @@ export const tableColumns: any = [
     title: '产品款号',
     align: 'center',
     dataIndex: 'productNum',
+    fixed: 'left',
     key: 'productNum',
-    width: 200
+    width: 100
   },
   {
     title: '产品名称',
     align: 'center',
     dataIndex: 'productName',
+    fixed: 'left',
     key: 'productName',
-    width: 250
+    width: 150
   },
 
   {
     title: '班组',
-    dataIndex: 'customerAccount',
-    key: 'customerAccount'
+    fixed: 'left',
+    align: 'center',
+    dataIndex: 'teamName',
+    key: 'teamName'
   }
 ]

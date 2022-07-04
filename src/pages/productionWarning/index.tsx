@@ -4,16 +4,15 @@ import { Button, message, Modal, Popover, Tag } from 'antd'
 import { cloneDeep } from 'lodash'
 import moment from 'moment'
 import { SetStateAction, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { Icon } from '@/components'
 import { CusDragTable, SearchBar } from '@/components'
 import { productionWarning } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
-import { searchConfigs, tableColumns } from './conifgs'
+import { easySearch, searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
-import LineChart from './LineChart'
 import Popup from './popup'
 import ScheduleModal from './scheduleModal/index'
 
@@ -33,20 +32,20 @@ const handleList = [
 ]
 
 const ProductionPlan = () => {
+  const navigate = useNavigate()
   const location = useLocation()
   const { state }: any = location
-
+  const [searchStatus, setSearchStatus] = useState(false)
   const [params, setParams] = useState<any>({
     pageSize: 10,
     pageNum: 1
   })
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [newlyAdded, setNewlyAdded] = useState(false) //新增
   const [facList, setFacList] = useState([])
-  const [current, setCurrent] = useState() //当前行
-  const [saveData, setSaveData] = useState<any>([]) //保存数据
+  const [current, setCurrent] = useState<any>() //当前行
+  const [factoryId, setFactoryId] = useState<any>('')
 
   const {
     tableChange,
@@ -64,34 +63,56 @@ const ProductionPlan = () => {
       setParams({ ...params, externalProduceOrderNum: id })
     }
   }, [state])
-
+  const jump = (id) => {
+    console.log('是否体专')
+    navigate('/scheduling', {
+      replace: true,
+      state: { id: id }
+    })
+  }
   const handle = (record) => {
     return (
       <>
         <div className={styles.operation}>
+          {/* <div>
+            <Tag
+              color="green"
+              onClick={() => {
+                jump(record.id)
+              }}
+            >
+              跳转值甘特图
+            </Tag>
+          </div> */}
           <div>
             <Tag
               color="green"
               onClick={() => {
                 setNewlyAdded(true)
+                setFactoryId(record.id)
               }}
             >
               添加加班
             </Tag>
-            {/* //record 根据某个值判断  */}
-            <Icon type="jack-icon-test" className={styles.previous} />
+            {record.extraType ? (
+              <Icon type="jack-icon-test" className={styles.previous} />
+            ) : null}
           </div>
-
-          <Tag
-            className={styles.modifySchedule}
-            color="gold"
-            onClick={() => {
-              setIsModalVisible(true)
-              setCurrent(record)
-            }}
-          >
-            修改日排程
-          </Tag>
+          <div>
+            <Tag
+              className={styles.modifySchedule}
+              color="gold"
+              onClick={() => {
+                setIsModalVisible(true)
+                setCurrent(record)
+              }}
+            >
+              修改日排程
+            </Tag>
+            {record.dailyType ? (
+              <Icon type="jack-icon-test" className={styles.previous} />
+            ) : null}
+          </div>
           {/* <Tag color="blue">修改交期</Tag>  后续版本开发 */}
         </div>
       </>
@@ -177,32 +198,9 @@ const ProductionPlan = () => {
     setParams(nParams)
   }
 
-  const toggleModalVisible = (visible: boolean) => {
-    setIsModalVisible(visible)
-  }
-
-  const rowSelection:
-    | {
-        selectedRowKeys: never[]
-        onChange: (selectedRowKeys: SetStateAction<never[]>) => void
-      }
-    | any = {
-    selectedRowKeys,
-    onChange: (selectedRowKeys: SetStateAction<never[]>) => {
-      setSelectedRowKeys(selectedRowKeys)
-    }
-  }
-
   const handleOk = async () => {
     // current 当前行
-    const res = await updateDailyScheduleList({
-      dailyScheduleListVO: [...saveData],
-      assignmentId: 1
-    })
-    if (res.code === 200) {
-      message.success('保存成功')
-      setIsModalVisible(false)
-    }
+    setIsModalVisible(false)
   }
 
   const handleCancel = () => {
@@ -228,29 +226,67 @@ const ProductionPlan = () => {
   const TableLeft = () => {
     return <></>
   }
-
-  const content = {
-    // formData,
+  const update = () => {
+    setNewlyAdded(false)
+    setParams({ ...params })
+    console.log('更新数据')
+  }
+  const popupContent = {
     updateMethod,
     newlyAdded,
-    setNewlyAdded
+    update
     // setEdit
   }
   return (
     <div className={styles.qualification}>
-      <LineChart />
-      <div className={styles.forms}>
-        <SearchBar
-          configs={configs}
-          params={params}
-          callback={searchParamsChange}
-        ></SearchBar>
+      <div className={searchStatus ? styles.formDisplay : styles.formHide}>
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={configs}
+              params={params}
+              callback={searchParamsChange}
+            ></SearchBar>
+          </div>
+          <div
+            onClick={() => {
+              setSearchStatus(!searchStatus)
+            }}
+            className={styles.collect}
+          >
+            {searchStatus === true ? (
+              <Icon type="jack-Icon_up" className={styles.previous} />
+            ) : null}
+          </div>
+        </>
       </div>
+
+      {searchStatus === false ? (
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={easySearch}
+              params={params}
+              callback={searchParamsChange}
+            ></SearchBar>
+            <div className={styles.advancedSearch}>
+              <Button
+                type="primary"
+                ghost
+                onClick={() => {
+                  setSearchStatus(!searchStatus)
+                }}
+              >
+                高级搜索
+              </Button>
+            </div>
+          </div>
+        </>
+      ) : null}
 
       <div>
         <CusDragTable
           storageField={'productionWarning'}
-          rowSelection={rowSelection}
           cusBarLeft={TableLeft}
           columns={tableColumns}
           dataSource={dataSource}
@@ -278,11 +314,13 @@ const ProductionPlan = () => {
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <ScheduleModal current={current} setSaveData={setSaveData} />
+          <ScheduleModal current={current} />
         </Modal>
       ) : null}
 
-      {newlyAdded ? <Popup content={content} /> : null}
+      {newlyAdded ? (
+        <Popup content={popupContent} factoryId={factoryId} />
+      ) : null}
     </div>
   )
 }

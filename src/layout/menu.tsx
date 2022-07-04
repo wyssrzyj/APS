@@ -91,8 +91,6 @@ const MenuBox = () => {
   }
 
   const changePage = (event: any) => {
-    console.log(event)
-
     const { key } = event
     const target = findRoute(menus, key) || '/home'
     navigate(target)

@@ -3,18 +3,20 @@ import { cloneDeep } from 'lodash'
 import moment from 'moment'
 import React, { SetStateAction, useCallback, useEffect, useState } from 'react'
 
+import { Icon } from '@/components'
 import { CusDragTable, SearchBar, Title } from '@/components'
 import { actualProductionApis, commonApis } from '@/recoil/apis'
 import { changeBolbToXls } from '@/utils/tool'
 import useTableChange from '@/utils/useTableChange'
 
-import { searchConfig, tableColumn } from './config'
+import { easySearch, searchConfig, tableColumn } from './config'
 import EditActualProduction from './editModal'
 import styles from './index.module.less'
 const { factoryList, getWorkshopSectionList, teamList } = commonApis
 const { efficiencyList, exportEfficiency, efficiencyDetailInfo } =
   actualProductionApis
 function ActualProductionList() {
+  const [searchStatus, setSearchStatus] = useState(false)
   const [columns, setColumns] = useState<any[]>()
   const [facList, setFacList] = useState([])
   const [workshopSectionList, setWorkshopSectionList] = useState([])
@@ -101,18 +103,6 @@ function ActualProductionList() {
     setEditModalVisible(visible)
   }
 
-  const rowSelection:
-    | {
-        selectedRowKeys: never[]
-        onChange: (selectedRowKeys: SetStateAction<never[]>) => void
-      }
-    | any = {
-    selectedRowKeys,
-    onChange: (selectedRowKeys: SetStateAction<never[]>) => {
-      setSelectedRowKeys(selectedRowKeys)
-    }
-  }
-
   const exportFile = () => {
     exportEfficiency({ ...params }).then((res) => {
       changeBolbToXls(res, '生产实绩')
@@ -159,13 +149,51 @@ function ActualProductionList() {
   return (
     <div className={styles.outContainer}>
       {/* <Title title={'生产实绩'}></Title> */}
-      <div className={styles.forms}>
-        <SearchBar
-          configs={configs}
-          params={params}
-          callback={paramsChange}
-        ></SearchBar>
+
+      <div className={searchStatus ? styles.formDisplay : styles.formHide}>
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={configs}
+              params={params}
+              callback={paramsChange}
+            ></SearchBar>
+          </div>
+          <div
+            onClick={() => {
+              setSearchStatus(!searchStatus)
+            }}
+            className={styles.collect}
+          >
+            {searchStatus === true ? (
+              <Icon type="jack-Icon_up" className={styles.previous} />
+            ) : null}
+          </div>
+        </>
       </div>
+
+      {searchStatus === false ? (
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={easySearch}
+              params={params}
+              callback={paramsChange}
+            ></SearchBar>
+            <div className={styles.advancedSearch}>
+              <Button
+                type="primary"
+                ghost
+                onClick={() => {
+                  setSearchStatus(!searchStatus)
+                }}
+              >
+                高级搜索
+              </Button>
+            </div>
+          </div>
+        </>
+      ) : null}
 
       {columns && columns.length ? (
         <CusDragTable
@@ -176,7 +204,6 @@ function ActualProductionList() {
           dataSource={dataSource}
           scroll={{ x: 1000 }}
           onChange={tableChange}
-          rowSelection={rowSelection}
           pagination={{
             showSizeChanger: true,
             // showQuickJumper: true, //是否快速查找

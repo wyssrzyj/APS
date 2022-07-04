@@ -137,7 +137,7 @@ export const menus = [
       {
         label: '日排程管理',
         key: 'dailySchedule',
-        icon: 'jack-paigong',
+        icon: 'jack-dysp',
         url: '/dailySchedule'
       },
       {
@@ -175,25 +175,25 @@ export const menus = [
   {
     label: '生产预警管理',
     key: 'productionWarning',
-    icon: 'jack-jindutiao',
+    icon: 'jack-shebeiguanli',
     url: '/productionWarning'
   },
   {
     label: '报表管理',
     key: 'reportManagement',
-    icon: 'jack-jindutiao',
+    icon: 'jack-xianshijieguo',
     url: '/',
     children: [
       {
         label: '生产周期报表',
         key: 'productionCycle',
-        icon: 'jack-paigong',
+        icon: 'jack-qiyeyewu',
         url: '/productionCycle'
       },
       {
         label: '班组日完成报表',
         key: 'dailyCompletion',
-        icon: 'jack-paigong',
+        icon: 'jack-jihuapaicheng',
         url: '/dailyCompletion'
       }
     ]

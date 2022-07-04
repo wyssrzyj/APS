@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { ReactNode } from 'react'
 
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const FORMAT_DATE = 'YYYY-MM-DD HH:mm'
 
 const map = new Map()
 map.set('1', '裁剪')
@@ -10,51 +10,58 @@ map.set('3', '后整')
 map.set('4', '包装')
 map.set('5', '外发')
 map.set('6', '缝制线外组')
+
 export const tableColumns: any = [
   {
     title: '序号',
     align: 'center',
     dataIndex: 'sn',
-    width: 200
+    width: 100
   },
   {
     title: '所属工段',
     align: 'center',
     dataIndex: 'section',
-    width: 200,
+    width: 100,
     render: (v: any) => {
-      map.get(v)
+      return map.get(v)
     }
   },
   {
     title: '总计划量',
     align: 'center',
     dataIndex: 'orderSum',
-    width: 200
+    width: 100
   },
   {
     title: '前工段计划完成日',
     align: 'center',
     dataIndex: 'preSectionPlanFinishTime',
-    width: 250
+    width: 100,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
   {
     title: '前工段实际完成日',
     align: 'center',
     dataIndex: 'preSectionRealityFinishTime',
-    width: 200
+    width: 100,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
   {
     title: '工段物料齐套日',
     align: 'center',
     dataIndex: 'sectionMaterialCompletenessTime',
-    width: 200
+    width: 100,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
   {
     title: '计划开始时间',
     align: 'center',
     dataIndex: 'planStartTime',
-    width: 170,
+    width: 100,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
@@ -62,9 +69,14 @@ export const tableColumns: any = [
     title: '计划完成时间',
     align: 'center',
     dataIndex: 'planEndTime',
-    width: 170,
+    width: 100,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
+  },
+  {
+    title: '操作',
+    align: 'center',
+    width: 100
   }
 ]
 type viewFormConfig = {

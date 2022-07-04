@@ -4,6 +4,7 @@ import moment from 'moment'
 import { useEffect, useState } from 'react'
 
 import { CusDragTable } from '@/components'
+import { Icon } from '@/components'
 import { materialSetApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
@@ -28,6 +29,8 @@ function Materials() {
     exportShortageReport,
     factoryList
   } = materialSetApis
+
+  const [searchStatus, setSearchStatus] = useState(false)
 
   const [params, setParams] = useState<any>({
     pageNum: 1,
@@ -383,9 +386,52 @@ function Materials() {
       <div>{/* <Title title={'物料齐套检查'} /> */}</div>
       <div>
         <div className={styles.content}>
-          <div className={styles.forms}>
-            <Forms factoryData={factoryData} FormData={FormData}></Forms>
+          <div className={searchStatus ? styles.formDisplay : styles.formHide}>
+            <>
+              <div className={styles.forms}>
+                <Forms
+                  factoryData={factoryData}
+                  FormData={FormData}
+                  display="formDisplay"
+                ></Forms>
+              </div>
+              <div
+                onClick={() => {
+                  setSearchStatus(!searchStatus)
+                }}
+                className={styles.collect}
+              >
+                {searchStatus === true ? (
+                  <Icon type="jack-Icon_up" className={styles.previous} />
+                ) : null}
+              </div>
+            </>
           </div>
+
+          {searchStatus === false ? (
+            <>
+              <div className={styles.forms}>
+                <div className={styles.forms}>
+                  <Forms
+                    factoryData={factoryData}
+                    FormData={FormData}
+                    display="formHide"
+                  ></Forms>
+                </div>
+                <div className={styles.advancedSearch}>
+                  <Button
+                    type="primary"
+                    ghost
+                    onClick={() => {
+                      setSearchStatus(!searchStatus)
+                    }}
+                  >
+                    高级搜索
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : null}
 
           <CusDragTable
             storageField={'materials'}

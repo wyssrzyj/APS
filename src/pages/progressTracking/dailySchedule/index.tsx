@@ -5,20 +5,20 @@ import { cloneDeep } from 'lodash'
 import moment from 'moment'
 import { SetStateAction, useEffect, useState } from 'react'
 
+import { Icon } from '@/components'
 import { CusDragTable, SearchBar } from '@/components'
-import {
-  actualProductionApis,
-  dailySchedule,
-  productionPlanApis
-} from '@/recoil/apis'
+import { dailySchedule, productionPlanApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
-import { searchConfigs, tableColumns } from './conifgs'
+import { easySearch, searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
 import ScheduleModal from './scheduleModal/index'
 
 const { factoryList, getWorkshopSectionList } = productionPlanApis
 const { pageList } = dailySchedule
+
+const img =
+  'https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/img.jpg'
 
 const productStatus = [
   { label: '待计划', value: 1 },
@@ -52,15 +52,26 @@ function ProductionPlan() {
     return <div key={index}>{_text}</div>
   }
   tableColumns[8].sorter = true
+  tableColumns[1].render = (v) => {
+    return (
+      <div key={v} className={styles.tableColumnsImg}>
+        <img
+          className={styles.tableColumnsImg}
+          src={v !== null ? v : img}
+          alt=""
+        />
+      </div>
+    )
+  }
 
-  const [params, setParams] = useState({
+  const [params, setParams] = useState<any>({
     pageSize: 10,
     pageNum: 1
   })
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [facList, setFacList] = useState([])
+  const [searchStatus, setSearchStatus] = useState(false)
   const [workshopSectionList, setWorkshopSectionList] = useState([])
   const [current, setCurrent] = useState() //当前行
 
@@ -145,22 +156,19 @@ function ProductionPlan() {
     setIsModalVisible(visible)
   }
 
-  const rowSelection:
-    | {
-        selectedRowKeys: never[]
-        onChange: (selectedRowKeys: SetStateAction<never[]>) => void
-      }
-    | any = {
-    selectedRowKeys,
-    onChange: (selectedRowKeys: SetStateAction<never[]>) => {
-      setSelectedRowKeys(selectedRowKeys)
-    }
-  }
-
   const TableLeft = () => {
     return <></>
   }
   const getSort = (_pagination, _filters, sorter) => {
+    if (sorter.order !== undefined) {
+      const sortType = sorter.order === 'ascend' ? 'asc' : 'desc'
+      setParams({
+        ...params,
+        sortField: 'orderDelivery',
+        sortType: sortType
+      })
+    }
+
     tableChange && tableChange(_pagination, _filters, sorter)
   }
   const handleOk = async () => {
@@ -172,24 +180,58 @@ function ProductionPlan() {
   }
   return (
     <div className={styles.qualification}>
-      <div>日排程</div>
-      <div className={styles.forms}>
-        <SearchBar
-          configs={configs}
-          params={params}
-          callback={searchParamsChange}
-        ></SearchBar>
+      <div className={searchStatus ? styles.formDisplay : styles.formHide}>
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={configs}
+              params={params}
+              callback={searchParamsChange}
+            ></SearchBar>
+          </div>
+          <div
+            onClick={() => {
+              setSearchStatus(!searchStatus)
+            }}
+            className={styles.collect}
+          >
+            {searchStatus === true ? (
+              <Icon type="jack-Icon_up" className={styles.previous} />
+            ) : null}
+          </div>
+        </>
       </div>
+      {searchStatus === false ? (
+        <>
+          <div className={styles.forms}>
+            <SearchBar
+              configs={easySearch}
+              params={params}
+              callback={searchParamsChange}
+            ></SearchBar>
+            <div className={styles.advancedSearch}>
+              <Button
+                type="primary"
+                ghost
+                onClick={() => {
+                  setSearchStatus(!searchStatus)
+                }}
+              >
+                高级搜索
+              </Button>
+            </div>
+          </div>
+        </>
+      ) : null}
 
       <div>
         <CusDragTable
           storageField={'dailySchedule'}
-          rowSelection={rowSelection}
           cusBarLeft={TableLeft}
           columns={tableColumns}
           dataSource={dataSource}
           rowKey={'id'}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 2000, y: 500 }}
           onChange={getSort}
           // onChange={}
           pagination={{

@@ -2,7 +2,15 @@ import moment from 'moment'
 import { ReactNode } from 'react'
 
 const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
-
+export const easySearch = [
+  {
+    label: '生产单号',
+    field: 'externalProduceOrderNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入生产单号'
+  }
+]
 export const searchConfigs = [
   {
     label: '工厂名称',
@@ -34,7 +42,6 @@ export const searchConfigs = [
     field: 'startTime',
     type: 'rangePicker',
     allowClear: true,
-    width: 250,
     placeholder: '请选择计划开始时间'
     // showTime: true
   },
@@ -42,7 +49,6 @@ export const searchConfigs = [
     label: '计划结束时间',
     field: 'endTime',
     allowClear: true,
-    width: 250,
 
     placeholder: '请选择计划结束时间',
     type: 'rangePicker'

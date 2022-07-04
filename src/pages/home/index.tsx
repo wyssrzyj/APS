@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-06-29 10:25:51
+ * @LastEditTime: 2022-07-04 12:59:15
  * @Description:
  * @LastEditors: lyj
  */
@@ -113,7 +113,7 @@ const Home = () => {
                       <div className={styles.content}>
                         <DynamicTable
                           title="齐套生产单库存变动查询"
-                          isDelay={true}
+                          isDelay={false}
                           key="productChangeTable"
                           type="productChangeTable"
                         />
