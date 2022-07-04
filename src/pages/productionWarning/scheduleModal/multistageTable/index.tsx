@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-17 08:41:26
- * @LastEditTime: 2022-07-01 10:30:25
+ * @LastEditTime: 2022-07-04 18:05:50
  * @Description:
  * @LastEditors: lyj
  */
@@ -128,6 +128,19 @@ const TableDome = (props) => {
     }
   }
 
+  // //更新数据
+  // const quantity = (e, v, index, type) => {
+  //   //没有进行深拷贝 待会重新处理一下 不然会有隐患
+  //   const current = list.filter((item) => item.id === v.id)[0]
+  //   current.data[index][type] = Number(e)
+  //   const subscript = list.findIndex((item) => {
+  //     return item.id === current.id
+  //   })
+  //   if (subscript !== -1) {
+  //     list.splice(subscript, 1, current)
+  //     setList([...list])
+  //   }
+  // }
   useEffect(() => {
     if (!isEmpty(titleData)) {
       const sizeList = []

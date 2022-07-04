@@ -173,10 +173,18 @@ export const menus = [
     ]
   },
   {
-    label: '生产预警管理',
-    key: 'productionWarning',
-    icon: 'jack-shebeiguanli',
-    url: '/productionWarning'
+    label: '预警管理',
+    key: 'earlyWarning',
+    icon: 'jack-feeds',
+    url: '/',
+    children: [
+      {
+        label: '生产预警管理',
+        key: 'productionWarning',
+        icon: 'jack-shebeiguanli',
+        url: '/productionWarning'
+      }
+    ]
   },
   {
     label: '报表管理',
@@ -198,6 +206,12 @@ export const menus = [
       }
     ]
   }
+  // {
+  //   label: '生产预警管理',
+  //   key: 'productionWarning',
+  //   icon: 'jack-jindutiao',
+  //   url: '/productionWarning'
+  // }
 ]
 
 type viewFormConfig = {

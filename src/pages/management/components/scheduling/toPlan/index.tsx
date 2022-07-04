@@ -92,6 +92,7 @@ function ToPlan(props: {
   }
   useEffect(() => {
     checkSchedule && checkSchedule(toPlanID, plannedID, stateAdd)
+    console.log('已计划id', plannedID)
   }, [plannedID, toPlanID, stateAdd])
   //初始
   useEffect(() => {

@@ -99,7 +99,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
           />
         </Col>
       </Row>
-      <Row className={styles.firstRow}>
+      {/* <Row className={styles.firstRow}>
         <Col span={13} className={styles.container}>
           <div className={styles.innerContainer}>
             <span className={styles.labelText}>预警延期:</span>
@@ -135,7 +135,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
             }}
           />
         </Col>
-      </Row>
+      </Row> */}
       <Row>
         <Col span={13} className={styles.container}>
           <div className={styles.innerContainer}>
