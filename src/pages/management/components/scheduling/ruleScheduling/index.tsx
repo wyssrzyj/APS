@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-07-05 15:50:35
+ * @LastEditTime: 2022-07-05 16:09:57
  * @Description:
  * @LastEditors: lyj
  */
@@ -29,7 +29,7 @@ function RuleScheduling(props: Record<string, any>) {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const { saveAlgorithm } = practice
 
-  // 搜索框
+  // 搜索框3
   useEffect(() => {
     getTableList({ ...searchParams, produceOrderIdList: checkIDs })
   }, [checkIDs, searchParams])
