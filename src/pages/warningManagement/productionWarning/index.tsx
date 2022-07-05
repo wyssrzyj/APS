@@ -63,27 +63,11 @@ const ProductionPlan = () => {
       setParams({ ...params, externalProduceOrderNum: id })
     }
   }, [state])
-  const jump = (id) => {
-    console.log('是否体专')
-    navigate('/scheduling', {
-      replace: true,
-      state: { id: id }
-    })
-  }
+
   const handle = (record) => {
     return (
       <>
         <div className={styles.operation}>
-          {/* <div>
-            <Tag
-              color="green"
-              onClick={() => {
-                jump(record.id)
-              }}
-            >
-              跳转值甘特图
-            </Tag>
-          </div> */}
           <div>
             <Tag
               color="green"

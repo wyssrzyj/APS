@@ -79,8 +79,16 @@ const SchedulingResults = React.lazy(
 //进度跟踪 - 生产实绩
 const ActualProduction = React.lazy(() => import('@/pages/actualProduction'))
 
+// 预警管理
+
 //生产预警
-const ProductionWarning = React.lazy(() => import('@/pages/productionWarning'))
+const ProductionWarning = React.lazy(
+  () => import('@/pages/warningManagement/productionWarning')
+)
+// 物料预警
+const MaterialAlert = React.lazy(
+  () => import('@/pages/warningManagement/materialAlert')
+)
 
 //报表管理- 生产周期报表
 const ProductionCycle = React.lazy(
@@ -130,6 +138,8 @@ const route = [
 
   //生产预警
   { path: '/productionWarning', element: <ProductionWarning /> },
+  // 物料预警
+  { path: '/materialAlert', element: <MaterialAlert /> },
   //报表管理
   //  生产周期报表
   { path: '/productionCycle', element: <ProductionCycle /> },

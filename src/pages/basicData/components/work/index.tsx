@@ -229,7 +229,7 @@ const Index = () => {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
-      setMovIsModalVisible(true)
+      showDeleteConfirm()
     }
   }
   const movApi = async () => {
@@ -267,7 +267,7 @@ const Index = () => {
         >
           新增
         </Button>
-        <Button type="primary" danger onClick={showDeleteConfirm}>
+        <Button type="primary" danger onClick={start}>
           删除
         </Button>
       </>
