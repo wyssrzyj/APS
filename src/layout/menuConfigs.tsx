@@ -183,6 +183,12 @@ export const menus = [
         key: 'productionWarning',
         icon: 'jack-shebeiguanli',
         url: '/productionWarning'
+      },
+      {
+        label: '物料预警管理',
+        key: 'materialAlert',
+        icon: 'jack-sgg_1',
+        url: '/materialAlert'
       }
     ]
   },
