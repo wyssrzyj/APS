@@ -99,7 +99,7 @@ const FormTable = (props: any) => {
       setSection(formatProcessing(section))
     }
 
-    //所属工段
+    //所属工段.
   }
   useEffect(() => {
     workshopSection && workshopSection(section)
