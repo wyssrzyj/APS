@@ -5,8 +5,9 @@ import { cloneDeep } from 'lodash'
 import moment from 'moment'
 import { SetStateAction, useEffect, useState } from 'react'
 
-import { Icon } from '@/components'
-import { CusDragTable, SearchBar } from '@/components'
+import {} from '@/components'
+import { AdvancedSearch, CusDragTable, Icon, SearchBar } from '@/components'
+import noneImg from '@/imgs/noneImg.jpg'
 import { dailySchedule, productionPlanApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
@@ -17,9 +18,7 @@ import ScheduleModal from './scheduleModal/index'
 const { factoryList, getWorkshopSectionList } = productionPlanApis
 const { pageList } = dailySchedule
 
-const img =
-  'https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/img.jpg'
-
+const img = noneImg
 const productStatus = [
   { label: '待计划', value: 1 },
   { label: '已计划', value: 2 },
@@ -180,49 +179,12 @@ function ProductionPlan() {
   }
   return (
     <div className={styles.qualification}>
-      <div className={searchStatus ? styles.formDisplay : styles.formHide}>
-        <>
-          <div className={styles.forms}>
-            <SearchBar
-              configs={configs}
-              params={params}
-              callback={searchParamsChange}
-            ></SearchBar>
-          </div>
-          <div
-            onClick={() => {
-              setSearchStatus(!searchStatus)
-            }}
-            className={styles.collect}
-          >
-            {searchStatus === true ? (
-              <Icon type="jack-Icon_up" className={styles.previous} />
-            ) : null}
-          </div>
-        </>
-      </div>
-      {searchStatus === false ? (
-        <>
-          <div className={styles.forms}>
-            <SearchBar
-              configs={easySearch}
-              params={params}
-              callback={searchParamsChange}
-            ></SearchBar>
-            <div className={styles.advancedSearch}>
-              <Button
-                type="primary"
-                ghost
-                onClick={() => {
-                  setSearchStatus(!searchStatus)
-                }}
-              >
-                高级搜索
-              </Button>
-            </div>
-          </div>
-        </>
-      ) : null}
+      <AdvancedSearch
+        easySearch={easySearch} //普通搜索
+        configs={configs} //高级搜索
+        params={params}
+        callback={searchParamsChange}
+      />
 
       <div>
         <CusDragTable

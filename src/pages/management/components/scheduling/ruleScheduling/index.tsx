@@ -1,11 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
-<<<<<<< HEAD
- * @LastEditTime: 2022-06-27 14:10:50
-=======
- * @LastEditTime: 2022-06-27 14:51:25
->>>>>>> dev
+ * @LastEditTime: 2022-07-05 15:50:35
  * @Description:
  * @LastEditors: lyj
  */
@@ -36,7 +32,7 @@ function RuleScheduling(props: Record<string, any>) {
   // 搜索框
   useEffect(() => {
     getTableList({ ...searchParams, produceOrderIdList: checkIDs })
-  }, [checkIDs])
+  }, [checkIDs, searchParams])
   const valuesChange = debounce(
     (values: any, allValues: Record<string, number>) => {
       setSearchParams({ ...allValues })

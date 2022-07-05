@@ -4,7 +4,7 @@ import moment from 'moment'
 import React, { SetStateAction, useCallback, useEffect, useState } from 'react'
 
 import { Icon } from '@/components'
-import { CusDragTable, SearchBar, Title } from '@/components'
+import { AdvancedSearch, CusDragTable, SearchBar } from '@/components'
 import { actualProductionApis, commonApis } from '@/recoil/apis'
 import { changeBolbToXls } from '@/utils/tool'
 import useTableChange from '@/utils/useTableChange'
@@ -148,52 +148,12 @@ function ActualProductionList() {
 
   return (
     <div className={styles.outContainer}>
-      {/* <Title title={'生产实绩'}></Title> */}
-
-      <div className={searchStatus ? styles.formDisplay : styles.formHide}>
-        <>
-          <div className={styles.forms}>
-            <SearchBar
-              configs={configs}
-              params={params}
-              callback={paramsChange}
-            ></SearchBar>
-          </div>
-          <div
-            onClick={() => {
-              setSearchStatus(!searchStatus)
-            }}
-            className={styles.collect}
-          >
-            {searchStatus === true ? (
-              <Icon type="jack-Icon_up" className={styles.previous} />
-            ) : null}
-          </div>
-        </>
-      </div>
-
-      {searchStatus === false ? (
-        <>
-          <div className={styles.forms}>
-            <SearchBar
-              configs={easySearch}
-              params={params}
-              callback={paramsChange}
-            ></SearchBar>
-            <div className={styles.advancedSearch}>
-              <Button
-                type="primary"
-                ghost
-                onClick={() => {
-                  setSearchStatus(!searchStatus)
-                }}
-              >
-                高级搜索
-              </Button>
-            </div>
-          </div>
-        </>
-      ) : null}
+      <AdvancedSearch
+        easySearch={easySearch} //普通搜索
+        configs={configs} //高级搜索
+        params={params}
+        callback={paramsChange}
+      />
 
       {columns && columns.length ? (
         <CusDragTable

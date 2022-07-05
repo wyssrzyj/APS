@@ -4,12 +4,14 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { CusDragTable, SearchBar } from '@/components'
+import noneImg from '@/imgs/noneImg.jpg'
 import { workingModeApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
 import { searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
 
+const img = noneImg
 const Index = () => {
   const navigate = useNavigate()
 
@@ -56,7 +58,17 @@ const Index = () => {
       </div>
     )
   }
-
+  tableColumns[1].render = (v) => {
+    return (
+      <div key={v} className={styles.tableColumnsImg}>
+        <img
+          className={styles.tableColumnsImg}
+          src={v !== null ? v : img}
+          alt=""
+        />
+      </div>
+    )
+  }
   //工厂名称
   useEffect(() => {
     getData()

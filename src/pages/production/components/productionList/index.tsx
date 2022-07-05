@@ -3,12 +3,13 @@ import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 
-import { CusDragTable } from '@/components'
+import { AdvancedSearchForms, CusDragTable } from '@/components'
 import { Icon } from '@/components'
+import noneImg from '@/imgs/noneImg.jpg'
 import { productionSingleApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
-import { easySearch, tableColumns } from './conifgs'
+import { tableColumns } from './conifgs'
 import Forms from './forms'
 import styles from './index.module.less'
 import MovPopup from './movPopup'
@@ -16,9 +17,7 @@ import Popup from './popup'
 
 function Production() {
   const { productionList, factoryList } = productionSingleApis
-
-  const img =
-    'https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/img.jpg'
+  const img = noneImg
 
   const map = new Map()
   map.set(1, '待计划')
@@ -177,59 +176,13 @@ function Production() {
   return (
     <div className={styles.qualification}>
       <div className={styles.content}>
-        <div className={searchStatus ? styles.formDisplay : styles.formHide}>
-          <>
-            <div className={styles.forms}>
-              <Forms
-                factoryData={factoryData}
-                FormData={FormData}
-                display="formDisplay"
-              ></Forms>
-            </div>
-            <div
-              onClick={() => {
-                setSearchStatus(!searchStatus)
-              }}
-              className={styles.collect}
-            >
-              {searchStatus === true ? (
-                <Icon type="jack-Icon_up" className={styles.previous} />
-              ) : null}
-            </div>
-          </>
-        </div>
-
-        {searchStatus === false ? (
-          <>
-            <div className={styles.forms}>
-              <div className={styles.forms}>
-                <Forms
-                  factoryData={factoryData}
-                  FormData={FormData}
-                  display="formHide"
-                ></Forms>
-              </div>
-              <div className={styles.advancedSearch}>
-                <Button
-                  type="primary"
-                  ghost
-                  onClick={() => {
-                    setSearchStatus(!searchStatus)
-                  }}
-                >
-                  高级搜索
-                </Button>
-              </div>
-            </div>
-          </>
-        ) : null}
-
+        <AdvancedSearchForms factoryData={factoryData} FormData={FormData} />
         <CusDragTable
           storageField={'productionList'}
           columns={tableColumns}
           dataSource={data}
           rowKey={'key'}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 2000, y: 500 }}
           loading={loading}
           onChange={getSort}
           pagination={{

@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-29 17:32:33
- * @LastEditTime: 2022-07-04 14:01:34
+ * @LastEditTime: 2022-07-05 15:46:02
  * @Description:
  * @LastEditors: lyj
  */
@@ -81,7 +81,7 @@ export const tableColumns: any = [
     dataIndex: 'img',
     fixed: 'left',
     key: 'img',
-    width: 200
+    width: 100
   },
   {
     title: '产品款号',
@@ -105,6 +105,7 @@ export const tableColumns: any = [
     fixed: 'left',
     align: 'center',
     dataIndex: 'teamName',
+    width: 150,
     key: 'teamName'
   }
 ]

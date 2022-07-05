@@ -79,7 +79,6 @@ export const tableColumns: any = [
     align: 'center',
     dataIndex: 'img',
     key: 'img',
-
     width: 100
   },
   {

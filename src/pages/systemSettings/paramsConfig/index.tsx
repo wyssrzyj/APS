@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-05-19 08:38:27
- * @LastEditTime: 2022-07-05 09:56:15
+ * @LastEditTime: 2022-07-05 13:06:09
  * @Description:
  * @LastEditors: lyj
  */
@@ -255,7 +255,8 @@ function Vacations() {
             <Form.Item label="承诺交期计算" name="6666">
               承诺交期 = 销售订单交期-{' '}
               <InputNumber
-                value={list.deliveryDateDeductionDays}
+                controls={false}
+                value={InputNumberValue}
                 style={{ width: 70 }}
                 min={1}
                 onBlur={getInputNumberValue}

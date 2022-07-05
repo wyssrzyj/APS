@@ -88,18 +88,18 @@ function WorkingHours(props: { onChange: any; list: any }) {
                   controls={false}
                   className={styles.inputText}
                   min={1}
-                  style={{ width: 50 }}
+                  style={{ width: 65 }}
                   value={data[index].minNum}
-                  onChange={(e) => inputValue(e, index, 'minNum')}
+                  onBlur={(e) => inputValue(e.target.value, index, 'minNum')}
                 />
                 (件)~
                 <InputNumber
                   controls={false}
                   className={styles.inputText}
                   min={1}
-                  style={{ width: 50 }}
+                  style={{ width: 65 }}
                   value={data[index].maxNum}
-                  onChange={(e) => inputValue(e, index, 'maxNum')}
+                  onBlur={(e) => inputValue(e.target.value, index, 'maxNum')}
                 />
                 (件) 　
                 <div>
@@ -108,9 +108,11 @@ function WorkingHours(props: { onChange: any; list: any }) {
                     controls={false}
                     className={styles.inputText}
                     min={1}
-                    style={{ width: 50 }}
+                    style={{ width: 65 }}
                     value={data[index].daysAhead}
-                    onChange={(e) => inputValue(e, index, 'daysAhead')}
+                    onBlur={(e) =>
+                      inputValue(e.target.value, index, 'daysAhead')
+                    }
                   />
                   天预警
                 </div>

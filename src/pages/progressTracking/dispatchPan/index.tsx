@@ -6,7 +6,12 @@ import moment, { Moment } from 'moment'
 import React, { SetStateAction, useCallback, useEffect, useState } from 'react'
 
 import { Icon } from '@/components'
-import { CusDragTable, CustomModal, SearchBar, Title } from '@/components'
+import {
+  AdvancedSearch,
+  CusDragTable,
+  CustomModal,
+  SearchBar
+} from '@/components'
 import { productionPlanApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
@@ -201,50 +206,12 @@ function ProductionPlan() {
 
   return (
     <div className={styles.qualification}>
-      <div className={searchStatus ? styles.formDisplay : styles.formHide}>
-        <>
-          <div className={styles.forms}>
-            <SearchBar
-              configs={configs}
-              params={params}
-              callback={searchParamsChange}
-            ></SearchBar>
-          </div>
-          <div
-            onClick={() => {
-              setSearchStatus(!searchStatus)
-            }}
-            className={styles.collect}
-          >
-            {searchStatus === true ? (
-              <Icon type="jack-Icon_up" className={styles.previous} />
-            ) : null}
-          </div>
-        </>
-      </div>
-      {searchStatus === false ? (
-        <>
-          <div className={styles.forms}>
-            <SearchBar
-              configs={easySearch}
-              params={params}
-              callback={searchParamsChange}
-            ></SearchBar>
-            <div className={styles.advancedSearch}>
-              <Button
-                type="primary"
-                ghost
-                onClick={() => {
-                  setSearchStatus(!searchStatus)
-                }}
-              >
-                高级搜索
-              </Button>
-            </div>
-          </div>
-        </>
-      ) : null}
-
+      <AdvancedSearch
+        easySearch={easySearch} //普通搜索
+        configs={configs} //高级搜索
+        params={params}
+        callback={searchParamsChange}
+      />
       <div>
         <CusDragTable
           storageField={'dispatchPan'}

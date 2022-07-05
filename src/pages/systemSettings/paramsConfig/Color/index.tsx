@@ -72,6 +72,7 @@ function WorkingHours(props: { onChange: any; list: any }) {
           <div className={styles.timePicker} key={index}>
             <Row className={styles.NoExtended}>
               <InputNumber
+                controls={false}
                 className={styles.inputText}
                 min={0}
                 style={{ width: 150 }}

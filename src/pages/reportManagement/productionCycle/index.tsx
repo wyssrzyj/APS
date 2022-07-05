@@ -7,7 +7,8 @@ import { SetStateAction, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { Icon } from '@/components'
-import { CusDragTable, SearchBar } from '@/components'
+import { AdvancedSearch, CusDragTable, SearchBar } from '@/components'
+import noneImg from '@/imgs/noneImg.jpg'
 import { periodicReport, productionPlanApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
@@ -16,9 +17,7 @@ import styles from './index.module.less'
 import Popup from './popup'
 import ScheduleModal from './scheduleModal/index'
 
-const img =
-  'https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/img.jpg'
-
+const img = noneImg
 const { factoryList } = productionPlanApis
 const { periodicReportList, periodicReportListExport } = periodicReport
 
@@ -212,50 +211,13 @@ const ProductionPlan = () => {
   }
   return (
     <div className={styles.qualification}>
-      <div className={searchStatus ? styles.formDisplay : styles.formHide}>
-        <>
-          <div className={styles.forms}>
-            <SearchBar
-              configs={configs}
-              params={params}
-              callback={searchParamsChange}
-            ></SearchBar>
-          </div>
-          <div
-            onClick={() => {
-              setSearchStatus(!searchStatus)
-            }}
-            className={styles.collect}
-          >
-            {searchStatus === true ? (
-              <Icon type="jack-Icon_up" className={styles.previous} />
-            ) : null}
-          </div>
-        </>
-      </div>
+      <AdvancedSearch
+        easySearch={easySearch} //普通搜索
+        configs={configs} //高级搜索
+        params={params}
+        callback={searchParamsChange}
+      />
 
-      {searchStatus === false ? (
-        <>
-          <div className={styles.forms}>
-            <SearchBar
-              configs={easySearch}
-              params={params}
-              callback={searchParamsChange}
-            ></SearchBar>
-            <div className={styles.advancedSearch}>
-              <Button
-                type="primary"
-                ghost
-                onClick={() => {
-                  setSearchStatus(!searchStatus)
-                }}
-              >
-                高级搜索
-              </Button>
-            </div>
-          </div>
-        </>
-      ) : null}
       <div>
         <CusDragTable
           storageField={'productionCycle'}

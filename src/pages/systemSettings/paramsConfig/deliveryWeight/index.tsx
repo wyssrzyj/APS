@@ -67,7 +67,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
           <div className={styles.innerContainer}>
             <span className={styles.labelText}>未延期:</span>
             <InputNumber
-              min={1}
+              controls={false}
               value={data[0].delay}
               style={{ width: 70 }}
               onChange={(e) => {
@@ -91,7 +91,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
           权重:
           <span className={styles.operationIcon}>-</span>
           <InputNumber
-            min={1}
+            controls={false}
             value={data[0].weight}
             onChange={(e) => {
               weight(e, 0)
@@ -99,49 +99,13 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
           />
         </Col>
       </Row>
-      {/* <Row className={styles.firstRow}>
-        <Col span={13} className={styles.container}>
-          <div className={styles.innerContainer}>
-            <span className={styles.labelText}>预警延期:</span>
-            <InputNumber
-              min={1}
-              value={data[1].delay}
-              style={{ width: 70 }}
-              onChange={(e) => {
-                inpout(e, 1)
-              }}
-            />
-          </div>
-          <Select
-            value={arr !== undefined ? arr : '1'}
-            style={{ width: 60 }}
-            onSelect={(e: any) => {
-              executionMethod(e, 1)
-            }}
-          >
-            <Option value="1">天</Option>
-            <Option value="2">周</Option>
-            <Option value="3">月</Option>
-          </Select>
-        </Col>
-        <Col span={10}>
-          权重:
-          <span className={styles.operationIcon}>-</span>
-          <InputNumber
-            min={1}
-            value={data[1].weight}
-            onChange={(e) => {
-              weight(e, 1)
-            }}
-          />
-        </Col>
-      </Row> */}
+
       <Row>
         <Col span={13} className={styles.container}>
           <div className={styles.innerContainer}>
             <span className={styles.labelText}> 已延期:</span>
             <InputNumber
-              min={1}
+              controls={false}
               value={data[2].delay}
               style={{ width: 70 }}
               onChange={(e) => {
@@ -165,7 +129,7 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
           权重:
           <span className={styles.operationIcon}>+</span>
           <InputNumber
-            min={1}
+            controls={false}
             value={data[2].weight}
             onChange={(e) => {
               weight(e, 2)

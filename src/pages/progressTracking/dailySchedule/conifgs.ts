@@ -76,7 +76,7 @@ export const tableColumns: any = [
     title: '款图',
     align: 'center',
     dataIndex: 'img',
-    width: 200
+    width: 100
   },
   {
     title: '工厂名称',

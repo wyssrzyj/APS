@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-07-04 18:10:04
+ * @LastEditTime: 2022-07-05 15:31:20
  * @Description:
  * @LastEditors: lyj
  */
@@ -37,6 +37,7 @@ export const tableColumns: any = [
     title: '款图',
     align: 'center',
     key: 'img',
+    width: 100,
     dataIndex: 'img'
   },
   {
