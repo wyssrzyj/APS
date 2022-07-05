@@ -36,6 +36,10 @@ const HeaderForm = (props: {
 
   useEffect(() => {
     setWorkshop(factoryData)
+    console.log(
+      '🚀 ~ file: index.tsx ~ line 39 ~ useEffect ~ factoryData',
+      factoryData
+    )
   }, [factoryData])
   useEffect(() => {
     setTimesType(type)

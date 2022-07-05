@@ -39,13 +39,7 @@ const FormTable = (props: any) => {
 
   const [materialDate, setMaterialDate] = useState<any>() //物料齐套日期的时间
 
-  const {
-    getTheSize,
-    materialData,
-    materialSaved,
-    sectionList,
-    materialCompletionTimeList
-  } = materialSetApis
+  const { sectionList, materialCompletionTimeList } = materialSetApis
   const map = new Map()
   map.set('1', '裁剪')
   map.set('2', '缝制')
@@ -71,20 +65,37 @@ const FormTable = (props: any) => {
     return data
   }
 
+  //数据替换
+  const dataReplacement = (timeList, list) => {
+    const cloneList = cloneDeep(list)
+    console.log('换用', timeList)
+
+    timeList.forEach((item) => {
+      const subscript = cloneList.findIndex(
+        (v: any) => v.section === item.section
+      )
+      if (subscript !== -1) {
+        cloneList.splice(subscript, 1, item)
+      }
+    })
+    return cloneList
+  }
   let getSectionList = async () => {
+    //原始的工厂数据
+    let section = await sectionList()
+    section.map((item) => {
+      item.externalProduceOrderId = item.dictValue
+      item.externalProduceOrderNum = item.dictValue
+      item.section = item.dictValue
+      item.allReadyTime = null
+    })
+
     let res = await materialCompletionTimeList({
       id: select.externalProduceOrderId
     })
     if (!isEmpty(res)) {
-      setSection(formatProcessing(res))
+      setSection(formatProcessing(dataReplacement(res, section)))
     } else {
-      let section = await sectionList()
-      section.map((item) => {
-        item.externalProduceOrderId = item.dictValue
-        item.externalProduceOrderNum = item.dictValue
-        item.section = item.dictValue
-        item.allReadyTime = null
-      })
       setSection(formatProcessing(section))
     }
 

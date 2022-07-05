@@ -6,7 +6,7 @@ import styles from './index.module.less'
 const DeliveryWeight = (props: { onChange: any; list: any }) => {
   const { onChange, list } = props
   const sum = [
-    { delay: '', day: '3', weight: '' },
+    { delay: '', day: '1', weight: '' },
     { delay: '', day: '2', weight: '' },
     { delay: '', day: '2', weight: '' }
   ]
@@ -76,7 +76,8 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
             />
           </div>
           <Select
-            value={arr !== undefined ? arr : '1'}
+            // value={arr !== undefined ? arr : '1'}
+            value={data[0].day}
             style={{ width: 60 }}
             onSelect={(e: any) => {
               executionMethod(e, 0)
@@ -99,7 +100,44 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
           />
         </Col>
       </Row>
-
+      <Row className={styles.firstRow}>
+        <Col span={13} className={styles.container}>
+          <div className={styles.innerContainer}>
+            <span className={styles.labelText}>预警延期:</span>
+            <InputNumber
+              controls={false}
+              value={data[1].delay}
+              style={{ width: 70 }}
+              onChange={(e) => {
+                inpout(e, 1)
+              }}
+            />
+          </div>
+          <Select
+            value={data[1].day}
+            // value={arr !== undefined ? arr : '1'}
+            style={{ width: 60 }}
+            onSelect={(e: any) => {
+              executionMethod(e, 1)
+            }}
+          >
+            <Option value="1">天</Option>
+            <Option value="2">周</Option>
+            <Option value="3">月</Option>
+          </Select>
+        </Col>
+        <Col span={10}>
+          权重:
+          <span className={styles.operationIcon}>-</span>
+          <InputNumber
+            controls={false}
+            value={data[1].weight}
+            onChange={(e) => {
+              weight(e, 1)
+            }}
+          />
+        </Col>
+      </Row>
       <Row>
         <Col span={13} className={styles.container}>
           <div className={styles.innerContainer}>
@@ -114,7 +152,8 @@ const DeliveryWeight = (props: { onChange: any; list: any }) => {
             />
           </div>
           <Select
-            value={delayArr !== undefined ? delayArr : '1'}
+            value={data[2].day}
+            // value={delayArr !== undefined ? delayArr : '1'}
             style={{ width: 60 }}
             onSelect={(e: any) => {
               executionMethod(e, 2)
