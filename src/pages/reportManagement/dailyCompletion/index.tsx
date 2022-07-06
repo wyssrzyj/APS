@@ -245,7 +245,7 @@ function ProductionPlan() {
             columns={dynamicMeter}
             dataSource={surfaceDataSource}
             rowKey={'key'}
-            scroll={{ x: 2000, y: '60vh' }}
+            scroll={{ x: 2000, y: '63vh' }}
             onChange={getSort}
             pagination={{
               //分页

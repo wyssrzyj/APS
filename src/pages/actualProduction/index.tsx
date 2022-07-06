@@ -158,7 +158,7 @@ function ActualProductionList() {
       {columns && columns.length ? (
         <CusDragTable
           rowKey={'id'}
-          storageField={'efficiencyList'}
+          storageField={'actualProduction'}
           columns={columns}
           cusBarLeft={TableLeft}
           dataSource={dataSource}
