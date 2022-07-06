@@ -414,7 +414,7 @@ function Materials() {
             columns={columns}
             dataSource={list}
             rowKey={'id'}
-            scroll={{ x: 2000, y: '60vh' }}
+            scroll={{ x: 2000, y: '64vh' }}
             loading={loading}
             onChange={tableChange}
             pagination={{

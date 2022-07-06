@@ -10,9 +10,7 @@ import { productionSingleApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
 import { tableColumns } from './conifgs'
-import Forms from './forms'
 import styles from './index.module.less'
-import MovPopup from './movPopup'
 import Popup from './popup'
 
 function Production() {
@@ -182,7 +180,7 @@ function Production() {
           columns={tableColumns}
           dataSource={data}
           rowKey={'key'}
-          scroll={{ x: 2000, y: '60vh' }}
+          scroll={{ x: 2000, y: '64vh' }}
           loading={loading}
           onChange={getSort}
           pagination={{
