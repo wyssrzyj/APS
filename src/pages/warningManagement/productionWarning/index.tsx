@@ -36,7 +36,8 @@ const ProductionPlan = () => {
   const { state }: any = location
   const [params, setParams] = useState<any>({
     pageSize: 10,
-    pageNum: 1
+    pageNum: 1,
+    waringType: '1'
   })
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
