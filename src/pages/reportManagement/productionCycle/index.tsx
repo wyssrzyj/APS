@@ -226,8 +226,7 @@ const ProductionPlan = () => {
           columns={tableColumns}
           dataSource={list}
           rowKey={'key'}
-          scroll={{ x: 2000 }}
-          // scroll={{ x: 2000, y: 500 }}
+          scroll={{ x: 2000, y: '55vh' }}
           onChange={getSort}
           pagination={{
             //分页

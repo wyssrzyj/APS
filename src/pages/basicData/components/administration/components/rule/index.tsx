@@ -255,7 +255,7 @@ function Rule() {
             columns={tableColumns}
             dataSource={dataSource}
             rowKey={'id'}
-            scroll={{ x: 1000 }}
+            scroll={{ x: 2000, y: '60vh' }}
             loading={loading}
             onChange={tableChange}
             pagination={{

@@ -182,7 +182,7 @@ function Production() {
           columns={tableColumns}
           dataSource={data}
           rowKey={'key'}
-          scroll={{ x: 2000, y: 500 }}
+          scroll={{ x: 2000, y: '60vh' }}
           loading={loading}
           onChange={getSort}
           pagination={{

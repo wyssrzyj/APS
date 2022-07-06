@@ -172,6 +172,7 @@ function ProductionPlan() {
   }
   const handleOk = async () => {
     setIsModalVisible(false)
+    setParams({ ...params })
   }
 
   const handleCancel = () => {
@@ -193,7 +194,7 @@ function ProductionPlan() {
           columns={tableColumns}
           dataSource={dataSource}
           rowKey={'id'}
-          scroll={{ x: 2000, y: 500 }}
+          scroll={{ x: 2000, y: '60vh' }}
           onChange={getSort}
           // onChange={}
           pagination={{

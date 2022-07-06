@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-07-04 18:07:19
+ * @LastEditTime: 2022-07-06 09:12:13
  * @Description:
  * @LastEditors: lyj
  */
@@ -94,50 +94,38 @@ const Home = () => {
               ) : null}
             </Row>
             <div className={styles.dynamicTableContainer}>
-              <Row gutter={24}>
-                {homePage.lower[0].type === true ? (
-                  <Col span={12}>
-                    <div className={styles.content}>
-                      <DynamicTable
-                        title="生产延期查询"
-                        isDelay={true}
-                        key="productDelayTable"
-                        type="productDelayTable"
-                      />
-                    </div>
-                  </Col>
-                ) : null}
-                {homePage.lower[1].type === true ? (
-                  <>
-                    <Col span={12}>
-                      <div className={styles.content}>
-                        <DynamicTable
-                          title="齐套生产单库存变动查询"
-                          isDelay={false}
-                          key="productChangeTable"
-                          type="productChangeTable"
-                        />
-                      </div>
-                    </Col>
-                  </>
-                ) : null}
-              </Row>
-            </div>
-            <div className={styles.dynamicTableContainer}>
-              <Row gutter={24}>
-                {homePage.lower[2].type === true ? (
-                  <Col span={12}>
-                    <div className={styles.content}>
-                      <DynamicTable
-                        title="生产单剩余工期查询"
-                        isDelay={true}
-                        key="durationQuery"
-                        type="durationQuery"
-                      />
-                    </div>
-                  </Col>
-                ) : null}
-              </Row>
+              {homePage.lower[0].type === true ? (
+                <div className={styles.dynamicTableContent}>
+                  <DynamicTable
+                    title="生产延期查询"
+                    isDelay={true}
+                    key="productDelayTable"
+                    type="productDelayTable"
+                  />
+                </div>
+              ) : null}
+              {homePage.lower[1].type === true ? (
+                <>
+                  <div className={styles.dynamicTableContent}>
+                    <DynamicTable
+                      title="齐套生产单库存变动查询"
+                      isDelay={false}
+                      key="productChangeTable"
+                      type="productChangeTable"
+                    />
+                  </div>
+                </>
+              ) : null}
+              {homePage.lower[2].type === true ? (
+                <div className={styles.dynamicTableContent}>
+                  <DynamicTable
+                    title="生产单剩余工期查询"
+                    isDelay={true}
+                    key="durationQuery"
+                    type="durationQuery"
+                  />
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

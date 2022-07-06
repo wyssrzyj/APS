@@ -219,7 +219,7 @@ function ProductionPlan() {
           columns={tableColumns}
           dataSource={dataSource}
           rowKey={'id'}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 2000, y: '60vh' }}
           onChange={tableChange}
           pagination={{
             //分页

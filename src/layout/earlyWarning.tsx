@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-05 14:35:00
+ * @LastEditTime: 2022-07-06 08:52:27
  * @Description:
  * @LastEditors: lyj
  */
@@ -65,7 +65,9 @@ const EarlyWarning = () => {
                   <span className={styles.textColor}>
                     {item.externalProduceOrderNum}
                   </span>
-                  生产单已{item.abnormalStatus === '1' ? '预警' : '延期'}
+                  {item.abnormalStatus === '1'
+                    ? '预警进入预警范围'
+                    : '生产单已延期'}
                 </div>
               </>
             ))}

@@ -162,7 +162,7 @@ function ActualProductionList() {
           columns={columns}
           cusBarLeft={TableLeft}
           dataSource={dataSource}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 2000, y: '60vh' }}
           onChange={tableChange}
           pagination={{
             showSizeChanger: true,
