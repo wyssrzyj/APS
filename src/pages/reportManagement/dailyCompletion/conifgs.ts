@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-29 17:32:33
- * @LastEditTime: 2022-07-05 15:46:02
+ * @LastEditTime: 2022-07-06 14:55:07
  * @Description:
  * @LastEditors: lyj
  */
@@ -13,7 +13,7 @@ const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
 export const easySearch = [
   {
     label: '生产单号',
-    field: 'externalProduceOrderNum',
+    field: 'produceOrderNum',
     type: 'input',
     allowClear: true,
     placeholder: '请输入生产单号'
@@ -64,7 +64,7 @@ export const tableColumns: any = [
     align: 'center',
     dataIndex: 'factoryName',
     key: 'factoryName',
-    width: 200,
+    width: 100,
     fixed: 'left'
   },
   {
@@ -73,7 +73,7 @@ export const tableColumns: any = [
     dataIndex: 'externalProduceOrderNum',
     key: 'externalProduceOrderNum',
     fixed: 'left',
-    width: 200
+    width: 100
   },
   {
     title: '款图',
@@ -97,7 +97,7 @@ export const tableColumns: any = [
     dataIndex: 'productName',
     fixed: 'left',
     key: 'productName',
-    width: 150
+    width: 100
   },
 
   {
@@ -105,7 +105,7 @@ export const tableColumns: any = [
     fixed: 'left',
     align: 'center',
     dataIndex: 'teamName',
-    width: 150,
+    width: 100,
     key: 'teamName'
   }
 ]

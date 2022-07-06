@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-21 13:18:16
- * @LastEditTime: 2022-07-04 17:57:02
+ * @LastEditTime: 2022-07-06 14:21:19
  * @Description:
  * @LastEditors: lyj
  */
@@ -25,15 +25,17 @@ const WarningModal = (props) => {
   ) => {
     return (
       <div key={index}>
-        <Button
-          type="link"
-          onClick={() => {
-            setIsModalVisible(true)
-            setSubitemData(record)
-          }}
-        >
-          编辑
-        </Button>
+        {record.section === '5' ? null : (
+          <Button
+            type="link"
+            onClick={() => {
+              setIsModalVisible(true)
+              setSubitemData(record)
+            }}
+          >
+            编辑
+          </Button>
+        )}
       </div>
     )
   }

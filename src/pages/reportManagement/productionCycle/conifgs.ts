@@ -7,7 +7,7 @@ const FORMAT_DATE = 'YYYY-MM-DD'
 export const easySearch = [
   {
     label: '生产单号',
-    field: 'externalProduceOrderNum',
+    field: 'produceOrderNum',
     type: 'input',
     allowClear: true,
     placeholder: '请输入生产单号'
@@ -54,34 +54,47 @@ export const tableColumns: any = [
     title: '工厂名称',
     align: 'center',
     dataIndex: 'factoryName',
-    key: 'factoryName'
+    key: 'factoryName',
+    fixed: 'left',
+    width: 100
   },
   {
     title: '生产单号',
     align: 'center',
     dataIndex: 'externalProduceOrderNum',
-    key: 'externalProduceOrderNum'
+    key: 'externalProduceOrderNum',
+    fixed: 'left',
+
+    width: 100
   },
   {
     title: '客户款号',
     dataIndex: 'productClientNum',
-    key: 'productClientNum'
+    key: 'productClientNum',
+    fixed: 'left',
+    align: 'center',
+    width: 100
   },
   {
     title: '产品名称',
     align: 'center',
     dataIndex: 'productName',
-    key: 'productName'
+    fixed: 'left',
+    key: 'productName',
+    width: 100
   },
   {
     title: '产品款号',
     align: 'center',
     dataIndex: 'productNum',
-    key: 'productNum'
+    fixed: 'left',
+    key: 'productNum',
+    width: 100
   },
   {
     title: '款图',
     align: 'center',
+    fixed: 'left',
     dataIndex: 'img',
     key: 'img',
     width: 100
@@ -90,14 +103,19 @@ export const tableColumns: any = [
   {
     title: '订单数量',
     align: 'center',
+    fixed: 'left',
     key: 'orderSum',
-    dataIndex: 'orderSum'
+    dataIndex: 'orderSum',
+    width: 100
   },
   {
     title: '承诺交期',
+    fixed: 'left',
     align: 'center',
     key: 'committedDeliveryDate',
     dataIndex: 'committedDeliveryDate',
+    width: 100,
+
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
@@ -106,7 +124,16 @@ export const tableColumns: any = [
     align: 'center',
     dataIndex: 'fabricPrepareTime',
     key: 'fabricPrepareTime',
-    width: 170,
+    width: 100,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
+  },
+  {
+    title: '辅料齐料日期',
+    align: 'center',
+    key: 'accessoryPrepareTime',
+    dataIndex: 'accessoryPrepareTime',
+    width: 100,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
@@ -141,26 +168,18 @@ export const tableColumns: any = [
         dataIndex: 'tailoringCompletedAmount',
         align: 'center',
         key: 'tailoringCompletedAmount',
-        width: 100
+        width: 100,
+        render: (date) => (date === 0 ? '' : date)
       },
       {
         title: '完成率',
         dataIndex: 'tailoringCompletedRate',
         align: 'center',
         key: 'tailoringCompletedRate',
-        width: 100
+        width: 100,
+        render: (date) => (date > 0 ? `${Number(date) * 100}%` : '')
       }
     ]
-  },
-
-  {
-    title: '辅料齐料日期',
-    align: 'center',
-    key: 'accessoryPrepareTime',
-    dataIndex: 'accessoryPrepareTime',
-    width: 100,
-    render: (date: moment.MomentInput) =>
-      date ? moment(date).format(FORMAT_DATE) : null
   },
 
   {
@@ -234,14 +253,16 @@ export const tableColumns: any = [
         dataIndex: 'sewingCompletedAmount',
         align: 'center',
         key: 'sewingCompletedAmount',
-        width: 100
+        width: 100,
+        render: (date) => (date === 0 ? '' : date)
       },
       {
         title: '完成率',
         dataIndex: 'sewingCompletedRate',
         align: 'center',
         key: 'sewingCompletedRate',
-        width: 100
+        width: 100,
+        render: (date) => (date > 0 ? `${Number(date) * 100}%` : '')
       }
     ]
   },
@@ -275,14 +296,16 @@ export const tableColumns: any = [
         dataIndex: 'trimCompletedAmount',
         align: 'center',
         key: 'trimCompletedAmount',
-        width: 100
+        width: 100,
+        render: (date) => (date === 0 ? '' : date)
       },
       {
         title: '完成率',
         dataIndex: 'trimCompletedRate',
         align: 'center',
         key: 'trimCompletedRate',
-        width: 100
+        width: 100,
+        render: (date) => (date > 0 ? `${Number(date) * 100}%` : '')
       }
     ]
   }

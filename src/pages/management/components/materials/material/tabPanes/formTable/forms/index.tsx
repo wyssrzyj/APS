@@ -132,7 +132,7 @@ const HeaderForm = (props: {
                 disabled={type}
                 allowClear={true}
                 onChange={getFactoryName}
-                placeholder="请选择工厂名称"
+                placeholder="请选择所属工段"
               >
                 {workshop != undefined
                   ? workshop.map((item: any) => (

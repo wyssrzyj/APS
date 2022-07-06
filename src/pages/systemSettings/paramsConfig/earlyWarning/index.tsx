@@ -26,9 +26,9 @@ function WorkingHours(props: { onChange: any; list: any }) {
       data.push({
         type: 1,
         id: index + new Date().valueOf() * Math.random(),
-        minNum: data[data.length - 1].maxNum + 1,
-        maxNum: data[data.length - 1].maxNum + 2,
-        daysAhead: data[data.length - 1].daysAhead + 1
+        minNum: Number(data[data.length - 1].maxNum) + 1,
+        maxNum: Number(data[data.length - 1].maxNum) + 2,
+        daysAhead: Number(data[data.length - 1].daysAhead) + 1
       })
       setData([...data])
     } else {
@@ -44,6 +44,9 @@ function WorkingHours(props: { onChange: any; list: any }) {
   // 修改数字输入框
   const inputValue = (value: any, index: number, type: string) => {
     if (type === 'minNum') {
+      console.log(value)
+      console.log(data[index].maxNum)
+
       if (value < data[index].maxNum) {
         data[index][type] = value
         setData([...data])
@@ -90,7 +93,9 @@ function WorkingHours(props: { onChange: any; list: any }) {
                   min={1}
                   style={{ width: 65 }}
                   value={data[index].minNum}
-                  onBlur={(e) => inputValue(e.target.value, index, 'minNum')}
+                  onBlur={(e) =>
+                    inputValue(Number(e.target.value), index, 'minNum')
+                  }
                 />
                 (件)~
                 <InputNumber
@@ -99,7 +104,9 @@ function WorkingHours(props: { onChange: any; list: any }) {
                   min={1}
                   style={{ width: 65 }}
                   value={data[index].maxNum}
-                  onBlur={(e) => inputValue(e.target.value, index, 'maxNum')}
+                  onBlur={(e) =>
+                    inputValue(Number(e.target.value), index, 'maxNum')
+                  }
                 />
                 (件) 　
                 <div>
@@ -111,7 +118,7 @@ function WorkingHours(props: { onChange: any; list: any }) {
                     style={{ width: 65 }}
                     value={data[index].daysAhead}
                     onBlur={(e) =>
-                      inputValue(e.target.value, index, 'daysAhead')
+                      inputValue(Number(e.target.value), index, 'daysAhead')
                     }
                   />
                   天预警

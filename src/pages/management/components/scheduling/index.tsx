@@ -285,7 +285,8 @@ function Index() {
 
   // 树刷新
   const refresh = () => {
-    setTreeUpdate(formData)
+    const cloneFormData = cloneDeep(formData)
+    setTreeUpdate(cloneFormData)
   }
   // 树选中
   const treeSelect = (e) => {

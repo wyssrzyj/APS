@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-07-05 15:31:20
+ * @LastEditTime: 2022-07-06 14:49:47
  * @Description:
  * @LastEditors: lyj
  */
@@ -111,6 +111,8 @@ export const tableColumns: any = [
     key: 'delayType',
     align: 'center',
     dataIndex: 'delayType',
+    fixed: 'right',
+
     render: (v: any) => (v === 0 ? '未延期' : v === 1 ? '已延期' : null)
   },
   {
@@ -118,6 +120,8 @@ export const tableColumns: any = [
     key: 'status',
     align: 'center',
     dataIndex: 'status',
+    fixed: 'right',
+
     render: (v: any) => map.get(v)
   },
   {
