@@ -252,7 +252,7 @@ function ProductionPlan() {
               showSizeChanger: true,
               // showQuickJumper: true, //是否快速查找
               pageSize: params.pageSize, //每页条数
-              current: params.pageNum, //	当前页数
+              current: params.pageNum, //	当前页数.
               total, //数据总数
               pageSizeOptions: ['10', '20', '50']
             }}
