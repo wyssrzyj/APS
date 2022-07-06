@@ -1,3 +1,10 @@
+/*
+ * @Author: lyj
+ * @Date: 2022-07-05 17:34:13
+ * @LastEditTime: 2022-07-06 17:27:54
+ * @Description:
+ * @LastEditors: lyj
+ */
 import { Button } from 'antd'
 import { useState } from 'react'
 
@@ -8,7 +15,7 @@ import Up from '../../imgs/Up.png'
 import styles from './index.module.less'
 const AdvancedSearch = (props) => {
   const { easySearch, configs, params, callback } = props
-  // easySearch 普通搜索
+  // easySearch 普通搜索.
   const [searchStatus, setSearchStatus] = useState(false)
   return (
     <div>
