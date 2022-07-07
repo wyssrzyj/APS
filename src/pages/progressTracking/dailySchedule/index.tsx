@@ -192,6 +192,7 @@ function ProductionPlan() {
           storageField={'dailySchedule'}
           cusBarLeft={TableLeft}
           columns={tableColumns}
+          bordered={true} //边框线
           dataSource={dataSource}
           rowKey={'id'}
           scroll={{ x: 2000, y: '60vh' }}

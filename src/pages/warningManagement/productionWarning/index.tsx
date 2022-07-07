@@ -237,7 +237,7 @@ const ProductionPlan = () => {
           rowKey={'id'}
           scroll={{ x: 2000, y: '63vh' }}
           onChange={getSort}
-          // onChange={}
+          bordered={true} //边框线
           pagination={{
             //分页
             showSizeChanger: true,

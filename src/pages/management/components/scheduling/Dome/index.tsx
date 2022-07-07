@@ -274,9 +274,13 @@ const Dhx = (props: {
       detailId,
       teamId
     })
+    console.log('arr', arr)
+
     if (arr.code === 200) {
       message.success(`更新完成`)
+      updateMethod && updateMethod()
     } else {
+      console.log('不更新？？？？？？？？？？？？？？')
       updateMethod && updateMethod()
     }
   }

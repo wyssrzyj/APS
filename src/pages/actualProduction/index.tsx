@@ -164,6 +164,7 @@ function ActualProductionList() {
           dataSource={dataSource}
           scroll={{ x: 2000, y: '60vh' }}
           onChange={tableChange}
+          bordered={true} //边框线
           pagination={{
             showSizeChanger: true,
             // showQuickJumper: true, //是否快速查找

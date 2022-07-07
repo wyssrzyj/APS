@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { CusDragTable, SearchBar } from '@/components'
 import noneImg from '@/imgs/noneImg.jpg'
-import { workingModeApis } from '@/recoil/apis'
+import { productionWarning } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
 import { searchConfigs, tableColumns } from './conifgs'
@@ -16,11 +16,12 @@ const Index = () => {
   const navigate = useNavigate()
 
   const [params, setParams] = useState<any>({
+    pageSize: 10,
     pageNum: 1,
-    pageSize: 10
+    waringType: '2'
   })
-
-  const { workingModes, factoryList } = workingModeApis
+  const { earlyWarningList, factoryList, updateDailyScheduleList } =
+    productionWarning
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
   const [facList, setFacList] = useState([])
 
@@ -32,7 +33,7 @@ const Index = () => {
     pageSize,
     loading,
     getDataList
-  } = useTableChange(params, workingModes)
+  } = useTableChange(params, earlyWarningList)
 
   const jump = (id) => {
     navigate('/scheduling', {
@@ -127,6 +128,7 @@ const Index = () => {
             scroll={{ x: 2000, y: '62vh' }}
             loading={loading}
             onChange={tableChange}
+            bordered={true} //边框线
             pagination={{
               showSizeChanger: true,
               pageSize: pageSize,

@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-07-04 18:07:01
+ * @LastEditTime: 2022-07-07 08:44:39
  * @Description:
  * @LastEditors: lyj
  */
@@ -16,9 +16,11 @@ import Icon from '@/components/Icon'
 import { loginApis, systemSettingsApis } from '@/recoil/apis'
 import { clearLocalStorage } from '@/utils/tool'
 
+import img from '../imgs/aps_logo.png'
 import EarlyWarning from './earlyWarning'
 import styles from './index.module.less'
 import { editPwdModalConfig } from './menuConfigs'
+
 const KeyIcon = () => <Icon type="jack-yuechi" className={styles.icon} />
 const UserIcon = () => <Icon type="jack-user" className={styles.icon} />
 const ExitIcon = () => <Icon type="jack-tuichu" className={styles.icon} />
@@ -66,11 +68,7 @@ const Header = () => {
   return (
     <div className={styles.header}>
       <div className={styles.logo}>
-        <img
-          className={styles.logImg}
-          src="https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/aps_logo.png"
-          alt="APS"
-        />
+        <img className={styles.logImg} src={img} alt="APS" />
       </div>
       <div className={styles.headerR}>
         {/* 预警信息 */}
