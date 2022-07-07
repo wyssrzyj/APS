@@ -1,9 +1,9 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 14:52:29
- * @LastEditTime: 2022-05-23 08:40:11
+ * @LastEditTime: 2022-07-07 09:01:51
  * @Description:
- * @LastEditors: zjr
+ * @LastEditors: lyj
  */
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, message, Modal, Switch } from 'antd'
@@ -256,6 +256,7 @@ const UserManage = () => {
           rowKey={'id'}
           loading={loading}
           onChange={tableChange}
+          bordered={true} //边框线
           pagination={{
             //分页
             showSizeChanger: true,

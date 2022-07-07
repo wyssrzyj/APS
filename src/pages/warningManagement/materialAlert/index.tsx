@@ -127,6 +127,7 @@ const Index = () => {
             scroll={{ x: 2000, y: '62vh' }}
             loading={loading}
             onChange={tableChange}
+            bordered={true} //边框线
             pagination={{
               showSizeChanger: true,
               pageSize: pageSize,

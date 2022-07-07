@@ -220,6 +220,7 @@ function ProductionPlan() {
           dataSource={dataSource}
           rowKey={'id'}
           scroll={{ x: 2000, y: '80vh' }}
+          dispatchPan
           onChange={tableChange}
           pagination={{
             //分页

@@ -413,6 +413,7 @@ function Materials() {
             rowSelection={rowSelection}
             columns={columns}
             dataSource={list}
+            bordered={true} //边框线
             rowKey={'id'}
             scroll={{ x: 2000, y: '64vh' }}
             loading={loading}

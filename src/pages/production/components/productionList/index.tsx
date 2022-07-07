@@ -183,6 +183,7 @@ function Production() {
           scroll={{ x: 2000, y: '64vh' }}
           loading={loading}
           onChange={getSort}
+          bordered={true} //边框线
           pagination={{
             //分页
             showSizeChanger: true,

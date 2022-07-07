@@ -258,6 +258,7 @@ function Rule() {
             scroll={{ x: 2000, y: '60vh' }}
             loading={loading}
             onChange={tableChange}
+            bordered={true} //边框线
             pagination={{
               //分页
               showSizeChanger: true,
