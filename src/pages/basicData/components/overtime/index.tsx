@@ -142,31 +142,7 @@ function Overtime() {
       align: 'center',
       dataIndex: 'remark'
     },
-    ,
-    // {
-    //   title: '创建人',
-    //   align: 'center',
-    //   dataIndex: 'createBy',
-    //   render: (value: string, row: any) => {
-    //     return (
-    //       <div>
-    //         <Tag key={value}>{value}</Tag>
-    //       </div>
-    //     )
-    //   }
-    // },
-    // {
-    //   title: '创建时间',
-    //   align: 'center',
-    //   dataIndex: 'createTime',
-    //   render: (value: string, row: any) => {
-    //     return (
-    //       <div>
-    //         <Tag key={value}>{moment(value).format('YYYY-MM-DD HH:ss')}</Tag>
-    //       </div>
-    //     )
-    //   }
-    // },
+
     {
       title: '操作',
       align: 'center',
@@ -321,9 +297,6 @@ function Overtime() {
       item.value = item.id
     })
     nConfigs[1]['options'] = list
-    // if (isEmpty(list)) {
-    //   nConfigs[1]['field'] = '6366'
-    // }
 
     setConfigs(nConfigs)
   }
@@ -347,7 +320,6 @@ function Overtime() {
             callback={paramsChange}
           ></SearchBar>
 
-          {/* <Forms factoryData={factoryData} FormData={FormData}></Forms> */}
           <CusDragTable
             storageField={'overtime'}
             cusBarLeft={TableLeft}
