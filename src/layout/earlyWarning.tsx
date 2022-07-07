@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-07 13:20:23
+ * @LastEditTime: 2022-07-07 13:33:29
  * @Description:
  * @LastEditors: lyj
  */
@@ -82,7 +82,6 @@ const EarlyWarning = () => {
           <>
             <Popover placement="top" content={arr} trigger="hover">
               <img src={mailbox} className={styles.imgMailbox} alt="" />
-              {/* <Icon type="jack-swyx" className={styles.previous} /> */}
               {list.length > 0 ? <div className={styles.remind}></div> : null}
             </Popover>
           </>
