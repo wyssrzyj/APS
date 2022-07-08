@@ -221,8 +221,11 @@ const Dhx = (props: {
       })
     //获取不可操作时间
     const currentStart = v.start_date.slice(0, -5) //更新开始时间
+    console.log(currentStart)
+
     const state = moment(moment(currentStart).valueOf()).format('YYYY-MM-DD') //因为字符转不相等所以转时间戳进行比较
     const susa = parenTime.flat(Infinity)
+
     return susa.includes(state)
   }
 
@@ -233,6 +236,8 @@ const Dhx = (props: {
         // setType('1')
         //判断日期是否可用
         if (judgeAvailableDate(updateData)) {
+          const currentStart = updateData.start_date.slice(0, -5) //更新开始时间
+          console.log(currentStart)
           //提示
           const tipsID = chart.filter(
             (item: { id: any }) => item.id === updateData.parent
@@ -242,12 +247,13 @@ const Dhx = (props: {
             const tips = chart.filter(
               (item: { id: any }) => item.id === updateData.parent
             )
-            message.warning(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
+            message.warning(`${currentStart} 不可工作`, 2)
             updateMethod && updateMethod()
           } else {
             // 同行
             const tips = chart.filter((item: { id: any }) => item.id === tipsID)
-            message.warning(`该日期【${tips[0].text}】不可用,请误重复操作`, 2)
+            message.warning(`${currentStart}不可工作`, 2)
+
             updateMethod && updateMethod()
           }
         } else {

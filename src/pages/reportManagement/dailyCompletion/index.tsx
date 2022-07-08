@@ -27,7 +27,7 @@ function ProductionPlan() {
 
   tableColumns[2].render = (v) => {
     return (
-      <div key={v} className={styles.tableColumnsImg}>
+      <div key={v}>
         <img
           className={styles.tableColumnsImg}
           src={v !== null ? v : img}
@@ -36,6 +36,7 @@ function ProductionPlan() {
       </div>
     )
   }
+
   const [facList, setFacList] = useState([])
   const [params, setParams] = useState<any>({
     pageSize: 10,
@@ -245,7 +246,7 @@ function ProductionPlan() {
             columns={dynamicMeter}
             dataSource={surfaceDataSource}
             rowKey={'key'}
-            scroll={{ x: 2000, y: '63vh' }}
+            scroll={{ x: 2000, y: '65vh' }}
             onChange={getSort}
             bordered={true} //边框线
             pagination={{
