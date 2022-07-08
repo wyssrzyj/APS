@@ -20,8 +20,6 @@ function Material(props: {
 }) {
   const { materialModal, setMaterialModal, materialList, update, refreshList } =
     props
-  console.log('~~~~~~~~~', materialList)
-
   const { getTheSize, materialData, materialSaved, checked, saveMaterialTime } =
     materialSetApis
 
@@ -227,7 +225,6 @@ function Material(props: {
           const res = await materialSaved(current)
           if (res) {
             saveSection() //保存工段
-            refreshList && refreshList()
             setMaterialModal(false)
             update()
             setSizeList([])
