@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-08 09:00:33
+ * @LastEditTime: 2022-07-08 10:29:42
  * @Description:
  * @LastEditors: lyj
  */
@@ -66,7 +66,7 @@ const EarlyWarning = () => {
                     {item.externalProduceOrderNum}
                   </span>
                   {item.abnormalStatus === '1'
-                    ? '预警进入预警范围'
+                    ? '生产单进入预警期'
                     : '生产单已延期'}
                 </div>
               </>
@@ -83,7 +83,13 @@ const EarlyWarning = () => {
             <Popover placement="top" content={arr} trigger="hover">
               <img src={mailbox} className={styles.imgMailbox} alt="" />
               {/* <Icon type="jack-swyx" className={styles.previous} /> */}
-              {list.length > 0 ? <div className={styles.remind}>1</div> : null}
+              {list.length < 10 ? (
+                <div className={styles.individual}>{list.length}</div>
+              ) : list.length < 100 ? (
+                <div className={styles.ten}>{list.length}</div>
+              ) : (
+                <div className={styles.hundred}>99+</div>
+              )}
             </Popover>
           </>
         ) : (

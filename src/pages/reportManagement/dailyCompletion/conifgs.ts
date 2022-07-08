@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-29 17:32:33
- * @LastEditTime: 2022-07-08 09:04:51
+ * @LastEditTime: 2022-07-08 09:35:01
  * @Description:
  * @LastEditors: lyj
  */
@@ -77,11 +77,11 @@ export const tableColumns: any = [
   },
   {
     title: '款图',
-    align: 'center',
-    dataIndex: 'img',
     fixed: 'left',
+    dataIndex: 'img',
     key: 'img',
-    width: 100
+    width: 80,
+    align: 'center'
   },
   {
     title: '产品款号',

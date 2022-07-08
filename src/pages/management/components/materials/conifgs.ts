@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-07-08 09:10:44
+ * @LastEditTime: 2022-07-08 09:17:27
  * @Description:
  * @LastEditors: lyj
  */
@@ -146,29 +146,31 @@ export const tableColumns: any = [
   },
   {
     title: '承诺交期',
-    key: 'orderSum',
+    key: 'committedDeliveryDate',
     align: 'center',
-    dataIndex: 'orderSum',
-    width: 100
+    dataIndex: 'committedDeliveryDate',
+    width: 100,
+    render: (v: any) => (v ? moment(v).format('YYYY-MM-DD') : null)
   },
   {
     title: '剩余工期',
-    key: 'orderSum',
+    key: 'remainingDuration',
     align: 'center',
-    dataIndex: 'orderSum',
+    dataIndex: 'remainingDuration',
     width: 100
   },
   {
     title: '成产单权重',
-    key: 'orderSum',
+    key: 'produceWeight',
     align: 'center',
-    dataIndex: 'orderSum',
+    dataIndex: 'produceWeight',
     width: 100
   },
   {
     title: '物料齐套状态',
     align: 'center',
-    dataIndex: 'address',
-    fixed: 'right'
+    dataIndex: 'checkStatus',
+    fixed: 'right',
+    render: (v: any) => map.get(v)
   }
 ]
