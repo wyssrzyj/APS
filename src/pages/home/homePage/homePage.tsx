@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-06-20 14:30:26
+ * @LastEditTime: 2022-07-08 08:54:28
  * @Description:
  * @LastEditors: lyj
  */
@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react'
 
 import { Icon } from '@/components' //路径
 
+import set from '../../../imgs/set.png'
 import styles from './index.module.less'
 const HomePage = (props) => {
   const { newestHomePage } = props
@@ -44,7 +45,8 @@ const HomePage = (props) => {
   return (
     <div>
       <div className={styles.earlyWarning}>
-        <Icon type="jack-set" className={styles.previous} onClick={showModal} />
+        <img className={styles.set} src={set} alt="" />
+        {/* <Icon type="jack-set" className={styles.previous} onClick={showModal} /> */}
       </div>
       <Modal
         centered={true}

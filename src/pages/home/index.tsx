@@ -68,7 +68,6 @@ const Home = () => {
         <div>
           <div className={styles.outContainer} ref={containerRef}>
             <HomePage newestHomePage={newestHomePage} />
-            {/* <Title title={'首页'}></Title> */}
             <Row gutter={24}>
               {homePage.upper[0].type === true ? (
                 <Col span={12}>

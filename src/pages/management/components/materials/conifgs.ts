@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-07-07 10:51:01
+ * @LastEditTime: 2022-07-08 09:10:44
  * @Description:
  * @LastEditors: lyj
  */
@@ -145,57 +145,28 @@ export const tableColumns: any = [
     render: (v: any) => (v ? moment(v).format('YYYY-MM-DD') : null)
   },
   {
-    title: '生产单权重',
+    title: '承诺交期',
+    key: 'orderSum',
     align: 'center',
-    key: 'produceWeight',
-    dataIndex: 'produceWeight',
+    dataIndex: 'orderSum',
     width: 100
   },
-
   {
-    title: '生产单状态',
+    title: '剩余工期',
+    key: 'orderSum',
     align: 'center',
-    key: 'status',
-    dataIndex: 'status',
-    width: 100,
-    render: (v: any) => production.get(v)
+    dataIndex: 'orderSum',
+    width: 100
+  },
+  {
+    title: '成产单权重',
+    key: 'orderSum',
+    align: 'center',
+    dataIndex: 'orderSum',
+    width: 100
   },
   {
     title: '物料齐套状态',
-    align: 'center',
-    key: 'checkStatus',
-    dataIndex: 'checkStatus',
-    width: 100,
-    render: (v: any) => map.get(v)
-  },
-  {
-    title: '外发情况',
-    key: 'outsourceType',
-    align: 'center',
-    dataIndex: 'outsourceType',
-    render: (v: any) => (v === 1 ? '工序外发' : v === 2 ? '整单外发' : null)
-  },
-
-  {
-    title: '延期情况',
-    key: 'delayType',
-    align: 'center',
-    dataIndex: 'delayType',
-    fixed: 'right',
-
-    render: (v: any) => (v === 0 ? '未延期' : v === 1 ? '已延期' : null)
-  },
-  {
-    title: '生产单状态',
-    key: 'status',
-    align: 'center',
-    dataIndex: 'status',
-    fixed: 'right',
-
-    render: (v: any) => status.get(v)
-  },
-  {
-    title: '操作',
     align: 'center',
     dataIndex: 'address',
     fixed: 'right'

@@ -27,7 +27,7 @@ function ProductionPlan() {
 
   tableColumns[2].render = (v) => {
     return (
-      <div key={v} className={styles.tableColumnsImg}>
+      <div key={v}>
         <img
           className={styles.tableColumnsImg}
           src={v !== null ? v : img}
