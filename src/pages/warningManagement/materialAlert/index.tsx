@@ -10,7 +10,7 @@ import useTableChange from '@/utils/useTableChange'
 
 import { searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
-
+import Material from './material'
 const img = noneImg
 const Index = () => {
   const navigate = useNavigate()
@@ -20,10 +20,12 @@ const Index = () => {
     pageNum: 1,
     waringType: '2'
   })
-  const { earlyWarningList, factoryList, updateDailyScheduleList } =
-    productionWarning
+  const { earlyWarningList, factoryList } = productionWarning
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
   const [facList, setFacList] = useState([])
+
+  const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
+  const [materialList, setMaterialList] = useState<any>([]) //物料齐套数据.
 
   const {
     tableChange,
@@ -56,12 +58,21 @@ const Index = () => {
         >
           修改排程
         </Button>
+        <Button
+          onClick={() => {
+            setMaterialModal(true)
+            setMaterialList([record])
+          }}
+          type="link"
+        >
+          物料冲销
+        </Button>
       </div>
     )
   }
   tableColumns[1].render = (v) => {
     return (
-      <div key={v} className={styles.tableColumnsImg}>
+      <div key={v}>
         <img
           className={styles.tableColumnsImg}
           src={v !== null ? v : img}
@@ -107,38 +118,54 @@ const Index = () => {
     }
     setParams({ ...values })
   }
+  //刷新列表
 
+  const refreshList = () => {
+    getDataList && getDataList()
+  }
+  const update = () => {
+    getDataList && getDataList()
+  }
   return (
     <div className={styles.qualification}>
-      <div>
-        <div className={styles.content}>
-          <div className={styles.forms}>
-            <SearchBar
-              configs={configs}
-              params={params}
-              callback={paramsChange}
-            ></SearchBar>
-          </div>
-
-          <CusDragTable
-            storageField={'materialAlert'}
-            columns={tableColumns}
-            dataSource={dataSource}
-            rowKey={'id'}
-            scroll={{ x: 2000, y: '62vh' }}
-            loading={loading}
-            onChange={tableChange}
-            bordered={true} //边框线
-            pagination={{
-              showSizeChanger: true,
-              pageSize: pageSize,
-              current: pageNum,
-              total, //数据总数
-              pageSizeOptions: ['10', '20', '50']
-            }}
-          />
+      <div className={styles.content}>
+        <div className={styles.forms}>
+          <SearchBar
+            configs={configs}
+            params={params}
+            callback={paramsChange}
+          ></SearchBar>
         </div>
+
+        <CusDragTable
+          storageField={'materialAlert'}
+          columns={tableColumns}
+          dataSource={dataSource}
+          rowKey={'id'}
+          scroll={{ x: 2000, y: '62vh' }}
+          loading={loading}
+          onChange={tableChange}
+          bordered={true} //边框线
+          pagination={{
+            showSizeChanger: true,
+            pageSize: pageSize,
+            current: pageNum,
+            total, //数据总数
+            pageSizeOptions: ['10', '20', '50']
+          }}
+        />
       </div>
+
+      {/* 物料齐套检查弹窗 */}
+      {materialModal && (
+        <Material
+          refreshList={refreshList}
+          update={update}
+          materialList={materialList}
+          materialModal={materialModal}
+          setMaterialModal={setMaterialModal}
+        />
+      )}
     </div>
   )
 }

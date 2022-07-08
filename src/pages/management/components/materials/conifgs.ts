@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-07-08 09:17:27
+ * @LastEditTime: 2022-07-08 10:52:25
  * @Description:
  * @LastEditors: lyj
  */
@@ -160,7 +160,7 @@ export const tableColumns: any = [
     width: 100
   },
   {
-    title: '成产单权重',
+    title: '生产单权重',
     key: 'produceWeight',
     align: 'center',
     dataIndex: 'produceWeight',

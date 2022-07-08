@@ -4,6 +4,14 @@ const { SHOW_PARENT } = TreeSelect
 import moment from 'moment'
 const FORMAT_DATE = 'YYYY-MM-DD '
 
+const map = new Map()
+map.set('1', '裁剪')
+map.set('2', '缝制')
+map.set('3', '后整')
+map.set('4', '包装')
+map.set('5', '外发')
+map.set('6', '缝制线外组')
+
 export const searchConfigs = [
   {
     label: '工厂名称',
@@ -51,7 +59,7 @@ export const tableColumns: any = [
     align: 'center',
     dataIndex: 'img',
     key: 'img',
-    width: 100
+    width: 80
   },
   {
     title: '工厂名称',
@@ -93,7 +101,7 @@ export const tableColumns: any = [
     align: 'center',
     dataIndex: 'planEndDate',
     key: 'planEndDate',
-    width: 170,
+    width: 80,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
@@ -103,7 +111,9 @@ export const tableColumns: any = [
     align: 'center',
     key: 'orderDelivery',
     dataIndex: 'orderDelivery',
-    width: 80
+    width: 80,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
 
   {
@@ -111,7 +121,8 @@ export const tableColumns: any = [
     align: 'center',
     key: 'currentSection',
     dataIndex: 'currentSection',
-    width: 80
+    width: 80,
+    render: (v) => map.get(v)
   },
   {
     title: '下工段物料齐套日期',
