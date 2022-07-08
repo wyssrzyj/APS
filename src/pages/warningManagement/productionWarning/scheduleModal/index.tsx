@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-21 13:18:16
- * @LastEditTime: 2022-07-04 18:06:04
+ * @LastEditTime: 2022-07-08 15:55:27
  * @Description:
  * @LastEditors: lyj
  */
@@ -50,7 +50,6 @@ const WarningModal = (props) => {
     const res = await getAssignmentList({
       externalProduceOrderId: current.externalProduceOrderId
     })
-    console.log(res)
 
     if (res.code === 200) {
       setData(res.data)

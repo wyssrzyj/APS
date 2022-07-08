@@ -211,8 +211,7 @@ const ProductionPlan = () => {
   }
   const update = () => {
     setNewlyAdded(false)
-    setParams({ ...params })
-    console.log('更新数据')
+    // setParams({ ...params })
   }
   const popupContent = {
     updateMethod,

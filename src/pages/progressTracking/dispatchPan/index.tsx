@@ -188,8 +188,6 @@ function ProductionPlan() {
     }
   }
   const update = async () => {
-    console.log('更新数据')
-
     getDataList && getDataList()
     // const arr = await productList(params)
   }

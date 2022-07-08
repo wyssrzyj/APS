@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-08 10:34:43
+ * @LastEditTime: 2022-07-08 16:45:56
  * @Description:
  * @LastEditors: lyj
  */
@@ -57,15 +57,20 @@ const EarlyWarning = () => {
                   className={styles.containerList}
                   key={index}
                 >
-                  {item.abnormalStatus === '1' ? (
+                  {item.waringType !== '1' ? (
+                    <div className={styles.material}></div>
+                  ) : item.abnormalStatus === '1' ? (
                     <div className={styles.circularWarning}></div>
                   ) : (
                     <div className={styles.circularDelay}></div>
                   )}
+
                   <span className={styles.textColor}>
                     {item.externalProduceOrderNum}
                   </span>
-                  {item.abnormalStatus === '1'
+                  {item.waringType !== '1'
+                    ? '生产单进入物料预警'
+                    : item.abnormalStatus === '1'
                     ? '生产单进入预警期'
                     : '生产单已延期'}
                 </div>
