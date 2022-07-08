@@ -445,7 +445,6 @@ function ToPlan(props: {
   const efficiencyMethods = async (id: any) => {
     setEfficiencyID(id)
     const res = await forDetail({ id })
-    console.log(res)
 
     setTemplateId(res)
     setEfficiencyData(true)
