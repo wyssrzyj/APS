@@ -30,8 +30,8 @@ const ProductionPlan = () => {
     pageNum: 1
   })
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
-  const [data, setData] = useState<any[]>() //表头数据
-  const [list, setList] = useState<any[]>() //表头数据
+  const [data, setData] = useState<any[]>()
+  const [list, setList] = useState<any[]>()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
