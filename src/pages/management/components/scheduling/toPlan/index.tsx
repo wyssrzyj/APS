@@ -631,9 +631,8 @@ function ToPlan(props: {
   //搜索
   const FormData = async (e, type) => {
     //先清除 后添加
-    setWaitingTreeData([])
-    setTreeData([])
     if (type === 'stay') {
+      setTreeData([])
       const notPlan = await listProductionOrders({
         factoryId: formData,
         isPlanned: 0,
@@ -644,7 +643,9 @@ function ToPlan(props: {
       setList(sum)
       getData(sum[Number('0')], '0')
     }
+
     if (type === 'already') {
+      setWaitingTreeData([])
       const planned = await listProductionOrders({
         factoryId: formData,
         isPlanned: 1,
@@ -665,6 +666,7 @@ function ToPlan(props: {
       getData(sum[Number('1')], '1')
     }
   }
+
   return (
     <div className={styles.tree}>
       {/* {!isModalVisible ? ( */}
