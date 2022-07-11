@@ -265,6 +265,8 @@ function Index() {
   // 树刷新
   const refresh = () => {
     const cloneFormData = cloneDeep(formData)
+    console.log('是否刷新')
+
     setTreeUpdate(cloneFormData)
   }
 
@@ -374,6 +376,8 @@ function Index() {
           visibleVerify={visibleVerify}
           onCancel={() => {
             toggleVerifyVisible(false)
+            setCheckIDs([])
+            update()
           }}
         />
       )}
