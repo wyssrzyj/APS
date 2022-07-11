@@ -372,7 +372,9 @@ function Index() {
           setCheckIDs={setCheckIDs}
           checkIDs={checkIDs}
           visibleVerify={visibleVerify}
-          onCancel={() => toggleVerifyVisible(false)}
+          onCancel={() => {
+            toggleVerifyVisible(false)
+          }}
         />
       )}
     </div>
