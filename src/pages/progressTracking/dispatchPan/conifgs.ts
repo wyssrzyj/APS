@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { ReactNode } from 'react'
 
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const FORMAT_DATE = 'YYYY-MM-DD HH:mm'
 export const easySearch = [
   {
     label: '生产单号',

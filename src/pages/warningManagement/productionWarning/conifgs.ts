@@ -112,6 +112,8 @@ export const tableColumns: any = [
   {
     title: '客户款号',
     dataIndex: 'productClientNum',
+    align: 'center',
+
     key: 'productClientNum',
     width: 80
   },
@@ -127,7 +129,9 @@ export const tableColumns: any = [
     align: 'center',
     key: 'orderDelivery',
     dataIndex: 'orderDelivery',
-    width: 80
+    width: 80,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
 
   {

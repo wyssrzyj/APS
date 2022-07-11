@@ -2,7 +2,7 @@ import moment from 'moment'
 import { number } from 'prop-types'
 import { ReactNode } from 'react'
 
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const FORMAT_DATE = 'YYYY-MM-DD HH:mm'
 
 export const easySearch = [
   {
