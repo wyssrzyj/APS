@@ -119,6 +119,7 @@ const Production = () => {
       </div>
     )
   }
+
   tableColumns[9].render = (_text: any, record: any, index: number) => {
     return <div key={index}>{_text}</div>
   }

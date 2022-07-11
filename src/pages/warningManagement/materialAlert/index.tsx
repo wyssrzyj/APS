@@ -89,6 +89,11 @@ const Index = () => {
       </div>
     )
   }
+  //剩余工期
+  tableColumns[9].render = (_text: any, record: any, index: number) => {
+    return <div key={index}>{_text}</div>
+  }
+  tableColumns[9].sorter = true
   //工厂名称
   useEffect(() => {
     getData()
@@ -134,6 +139,18 @@ const Index = () => {
   const update = () => {
     getDataList && getDataList()
   }
+  const getSort = (_pagination, _filters, sorter) => {
+    if (sorter.order !== undefined) {
+      const sortType = sorter.order === 'ascend' ? 'asc' : 'desc'
+      setParams({
+        ...params,
+        sortField: 'orderDelivery',
+        sortType: sortType
+      })
+    }
+
+    tableChange && tableChange(_pagination, _filters, sorter)
+  }
   return (
     <div className={styles.qualification}>
       <div className={styles.content}>
@@ -152,7 +169,7 @@ const Index = () => {
           rowKey={'id'}
           scroll={{ x: 2000, y: '62vh' }}
           loading={loading}
-          onChange={tableChange}
+          onChange={getSort}
           bordered={true} //边框线
           pagination={{
             showSizeChanger: true,

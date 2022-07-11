@@ -115,7 +115,13 @@ export const tableColumns: any = [
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
-
+  {
+    title: '剩余工期',
+    align: 'center',
+    key: 'remainingDuration',
+    dataIndex: 'remainingDuration',
+    width: 80
+  },
   {
     title: '生产中工段',
     align: 'center',

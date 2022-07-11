@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-05-30 09:06:43
- * @LastEditTime: 2022-06-20 09:01:33
+ * @LastEditTime: 2022-07-11 16:59:54
  * @Description:
  * @LastEditors: lyj
  */
@@ -47,13 +47,15 @@ function Popup(props: any) {
         pageNum: 1,
         pageSize: defaultPageSize,
         externalProduceOrderId: externalProduceOrder.externalProduceOrderId,
-        section: externalProduceOrder.section
+        section: externalProduceOrder.section,
+        sectionSn: externalProduceOrder.sectionSn
       }
       const all = {
         pageNum: 1,
         pageSize: 1000,
         externalProduceOrderId: externalProduceOrder.externalProduceOrderId,
-        section: externalProduceOrder.section
+        section: externalProduceOrder.section,
+        sectionSn: externalProduceOrder.sectionSn
       }
       getDetails('1', sum)
       getDetails('2', all)
