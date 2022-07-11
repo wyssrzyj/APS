@@ -177,7 +177,7 @@ export const tableColumns: any = [
         align: 'center',
         key: 'tailoringCompletedRate',
         width: 100,
-        render: (date) => (date > 0 ? `${Number(date) * 100}%` : '')
+        render: (date) => (date > 0 ? `${Number(date)}%` : '')
       }
     ]
   },
@@ -262,7 +262,7 @@ export const tableColumns: any = [
         align: 'center',
         key: 'sewingCompletedRate',
         width: 100,
-        render: (date) => (date > 0 ? `${Number(date) * 100}%` : '')
+        render: (date) => (date > 0 ? `${Number(date)}%` : '')
       }
     ]
   },
@@ -305,7 +305,7 @@ export const tableColumns: any = [
         align: 'center',
         key: 'trimCompletedRate',
         width: 100,
-        render: (date) => (date > 0 ? `${Number(date) * 100}%` : '')
+        render: (date) => (date > 0 ? `${Number(date)}%` : '')
       }
     ]
   }

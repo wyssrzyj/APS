@@ -80,7 +80,7 @@ export const tableColumns: Array<Partial<Column>> = [
     title: '操作',
     align: 'center',
     fixed: 'right',
-    width: 150
+    width: 100
   }
 ]
 type AddFormConfig = {

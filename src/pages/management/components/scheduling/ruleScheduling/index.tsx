@@ -1,13 +1,13 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-07-05 15:50:35
+ * @LastEditTime: 2022-07-11 13:23:01
  * @Description:
  * @LastEditors: lyj
  */
 import { getAttribute } from '@antv/g2/lib/dependents'
 import { Button, message, Modal, Space } from 'antd'
-import { debounce } from 'lodash'
+import { debounce, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
@@ -44,10 +44,7 @@ function RuleScheduling(props: Record<string, any>) {
 
     setDataSource(data)
   }
-  // 表格数据
-  // useEffect(() => {
-  //   console.log('dataSource', dataSource)
-  // }, [dataSource])
+
   const changeTableOrder = (changeData: Record<string, any>) => {
     setDataSource(changeData)
   }
@@ -57,9 +54,7 @@ function RuleScheduling(props: Record<string, any>) {
     setIsModalVisible(true)
     // onCancel()
   }
-  const handleCancel = () => {
-    setIsModalVisible(false)
-  }
+
   const handleOk = async (async) => {
     const res = await saveAlgorithm({ ganttViewList: data.data })
     if (res.code === 200) {
@@ -81,7 +76,6 @@ function RuleScheduling(props: Record<string, any>) {
         onCancel={() => {
           setVisibleRule(false)
         }}
-        // maskClosable={false}
       >
         <Forms searchParams={searchParams} onChange={valuesChange} />
         <RulesTables
@@ -98,8 +92,16 @@ function RuleScheduling(props: Record<string, any>) {
           centered={true}
           visible={isModalVisible}
           onOk={handleOk}
-          okText="保存"
-          onCancel={onCancel}
+          onCancel={() => {
+            setVisibleRule(false)
+          }}
+          okButtonProps={{ disabled: !isEmpty(data.data) ? false : true }}
+          // onOk={handleOk}
+          // okText="保存"
+          // eslint-disable-next-line react/jsx-key
+          // onCancel={() => {
+          //   setVisibleRule(false)
+          // }}
         >
           <ContrastGantt
             getIframe={getIframe}

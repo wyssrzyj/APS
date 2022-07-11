@@ -49,11 +49,13 @@ function VerifyModal(props: Record<string, any>) {
     )
   }, [checkIDs])
   const release = async () => {
-    await releaseSchedule(checkIDs)
-    onCancel()
-    setCheckIDs([])
-    update && update()
-    message.success(`保存成功`)
+    const arr = await releaseSchedule(checkIDs)
+    if (arr.code === 200) {
+      onCancel()
+      setCheckIDs([])
+      update && update()
+      message.success(`保存成功`)
+    }
   }
   return (
     <div>

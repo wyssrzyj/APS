@@ -137,7 +137,6 @@ function Index() {
   //判断任务是否分派
   const toggleRuleVisible = (visible: boolean) => {
     if (visible) {
-      console.log(schedulingIDs)
       if (schedulingIDs.length > 0) {
         setVisibleRule(visible)
       } else {
@@ -260,6 +259,7 @@ function Index() {
 
   const update = () => {
     refresh()
+    // setSchedulingIDs([]) //清空
   }
 
   // 树刷新

@@ -41,7 +41,6 @@ const MenuBox = () => {
 
   useEffect(() => {
     initOpenKeys(menus, setOpenKey)
-    console.log('1111111111')
   }, [])
 
   const getMenuDOM = (data: any) => {

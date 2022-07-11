@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-10 13:28:44
- * @LastEditTime: 2022-07-04 16:17:58
+ * @LastEditTime: 2022-07-11 13:13:10
  * @Description:
  * @LastEditors: lyj
  */
@@ -82,9 +82,7 @@ function IframeDome() {
       console.log('对比图 2')
       const newID = id.split(',')
       const res = await comparisonChart({ idList: newID })
-
       parent.postMessage({ data: res.data }, '*') //传递给父级
-
       setValue(res.data)
 
       return res

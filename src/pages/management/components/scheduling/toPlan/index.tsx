@@ -92,7 +92,6 @@ function ToPlan(props: {
   }
   useEffect(() => {
     checkSchedule && checkSchedule(toPlanID, plannedID, stateAdd)
-    console.log('已计划id', plannedID)
   }, [plannedID, toPlanID, stateAdd])
   //初始
   useEffect(() => {
@@ -102,7 +101,6 @@ function ToPlan(props: {
       workshopTeam(formData)
     }
     if (treeUpdate !== undefined) {
-      console.log('树美术新', treeUpdate)
       dataAcquisition(formData)
       //车间/班组
       workshopTeam(formData)
@@ -217,8 +215,6 @@ function ToPlan(props: {
   }
   //获取数据
   const dataAcquisition = async (id: any) => {
-    console.log('是否更新')
-
     //已计划假数据
     // 0未计划  1已计划
     const notPlan = await listProductionOrders({

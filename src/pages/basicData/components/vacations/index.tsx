@@ -107,6 +107,8 @@ function Vacations() {
       title: '操作',
       align: 'center',
       dataIndex: 'address',
+      fixed: 'right',
+
       render: (_value: any, _row: any) => {
         return (
           <div className={styles.flex}>

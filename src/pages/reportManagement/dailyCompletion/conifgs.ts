@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-29 17:32:33
- * @LastEditTime: 2022-07-08 09:35:01
+ * @LastEditTime: 2022-07-11 10:53:46
  * @Description:
  * @LastEditors: lyj
  */
@@ -80,7 +80,7 @@ export const tableColumns: any = [
     fixed: 'left',
     dataIndex: 'img',
     key: 'img',
-    width: 80,
+    width: 100,
     align: 'center'
   },
   {
