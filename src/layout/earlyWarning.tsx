@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-08 16:45:56
+ * @LastEditTime: 2022-07-08 17:30:49
  * @Description:
  * @LastEditors: lyj
  */
@@ -42,6 +42,7 @@ const EarlyWarning = () => {
         ids.push(item.id)
       })
       setIds(ids)
+      console.log(res.data)
       setList(res.data)
     }
   }
