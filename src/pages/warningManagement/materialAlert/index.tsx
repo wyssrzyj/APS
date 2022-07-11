@@ -1,7 +1,7 @@
 import { Button } from 'antd'
 import { cloneDeep } from 'lodash'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { CusDragTable, SearchBar } from '@/components'
 import noneImg from '@/imgs/noneImg.jpg'
@@ -14,6 +14,8 @@ import Material from './material'
 const img = noneImg
 const Index = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const { state }: any = location
 
   const [params, setParams] = useState<any>({
     pageSize: 10,
@@ -27,6 +29,12 @@ const Index = () => {
   const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
   const [materialList, setMaterialList] = useState<any>([]) //物料齐套数据.
 
+  useEffect(() => {
+    if (state !== null) {
+      const id = state.id
+      setParams({ ...params, externalProduceOrderNum: id })
+    }
+  }, [state])
   const {
     tableChange,
     dataSource,

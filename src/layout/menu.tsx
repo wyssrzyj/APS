@@ -41,6 +41,7 @@ const MenuBox = () => {
 
   useEffect(() => {
     initOpenKeys(menus, setOpenKey)
+    console.log('1111111111')
   }, [])
 
   const getMenuDOM = (data: any) => {
@@ -96,26 +97,20 @@ const MenuBox = () => {
     navigate(target)
   }
 
-  const getSelectKey = (menus: any) => {
-    menus.forEach((item: any) => {
-      const url = get(item, 'url', '')
-      const children = get(item, 'children', [])
-      if (url && new RegExp(url).test(location.pathname)) {
-        setCurrentMenu([item.key])
-      } else if (!isEmpty(children)) {
-        getSelectKey(children)
-      }
-    })
-  }
+  // const getSelectKey = (menus: any) => {
+  //   menus.forEach((item: any) => {
+  //     const url = get(item, 'url', '')
+  //     const children = get(item, 'children', [])
+  //     if (url && new RegExp(url).test(location.pathname)) {
+  //       setCurrentMenu([item.key])
+  //     } else if (!isEmpty(children)) {
+  //       getSelectKey(children)
+  //     }
+  //   })
+  // }
   const onOpenChange = (keys: any) => {
     setOpenKey([keys[keys.length - 1]])
   }
-
-  useEffect(() => {
-    // getSelectKey(menus)
-    // setCurrentMenu(menuKeys.get(location.pathname))
-    // setOpenKeys(subsMap.get(location.pathname))
-  }, [location.pathname])
 
   useEffect(() => {
     for (let i = 0; i < menus.length; i++) {
@@ -131,18 +126,26 @@ const MenuBox = () => {
       }
     }
   }, [])
+  const getParentKey = (name) => {
+    menus.forEach((item, index) => {
+      if (!isEmpty(item.children)) {
+        item.children.forEach((v) => {
+          if (v.key === name) {
+            setOpenKey([item.key])
+          }
+        })
+      }
+    })
+  }
   useEffect(() => {
-    // console.log('测试', currentMenu)
     setCurrentMenu([location.pathname.slice(1)])
+    getParentKey(location.pathname.slice(1)) //获取父级
   }, [location.pathname])
 
   return (
-    // <div className={classNames(styles.menu, collapsed && styles.miniMenu)}>
     <Menu
       selectedKeys={currentMenu}
       openKeys={openKey}
-      // defaultSelectedKeys={['classification']}
-      // defaultOpenKeys={[openKey]}
       mode="inline"
       style={{ flex: 1 }}
       multiple={false}

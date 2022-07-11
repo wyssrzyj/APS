@@ -211,6 +211,7 @@ const ProductionPlan = () => {
   }
   const update = () => {
     setNewlyAdded(false)
+    getDataList()
     // setParams({ ...params })
   }
   const popupContent = {

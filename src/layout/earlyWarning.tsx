@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-08 17:30:49
+ * @LastEditTime: 2022-07-11 09:08:24
  * @Description:
  * @LastEditors: lyj
  */
@@ -21,14 +21,22 @@ const EarlyWarning = () => {
   const [list, setList] = useState([])
   const [ids, setIds] = useState([])
 
-  const warning = async (id) => {
+  const warning = async (v) => {
+    const id = v.externalProduceOrderNum
     const res = await closePrompt({ idList: ids })
     if (res.code === 200) {
       setList([])
-      navigate('/productionWarning', {
-        replace: true,
-        state: { id: id }
-      })
+      if (v.waringType !== '1') {
+        navigate('/materialAlert', {
+          replace: true,
+          state: { id: id }
+        })
+      } else {
+        navigate('/productionWarning', {
+          replace: true,
+          state: { id: id }
+        })
+      }
     }
   }
   useEffect(() => {
@@ -54,7 +62,7 @@ const EarlyWarning = () => {
             list.map((item, index) => (
               <>
                 <div
-                  onClick={() => warning(item.externalProduceOrderNum)}
+                  onClick={() => warning(item)}
                   className={styles.containerList}
                   key={index}
                 >

@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-05-19 08:38:27
- * @LastEditTime: 2022-07-05 13:06:09
+ * @LastEditTime: 2022-07-11 09:39:20
  * @Description:
  * @LastEditors: lyj
  */
@@ -27,6 +27,7 @@ import Color from './Color/index'
 import SingleColor from './Color/singleColor'
 import DeliveryWeight from './deliveryWeight'
 import EarlyWarning from './earlyWarning'
+import Incomplete from './Incomplete'
 import styles from './index.module.less'
 import Inputs from './inputs'
 
@@ -34,9 +35,6 @@ function Vacations() {
   //获取全局中依赖的数据
   const value = useRecoilValue(commonState.lyj)
 
-  const [pageNum, setPageNum] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
-  const [total] = useState<number>(0)
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [type, setType] = useState(false) //编辑或者新增
@@ -78,30 +76,6 @@ function Vacations() {
     })
   }
 
-  const onPaginationChange = (
-    page: React.SetStateAction<number>,
-    pageSize: React.SetStateAction<number>
-  ) => {
-    setPageNum(page)
-    setPageSize(pageSize)
-  }
-  const editUser = (type: boolean) => {
-    if (type === true) {
-      setType(false)
-      setIsModalVisible(true)
-    } else {
-      console.log('查看')
-    }
-  }
-  //删除
-  const start = () => {
-    if (selectedRowKeys[0] === undefined) {
-      message.warning('请至少选择一个')
-    } else {
-      setMovIsModalVisible(true)
-    }
-  }
-
   const onSelectChange = (selectedRowKeys: React.SetStateAction<never[]>) => {
     setSelectedRowKeys(selectedRowKeys)
   }
@@ -137,6 +111,8 @@ function Vacations() {
   }
 
   const onFinish = async (values: any) => {
+    console.log(values)
+
     const arr: any = {}
     //重新排程时锁定
     // arr.lockTime = values.lockTime.delay
@@ -181,6 +157,7 @@ function Vacations() {
 
     // 预警设置
     arr.waringConfigs = values.waringConfigs
+    arr.materialWaringAdvanceDays = Number(values.materialWaringAdvanceDays)
 
     if (repeat(arr.expireColorConfigs) !== true) {
       const res = await systemParameters(arr)
@@ -272,6 +249,12 @@ function Vacations() {
             <div className={styles.border}></div>
             <Form.Item label="未完成生产单预警" name="waringConfigs">
               <EarlyWarning onChange={undefined} list={list} />
+            </Form.Item>
+            <Form.Item
+              label="未齐料生产单预警"
+              name="materialWaringAdvanceDays"
+            >
+              <Incomplete onChange={undefined} list={list} />
             </Form.Item>
           </div>
         </Form>
