@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-11 09:18:11
- * @LastEditTime: 2022-07-11 09:51:19
+ * @LastEditTime: 2022-07-11 14:22:45
  * @Description:
  * @LastEditors: lyj
  */
@@ -28,6 +28,7 @@ function WorkingHours(props: { onChange: any; list: any }) {
   //随机颜色
 
   const getInputNumberValue = (e) => {
+    setData(e.target.value)
     onChange(e.target.value)
   }
   return (
