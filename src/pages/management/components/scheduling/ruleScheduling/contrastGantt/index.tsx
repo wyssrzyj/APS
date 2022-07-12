@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 09:14:45
- * @LastEditTime: 2022-07-11 13:11:52
+ * @LastEditTime: 2022-07-12 09:01:51
  * @Description:
  * @LastEditors: lyj
  */
@@ -20,7 +20,6 @@ const ContrastGantt = (props) => {
   const [type, setType] = useState<any>('2')
   useEffect(() => {
     if (!isEmpty(checkIDs)) {
-      console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~', checkIDs)
       setID(checkIDs)
     }
   }, [checkIDs])

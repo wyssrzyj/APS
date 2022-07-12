@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-12 13:03:02
- * @LastEditTime: 2022-07-04 13:25:43
+ * @LastEditTime: 2022-07-12 08:58:26
  * @Description:
  * @LastEditors: lyj
  */
@@ -29,8 +29,7 @@ const DynamicTable = (props: Record<string, any>) => {
   const [form] = Form.useForm()
   const [params, setParams] = useState<Record<string, any>>({
     pageSize: 5,
-    pageNum: 1,
-    day: 7
+    pageNum: 1
   })
   const { tableChange, dataSource } = useTableChange(
     params,
@@ -103,24 +102,20 @@ const DynamicTable = (props: Record<string, any>) => {
             allowClear
           />
         </Form.Item>
-        {type === 'durationQuery' ? (
+        <Form.Item name="day" label="剩余">
+          <InputNumber
+            addonAfter="天"
+            min={1}
+            className={styles.durationQuery}
+          />
+        </Form.Item>
+        {/* {type === 'durationQuery' ? (
           <Form.Item name="day" label="剩余">
             <InputNumber addonAfter="天" className={styles.durationQuery} />
           </Form.Item>
         ) : (
-          <Form.Item name="day" label="最近">
-            <Select
-              placeholder="请选择"
-              style={{ width: '100px' }}
-              allowClear
-              className={styles.mb18}
-            >
-              <Option value={7}>7天</Option>
-              <Option value={14}>14天</Option>
-              <Option value={30}>30天</Option>
-            </Select>
-          </Form.Item>
-        )}
+         
+        )} */}
       </Form>
       <div className={styles.dynamicTable}>
         <CusDragTable

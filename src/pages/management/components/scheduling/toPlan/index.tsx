@@ -14,6 +14,7 @@ import TheEfficiency from './theEfficiency'
 
 const { TabPane } = Tabs
 function ToPlan(props: {
+  publishType: any
   treeUpdate: any
   remind: any
   formData: any
@@ -28,7 +29,8 @@ function ToPlan(props: {
     updateMethod,
     checkSchedule,
     treeSelect,
-    treeUpdate
+    treeUpdate,
+    publishType
   } = props
   const location = useLocation()
   const { state }: any = location
@@ -106,6 +108,17 @@ function ToPlan(props: {
       workshopTeam(formData)
     }
   }, [formData, treeUpdate])
+  useEffect(() => {
+    console.log('1111111')
+
+    if (publishType === true) {
+      console.log(publishType)
+
+      const id = ''
+      setProductName(id)
+    }
+  }, [publishType])
+
   //效率模板
   useEffect(() => {
     efficiency()
@@ -634,7 +647,7 @@ function ToPlan(props: {
     if (type === 'stay') {
       setTreeData([])
       const notPlan = await listProductionOrders({
-        factoryId: formData,
+        factoryId: formData === undefined ? e.factoryId : formData, //物料预警跳转 工厂id会获取不到
         isPlanned: 0,
         externalProduceOrderNum: e.productName
       })
@@ -647,17 +660,26 @@ function ToPlan(props: {
     if (type === 'already') {
       setWaitingTreeData([])
       const planned = await listProductionOrders({
+        factoryId: formData === undefined ? e.factoryId : formData,
+        isPlanned: 1,
+        externalProduceOrderNum: e.productName
+      })
+      console.log({
         factoryId: formData,
         isPlanned: 1,
         externalProduceOrderNum: e.productName
       })
 
       if (!isEmpty(planned)) {
+        console.log('~~~~')
+
         const plannedData = planned.map((item: any) => {
           return item.externalProduceOrderId
         })
         setPlannedID(plannedData)
       } else {
+        console.log('+++++++++++++')
+
         setPlannedID([])
       }
       //添加字段
@@ -676,7 +698,6 @@ function ToPlan(props: {
             formData={formData}
             FormData={(e) => {
               FormData(e, 'stay')
-              // setProductName(e)
             }}
           ></Forms>
           {treeData !== undefined && treeData.length > 0 ? (
@@ -699,7 +720,6 @@ function ToPlan(props: {
             productName={productName}
             FormData={(e) => {
               FormData(e, 'already')
-              // setProductName(e)
             }}
           ></Forms>
           {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (

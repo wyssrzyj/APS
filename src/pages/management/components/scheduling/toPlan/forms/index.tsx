@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-25 10:09:18
  * @LastEditors: lyj
- * @LastEditTime: 2022-07-04 17:52:07
+ * @LastEditTime: 2022-07-12 10:48:21
  * @FilePath: \jack-aps\src\pages\practice\administration\components\scheduling\toPlan\forms\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -27,12 +27,32 @@ const HeaderForm = (props: any) => {
   const [form] = Form.useForm()
   const { validateFields } = form
   const { Option } = Select
-
+  const [initialValues, setInitialValues] = useState<any>()
+  //展示数据
   useEffect(() => {
     if (productName !== undefined) {
-      form.setFieldsValue({ productName: productName })
+      const id = productName
+      setInitialValues({ productName: id })
     }
   }, [productName])
+  useEffect(() => {
+    if (initialValues) {
+      form.resetFields() //重置form中的数据
+    }
+  }, [initialValues])
+  //准备获取接口数据
+  useEffect(() => {
+    if (productName !== undefined) {
+      if (formData !== undefined) {
+        const id = productName
+        executionMethod(id, formData)
+      }
+    }
+  }, [productName, formData])
+
+  const executionMethod = debounce((productName, formData) => {
+    FormData && FormData({ productName: productName, factoryId: formData })
+  }, 500)
 
   const getCurrentUser = () => {
     // 本地没有就返回 第一条
@@ -59,6 +79,8 @@ const HeaderForm = (props: any) => {
     const values = await validateFields()
     //处理时间格式
     const timeFormat = { ...values, ...values.planEndDate }
+    console.log(timeFormat)
+
     FormData && FormData(timeFormat)
   }, 500)
 
@@ -74,7 +96,7 @@ const HeaderForm = (props: any) => {
 
   return (
     <div>
-      <Form form={form}>
+      <Form form={form} initialValues={initialValues}>
         <Row>
           <Col span={24}>
             <Form.Item

@@ -1,92 +1,5 @@
 export const menus = [
   { label: '首页', key: 'home', icon: 'jack-home-fill', url: '/home' },
-  {
-    label: '系统管理',
-    key: 'systemManagement',
-    icon: 'jack-set',
-    children: [
-      {
-        label: '系统参数设置',
-        key: 'systemSettingsWork',
-        icon: 'jack-xitongcanshupeizhi',
-        url: '/systemSettingsWork'
-      },
-      {
-        label: '用户管理',
-        key: 'userManage',
-        icon: 'jack-yonghu3',
-        url: '/userManage'
-      }
-
-      // {
-      //   label: '部门管理',
-      //   key: 'department',
-      //   icon: 'jack-viewgallery',
-      //   url: '/departmentManage'
-      // },
-      // {
-      //   label: '角色管理',
-      //   key: 'role',
-      //   icon: 'jack-jiaoseguanli1',
-      //   url: '/roleManage'
-      // }
-    ]
-  },
-  {
-    label: '基础数据',
-    key: 'basicData',
-    icon: 'jack-jichushuju',
-    url: '/',
-    children: [
-      {
-        label: '工作模式',
-        key: 'work',
-        icon: 'jack-kuaisugongzuoliu',
-        url: '/work'
-      },
-      {
-        label: '加班管理',
-        key: 'overtime',
-        icon: 'jack-jiaban',
-        url: '/overtime'
-      },
-      {
-        label: '节假日',
-        key: 'vacations',
-        icon: 'jack-jiejiarishezhi',
-        url: '/vacations'
-      },
-      {
-        label: '产能效率模板',
-        key: 'rule',
-        icon: 'jack-guanlimoban1',
-        url: '/rule'
-      }
-      // {
-      //   label: '日历管理',
-      //   key: 'management',
-      //   icon: 'jack-rili',
-      //   url: '/',
-      //   children: [
-
-      //   ]
-      // },
-      // {
-      //   label: '产能效率管理',
-      //   key: 'capacity',
-      //   icon: 'jack-channengxiaoshuai-01',
-      //   url: '/',
-      //   children: [
-      //     {
-      //       label: '产能效率模板',
-      //       key: 'rule',
-      //       icon: 'jack-guanlimoban1',
-      //       url: '/rule'
-      //     }
-      //   ]
-      // }
-    ]
-  },
 
   {
     label: '业务单数据管理',
@@ -210,6 +123,93 @@ export const menus = [
         icon: 'jack-jihuapaicheng',
         url: '/dailyCompletion'
       }
+    ]
+  },
+  {
+    label: '系统管理',
+    key: 'systemManagement',
+    icon: 'jack-set',
+    children: [
+      {
+        label: '系统参数设置',
+        key: 'systemSettingsWork',
+        icon: 'jack-xitongcanshupeizhi',
+        url: '/systemSettingsWork'
+      },
+      {
+        label: '用户管理',
+        key: 'userManage',
+        icon: 'jack-yonghu3',
+        url: '/userManage'
+      }
+
+      // {
+      //   label: '部门管理',
+      //   key: 'department',
+      //   icon: 'jack-viewgallery',
+      //   url: '/departmentManage'
+      // },
+      // {
+      //   label: '角色管理',
+      //   key: 'role',
+      //   icon: 'jack-jiaoseguanli1',
+      //   url: '/roleManage'
+      // }
+    ]
+  },
+  {
+    label: '基础数据',
+    key: 'basicData',
+    icon: 'jack-jichushuju',
+    url: '/',
+    children: [
+      {
+        label: '工作模式',
+        key: 'work',
+        icon: 'jack-kuaisugongzuoliu',
+        url: '/work'
+      },
+      {
+        label: '加班管理',
+        key: 'overtime',
+        icon: 'jack-jiaban',
+        url: '/overtime'
+      },
+      {
+        label: '节假日',
+        key: 'vacations',
+        icon: 'jack-jiejiarishezhi',
+        url: '/vacations'
+      },
+      {
+        label: '产能效率模板',
+        key: 'rule',
+        icon: 'jack-guanlimoban1',
+        url: '/rule'
+      }
+      // {
+      //   label: '日历管理',
+      //   key: 'management',
+      //   icon: 'jack-rili',
+      //   url: '/',
+      //   children: [
+
+      //   ]
+      // },
+      // {
+      //   label: '产能效率管理',
+      //   key: 'capacity',
+      //   icon: 'jack-channengxiaoshuai-01',
+      //   url: '/',
+      //   children: [
+      //     {
+      //       label: '产能效率模板',
+      //       key: 'rule',
+      //       icon: 'jack-guanlimoban1',
+      //       url: '/rule'
+      //     }
+      //   ]
+      // }
     ]
   }
   // {

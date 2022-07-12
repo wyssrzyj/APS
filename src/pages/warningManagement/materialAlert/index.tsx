@@ -60,7 +60,7 @@ const Index = () => {
       <div key={index} className={styles.operation}>
         <Button
           onClick={() => {
-            jump(record.id)
+            jump(record.externalProduceOrderNum)
           }}
           type="link"
         >

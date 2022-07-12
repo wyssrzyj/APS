@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-11 09:43:10
+ * @LastEditTime: 2022-07-12 11:17:17
  * @Description:
  * @LastEditors: lyj
  */
@@ -45,9 +45,9 @@ const HomePage = (props) => {
   return (
     <div>
       <div className={styles.earlyWarning}>
-        <span onClick={showModal}>
+        <div onClick={showModal} className={styles.earlyWarningImg}>
           <img className={styles.set} src={set} alt="" />
-        </span>
+        </div>
 
         {/* <Icon type="jack-set" className={styles.previous}  /> */}
       </div>

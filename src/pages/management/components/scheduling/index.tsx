@@ -29,6 +29,7 @@ function Index() {
   const [time, setTime] = useState<any>({}) //最大时间 最小时间
   const [treeSelection, setTreeSelection] = useState<any>() //树选中
   const [treeUpdate, setTreeUpdate] = useState<any>() //树刷新
+  const [publishType, setPublishType] = useState<any>(false) //发布清除树的搜索条件
 
   const { figureData, productionView, workingDate } = schedulingApis
 
@@ -265,9 +266,8 @@ function Index() {
   // 树刷新
   const refresh = () => {
     const cloneFormData = cloneDeep(formData)
-    console.log('是否刷新')
-
     setTreeUpdate(cloneFormData)
+    setPublishType(true)
   }
 
   // 树选中
@@ -280,6 +280,7 @@ function Index() {
     toggleRuleVisible(false)
     update()
     updateMethod()
+    setPublishType(false)
   }
 
   return (
@@ -291,6 +292,7 @@ function Index() {
           <div className={styles.team}>
             <div className={styles.leftContent}>
               <ToPlan
+                publishType={publishType}
                 treeUpdate={treeUpdate}
                 treeSelect={treeSelect}
                 checkSchedule={checkSchedule}
@@ -370,14 +372,17 @@ function Index() {
       )}
       {visibleVerify && (
         <Verification
-          update={update}
+          update={() => {
+            toggleVerifyVisible(false)
+            setCheckIDs([])
+            update()
+          }}
           setCheckIDs={setCheckIDs}
           checkIDs={checkIDs}
           visibleVerify={visibleVerify}
           onCancel={() => {
             toggleVerifyVisible(false)
-            setCheckIDs([])
-            update()
+            setPublishType(false)
           }}
         />
       )}

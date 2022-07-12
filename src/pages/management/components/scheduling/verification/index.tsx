@@ -43,15 +43,11 @@ function VerifyModal(props: Record<string, any>) {
 
   useEffect(() => {
     verifyInfo(checkIDs)
-    console.log(
-      '🚀 ~ file: index.tsx ~ line 46 ~ useEffect ~ checkIDs',
-      checkIDs
-    )
   }, [checkIDs])
   const release = async () => {
     const arr = await releaseSchedule(checkIDs)
     if (arr.code === 200) {
-      onCancel && onCancel()
+      update && update()
 
       message.success(`保存成功`)
     }

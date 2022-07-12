@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-07-06 09:12:13
+ * @LastEditTime: 2022-07-12 11:17:54
  * @Description:
  * @LastEditors: lyj
  */
@@ -66,8 +66,11 @@ const Home = () => {
     <div>
       {type ? (
         <div>
-          <div className={styles.outContainer} ref={containerRef}>
+          <div>
             <HomePage newestHomePage={newestHomePage} />
+          </div>
+
+          <div className={styles.outContainer} ref={containerRef}>
             <Row gutter={24}>
               {homePage.upper[0].type === true ? (
                 <Col span={12}>
@@ -93,6 +96,17 @@ const Home = () => {
               ) : null}
             </Row>
             <div className={styles.dynamicTableContainer}>
+              {homePage.lower[2].type === true ? (
+                <div className={styles.dynamicTableContent}>
+                  <DynamicTable
+                    title="生产单剩余工期查询"
+                    isDelay={true}
+                    key="durationQuery"
+                    type="durationQuery"
+                  />
+                </div>
+              ) : null}
+
               {homePage.lower[0].type === true ? (
                 <div className={styles.dynamicTableContent}>
                   <DynamicTable
@@ -114,16 +128,6 @@ const Home = () => {
                     />
                   </div>
                 </>
-              ) : null}
-              {homePage.lower[2].type === true ? (
-                <div className={styles.dynamicTableContent}>
-                  <DynamicTable
-                    title="生产单剩余工期查询"
-                    isDelay={true}
-                    key="durationQuery"
-                    type="durationQuery"
-                  />
-                </div>
               ) : null}
             </div>
           </div>

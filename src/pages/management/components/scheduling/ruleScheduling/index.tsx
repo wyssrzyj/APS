@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-07-11 13:23:01
+ * @LastEditTime: 2022-07-12 09:01:46
  * @Description:
  * @LastEditors: lyj
  */
@@ -96,12 +96,6 @@ function RuleScheduling(props: Record<string, any>) {
             setVisibleRule(false)
           }}
           okButtonProps={{ disabled: !isEmpty(data.data) ? false : true }}
-          // onOk={handleOk}
-          // okText="保存"
-          // eslint-disable-next-line react/jsx-key
-          // onCancel={() => {
-          //   setVisibleRule(false)
-          // }}
         >
           <ContrastGantt
             getIframe={getIframe}
