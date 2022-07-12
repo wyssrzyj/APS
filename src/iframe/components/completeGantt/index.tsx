@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-10 13:28:44
- * @LastEditTime: 2022-07-12 17:19:47
+ * @LastEditTime: 2022-07-12 17:21:42
  * @Description:
  * @LastEditors: lyj
  */
@@ -158,7 +158,7 @@ function IframeDome() {
     if (!isEmpty(gunterData)) {
       setChart(gunterData)
     }
-    setLine([]) //线 //初始的时候传空
+    setLine([]) //线 //初始的时候传空.
   }, [gunterData])
 
   // 合并图线
