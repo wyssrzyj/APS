@@ -33,10 +33,19 @@ function Index() {
 
   const { figureData, productionView, workingDate } = schedulingApis
 
+  //form切换 清空树结构的搜索条件
+  const switchFormData = (e) => {
+    if (formData !== undefined) {
+      if (e !== formData) {
+        setPublishType(true)
+      }
+    }
+  }
   //头部form的数据
   const FormData = (e: any) => {
     setFormData(e)
-    setCheckIDs([])
+    switchFormData(e)
+    // setCheckIDs([])
     setSchedulingIDs([])
   }
 
@@ -147,7 +156,7 @@ function Index() {
   }
 
   const validateCheckId = () => {
-    let passflag = false
+    let passels = false
     const arr: any[] = []
 
     promptList.map((item: { externalProduceOrderNum: any }) => {
@@ -157,17 +166,17 @@ function Index() {
     //选中里有不满足的就进行提示.  .
     if (Number(arr.length) > 0) {
       message.warning(`生产单${arr.join('、')}任务未分派`)
-      passflag = false
+      passels = false
     } else {
       if (!isEmpty(checkIDs)) {
         if (arr.length <= 0) {
-          passflag = true
+          passels = true
         }
       } else {
         message.warning(`暂无已计划数据`)
-        passflag = false
+        passels = false
       }
-      return passflag
+      return passels
     }
   }
 
@@ -306,7 +315,10 @@ function Index() {
                   className={styles.rules}
                   ghost
                   type="primary"
-                  onClick={() => toggleRuleVisible(true)}
+                  onClick={() => {
+                    setPublishType(false)
+                    toggleRuleVisible(true)
+                  }}
                 >
                   规则排程
                 </Button>
@@ -314,7 +326,11 @@ function Index() {
                   ghost
                   className={styles.heckSchedule}
                   type="primary"
-                  onClick={() => toggleVerifyVisible(true)}
+                  onClick={() => {
+                    setPublishType(false)
+
+                    toggleVerifyVisible(true)
+                  }}
                 >
                   校验排程
                 </Button>
@@ -374,7 +390,7 @@ function Index() {
         <Verification
           update={() => {
             toggleVerifyVisible(false)
-            setCheckIDs([])
+            // setCheckIDs([])
             update()
           }}
           setCheckIDs={setCheckIDs}

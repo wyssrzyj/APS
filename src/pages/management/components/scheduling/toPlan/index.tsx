@@ -74,6 +74,13 @@ function ToPlan(props: {
       setProductName(id)
     }
   }, [state])
+  const id = ''
+  useEffect(() => {
+    //清空查询条件的数据（规则排确定、校验发布、切换工厂都可以清空）
+    if (publishType === true) {
+      setProductName(cloneDeep(id))
+    }
+  }, [publishType])
 
   useEffect(() => {
     if (selectedKeys !== null && selectedKeys !== undefined) {
@@ -108,16 +115,6 @@ function ToPlan(props: {
       workshopTeam(formData)
     }
   }, [formData, treeUpdate])
-  useEffect(() => {
-    console.log('1111111')
-
-    if (publishType === true) {
-      console.log(publishType)
-
-      const id = ''
-      setProductName(id)
-    }
-  }, [publishType])
 
   //效率模板
   useEffect(() => {
@@ -643,6 +640,7 @@ function ToPlan(props: {
   }
   //搜索
   const FormData = async (e, type) => {
+    //搜素不需要和规则、校验联动
     //先清除 后添加
     if (type === 'stay') {
       setTreeData([])
@@ -664,24 +662,6 @@ function ToPlan(props: {
         isPlanned: 1,
         externalProduceOrderNum: e.productName
       })
-      console.log({
-        factoryId: formData,
-        isPlanned: 1,
-        externalProduceOrderNum: e.productName
-      })
-
-      if (!isEmpty(planned)) {
-        console.log('~~~~')
-
-        const plannedData = planned.map((item: any) => {
-          return item.externalProduceOrderId
-        })
-        setPlannedID(plannedData)
-      } else {
-        console.log('+++++++++++++')
-
-        setPlannedID([])
-      }
       //添加字段
       const sum = [list[0], fieldChanges(planned)]
       setList(sum)
@@ -696,6 +676,7 @@ function ToPlan(props: {
         <TabPane tab="待计划" key="0">
           <Forms
             formData={formData}
+            // productName={productName}
             FormData={(e) => {
               FormData(e, 'stay')
             }}
