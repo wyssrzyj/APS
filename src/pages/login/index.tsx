@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 10:02:54
- * @LastEditTime: 2022-07-07 08:46:47
+ * @LastEditTime: 2022-07-12 16:53:51
  * @Description:
  * @LastEditors: lyj
  */
@@ -39,9 +39,9 @@ const LoginContent = () => {
           { name: '生产任务动态', type: true }
         ],
         lower: [
+          { name: '生产单剩余工期查询', type: false },
           { name: '生产延期查询', type: true },
-          { name: '生产任务动态', type: true },
-          { name: '生产单剩余工期查询', type: false }
+          { name: '生产任务动态', type: true }
         ]
       }
       //设置配置
