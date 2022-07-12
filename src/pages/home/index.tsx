@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-07-12 11:17:54
+ * @LastEditTime: 2022-07-12 16:39:55
  * @Description:
  * @LastEditors: lyj
  */
@@ -71,9 +71,9 @@ const Home = () => {
           </div>
 
           <div className={styles.outContainer} ref={containerRef}>
-            <Row gutter={24}>
-              {homePage.upper[0].type === true ? (
-                <Col span={12}>
+            <div className={styles.dynamicTableContainer}>
+              <div className={styles.containerRefTop}>
+                {homePage.upper[0].type === true ? (
                   <div className={styles.content}>
                     <DynamicContent
                       key="manufactureOrder"
@@ -81,10 +81,10 @@ const Home = () => {
                       type="manufactureOrder"
                     />
                   </div>
-                </Col>
-              ) : null}
-              {homePage.upper[1].type === true ? (
-                <Col span={12}>
+                ) : null}
+              </div>
+              <div className={styles.containerRefTop}>
+                {homePage.upper[1].type === true ? (
                   <div className={styles.content}>
                     <DynamicContent
                       key="manufactureTask"
@@ -92,9 +92,10 @@ const Home = () => {
                       type="manufactureTask"
                     />
                   </div>
-                </Col>
-              ) : null}
-            </Row>
+                ) : null}
+              </div>
+            </div>
+
             <div className={styles.dynamicTableContainer}>
               {homePage.lower[2].type === true ? (
                 <div className={styles.dynamicTableContent}>
