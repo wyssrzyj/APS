@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-07-12 16:39:55
+ * @LastEditTime: 2022-07-12 17:37:32
  * @Description:
  * @LastEditors: lyj
  */
@@ -97,7 +97,7 @@ const Home = () => {
             </div>
 
             <div className={styles.dynamicTableContainer}>
-              {homePage.lower[2].type === true ? (
+              {homePage.lower[0].type === true ? (
                 <div className={styles.dynamicTableContent}>
                   <DynamicTable
                     title="生产单剩余工期查询"
@@ -108,7 +108,7 @@ const Home = () => {
                 </div>
               ) : null}
 
-              {homePage.lower[0].type === true ? (
+              {homePage.lower[1].type === true ? (
                 <div className={styles.dynamicTableContent}>
                   <DynamicTable
                     title="生产延期查询"
@@ -118,7 +118,7 @@ const Home = () => {
                   />
                 </div>
               ) : null}
-              {homePage.lower[1].type === true ? (
+              {homePage.lower[2].type === true ? (
                 <>
                   <div className={styles.dynamicTableContent}>
                     <DynamicTable
