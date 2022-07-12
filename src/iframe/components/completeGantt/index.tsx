@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-10 13:28:44
- * @LastEditTime: 2022-07-12 15:56:16
+ * @LastEditTime: 2022-07-12 17:19:47
  * @Description:
  * @LastEditors: lyj
  */
@@ -38,7 +38,8 @@ function IframeDome() {
     resourceMap,
     getLine,
     comparisonChart,
-    productionView
+    productionView,
+    comparisonAlgorithm
   } = orderApis
 
   function parse(search) {
@@ -86,17 +87,16 @@ function IframeDome() {
       console.log('对比图 2')
       const newID = id.split(',')
       const res = await comparisonChart({ idList: newID })
+      setLoadingStatus(true)
       parent.postMessage({ data: res.data }, '*') //传递给父级
       setValue(res.data)
-      setLoadingStatus(true)
       return res
     }
     //对比图
     if (type === '3') {
-      console.log(' 对比图 3')
-
       const newID = id.split(',')
-      const res = await comparisonChart({ idList: newID })
+      const res = await comparisonAlgorithm({ idList: newID })
+      setLoadingStatus(true)
       return res
     }
     //对比图
@@ -183,7 +183,7 @@ function IframeDome() {
   // 是否加载完毕
   const loading = () => {
     const locationId: any = parse(location.search)
-    if (locationId.type == 2) {
+    if (locationId.type == 2 || locationId.type == 3) {
       if (loadingStatus === false) {
         return true
       } else {

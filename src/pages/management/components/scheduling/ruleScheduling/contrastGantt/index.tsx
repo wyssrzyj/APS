@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 09:14:45
- * @LastEditTime: 2022-07-12 15:22:06
+ * @LastEditTime: 2022-07-12 17:06:23
  * @Description:
  * @LastEditors: lyj
  */
@@ -42,7 +42,7 @@ const ContrastGantt = (props) => {
       <div className={styles.iframeRight}>
         <Select defaultValue="2" style={{ width: 120 }} onChange={handleChange}>
           <Option value="2">算法1</Option>
-          {/* <Option value="3">算法2</Option> */}
+          <Option value="3">算法2</Option>
           {/* <Option value="4">算法3</Option> */}
         </Select>
       </div>
