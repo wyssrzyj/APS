@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-07-08 15:24:56
+ * @LastEditTime: 2022-07-13 13:10:28
  * @Description:
  * @LastEditors: lyj
  */
@@ -29,6 +29,13 @@ status.set(4, '生产完成')
 
 export const easySearch = [
   {
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入客户款号'
+  },
+  {
     label: '生产单号',
     field: 'productOrderNum',
     type: 'input',
@@ -38,14 +45,21 @@ export const easySearch = [
 ]
 export const searchConfigs = [
   {
-    label: '工厂名称',
-    field: 'factoryId',
-    type: 'select',
-    width: 250,
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
     allowClear: true,
-    placeholder: '请选择工厂名称',
-    options: []
+    placeholder: '请输入客户款号'
   },
+  // {
+  //   label: '工厂名称',
+  //   field: 'factoryId',
+  //   type: 'select',
+  //   width: 250,
+  //   allowClear: true,
+  //   placeholder: '请选择工厂名称',
+  //   options: []
+  // },
   {
     label: '生产单号',
     field: 'productOrderNum',

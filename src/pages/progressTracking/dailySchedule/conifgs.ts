@@ -5,8 +5,15 @@ const FORMAT_DATE = 'YYYY-MM-DD HH:mm'
 
 export const easySearch = [
   {
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入客户款号'
+  },
+  {
     label: '生产单号',
-    field: 'externalProduceOrderNum',
+    field: 'productOrderNum',
     type: 'input',
     allowClear: true,
     placeholder: '请输入生产单号'
@@ -14,14 +21,21 @@ export const easySearch = [
 ]
 export const searchConfigs = [
   {
-    label: '工厂名称',
-    field: 'factoryId',
-    type: 'select',
-    width: 250,
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
     allowClear: true,
-    placeholder: '请选择工厂名称',
-    options: []
+    placeholder: '请输入客户款号'
   },
+  // {
+  //   label: '工厂名称',
+  //   field: 'factoryId',
+  //   type: 'select',
+  //   width: 250,
+  //   allowClear: true,
+  //   placeholder: '请选择工厂名称',
+  //   options: []
+  // },
   {
     label: '生产单号',
     field: 'externalProduceOrderNum',

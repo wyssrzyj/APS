@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
  * @LastEditors: lyj
- * @LastEditTime: 2022-07-04 13:00:44
+ * @LastEditTime: 2022-07-13 16:11:13
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -29,6 +29,26 @@ export const productionList = async (params: any) => {
     console.log(e)
   }
 }
+
+//修改备注
+export const modifyRemarks = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/product-order/update-remark`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 // 工序外发 - 显示
 export const processOutsourcing = async (params: any) => {
   try {

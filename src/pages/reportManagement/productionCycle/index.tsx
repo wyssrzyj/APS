@@ -105,7 +105,7 @@ const ProductionPlan = () => {
 
   useEffect(() => {
     const nConfigs: any[] = cloneDeep(configs)
-    nConfigs[0].options = facList
+    // nConfigs[0].options = facList
     setConfigs(nConfigs)
   }, [facList])
 

@@ -93,7 +93,7 @@ function ProductionPlan() {
 
   useEffect(() => {
     const nConfigs: any[] = cloneDeep(configs)
-    nConfigs[0]['options'] = facList
+    // nConfigs[0]['options'] = facList
     nConfigs[4]['options'] = productStatus
     setConfigs(nConfigs)
   }, [facList, workshopSectionList])

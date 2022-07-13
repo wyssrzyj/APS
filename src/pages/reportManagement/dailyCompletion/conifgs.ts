@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-29 17:32:33
- * @LastEditTime: 2022-07-11 10:53:46
+ * @LastEditTime: 2022-07-13 13:15:39
  * @Description:
  * @LastEditors: lyj
  */
@@ -12,8 +12,15 @@ const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
 
 export const easySearch = [
   {
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入客户款号'
+  },
+  {
     label: '生产单号',
-    field: 'produceOrderNum',
+    field: 'productOrderNum',
     type: 'input',
     allowClear: true,
     placeholder: '请输入生产单号'
@@ -22,14 +29,21 @@ export const easySearch = [
 
 export const searchConfigs = [
   {
-    label: '工厂名称',
-    field: 'factoryId',
-    type: 'select',
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
     allowClear: true,
-    placeholder: '请选择工厂名称',
-    options: [],
-    width: 250
+    placeholder: '请输入客户款号'
   },
+  // {
+  //   label: '工厂名称',
+  //   field: 'factoryId',
+  //   type: 'select',
+  //   allowClear: true,
+  //   placeholder: '请选择工厂名称',
+  //   options: [],
+  //   width: 250
+  // },
   {
     label: '生产单号',
     field: 'produceOrderNum',

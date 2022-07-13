@@ -1,9 +1,10 @@
-import { Button } from 'antd'
+import { Button, Input, message, Tooltip } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 
 import { AdvancedSearch, CusDragTable } from '@/components'
+import change from '@/imgs/change.png'
 import noneImg from '@/imgs/noneImg.jpg'
 import { productionPlanApis, productionSingleApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
@@ -14,6 +15,7 @@ import Popup from './popup'
 
 const img = noneImg
 
+const { TextArea } = Input
 const map = new Map()
 map.set(1, '待计划')
 map.set(2, '已计划')
@@ -28,7 +30,7 @@ const productStatus = [
 ]
 
 const Production = () => {
-  const { productionList } = productionSingleApis
+  const { productionList, modifyRemarks } = productionSingleApis
   const { factoryList } = productionPlanApis
 
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
@@ -45,6 +47,7 @@ const Production = () => {
   const [externalProduceOrderId, setExternalProduceOrderId] = useState() //外发需要的id
   const [whetherEditor, setWhetherEditor] = useState<any>()
   const [data, setData] = useState<any>([])
+  const [changeValue, setChangeValue] = useState<any>('') //更改的值
 
   const {
     tableChange,
@@ -78,6 +81,7 @@ const Production = () => {
     if (!isEmpty(dataSource)) {
       const cloneDataSource = cloneDeep(dataSource)
       cloneDataSource.map((item) => {
+        item.type = false //用于备注弹窗
         item.id = item.externalProduceOrderId
         item.key = item.externalProduceOrderId
       })
@@ -125,9 +129,62 @@ const Production = () => {
   }
   tableColumns[9].sorter = true
 
+  const titleContainer = (item) => {
+    let sum = item.remainingDuration
+    const confirm = (e) => {
+      sum = e.target.value
+    }
+    const changeText = async () => {
+      const res = await modifyRemarks({
+        id: item.id,
+        remark: sum
+      })
+      getDataList && getDataList()
+      message.success('更改完成')
+    }
+
+    return (
+      <div className={styles.remaining}>
+        <TextArea
+          allowClear
+          defaultValue={item.remark}
+          onChange={confirm}
+          autoSize={true}
+        />
+        <Button
+          onClick={changeText}
+          className={styles.remainingButton}
+          type="primary"
+        >
+          更改
+        </Button>
+      </div>
+    )
+  }
+  tableColumns[11].render = (_v, item) => {
+    return (
+      <div className={styles.remainingDuration}>
+        {/* <Input.Group compact>
+          <Input defaultValue="123" />
+          <Button type="primary">计算值</Button>
+        </Input.Group> */}
+
+        <Tooltip
+          trigger={'click'}
+          placement="topLeft"
+          title={titleContainer(item)}
+          key={item.id}
+        >
+          <span>{_v}</span>
+          <img src={change} alt="" className={styles.imgChange} />
+        </Tooltip>
+      </div>
+    )
+  }
+
   useEffect(() => {
     const nConfigs: any[] = cloneDeep(configs)
-    nConfigs[0]['options'] = facList
+    // nConfigs[0]['options'] = facList
     nConfigs[4]['options'] = productStatus
     setConfigs(nConfigs)
   }, [facList])

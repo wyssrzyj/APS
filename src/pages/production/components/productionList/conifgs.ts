@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-07-07 10:47:22
+ * @LastEditTime: 2022-07-13 16:29:51
  * @Description:
  * @LastEditors: lyj
  */
@@ -18,6 +18,13 @@ map.set(4, '生产完成')
 
 export const easySearch = [
   {
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入客户款号'
+  },
+  {
     label: '生产单号',
     field: 'productOrderNum',
     type: 'input',
@@ -27,14 +34,21 @@ export const easySearch = [
 ]
 export const searchConfigs = [
   {
-    label: '工厂名称',
-    field: 'factoryId',
-    type: 'select',
-    width: 250,
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
     allowClear: true,
-    placeholder: '请选择工厂名称',
-    options: []
+    placeholder: '请输入客户款号'
   },
+  // {
+  //   label: '工厂名称',
+  //   field: 'factoryId',
+  //   type: 'select',
+  //   width: 250,
+  //   allowClear: true,
+  //   placeholder: '请选择工厂名称',
+  //   options: []
+  // },
   {
     label: '生产单号',
     field: 'productOrderNum',
@@ -158,12 +172,20 @@ export const tableColumns: any = [
   },
 
   {
+    title: '备注',
+    align: 'center',
+    key: 'remark',
+    dataIndex: 'remark',
+    fixed: 'right',
+    width: 100
+  },
+  {
     title: '延期情况',
     key: 'delayType',
     align: 'center',
     dataIndex: 'delayType',
     fixed: 'right',
-
+    width: 100,
     render: (v: any) => (v === 0 ? '未延期' : v === 1 ? '已延期' : null)
   },
   {
