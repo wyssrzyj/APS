@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-07-12 17:37:32
+ * @LastEditTime: 2022-07-13 08:33:38
  * @Description:
  * @LastEditors: lyj
  */
@@ -44,7 +44,7 @@ const Home = () => {
     if (id) {
       api(id)
     } else {
-      //跳转至登录
+      //跳转至登录.
       const token = JSON.parse(localStorage.getItem('currentUser'))
       if (token) {
         setType(true)
