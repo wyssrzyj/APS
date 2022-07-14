@@ -535,9 +535,10 @@ function ToPlan(props: {
         ) : null}
         {type === 4 ? (
           <div className={styles.card}>
-            <div>款名：{data.productName}</div>
-            <div>款号: {data.productNum}</div>
+            <div>产品名称：{data.productName}</div>
+            <div>产品款号: {data.productNum}</div>
             <div>数量: {data.orderSum}</div>
+            <div>客户款号: {data.productClientNum}</div>
           </div>
         ) : null}
       </div>

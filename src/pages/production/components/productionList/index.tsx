@@ -128,7 +128,7 @@ const Production = () => {
     return <div key={index}>{_text}</div>
   }
   tableColumns[9].sorter = true
-
+  //备注
   const titleContainer = (item) => {
     let sum = item.remainingDuration
     const confirm = (e) => {
@@ -161,21 +161,25 @@ const Production = () => {
       </div>
     )
   }
+  //树总合
+  const treeSelectSumS = (item) => {
+    return <div>123</div>
+  }
   tableColumns[11].render = (_v, item) => {
     return (
       <div className={styles.remainingDuration}>
-        {/* <Input.Group compact>
+        <Input.Group compact>
           <Input defaultValue="123" />
-          <Button type="primary">计算值</Button>
-        </Input.Group> */}
+          <Button type="primary">更新</Button>
+        </Input.Group>
 
         <Tooltip
           trigger={'click'}
           placement="topLeft"
-          title={titleContainer(item)}
+          title={treeSelectSumS(item)}
           key={item.id}
         >
-          <span>{_v}</span>
+          {/* <span>{_v}</span> */}
           <img src={change} alt="" className={styles.imgChange} />
         </Tooltip>
       </div>

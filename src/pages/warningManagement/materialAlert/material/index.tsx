@@ -258,7 +258,6 @@ function Material(props: {
   //判断是否满足保存条件
   const meetConditions = (data: any[]) => {
     //只要底部有时间就可以提交
-    console.log(data)
 
     if (!isEmpty(data)) {
       if (data[0].bottomTime !== null) {

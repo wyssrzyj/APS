@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-17 08:41:26
- * @LastEditTime: 2022-07-04 18:05:50
+ * @LastEditTime: 2022-07-14 13:28:11
  * @Description:
  * @LastEditors: lyj
  */
@@ -66,7 +66,6 @@ const TableDome = (props) => {
 
     const titleData = res.planDateTimeList //接口数据
     const data = res.dailyScheduleVOS
-    console.log(data)
 
     setList(data) //先渲染数据在渲染格式 防止拿不到数据
     setTitleData(titleData)

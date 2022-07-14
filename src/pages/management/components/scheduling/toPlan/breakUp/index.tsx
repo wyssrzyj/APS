@@ -3,22 +3,26 @@ import {
   Button,
   Checkbox,
   DatePicker,
+  Input,
   InputNumber,
   message,
   Modal,
   Select,
-  Table
+  Table,
+  Tooltip,
+  Tree
 } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
-import Item from 'antd/lib/list/Item'
 import { cloneDeep, isElement, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
+import change from '@/imgs/change.png'
 import { dockingDataApis, schedulingApis } from '@/recoil/apis'
 
 // import Details from './details/index'
 import styles from './index.module.less'
+import ProductionAmountTree from './productionAmountTree'
 const BreakUp = (props: any) => {
   const {
     setIsModalVisible,
@@ -29,8 +33,14 @@ const BreakUp = (props: any) => {
     empty
   } = props
 
+  const splitTypeData = [
+    { name: '颜色', id: '1' },
+    { name: '尺码', id: '2' }
+  ]
+
   const { workshopList, teamList, capacityListID } = dockingDataApis
-  const { splitMethod, breakQuery, calculateCompletionTime } = schedulingApis
+  const { splitMethod, breakQuery, calculateCompletionTime, getSkuTree } =
+    schedulingApis
 
   const { Option } = Select
   const [pageNum, setPageNum] = useState<number>(1)
@@ -39,6 +49,9 @@ const BreakUp = (props: any) => {
   const [data, setData] = useState<any>([]) //查询的数据
   const [initialTeamList, setInitialTeamList] = useState<any>([]) //处理初始班组
   const [factoryName, setFactoryName] = useState<any>([]) //车间
+  const [splitType, setSplitType] = useState<any>('1') //拆分类型
+  const [splitQuantityTree, setSplitQuantityTree] = useState<any>({})
+  const [allSelected, setAllSelected] = useState([]) //所有选中的
 
   useEffect(() => {
     if (formData !== undefined) {
@@ -62,6 +75,7 @@ const BreakUp = (props: any) => {
       getInterfaceData(workSplitList)
     }
   }, [workSplitList])
+
   //替换数据
   const updateData = (record: any, list: any) => {
     /**
@@ -88,12 +102,10 @@ const BreakUp = (props: any) => {
       return []
     }
   }
+
   //**处理班组 效率 初始值问题
   const initialHandleChange = async (shopId, teamId, record, teamDate) => {
-    // const sum = cloneDeep(teamLis)
-
     const sum = teamDate
-
     //班组
     record.teamType = true
     const team = await teamList({
@@ -154,9 +166,16 @@ const BreakUp = (props: any) => {
   }
 
   const getInterfaceData = async (data: any) => {
+    const arr = await getSkuTree({
+      externalProduceOrderId: data.externalProduceOrderId
+    })
+    setSplitQuantityTree(arr)
+
     const res = await breakQuery({ assignmentId: data.id })
+
     if (!isEmpty(res)) {
       res.map(async (item: any, index) => {
+        item.tree = arr
         item.isLocked = item.isLocked === 1 ? true : false
         //拆分数量
         // item.productionAmount = item.productionAmount ? 0 : 0
@@ -174,6 +193,7 @@ const BreakUp = (props: any) => {
       // delete data.id //防止 id和父级一样.
       const res = cloneDeep(data)
       // res.children = []
+      res.tree = arr
       res.id = 1008611
       res.key = 2
       res.productionAmount = 0
@@ -222,7 +242,7 @@ const BreakUp = (props: any) => {
   }
 
   //数字输入框的处理
-  let timeout: NodeJS.Timeout
+
   const onBreakUp = (
     e: any,
     record: {
@@ -455,7 +475,48 @@ const BreakUp = (props: any) => {
     setPageNum(page)
     setPageSize(pageSize)
   }
+  const onVisibleChange = (e) => {
+    console.log(e)
+  }
 
+  const addUnavailableStatus = (data, selectedItem) => {
+    //data 树数据
+    //selectedItem 当前不可用的
+    const cloneData = cloneDeep(data)
+    //子项选中后状态设置为不可用
+    selectedItem.forEach((c) => {
+      cloneData.map((item) => {
+        item.children.map((v) => {
+          if (v.id == c) {
+            v.disabled = true
+          }
+        })
+      })
+    })
+    // 子项全部设置为不可用后 父级设置为不可用
+    cloneData.map((item) => {
+      item.disabled = item.children.every((item: any) => {
+        return item.disabled === true
+      })
+    })
+    return cloneData
+  }
+  //获取所有的选中值
+  useEffect(() => {
+    const sum = []
+    data.forEach((item) => {
+      if (!isEmpty(item.selectedItem)) {
+        sum.push(item.selectedItem)
+      }
+    })
+    setAllSelected(sum.flat(Infinity))
+  }, [data])
+  //选中拆分数量
+  const selectSplitQuantity = (e, item, colorDataList) => {
+    console.log('当前是颜色还是尺寸', splitType)
+
+    onBreakUp(e, item, 1)
+  }
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
@@ -469,14 +530,14 @@ const BreakUp = (props: any) => {
         return <div key={_value}>{index + 1}</div>
       }
     },
-    {
-      title: '生产单号',
-      align: 'center',
-      fixed: 'left',
-      width: 80,
-      key: 'externalProduceOrderNum',
-      dataIndex: 'externalProduceOrderNum'
-    },
+    // {
+    //   title: '生产单号',
+    //   align: 'center',
+    //   fixed: 'left',
+    //   width: 80,
+    //   key: 'externalProduceOrderNum',
+    //   dataIndex: 'externalProduceOrderNum'
+    // },
     {
       title: '产品名称',
       align: 'center',
@@ -501,23 +562,83 @@ const BreakUp = (props: any) => {
       dataIndex: 'orderSum'
     },
     {
+      title: '客户款号',
+      align: 'center',
+      // fixed: 'left',
+      width: 80,
+      key: 'productNum',
+      dataIndex: 'productNum'
+    },
+    {
+      title: '拆分类型',
+      align: 'center',
+      width: 160,
+      key: 'productNum',
+      dataIndex: 'productNum',
+      render: (_value, v, index) => {
+        return (
+          <div>
+            {index === 0 ? (
+              <Select
+                placeholder="请选择拆分类型"
+                defaultValue={splitType}
+                style={{ width: 130 }}
+                // disabled={_row.createPlanStatus}
+                onChange={(e) => {
+                  setSplitType(e)
+                }}
+              >
+                {splitTypeData.map((item: any) => (
+                  // eslint-disable-next-line react/jsx-key
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                ))}
+              </Select>
+            ) : null}
+          </div>
+        )
+      }
+    },
+    {
       title: '拆分数量',
       align: 'center',
-      width: 120,
+      width: 160,
       dataIndex: 'productionAmount',
       key: 'productionAmount',
 
       render: (_value: any, _row: any) => {
         return (
-          <div>
-            <InputNumber
-              min={0}
-              disabled={_row.createPlanStatus}
-              value={_value}
-              max={_row.orderSum} //最大值是生产单总量
-              onBlur={(e) => onBreakUp(e.target.value, _row, 1)}
-            />
-          </div>
+          <>
+            <div className={styles.remainingDuration}>
+              <InputNumber
+                controls={false}
+                min={0}
+                // disabled={_row.createPlanStatus}
+                value={_value}
+                max={_row.orderSum} //最大值是生产单总量
+                onBlur={(e) => onBreakUp(e.target.value, _row, 1)}
+              />
+
+              <Tooltip
+                onVisibleChange={onVisibleChange}
+                trigger={'click'}
+                placement="topLeft"
+                title={
+                  <ProductionAmountTree
+                    allSelected={allSelected}
+                    split={splitType}
+                    row={_row}
+                    selectSplitQuantity={selectSplitQuantity}
+                  />
+                }
+                key={_row.id}
+              >
+                {/* <span>{_v}</span> */}
+                <img src={change} alt="" className={styles.imgChange} />
+              </Tooltip>
+            </div>
+          </>
         )
       }
     },
@@ -553,7 +674,7 @@ const BreakUp = (props: any) => {
               placeholder="请选择工作车间"
               defaultValue={_value}
               style={{ width: 120 }}
-              disabled={_row.createPlanStatus}
+              // disabled={_row.createPlanStatus}
               onChange={(e) => handleChange(1, e, _row)}
             >
               {factoryName.map((item: any) => (
@@ -579,11 +700,9 @@ const BreakUp = (props: any) => {
           <>
             <Select
               disabled={
-                _row.createPlanStatus === false
-                  ? _row.shopId
-                    ? false
-                    : true
-                  : _row.createPlanStatus
+                // _row.createPlanStatus === false
+                _row.shopId ? false : true
+                // : _row.createPlanStatus
               }
               // disabled={_row.createPlanStatus}
               placeholder="请选择工作班组"

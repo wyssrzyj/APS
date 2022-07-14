@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-07-13 13:10:28
+ * @LastEditTime: 2022-07-14 09:14:52
  * @Description:
  * @LastEditors: lyj
  */
@@ -132,9 +132,9 @@ export const tableColumns: any = [
   },
   {
     title: '产品款号',
-    key: 'productClientNum',
+    key: 'productNum',
     align: 'center',
-    dataIndex: 'productClientNum',
+    dataIndex: 'productNum',
     width: 200
   },
   {
