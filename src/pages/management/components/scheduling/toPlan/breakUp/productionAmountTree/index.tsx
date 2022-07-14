@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-14 09:31:58
- * @LastEditTime: 2022-07-14 19:58:53
+ * @LastEditTime: 2022-07-14 20:03:45
  * @Description:
  * @LastEditors: lyj
  */
@@ -91,7 +91,7 @@ const ProductionAmountTree = (props) => {
     // console.log(addUnavailableStatus(sizeDataList, available))
 
     // setColorDataList(colorDataList)
-    // setSizeDataList(sizeDataList)
+    // setSizeDataList(sizeDataList).
     setColorDataList(addUnavailableStatus(colorDataList, available))
     setSizeDataList(addUnavailableStatus(sizeDataList, available))
   }, [allSelected, row])
