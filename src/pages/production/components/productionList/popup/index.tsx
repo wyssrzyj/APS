@@ -25,7 +25,8 @@ function ProductionOrder(props: { content: any }) {
     getDetailsId,
     externalProduceOrderId,
     whetherEditor,
-    refreshData
+    refreshData,
+    setEmpty
   } = content
 
   const { processRoute, popupPreservation, processOutsourcing } =
@@ -236,6 +237,7 @@ function ProductionOrder(props: { content: any }) {
         })
         if (arr) {
           message.success('保存成功')
+
           refreshData && refreshData()
           handleCancel()
         }
@@ -246,6 +248,7 @@ function ProductionOrder(props: { content: any }) {
   }
 
   const handleCancel = () => {
+    setEmpty(false)
     setIsModalVisible(false)
     refreshData && refreshData()
   }

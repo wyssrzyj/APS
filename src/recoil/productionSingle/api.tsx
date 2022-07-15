@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
  * @LastEditors: lyj
- * @LastEditTime: 2022-07-13 16:11:13
+ * @LastEditTime: 2022-07-15 17:22:06
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -267,6 +267,60 @@ export const wholeSingleOugoing = async (params: any) => {
   try {
     const res: ResponseProps = await axios.post(
       `/aps/outsource/out-and-process-delete`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+// 根据生产单id查询
+export const customSection = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/custom-section/get`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+// 自定义工段保存
+export const userDefinedSectionSaving = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/custom-section/save`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+// 获取工段维护类型
+export const getSectionMaintenanceType = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/custom-section/get-section-type`,
       params
     )
     if (res.code !== 200) {

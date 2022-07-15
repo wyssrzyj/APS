@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-21 13:18:16
- * @LastEditTime: 2022-07-06 14:21:19
+ * @LastEditTime: 2022-07-15 17:19:06
  * @Description:
  * @LastEditors: lyj
  */
@@ -110,6 +110,7 @@ const WarningModal = (props) => {
       if (res.code === 200) {
         message.success('保存成功')
         setIsModalVisible(false)
+        getProductionWarning() //刷新数据
       }
     }
   }

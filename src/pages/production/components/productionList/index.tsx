@@ -31,7 +31,8 @@ const productStatus = [
 ]
 
 const Production = () => {
-  const { productionList, modifyRemarks } = productionSingleApis
+  const { productionList, modifyRemarks, getSectionMaintenanceType } =
+    productionSingleApis
   const { factoryList } = productionPlanApis
 
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
@@ -47,7 +48,9 @@ const Production = () => {
     pageSize: 10
   })
 
-  const [getDetailsId, setGetDetailsId] = useState() //工艺需要的id
+  const [currentlySelected, setCurrentlySelected] = useState() //当前选中的
+  const [getDetailsId, setGetDetailsId] = useState()
+
   const [externalProduceOrderId, setExternalProduceOrderId] = useState() //外发需要的id
   const [whetherEditor, setWhetherEditor] = useState<any>()
   const [data, setData] = useState<any>([])
@@ -195,29 +198,33 @@ const Production = () => {
 
   // eslint-disable-next-line no-sparse-arrays
 
-  const editUser = (type: boolean, row: any) => {
+  const editUser = async (type: boolean, row: any) => {
+    console.log(row)
+
     setWhetherEditor(row.outsourceType)
+    setCurrentlySelected(row)
     setGetDetailsId(row.externalProduceOrderId)
     setExternalProduceOrderId(row.externalProduceOrderId)
-    const arr = '1'
+    setType(!type)
+    const res = await getSectionMaintenanceType({
+      externalProduceOrderId: row.externalProduceOrderId
+    })
+    // console.log(res.type)
+    // res.type = '1'
+
     //新接口 会返回3个状态
 
-    if (type === true) {
-      setType(false)
-      //新弹窗
-      // if (arr === '0') {
-      //   setEmpty(true)
-      // }
-      //老
-      if (arr === '1') {
-        setIsModalVisible(true)
-      }
-      //自定义
-      // if (arr === '2') {
-      //   setCustomType(true)
-      // }
-    } else {
-      setType(true)
+    //新弹窗
+    if (res.type === '0') {
+      setEmpty(true)
+    }
+    // 老
+    if (res.type === '1') {
+      setIsModalVisible(true)
+    }
+    //自定义
+    if (res.type === '2') {
+      setCustomType(true)
     }
   }
 
@@ -279,7 +286,7 @@ const Production = () => {
   }
   const content = {
     whetherEditor,
-    setGetDetailsId,
+    setEmpty,
     isModalVisible,
     setIsModalVisible,
     refreshData,
@@ -289,6 +296,9 @@ const Production = () => {
   }
   const customContent = {
     customType,
+    types,
+    setEmpty,
+    currentlySelected,
     setCustomType
   }
   return (
@@ -332,9 +342,15 @@ const Production = () => {
                 setIsModalVisible(true)
               }}
             >
-              老MES
+              MES工艺
             </Button>
-            <Button type="primary" ghost>
+            <Button
+              type="primary"
+              onClick={() => {
+                setCustomType(true)
+              }}
+              ghost
+            >
               自定义
             </Button>
           </div>
