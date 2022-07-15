@@ -206,7 +206,7 @@ const Production = () => {
       setType(false)
       //新弹窗
       // if (arr === '0') {
-      //   setEmpty(true)
+      //   setEmpty(true).
       // }
       //老
       if (arr === '1') {
