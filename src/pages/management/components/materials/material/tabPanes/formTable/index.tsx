@@ -68,7 +68,6 @@ const FormTable = (props: any) => {
   //数据替换
   const dataReplacement = (timeList, list) => {
     const cloneList = cloneDeep(list)
-    console.log('换用', timeList)
 
     timeList.forEach((item) => {
       const subscript = cloneList.findIndex(
@@ -82,11 +81,21 @@ const FormTable = (props: any) => {
   }
   let getSectionList = async () => {
     //原始的工厂数据
-    let section = await sectionList()
-    section.map((item) => {
-      item.externalProduceOrderId = item.dictValue
-      item.externalProduceOrderNum = item.dictValue
-      item.section = item.dictValue
+
+    let workshopSection: any = [
+      { name: '裁剪工段', value: '1', id: '1' },
+      { name: '缝制工段', value: '2', id: '2' },
+      { name: '后整工段', value: '3', id: '1' },
+      { name: '包装工段', value: '4', id: '4' },
+      { name: '外发工段', value: '5', id: '5' },
+      { name: '缝制线外组', value: '6', id: '6' }
+      // { name: '回厂加工', value: '20', id: '20' }
+    ]
+
+    workshopSection.map((item) => {
+      item.externalProduceOrderId = item.value
+      item.externalProduceOrderNum = item.value
+      item.section = item.value
       item.allReadyTime = null
     })
 
@@ -94,9 +103,9 @@ const FormTable = (props: any) => {
       id: select.externalProduceOrderId
     })
     if (!isEmpty(res)) {
-      setSection(formatProcessing(dataReplacement(res, section)))
+      setSection(formatProcessing(dataReplacement(res, workshopSection)))
     } else {
-      setSection(formatProcessing(section))
+      setSection(formatProcessing(workshopSection))
     }
 
     //所属工段.

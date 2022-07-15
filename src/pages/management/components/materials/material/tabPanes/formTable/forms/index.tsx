@@ -23,7 +23,6 @@ const HeaderForm = (props: {
   data: []
 }) => {
   const { FormData, factoryData, type, updateSection, data } = props
-  const { sectionList } = materialSetApis
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
@@ -36,10 +35,6 @@ const HeaderForm = (props: {
 
   useEffect(() => {
     setWorkshop(factoryData)
-    console.log(
-      '🚀 ~ file: index.tsx ~ line 39 ~ useEffect ~ factoryData',
-      factoryData
-    )
   }, [factoryData])
   useEffect(() => {
     setTimesType(type)

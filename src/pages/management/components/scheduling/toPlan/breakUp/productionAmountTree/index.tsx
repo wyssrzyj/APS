@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-14 09:31:58
- * @LastEditTime: 2022-07-14 20:03:45
+ * @LastEditTime: 2022-07-15 10:55:05
  * @Description:
  * @LastEditors: lyj
  */
@@ -13,26 +13,36 @@ import styles from './index.module.less'
 
 const { TabPane } = Tabs
 const ProductionAmountTree = (props) => {
-  const { selectSplitQuantity, row, allSelected } = props
+  const { selectSplitQuantity, row, allSelected, split } = props
 
   const [colorDataList, setColorDataList] = useState<any>([]) //颜色
   const [sizeDataList, setSizeDataList] = useState<any>([]) //尺码
 
-  const [selectedItem, setSelectedItem] = useState<any>([]) //选中项
-  const [currentlyUnavailable, setCurrentlyUnavailable] = useState<any>([]) //当前需要禁用的
+  const [selectedItem, setSelectedItem] = useState<any>([]) //当前选中项
+  const [currentlyUnavailable, setCurrentlyUnavailable] = useState<any>([]) //所有选中的
+
+  useEffect(() => {
+    //拆分类型切换 清空当前选中 、所有选中的
+    setSelectedItem([''])
+    setCurrentlyUnavailable([])
+  }, [split])
+
+  useEffect(() => {
+    setCurrentlyUnavailable(allSelected) //拆分类型切换 清空选中
+  }, [allSelected])
 
   // 字段更改
-  const fieldChange = (data) => {
+  const fieldChange = (data, type) => {
     const subitems = []
     data.map((item) => {
-      item.title = item.colorName
-      item.key = item.colorCode
+      item.title = item.colorName !== undefined ? item.colorName : item.sizeName
+      item.key = item.colorCode !== undefined ? item.colorCode : item.sizeName
       item.children = item.skuDataList
       if (!isEmpty(item.skuDataList)) {
         item.skuDataList.map((v) => {
           subitems.push(v)
           // v.disabled = true
-          v.title = v.sizeName
+          v.title = type === '1' ? v.sizeName : v.colorName
           v.key = v.id
         })
       }
@@ -76,29 +86,14 @@ const ProductionAmountTree = (props) => {
     }
   }
   useEffect(() => {
-    console.log('当前项', row.selectedItem)
-    console.log('所有', allSelected)
+    const available = getNotAvailable(row.selectedItem, currentlyUnavailable) //获取当前不可用
 
-    const available = getNotAvailable(row.selectedItem, allSelected) //获取当前不可用
+    const colorDataList = fieldChange(row.tree.colorData.colorDataList, '1') //处理字段
+    const sizeDataList = fieldChange(row.tree.sizeData.sizeDataList, '2') //处理字段
 
-    const colorDataList = fieldChange(row.tree.colorData.colorDataList) //处理字段
-    const sizeDataList = fieldChange(row.tree.sizeData.sizeDataList) //处理字段
-
-    console.log(colorDataList)
-    console.log(available)
-
-    // console.log(addUnavailableStatus(colorDataList, available))
-    // console.log(addUnavailableStatus(sizeDataList, available))
-
-    // setColorDataList(colorDataList)
-    // setSizeDataList(sizeDataList).
     setColorDataList(addUnavailableStatus(colorDataList, available))
     setSizeDataList(addUnavailableStatus(sizeDataList, available))
-  }, [allSelected, row])
-
-  const onSelect: any['onSelect'] = (selectedKeys, info) => {
-    console.log('1', selectedKeys, info)
-  }
+  }, [currentlyUnavailable, row])
 
   const onCheck: any['onCheck'] = (checkedKeys, info) => {
     setSelectedItem(checkedKeys)
@@ -140,13 +135,12 @@ const ProductionAmountTree = (props) => {
 
   //保存
   const preservation = (item) => {
-    console.log('保存')
-
     if (item.split === '1') {
       if (!isEmpty(colorDataList)) {
         // 添加不可用状态
         // row.tree.colorData.colorDataList = addUnavailableStatus(colorDataList) //添加状态
         row.selectedItem = selectedItem //添加选中项
+        row.type = false
         //选中的总数
         const sum = getAllChildren(colorDataList)
         selectSplitQuantity(sum, row, selectedItem)
@@ -157,6 +151,8 @@ const ProductionAmountTree = (props) => {
         // row.tree.sizeData.sizeDataList = addUnavailableStatus(sizeDataList) //添加状态
 
         row.selectedItem = selectedItem
+        row.type = false
+
         const sum = getAllChildren(sizeDataList)
         selectSplitQuantity(sum, row, selectedItem)
       }
@@ -166,8 +162,9 @@ const ProductionAmountTree = (props) => {
   return (
     <div className={styles.productionAmountTree}>
       <Tree
+        height={200}
+        checkedKeys={selectedItem}
         checkable
-        onSelect={onSelect}
         onCheck={onCheck}
         treeData={showValue(props)}
       />

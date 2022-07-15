@@ -49,8 +49,8 @@ const BreakUp = (props: any) => {
   const [data, setData] = useState<any>([]) //查询的数据
   const [initialTeamList, setInitialTeamList] = useState<any>([]) //处理初始班组
   const [factoryName, setFactoryName] = useState<any>([]) //车间
+
   const [splitType, setSplitType] = useState<any>('1') //拆分类型
-  const [splitQuantityTree, setSplitQuantityTree] = useState<any>({})
   const [allSelected, setAllSelected] = useState([]) //所有选中的
 
   useEffect(() => {
@@ -85,6 +85,13 @@ const BreakUp = (props: any) => {
     const subscript = list.findIndex((item: any) => item.ids === record.ids)
     if (subscript !== -1) {
       list.splice(subscript, 1, record)
+
+      list.map((item, index) => {
+        if (index !== subscript) {
+          item.type = false
+        }
+      })
+
       setData([...list])
     } else {
     }
@@ -169,12 +176,12 @@ const BreakUp = (props: any) => {
     const arr = await getSkuTree({
       externalProduceOrderId: data.externalProduceOrderId
     })
-    setSplitQuantityTree(arr)
 
     const res = await breakQuery({ assignmentId: data.id })
 
     if (!isEmpty(res)) {
       res.map(async (item: any, index) => {
+        item.type = false
         item.tree = arr
         item.isLocked = item.isLocked === 1 ? true : false
         //拆分数量
@@ -193,6 +200,7 @@ const BreakUp = (props: any) => {
       // delete data.id //防止 id和父级一样.
       const res = cloneDeep(data)
       // res.children = []
+      res.type = false
       res.tree = arr
       res.id = 1008611
       res.key = 2
@@ -263,12 +271,12 @@ const BreakUp = (props: any) => {
         message.warning('请输入大于0的数')
         updateData(record, sum)
       } else {
-        record.productionAmount = e
+        record.productionAmount = Number(e)
         updateData(record, sum)
       }
     }
     if (type === 2) {
-      record.completedAmount = e
+      record.completedAmount = Number(e)
       updateData(record, sum)
     }
   }
@@ -351,6 +359,10 @@ const BreakUp = (props: any) => {
         0
       )
       const value = arr[0].orderSum - res
+      console.log(arr[0].orderSum)
+      console.log(res)
+      console.log(value)
+
       if (value <= 0) {
         message.warning('拆分数量以到达最大值')
       } else {
@@ -367,6 +379,8 @@ const BreakUp = (props: any) => {
           externalProduceOrderNum: arr[0].externalProduceOrderNum,
           productName: arr[0].productName,
           productNum: arr[0].productNum,
+          type: arr[0].type,
+          tree: arr[0].tree,
           completedAmount: 0
         })
         setData([...arr])
@@ -479,28 +493,6 @@ const BreakUp = (props: any) => {
     console.log(e)
   }
 
-  const addUnavailableStatus = (data, selectedItem) => {
-    //data 树数据
-    //selectedItem 当前不可用的
-    const cloneData = cloneDeep(data)
-    //子项选中后状态设置为不可用
-    selectedItem.forEach((c) => {
-      cloneData.map((item) => {
-        item.children.map((v) => {
-          if (v.id == c) {
-            v.disabled = true
-          }
-        })
-      })
-    })
-    // 子项全部设置为不可用后 父级设置为不可用
-    cloneData.map((item) => {
-      item.disabled = item.children.every((item: any) => {
-        return item.disabled === true
-      })
-    })
-    return cloneData
-  }
   //获取所有的选中值
   useEffect(() => {
     const sum = []
@@ -512,10 +504,12 @@ const BreakUp = (props: any) => {
     setAllSelected(sum.flat(Infinity))
   }, [data])
   //选中拆分数量
-  const selectSplitQuantity = (e, item, colorDataList) => {
-    console.log('当前是颜色还是尺寸', splitType)
-
+  const selectSplitQuantity = (e, item) => {
     onBreakUp(e, item, 1)
+  }
+  const displayTooltip = (item: any) => {
+    item.type = true
+    onBreakUp(item.productionAmount, item, 1)
   }
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
@@ -583,13 +577,11 @@ const BreakUp = (props: any) => {
                 placeholder="请选择拆分类型"
                 defaultValue={splitType}
                 style={{ width: 130 }}
-                // disabled={_row.createPlanStatus}
                 onChange={(e) => {
                   setSplitType(e)
                 }}
               >
                 {splitTypeData.map((item: any) => (
-                  // eslint-disable-next-line react/jsx-key
                   <Option key={item.id} value={item.id}>
                     {item.name}
                   </Option>
@@ -621,8 +613,10 @@ const BreakUp = (props: any) => {
               />
 
               <Tooltip
+                color={'#fff'}
                 onVisibleChange={onVisibleChange}
                 trigger={'click'}
+                visible={_row.type}
                 placement="topLeft"
                 title={
                   <ProductionAmountTree
@@ -634,8 +628,13 @@ const BreakUp = (props: any) => {
                 }
                 key={_row.id}
               >
-                {/* <span>{_v}</span> */}
-                <img src={change} alt="" className={styles.imgChange} />
+                <span
+                  onClick={() => {
+                    displayTooltip(_row)
+                  }}
+                >
+                  <img src={change} alt="" className={styles.imgChange} />
+                </span>
               </Tooltip>
             </div>
           </>

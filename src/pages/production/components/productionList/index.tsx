@@ -1,4 +1,4 @@
-import { Button, Input, message, Tooltip } from 'antd'
+import { Button, Input, message, Modal, Tooltip } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
@@ -10,6 +10,7 @@ import { productionPlanApis, productionSingleApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
 import { easySearch, searchConfigs, tableColumns } from './conifgs'
+import Custom from './custom'
 import styles from './index.module.less'
 import Popup from './popup'
 
@@ -37,6 +38,9 @@ const Production = () => {
   const [facList, setFacList] = useState([])
 
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
+  const [empty, setEmpty] = useState(false) //选择方式弹窗
+  const [customType, setCustomType] = useState(false) //自定义弹窗
+
   const [types, setType] = useState(false) //编辑或者查看
   const [params, setParams] = useState<any>({
     pageNum: 1,
@@ -161,25 +165,17 @@ const Production = () => {
       </div>
     )
   }
-  //树总合
-  const treeSelectSumS = (item) => {
-    return <div>123</div>
-  }
+
   tableColumns[11].render = (_v, item) => {
     return (
       <div className={styles.remainingDuration}>
-        <Input.Group compact>
-          <Input defaultValue="123" />
-          <Button type="primary">更新</Button>
-        </Input.Group>
-
         <Tooltip
           trigger={'click'}
           placement="topLeft"
-          title={treeSelectSumS(item)}
+          title={titleContainer(item)}
           key={item.id}
         >
-          {/* <span>{_v}</span> */}
+          <span>{_v}</span>
           <img src={change} alt="" className={styles.imgChange} />
         </Tooltip>
       </div>
@@ -203,12 +199,25 @@ const Production = () => {
     setWhetherEditor(row.outsourceType)
     setGetDetailsId(row.externalProduceOrderId)
     setExternalProduceOrderId(row.externalProduceOrderId)
+    const arr = '1'
+    //新接口 会返回3个状态
+
     if (type === true) {
       setType(false)
-      setIsModalVisible(true)
+      //新弹窗
+      // if (arr === '0') {
+      //   setEmpty(true)
+      // }
+      //老
+      if (arr === '1') {
+        setIsModalVisible(true)
+      }
+      //自定义
+      // if (arr === '2') {
+      //   setCustomType(true)
+      // }
     } else {
       setType(true)
-      setIsModalVisible(true)
     }
   }
 
@@ -257,7 +266,17 @@ const Production = () => {
     }
     setParams(nParams)
   }
+  const showModal = () => {
+    setEmpty(true)
+  }
 
+  const handleOk = () => {
+    setEmpty(false)
+  }
+
+  const handleCancel = () => {
+    setEmpty(false)
+  }
   const content = {
     whetherEditor,
     setGetDetailsId,
@@ -268,6 +287,10 @@ const Production = () => {
     getDetailsId,
     externalProduceOrderId
   }
+  const customContent = {
+    customType,
+    setCustomType
+  }
   return (
     <div className={styles.qualification}>
       <div className={styles.content}>
@@ -277,7 +300,6 @@ const Production = () => {
           params={params}
           callback={searchParamsChange}
         />
-
         <CusDragTable
           storageField={'productionList'}
           columns={tableColumns}
@@ -295,7 +317,30 @@ const Production = () => {
             pageSizeOptions: ['10', '20', '50']
           }}
         />
+        <Modal
+          title="选择方式"
+          visible={empty}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          centered={true}
+        >
+          <div className={styles.empty}>
+            <Button
+              type="primary"
+              ghost
+              onClick={() => {
+                setIsModalVisible(true)
+              }}
+            >
+              老MES
+            </Button>
+            <Button type="primary" ghost>
+              自定义
+            </Button>
+          </div>
+        </Modal>
         {isModalVisible && <Popup content={content} />}
+        {customType && <Custom content={customContent} />}
       </div>
     </div>
   )
