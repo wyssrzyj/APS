@@ -25,7 +25,8 @@ function ProductionOrder(props: { content: any }) {
     getDetailsId,
     externalProduceOrderId,
     whetherEditor,
-    refreshData
+    refreshData,
+    setEmpty
   } = content
 
   const { processRoute, popupPreservation, processOutsourcing } =
@@ -232,10 +233,11 @@ function ProductionOrder(props: { content: any }) {
           productId: getDetailsId,
           externalProduceOrderId: externalProduceOrderId,
           outsourceProcessDTOList: [], //外发全部为true且时间不为空的数据
-          processDTOList: allSaveList //工艺全部数据.
+          processDTOList: allSaveList //工艺全部数据..
         })
         if (arr) {
           message.success('保存成功')
+
           refreshData && refreshData()
           handleCancel()
         }
@@ -246,6 +248,7 @@ function ProductionOrder(props: { content: any }) {
   }
 
   const handleCancel = () => {
+    setEmpty(false)
     setIsModalVisible(false)
     refreshData && refreshData()
   }
