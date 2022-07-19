@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-15 13:43:31
- * @LastEditTime: 2022-07-15 17:32:13
+ * @LastEditTime: 2022-07-19 08:31:50
  * @Description:
  * @LastEditors: lyj
  */
@@ -153,6 +153,7 @@ function Custom(props) {
           <div className={styles.flex}>
             {data.length > 1 ? (
               <Button
+                disabled={types}
                 onClick={() => reduce(_row.ids)}
                 type="primary"
                 icon={<MinusOutlined />}
