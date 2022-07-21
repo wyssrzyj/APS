@@ -1,12 +1,15 @@
 /*
  * @Author: lyj
  * @Date: 2022-04-13 15:47:01
- * @LastEditTime: 2022-05-26 13:30:13
+ * @LastEditTime: 2022-07-20 15:06:23
  * @Description:
  * @LastEditors: lyj
  */
 import { Button, Col, Form, Image, Input, Row, TreeSelect } from 'antd'
 import React, { useEffect } from 'react'
+import { useRecoilValue } from 'recoil'
+
+import { dockingData } from '@/recoil'
 
 import styles from './index.module.less'
 
@@ -16,6 +19,8 @@ function TabPanes(props: any) {
   const [form] = Form.useForm()
   const { SHOW_PARENT } = TreeSelect
   const { TextArea } = Input
+  const searchConfigs = useRecoilValue(dockingData.searchConfigs)
+
   useEffect(() => {
     form.setFieldsValue(list)
   }, [list])

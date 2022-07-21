@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-22 17:40:18
- * @LastEditTime: 2022-07-12 09:01:46
+ * @LastEditTime: 2022-07-20 13:34:23
  * @Description:
  * @LastEditors: lyj
  */
@@ -40,6 +40,8 @@ function RuleScheduling(props: Record<string, any>) {
     200
   )
   const getTableList = async (params: Record<string, number | string>) => {
+    console.log('未清空', params)
+
     const data = await practice.rulesScheduling(params)
 
     setDataSource(data)

@@ -44,9 +44,6 @@ function WorkingHours(props: { onChange: any; list: any }) {
   // 修改数字输入框
   const inputValue = (value: any, index: number, type: string) => {
     if (type === 'minNum') {
-      console.log(value)
-      console.log(data[index].maxNum)
-
       if (value < data[index].maxNum) {
         data[index][type] = value
         setData([...data])

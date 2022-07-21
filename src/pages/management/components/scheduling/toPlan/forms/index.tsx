@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-25 10:09:18
  * @LastEditors: lyj
- * @LastEditTime: 2022-07-12 14:09:04
+ * @LastEditTime: 2022-07-20 13:25:58
  * @FilePath: \jack-aps\src\pages\practice\administration\components\scheduling\toPlan\forms\index.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -31,8 +31,12 @@ const HeaderForm = (props: any) => {
   //展示数据
   useEffect(() => {
     if (productName !== undefined) {
-      const id = productName
-      setInitialValues({ productName: id })
+      if (productName === 'empty') {
+        setInitialValues({ productName: '' })
+      } else {
+        const id = productName
+        setInitialValues({ productName: id })
+      }
     }
   }, [productName])
   useEffect(() => {
@@ -51,7 +55,9 @@ const HeaderForm = (props: any) => {
   }, [productName, formData])
 
   const executionMethod = debounce((productName, formData) => {
-    FormData && FormData({ productName: productName, factoryId: formData })
+    if (productName !== 'empty') {
+      FormData && FormData({ productName: productName, factoryId: formData })
+    }
   }, 500)
 
   const getCurrentUser = () => {
@@ -79,7 +85,7 @@ const HeaderForm = (props: any) => {
     const values = await validateFields()
     //处理时间格式
     const timeFormat = { ...values, ...values.planEndDate }
-    console.log(timeFormat)
+    console.log(22222222222)
 
     FormData && FormData(timeFormat)
   }, 500)

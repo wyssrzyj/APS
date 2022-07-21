@@ -3,14 +3,6 @@ import { ReactNode } from 'react'
 
 const FORMAT_DATE = 'YYYY-MM-DD HH:mm'
 
-const map = new Map()
-map.set('1', '裁剪')
-map.set('2', '缝制')
-map.set('3', '后整')
-map.set('4', '包装')
-map.set('5', '外发')
-map.set('6', '缝制线外组')
-
 export const tableColumns: any = [
   {
     title: '序号',
@@ -22,10 +14,7 @@ export const tableColumns: any = [
     title: '所属工段',
     align: 'center',
     dataIndex: 'section',
-    width: 100,
-    render: (v: any) => {
-      return map.get(v)
-    }
+    width: 100
   },
   {
     title: '总计划量',

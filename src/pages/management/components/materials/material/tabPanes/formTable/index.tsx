@@ -5,8 +5,10 @@ import classNames from 'classnames'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 import { Icon } from '@/components'
+import { dockingData } from '@/recoil'
 import { materialSetApis } from '@/recoil/apis'
 
 import Forms from './forms'
@@ -21,6 +23,7 @@ const FormTable = (props: any) => {
     workshopSection
   } = props
   const { Option } = Select
+  const searchConfigs = useRecoilValue(dockingData.searchConfigs)
 
   const [initialData, setInitialData] = useState<any>([]) //接口初始数据
 
@@ -40,18 +43,14 @@ const FormTable = (props: any) => {
   const [materialDate, setMaterialDate] = useState<any>() //物料齐套日期的时间
 
   const { sectionList, materialCompletionTimeList } = materialSetApis
+
   const map = new Map()
-  map.set('1', '裁剪')
-  map.set('2', '缝制')
-  map.set('3', '后整')
-  map.set('4', '包装')
-  map.set('5', '外发')
-  map.set('6', '缝制线外组')
+  searchConfigs.forEach((item) => {
+    map.set(item.value, item.name)
+  })
 
   useEffect(() => {
     if (select) {
-      console.log(select)
-
       getSectionList()
     }
   }, [select])
@@ -80,17 +79,7 @@ const FormTable = (props: any) => {
     return cloneList
   }
   let getSectionList = async () => {
-    //原始的工厂数据
-
-    let workshopSection: any = [
-      { name: '裁剪工段', value: '1', id: '1' },
-      { name: '缝制工段', value: '2', id: '2' },
-      { name: '后整工段', value: '3', id: '1' },
-      { name: '包装工段', value: '4', id: '4' },
-      { name: '外发工段', value: '5', id: '5' },
-      { name: '缝制线外组', value: '6', id: '6' }
-      // { name: '回厂加工', value: '20', id: '20' }
-    ]
+    let workshopSection: any = cloneDeep(searchConfigs) //工段
 
     workshopSection.map((item) => {
       item.externalProduceOrderId = item.value
@@ -452,11 +441,7 @@ const FormTable = (props: any) => {
     processingData(cloneTime, moment(e).valueOf(), currentValue, 'time')
   }
 
-  // let timeout: NodeJS.Timeout
-
   const quantity = (e: any, currentValue: any) => {
-    // console.log('uef获取最新的值', getData.current.getData)
-    // const cloneNumber = getData.current.getData
     const cloneNumber = notData
 
     processingData(cloneNumber, e, currentValue, 'number')

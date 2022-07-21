@@ -1,10 +1,12 @@
 import { Button } from 'antd'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, map } from 'lodash'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useRecoilValue } from 'recoil'
 
 import { CusDragTable, SearchBar } from '@/components'
 import noneImg from '@/imgs/noneImg.jpg'
+import { dockingData } from '@/recoil'
 import { productionWarning } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
@@ -16,6 +18,12 @@ const Index = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { state }: any = location
+
+  const search = useRecoilValue(dockingData.searchConfigs)
+  const map = new Map()
+  search.forEach((item) => {
+    map.set(item.value, item.name)
+  })
 
   const [params, setParams] = useState<any>({
     pageSize: 10,
@@ -94,6 +102,9 @@ const Index = () => {
     return <div key={index}>{_text}</div>
   }
   tableColumns[9].sorter = true
+  tableColumns[10].render = (v: any) => {
+    return <div>{map.get(v)}</div>
+  }
   //工厂名称
   useEffect(() => {
     getData()

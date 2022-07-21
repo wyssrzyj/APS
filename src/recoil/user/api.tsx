@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-03-02 15:41:46
- * @LastEditTime: 2022-06-29 09:58:20
+ * @LastEditTime: 2022-07-20 08:22:25
  * @Description:
  * @LastEditors: lyj
  */
@@ -57,7 +57,7 @@ export const operationUser = async (params: any) => {
 export const newAlertMessage = async () => {
   try {
     const res: ResponseProps = await axios.post(
-      ' /aps/waring-order/new-waring-list'
+      '/aps/waring-order/new-waring-list'
     )
     return res
   } catch (e) {

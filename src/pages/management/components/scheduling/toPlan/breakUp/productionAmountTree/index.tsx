@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-14 09:31:58
- * @LastEditTime: 2022-07-15 10:55:05
+ * @LastEditTime: 2022-07-21 18:21:35
  * @Description:
  * @LastEditors: lyj
  */
@@ -13,7 +13,8 @@ import styles from './index.module.less'
 
 const { TabPane } = Tabs
 const ProductionAmountTree = (props) => {
-  const { selectSplitQuantity, row, allSelected, split } = props
+  const { selectSplitQuantity, row, allSelected, split, initial, setInitial } =
+    props
 
   const [colorDataList, setColorDataList] = useState<any>([]) //颜色
   const [sizeDataList, setSizeDataList] = useState<any>([]) //尺码
@@ -22,13 +23,7 @@ const ProductionAmountTree = (props) => {
   const [currentlyUnavailable, setCurrentlyUnavailable] = useState<any>([]) //所有选中的
 
   useEffect(() => {
-    //拆分类型切换 清空当前选中 、所有选中的
-    setSelectedItem([''])
-    setCurrentlyUnavailable([])
-  }, [split])
-
-  useEffect(() => {
-    setCurrentlyUnavailable(allSelected) //拆分类型切换 清空选中
+    setCurrentlyUnavailable(allSelected)
   }, [allSelected])
 
   // 字段更改
@@ -52,23 +47,28 @@ const ProductionAmountTree = (props) => {
   const addUnavailableStatus = (data, available) => {
     const cloneData = cloneDeep(data)
     //子项选中后状态设置为不可用
-    available.forEach((c) => {
-      cloneData.map((item) => {
-        item.children.map((v) => {
-          if (v.id == c) {
-            v.disabled = true
-          }
+    if (!isEmpty(available)) {
+      available.forEach((c) => {
+        cloneData.map((item) => {
+          item.children.map((v) => {
+            if (v.id == c) {
+              v.disabled = true
+            }
+          })
         })
       })
-    })
-    // 子项全部设置为不可用后 父级设置为不可用
-    cloneData.map((item) => {
-      item.disabled = item.children.every((item: any) => {
-        return item.disabled === true
+      // 子项全部设置为不可用后 父级设置为不可用
+      cloneData.map((item) => {
+        item.disabled = item.children.every((item: any) => {
+          return item.disabled === true
+        })
       })
-    })
-    return cloneData
+      return cloneData
+    } else {
+      return data
+    }
   }
+
   const getNotAvailable = (e, v) => {
     //返回 总部可用中非当前选中的
     const sum = []
@@ -79,20 +79,27 @@ const ProductionAmountTree = (props) => {
             sum.push(item)
           }
         })
+        return sum
+      } else {
+        return []
       }
-      return sum
     } else {
       return v
     }
   }
+
   useEffect(() => {
-    const available = getNotAvailable(row.selectedItem, currentlyUnavailable) //获取当前不可用
+    setSelectedItem(row.selectedItem)
 
-    const colorDataList = fieldChange(row.tree.colorData.colorDataList, '1') //处理字段
-    const sizeDataList = fieldChange(row.tree.sizeData.sizeDataList, '2') //处理字段
+    try {
+      const available = getNotAvailable(row.selectedItem, currentlyUnavailable) //获取当前不可用
 
-    setColorDataList(addUnavailableStatus(colorDataList, available))
-    setSizeDataList(addUnavailableStatus(sizeDataList, available))
+      const colorDataList = fieldChange(row.tree.colorData.colorDataList, '1') //处理字段
+      const sizeDataList = fieldChange(row.tree.sizeData.sizeDataList, '2') //处理字段
+
+      setColorDataList(addUnavailableStatus(colorDataList, available)) //状态更改成不可用 传递出去
+      setSizeDataList(addUnavailableStatus(sizeDataList, available))
+    } catch (error) {}
   }, [currentlyUnavailable, row])
 
   const onCheck: any['onCheck'] = (checkedKeys, info) => {
@@ -132,14 +139,46 @@ const ProductionAmountTree = (props) => {
 
     return sum
   }
+  //获取子项
+  const getChildren = (subitem, all, data) => {
+    const cloneAll = cloneDeep(all)
+    subitem.forEach((item) => {
+      const susa = cloneAll.indexOf(item)
+      if (susa !== -1) {
+        cloneAll.splice(susa, 1)
+      }
+    })
+    // cloneAll //所有选中的子项的集合
+
+    const childrenContainer = [] //所有子项的数据
+    data.forEach((item) => {
+      childrenContainer.push(item.children)
+    })
+    const list = childrenContainer.flat(Infinity)
+
+    const container = []
+    cloneAll.forEach((item) => {
+      const susa = list.findIndex((v) => v.id === item)
+      if (susa !== -1) {
+        container.push(list[susa])
+      }
+    })
+    return container
+  }
 
   //保存
   const preservation = (item) => {
+    setInitial({ name: 'afterOperation' })
     if (item.split === '1') {
       if (!isEmpty(colorDataList)) {
-        // 添加不可用状态
-        // row.tree.colorData.colorDataList = addUnavailableStatus(colorDataList) //添加状态
+        const parentID = []
+        colorDataList.forEach((item) => {
+          parentID.push(item.key)
+        })
+
         row.selectedItem = selectedItem //添加选中项
+        row.skuList = getChildren(parentID, selectedItem, colorDataList) //保存需要的子项
+        row.skuType = '1'
         row.type = false
         //选中的总数
         const sum = getAllChildren(colorDataList)
@@ -148,9 +187,14 @@ const ProductionAmountTree = (props) => {
     }
     if (item.split === '2') {
       if (!isEmpty(sizeDataList)) {
-        // row.tree.sizeData.sizeDataList = addUnavailableStatus(sizeDataList) //添加状态
-
+        const parentID = []
+        sizeDataList.forEach((item) => {
+          parentID.push(item.key)
+        })
+        row.skuList = getChildren(parentID, selectedItem, sizeDataList) //保存需要的子项
+        row.skuType = '2'
         row.selectedItem = selectedItem
+        //保存需要的子项
         row.type = false
 
         const sum = getAllChildren(sizeDataList)

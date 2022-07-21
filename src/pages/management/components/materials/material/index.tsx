@@ -20,7 +20,6 @@ function Material(props: {
 }) {
   const { materialModal, setMaterialModal, materialList, update, refreshList } =
     props
-  console.log('~~~~~~~~~', materialList)
 
   const { getTheSize, materialData, materialSaved, checked, saveMaterialTime } =
     materialSetApis

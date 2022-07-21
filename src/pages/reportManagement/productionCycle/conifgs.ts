@@ -14,7 +14,7 @@ export const easySearch = [
   },
   {
     label: '生产单号',
-    field: 'productOrderNum',
+    field: 'produceOrderNum',
     type: 'input',
     allowClear: true,
     placeholder: '请输入生产单号'

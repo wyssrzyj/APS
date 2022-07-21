@@ -199,8 +199,6 @@ const Production = () => {
   // eslint-disable-next-line no-sparse-arrays
 
   const editUser = async (type: boolean, row: any) => {
-    console.log(row)
-
     setWhetherEditor(row.outsourceType)
     setCurrentlySelected(row)
     setGetDetailsId(row.externalProduceOrderId)

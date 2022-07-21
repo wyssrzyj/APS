@@ -1,4 +1,4 @@
-import { message, Popover, Tabs, Tag, Tree } from 'antd'
+import { Button, message, Popover, Tabs, Tag, Tree } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
@@ -22,6 +22,7 @@ function ToPlan(props: {
   updateMethod: any
   checkSchedule: any
   treeSelect
+  selectedSelect: any
 }) {
   const {
     remind,
@@ -30,7 +31,8 @@ function ToPlan(props: {
     checkSchedule,
     treeSelect,
     treeUpdate,
-    publishType
+    publishType,
+    selectedSelect
   } = props
   const location = useLocation()
   const { state }: any = location
@@ -87,6 +89,15 @@ function ToPlan(props: {
       treeSelect(selectedKeys[0])
     }
   }, [selectedKeys])
+  //清空选中的带计划
+  useEffect(() => {
+    console.log('为啥没有清空', selectedSelect)
+
+    if (selectedSelect.type === 'empty') {
+      setToPlanID([])
+    }
+  }, [selectedSelect])
+
   const map = new Map()
   map.set('1', '裁剪工段')
   map.set('2', '缝制工段')
@@ -102,17 +113,20 @@ function ToPlan(props: {
   useEffect(() => {
     checkSchedule && checkSchedule(toPlanID, plannedID, stateAdd)
   }, [plannedID, toPlanID, stateAdd])
+
   //初始
   useEffect(() => {
+    setProductName('empty') //更新树数据 清空搜索项
     if (formData !== undefined) {
       dataAcquisition(formData)
       //车间/班组
       workshopTeam(formData)
-    }
-    if (treeUpdate !== undefined) {
-      dataAcquisition(formData)
-      //车间/班组
-      workshopTeam(formData)
+    } else {
+      if (treeUpdate !== undefined) {
+        dataAcquisition(formData)
+        //车间/班组
+        workshopTeam(formData)
+      }
     }
   }, [formData, treeUpdate])
 
@@ -225,6 +239,8 @@ function ToPlan(props: {
   }
   //获取数据
   const dataAcquisition = async (id: any) => {
+    console.log('~~~~~~~~~~~')
+
     //已计划假数据
     // 0未计划  1已计划
     const notPlan = await listProductionOrders({
@@ -539,6 +555,11 @@ function ToPlan(props: {
             <div>产品款号: {data.productNum}</div>
             <div>数量: {data.orderSum}</div>
             <div>客户款号: {data.productClientNum}</div>
+            {current === '1' ? (
+              <Tag className={styles.tag} color="gold">
+                生成车间计划
+              </Tag>
+            ) : null}
           </div>
         ) : null}
       </div>
@@ -677,7 +698,7 @@ function ToPlan(props: {
         <TabPane tab="待计划" key="0">
           <Forms
             formData={formData}
-            // productName={productName}
+            productName={productName}
             FormData={(e) => {
               FormData(e, 'stay')
             }}

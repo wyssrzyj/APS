@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-29 17:32:33
- * @LastEditTime: 2022-07-13 13:15:39
+ * @LastEditTime: 2022-07-20 09:32:52
  * @Description:
  * @LastEditors: lyj
  */
@@ -20,7 +20,7 @@ export const easySearch = [
   },
   {
     label: '生产单号',
-    field: 'productOrderNum',
+    field: 'produceOrderNum',
     type: 'input',
     allowClear: true,
     placeholder: '请输入生产单号'

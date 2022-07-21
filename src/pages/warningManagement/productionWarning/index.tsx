@@ -5,10 +5,12 @@ import { cloneDeep } from 'lodash'
 import moment from 'moment'
 import { SetStateAction, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useRecoilValue } from 'recoil'
 
 import { Icon } from '@/components'
 import { AdvancedSearch, CusDragTable, SearchBar } from '@/components'
 import noneImg from '@/imgs/noneImg.jpg'
+import { dockingData } from '@/recoil'
 import { productionWarning } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
@@ -34,6 +36,13 @@ const ProductionPlan = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { state }: any = location
+
+  const search = useRecoilValue(dockingData.searchConfigs)
+  const map = new Map()
+  search.forEach((item) => {
+    map.set(item.value, item.name)
+  })
+
   const [params, setParams] = useState<any>({
     pageSize: 10,
     pageNum: 1,
@@ -67,7 +76,7 @@ const ProductionPlan = () => {
     return (
       <>
         <div className={styles.operation}>
-          <div>
+          <div className={styles.operationTop}>
             <Tag
               color="green"
               onClick={() => {
@@ -81,6 +90,7 @@ const ProductionPlan = () => {
               <Icon type="jack-icon-test" className={styles.previous} />
             ) : null}
           </div>
+
           <div>
             <Tag
               className={styles.modifySchedule}
@@ -131,6 +141,11 @@ const ProductionPlan = () => {
     return <div key={index}>{_text}</div>
   }
   tableColumns[8].sorter = true
+  tableColumns[11].render = (v: any) => {
+    // return <div>{map.get(v)}</div>
+    return <div>{map.get(v)}</div>
+  }
+
   useEffect(() => {
     ;(async () => {
       getFacList()

@@ -1,14 +1,16 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-21 13:18:16
- * @LastEditTime: 2022-07-15 17:19:06
+ * @LastEditTime: 2022-07-20 15:57:00
  * @Description:
  * @LastEditors: lyj
  */
 import { Button, message, Modal, Table } from 'antd'
 import { isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
+import { dockingData } from '@/recoil'
 import { dailySchedule, productionWarning } from '@/recoil/apis'
 
 import { tableColumns } from './conifgs'
@@ -16,6 +18,11 @@ import MultistageTable from './multistageTable'
 
 const WarningModal = (props) => {
   const { current } = props
+  const searchConfigs = useRecoilValue(dockingData.searchConfigs)
+  const map = new Map()
+  searchConfigs.forEach((item) => {
+    map.set(item.value, item.name)
+  })
   const { getAssignmentList } = productionWarning
   const { updateDailyScheduleList } = dailySchedule
   tableColumns[tableColumns.length - 1].render = (
@@ -38,6 +45,9 @@ const WarningModal = (props) => {
         )}
       </div>
     )
+  }
+  tableColumns[1].render = (v) => {
+    return <div>{map.get(v)}</div>
   }
 
   const [data, setData] = useState([])

@@ -129,8 +129,6 @@ const Index = () => {
     value: any,
     row: { [x: string]: Key | null | undefined }
   ) => {
-    console.log(value)
-
     const chars = value !== undefined ? value.split(',') : []
     return (
       <div>

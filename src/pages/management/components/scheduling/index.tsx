@@ -30,6 +30,7 @@ function Index() {
   const [treeSelection, setTreeSelection] = useState<any>() //树选中
   const [treeUpdate, setTreeUpdate] = useState<any>() //树刷新
   const [publishType, setPublishType] = useState<any>(false) //发布清除树的搜索条件
+  const [selectedSelect, setSelectedSelect] = useState<any>({}) //发布清除待计划选中的值
 
   const { figureData, productionView, workingDate } = schedulingApis
 
@@ -215,6 +216,7 @@ function Index() {
         ruleIds.forEach((item) => {
           ids.push(item.externalProduceOrderId)
         })
+
         setSchedulingIDs(ids.concat(toPlanID))
       } else {
         setSchedulingIDs(toPlanID)
@@ -269,7 +271,7 @@ function Index() {
 
   const update = () => {
     refresh()
-    // setSchedulingIDs([]) //清空
+    setSelectedSelect({ type: 'empty' })
   }
 
   // 树刷新
@@ -301,6 +303,7 @@ function Index() {
           <div className={styles.team}>
             <div className={styles.leftContent}>
               <ToPlan
+                selectedSelect={selectedSelect}
                 publishType={publishType}
                 treeUpdate={treeUpdate}
                 treeSelect={treeSelect}
@@ -318,6 +321,7 @@ function Index() {
                   onClick={() => {
                     setPublishType(false)
                     toggleRuleVisible(true)
+                    setSelectedSelect({ type: 'initial' })
                   }}
                 >
                   规则排程

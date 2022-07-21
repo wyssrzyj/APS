@@ -46,12 +46,16 @@ const BreakUp = (props: any) => {
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
+  const [load, setLoad] = useState<any>(true)
+
   const [data, setData] = useState<any>([]) //查询的数据
+
   const [initialTeamList, setInitialTeamList] = useState<any>([]) //处理初始班组
   const [factoryName, setFactoryName] = useState<any>([]) //车间
 
   const [splitType, setSplitType] = useState<any>('1') //拆分类型
   const [allSelected, setAllSelected] = useState([]) //所有选中的
+  const [initial, setInitial] = useState({ name: 'initial' })
 
   useEffect(() => {
     if (formData !== undefined) {
@@ -93,6 +97,7 @@ const BreakUp = (props: any) => {
       })
 
       setData([...list])
+      setLoad(false)
     } else {
     }
   }
@@ -181,6 +186,13 @@ const BreakUp = (props: any) => {
 
     if (!isEmpty(res)) {
       res.map(async (item: any, index) => {
+        const sum = []
+        if (!isEmpty(item.skuList)) {
+          item.skuList.map((item) => {
+            sum.push(item.id)
+          })
+        }
+        item.selectedItem = sum //选中的
         item.type = false
         item.tree = arr
         item.isLocked = item.isLocked === 1 ? true : false
@@ -194,11 +206,14 @@ const BreakUp = (props: any) => {
       //这个时候先不能渲染 这里的会慢一步
       //先渲染后处理
 
+      setSplitType(res[0].skuType)
+
       setInitialTeamList([...res])
     } else {
       //初始空数组 添加key防止报错
       // delete data.id //防止 id和父级一样.
       const res = cloneDeep(data)
+
       // res.children = []
       res.type = false
       res.tree = arr
@@ -207,7 +222,9 @@ const BreakUp = (props: any) => {
       res.productionAmount = 0
       res.completedAmount = 0
       res.additionalTime = '0'
+      setSplitType('1')
       setData([res])
+      setLoad(false)
     }
   }
 
@@ -359,9 +376,6 @@ const BreakUp = (props: any) => {
         0
       )
       const value = arr[0].orderSum - res
-      console.log(arr[0].orderSum)
-      console.log(res)
-      console.log(value)
 
       if (value <= 0) {
         message.warning('拆分数量以到达最大值')
@@ -496,13 +510,46 @@ const BreakUp = (props: any) => {
   //获取所有的选中值
   useEffect(() => {
     const sum = []
+    const initialData = []
     data.forEach((item) => {
       if (!isEmpty(item.selectedItem)) {
         sum.push(item.selectedItem)
+      } else {
+        //初始
+        if (!isEmpty(item.skuList)) {
+          const ids = []
+          item.skuList.forEach((v) => {
+            ids.push(v.id)
+          })
+          initialData.push(ids)
+        }
       }
     })
-    setAllSelected(sum.flat(Infinity))
-  }, [data])
+    //初始 先用 initial
+    // 操作 用 sum
+
+    if (initial.name === 'splitType') {
+      setAllSelected([])
+    } else {
+      if (!isEmpty(sum.flat(Infinity))) {
+        setAllSelected(sum.flat(Infinity))
+      } else {
+        setAllSelected(initialData.flat(Infinity))
+      }
+    }
+  }, [data, initial])
+
+  //切换清空 选中、所有的数据
+  useEffect(() => {
+    if (initial.name !== 'initial') {
+      data.map((item) => {
+        item.selectedItem = []
+      })
+      setData(data)
+      setAllSelected([])
+    }
+  }, [splitType])
+
   //选中拆分数量
   const selectSplitQuantity = (e, item) => {
     onBreakUp(e, item, 1)
@@ -567,8 +614,8 @@ const BreakUp = (props: any) => {
       title: '拆分类型',
       align: 'center',
       width: 160,
-      key: 'productNum',
-      dataIndex: 'productNum',
+      key: 'splitType',
+      dataIndex: 'splitType',
       render: (_value, v, index) => {
         return (
           <div>
@@ -579,6 +626,7 @@ const BreakUp = (props: any) => {
                 style={{ width: 130 }}
                 onChange={(e) => {
                   setSplitType(e)
+                  setInitial({ name: 'splitType' })
                 }}
               >
                 {splitTypeData.map((item: any) => (
@@ -620,6 +668,8 @@ const BreakUp = (props: any) => {
                 placement="topLeft"
                 title={
                   <ProductionAmountTree
+                    setInitial={setInitial}
+                    initial={initial}
                     allSelected={allSelected}
                     split={splitType}
                     row={_row}
@@ -858,6 +908,7 @@ const BreakUp = (props: any) => {
         <Table
           className={styles.table}
           bordered
+          loading={load}
           columns={columns}
           scroll={{ x: 1500, y: 500 }}
           dataSource={data}

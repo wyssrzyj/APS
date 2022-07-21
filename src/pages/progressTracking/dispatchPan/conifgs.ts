@@ -12,7 +12,7 @@ export const easySearch = [
   },
   {
     label: '生产单号',
-    field: 'productOrderNum',
+    field: 'externalProduceOrderNum',
     type: 'input',
     allowClear: true,
     placeholder: '请输入生产单号'
