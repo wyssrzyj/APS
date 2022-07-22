@@ -112,10 +112,16 @@ export const menus = [
     url: '/',
     children: [
       {
-        label: '生产周期报表',
+        label: '生产完成报表',
         key: 'productionCycle',
         icon: 'jack-qiyeyewu',
         url: '/productionCycle'
+      },
+      {
+        label: '生产计划报表',
+        key: 'planningReport',
+        icon: 'jack-qiyeyewu',
+        url: '/planningReport'
       },
       {
         label: '班组日完成报表',

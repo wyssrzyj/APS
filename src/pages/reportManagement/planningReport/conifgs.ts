@@ -185,22 +185,6 @@ export const tableColumns: any = [
         width: 100,
         render: (date: moment.MomentInput) =>
           date ? moment(date).format(FORMAT_DATE) : null
-      },
-      {
-        title: '完成数量',
-        dataIndex: 'tailoringCompletedAmount',
-        align: 'center',
-        key: 'tailoringCompletedAmount',
-        width: 100,
-        render: (date) => (date === 0 ? '' : date)
-      },
-      {
-        title: '完成率',
-        dataIndex: 'tailoringCompletedRate',
-        align: 'center',
-        key: 'tailoringCompletedRate',
-        width: 100,
-        render: (date) => (date > 0 ? `${Number(date)}%` : '')
       }
     ]
   },
@@ -270,22 +254,6 @@ export const tableColumns: any = [
         width: 100,
         render: (date: moment.MomentInput) =>
           date ? moment(date).format(FORMAT_DATE) : null
-      },
-      {
-        title: '完成数量',
-        dataIndex: 'sewingCompletedAmount',
-        align: 'center',
-        key: 'sewingCompletedAmount',
-        width: 100,
-        render: (date) => (date === 0 ? '' : date)
-      },
-      {
-        title: '完成率',
-        dataIndex: 'sewingCompletedRate',
-        align: 'center',
-        key: 'sewingCompletedRate',
-        width: 100,
-        render: (date) => (date > 0 ? `${Number(date)}%` : '')
       }
     ]
   },
@@ -313,22 +281,6 @@ export const tableColumns: any = [
         width: 100,
         render: (date: moment.MomentInput) =>
           date ? moment(date).format(FORMAT_DATE) : null
-      },
-      {
-        title: '完成数量',
-        dataIndex: 'trimCompletedAmount',
-        align: 'center',
-        key: 'trimCompletedAmount',
-        width: 100,
-        render: (date) => (date === 0 ? '' : date)
-      },
-      {
-        title: '完成率',
-        dataIndex: 'trimCompletedRate',
-        align: 'center',
-        key: 'trimCompletedRate',
-        width: 100,
-        render: (date) => (date > 0 ? `${Number(date)}%` : '')
       }
     ]
   },

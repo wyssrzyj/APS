@@ -408,10 +408,21 @@ const BreakUp = (props: any) => {
     setData([...res])
   }
 
+  function isRepeat(arr: any) {
+    const hash: any = {}
+    for (const i in arr) {
+      if (hash[arr[i]]) return true
+      hash[arr[i]] = true
+    }
+    return false
+  }
+
   // 保存事件
   const handleOk = async () => {
     const arr = cloneDeep(data)
+
     const state = { timeState: false, number: false, teamType: false }
+
     //时间的过滤
     const Time = arr.filter(
       (item: { planStartTime: undefined; planEndTime: undefined }) =>
@@ -423,75 +434,84 @@ const BreakUp = (props: any) => {
     } else {
       state.timeState = true
     }
-    // 拆分数量
-    const res = arr.reduce((total: any, current: { productionAmount: any }) => {
-      total += Math.abs(current.productionAmount)
-      return total
-    }, 0)
-    const value = res - arr[0].orderSum
-    if (value !== 0) {
-      if (value < 0) {
-        message.warning(`拆分数量总和未满足订单总量 剩余-【${value}】`)
-      } else {
-        message.warning(`拆分数量总和 超出订单总量 超出-【${Math.abs(value)}】`)
-      }
-    } else {
-      state.number = true
-    }
 
-    //工作班组 不可重复
-    //判断班组是否重复
-    const team: any = []
-    arr.map((item: { teamId: any }) => {
-      team.push(item.teamId)
-    })
-    function isRepeat(arr: any) {
-      const hash: any = {}
-      for (const i in arr) {
-        if (hash[arr[i]]) return true
-        hash[arr[i]] = true
-      }
-      return false
-    }
-
-    if (!isRepeat(team)) {
-      state.teamType = true
-    } else {
-      state.teamType = false
-      message.warning(`班组不能相同`)
-    }
-    if (
-      state.timeState === true &&
-      state.number === true &&
-      state.teamType === true
-    ) {
-      arr.map((item: any, index: any) => {
-        item.isLocked = item.isLocked === true ? 1 : 0
-        if (item.automatic === undefined || item.automatic <= 0) {
-          //手动 -旧值
-          item.additionalTime = item.planEndTime - item.used
+    if (state.timeState === true) {
+      // 拆分数量
+      const res = arr.reduce(
+        (total: any, current: { productionAmount: any }) => {
+          total += Math.abs(current.productionAmount)
+          return total
+        },
+        0
+      )
+      const value = res - arr[0].orderSum
+      if (value !== 0) {
+        if (value < 0) {
+          message.warning(`拆分数量总和未满足订单总量 剩余-【${value}】`)
         } else {
-          //手动 -自动
-          item.additionalTime = item.planEndTime - item.automatic
+          message.warning(
+            `拆分数量总和 超出订单总量 超出-【${Math.abs(value)}】`
+          )
         }
-      })
-      if (arr[0].id === 1008611) {
-        arr.map((item) => {
-          item.id = null
-        })
+      } else {
+        state.number = true
       }
 
-      const sum = await splitMethod({
-        assignmentId: workSplitList.id,
-        data: arr
+      //工作班组 不可重复
+      //判断班组是否重复
+      const team: any = []
+      arr.map((item: { teamId: any }) => {
+        team.push(item.teamId)
       })
 
-      if (sum) {
-        message.success('保存成功')
-        breakSave && breakSave()
-        empty && empty()
+      if (!isRepeat(team)) {
+        const teamIdType = team.every((item: any) => {
+          return item !== null && item !== undefined
+        })
+
+        if (teamIdType) {
+          state.teamType = true
+        } else {
+          state.teamType = false
+          message.warning(`班组不能为空`)
+        }
       } else {
-        message.error('保存失败')
+        state.teamType = false
+        message.warning(`班组不能相同`)
+      }
+
+      if (
+        state.timeState === true &&
+        state.number === true &&
+        state.teamType === true
+      ) {
+        arr.map((item: any, index: any) => {
+          item.isLocked = item.isLocked === true ? 1 : 0
+          if (item.automatic === undefined || item.automatic <= 0) {
+            //手动 -旧值
+            item.additionalTime = item.planEndTime - item.used
+          } else {
+            //手动 -自动
+            item.additionalTime = item.planEndTime - item.automatic
+          }
+        })
+        if (arr[0].id === 1008611) {
+          arr.map((item) => {
+            item.id = null
+          })
+        }
+        const sum = await splitMethod({
+          assignmentId: workSplitList.id,
+          data: arr
+        })
+
+        if (sum) {
+          message.success('保存成功')
+          breakSave && breakSave()
+          empty && empty()
+        } else {
+          message.error('保存失败')
+        }
       }
     }
   }

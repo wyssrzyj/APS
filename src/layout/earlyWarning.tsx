@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-20 09:55:56
+ * @LastEditTime: 2022-07-22 10:34:38
  * @Description:
  * @LastEditors: lyj
  */
@@ -75,7 +75,7 @@ const EarlyWarning = () => {
                   )}
 
                   <span className={styles.textColor}>
-                    {item.externalProduceOrderNum}
+                    {item.productClientNum}
                   </span>
                   {item.waringType !== '1'
                     ? '生产单进入物料预警'

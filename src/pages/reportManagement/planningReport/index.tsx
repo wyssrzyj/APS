@@ -19,7 +19,8 @@ import ScheduleModal from './scheduleModal/index'
 
 const img = noneImg
 const { factoryList } = productionPlanApis
-const { periodicReportList, periodicReportListExport } = periodicReport
+const { periodicReportList, periodicReportListExport, planningReport } =
+  periodicReport
 
 const ProductionPlan = () => {
   const location = useLocation()
@@ -46,7 +47,7 @@ const ProductionPlan = () => {
     pageSize,
     loading,
     getDataList
-  } = useTableChange(params, periodicReportList)
+  } = useTableChange(params, planningReport)
   useEffect(() => {
     if (!isEmpty(dataSource)) {
       dataSource.map((item, index) => {
@@ -164,7 +165,7 @@ const ProductionPlan = () => {
       const blob = new Blob([res], { type: 'application/octet-stream' })
       const download = document.createElement('a')
       download.href = window.URL.createObjectURL(blob)
-      download.download = `生产周期完成报表.xls`
+      download.download = `生产周期计划报表.xls`
       download.click()
       window.URL.revokeObjectURL(download.href)
     })

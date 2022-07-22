@@ -90,9 +90,13 @@ const MaterialAlert = React.lazy(
   () => import('@/pages/warningManagement/materialAlert')
 )
 
-//报表管理- 生产周期报表
+//报表管理- 生产周期完成报表
 const ProductionCycle = React.lazy(
   () => import('@/pages/reportManagement/productionCycle')
+)
+//报表管理- 生产周期计划报表
+const PlanningReport = React.lazy(
+  () => import('@/pages/reportManagement/planningReport')
 )
 //报表管理- 班组日完成报表
 const DailyCompletion = React.lazy(
@@ -141,8 +145,11 @@ const route = [
   // 物料预警
   { path: '/materialAlert', element: <MaterialAlert /> },
   //报表管理
-  //  生产周期报表
+  //  生产周期完成报表
   { path: '/productionCycle', element: <ProductionCycle /> },
+
+  //  生产周期计划报表
+  { path: '/planningReport', element: <PlanningReport /> },
   //  班组日完成报表
   { path: '/dailyCompletion', element: <DailyCompletion /> },
   //空白例子

@@ -237,6 +237,8 @@ function Popup(props: { content: any }) {
         additionalTime,
         capacityId
       })
+      console.log(arr)
+
       if (arr.code === 200) {
         const cloneLis = cloneDeep(list)
         const time = moment(arr.data)
