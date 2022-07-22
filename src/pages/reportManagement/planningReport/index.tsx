@@ -19,8 +19,7 @@ import ScheduleModal from './scheduleModal/index'
 
 const img = noneImg
 const { factoryList } = productionPlanApis
-const { periodicReportList, periodicReportListExport, planningReport } =
-  periodicReport
+const { planningReportExport, planningReport } = periodicReport
 
 const ProductionPlan = () => {
   const location = useLocation()
@@ -158,7 +157,7 @@ const ProductionPlan = () => {
   }
 
   const exportFile = () => {
-    periodicReportListExport({
+    planningReportExport({
       ...params
     }).then((res: any) => {
       message.success('导出成功')

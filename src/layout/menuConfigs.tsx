@@ -1,16 +1,23 @@
+import Icon from '@/components/Icon'
+
 export const menus = [
-  { label: '首页', key: 'home', icon: 'jack-home-fill', url: '/home' },
+  {
+    label: '首页',
+    key: 'home',
+    icon: <Icon type={'jack-home-fill'} />,
+    url: '/home'
+  },
 
   {
     label: '业务单数据管理',
     key: 'production ',
-    icon: 'jack-qiyeyewu',
+    icon: <Icon type={'jack-qiyeyewu'} />,
     url: '/',
     children: [
       {
         label: '生产单列表',
         key: 'productionList',
-        icon: 'jack-shengchanguanli',
+        icon: <Icon type={'jack-shengchanguanli'} />,
         url: '/productionList'
       }
     ]
@@ -18,25 +25,26 @@ export const menus = [
   {
     label: '生产管理',
     key: 'productionManagement',
-    icon: 'jack-shengchan',
+    icon: <Icon type={'jack-shengchan'} />,
+
     url: '/',
     children: [
       {
         label: '班组工作日历',
         key: 'workCalendar',
-        icon: 'jack-rili',
+        icon: <Icon type={'jack-rili'} />,
         url: '/workCalendar'
       },
       {
         label: '物料齐套检查',
         key: 'materials',
-        icon: 'jack-wuliaoguanli',
+        icon: <Icon type={'jack-wuliaoguanli'} />,
         url: '/materials'
       },
       {
         label: '生产单排程',
         key: 'scheduling',
-        icon: 'jack-jihuapaicheng',
+        icon: <Icon type={'jack-jihuapaicheng'} />,
         url: '/scheduling'
       }
     ]
@@ -44,43 +52,44 @@ export const menus = [
   {
     label: '进度跟踪',
     key: 'productionManagements',
-    icon: 'jack-jindutiao',
+    icon: <Icon type={'jack-jindutiao'} />,
+
     url: '/',
     children: [
       {
         label: '日排程管理',
         key: 'dailySchedule',
-        icon: 'jack-dysp',
+        icon: <Icon type={'jack-dysp'} />,
         url: '/dailySchedule'
       },
       {
         label: '生产计划',
         key: 'dispatchPan',
-        icon: 'jack-paigong',
+        icon: <Icon type={'jack-paigong'} />,
         url: '/dispatchPan'
       },
       {
         label: '班组甘特图',
         key: 'resourcedMap',
-        icon: 'jack-ziyuan1',
+        icon: <Icon type={'jack-ziyuan1'} />,
         url: '/resourcedMap'
       },
       {
         label: '生产单甘特图',
         key: 'orderChart',
-        icon: 'jack-chartmixed',
+        icon: <Icon type={'jack-chartmixed'} />,
         url: '/orderChart'
       },
       {
         label: '班组负荷图',
         key: 'schedulingResults',
-        icon: 'jack-fuhe',
+        icon: <Icon type={'jack-fuhe'} />,
         url: '/schedulingResults'
       },
       {
         label: '生产实绩',
         key: 'actualProduction',
-        icon: 'jack-shengchanpicishiji',
+        icon: <Icon type={'jack-shengchanpicishiji'} />,
         url: '/actualProduction'
       }
     ]
@@ -88,19 +97,20 @@ export const menus = [
   {
     label: '预警管理',
     key: 'earlyWarning',
-    icon: 'jack-feeds',
+    icon: <Icon type={'jack-feeds'} />,
     url: '/',
     children: [
       {
         label: '生产预警管理',
         key: 'productionWarning',
-        icon: 'jack-shebeiguanli',
+        icon: <Icon type={'jack-shebeiguanli'} />,
+
         url: '/productionWarning'
       },
       {
         label: '物料预警管理',
         key: 'materialAlert',
-        icon: 'jack-sgg_1',
+        icon: <Icon type={'jack-sgg_1'} />,
         url: '/materialAlert'
       }
     ]
@@ -108,25 +118,25 @@ export const menus = [
   {
     label: '报表管理',
     key: 'reportManagement',
-    icon: 'jack-xianshijieguo',
+    icon: <Icon type={'jack-xianshijieguo'} />,
     url: '/',
     children: [
       {
         label: '生产完成报表',
         key: 'productionCycle',
-        icon: 'jack-qiyeyewu',
+        icon: <Icon type={'jack-qiyeyewu'} />,
         url: '/productionCycle'
       },
       {
         label: '生产计划报表',
         key: 'planningReport',
-        icon: 'jack-qiyeyewu',
+        icon: <Icon type={'jack-jichushuju'} />,
         url: '/planningReport'
       },
       {
         label: '班组日完成报表',
         key: 'dailyCompletion',
-        icon: 'jack-jihuapaicheng',
+        icon: <Icon type={'jack-jihuapaicheng'} />,
         url: '/dailyCompletion'
       }
     ]
@@ -134,18 +144,18 @@ export const menus = [
   {
     label: '系统管理',
     key: 'systemManagement',
-    icon: 'jack-set',
+    icon: <Icon type={'jack-set'} />,
     children: [
       {
         label: '系统参数设置',
         key: 'systemSettingsWork',
-        icon: 'jack-xitongcanshupeizhi',
+        icon: <Icon type={'jack-xitongcanshupeizhi'} />,
         url: '/systemSettingsWork'
       },
       {
         label: '用户管理',
         key: 'userManage',
-        icon: 'jack-yonghu3',
+        icon: <Icon type={'jack-yonghu3'} />,
         url: '/userManage'
       }
 
@@ -166,31 +176,31 @@ export const menus = [
   {
     label: '基础数据',
     key: 'basicData',
-    icon: 'jack-jichushuju',
+    icon: <Icon type={'jack-jichushuju'} />,
     url: '/',
     children: [
       {
         label: '工作模式',
         key: 'work',
-        icon: 'jack-kuaisugongzuoliu',
+        icon: <Icon type={'jack-kuaisugongzuoliu'} />,
         url: '/work'
       },
       {
         label: '加班管理',
         key: 'overtime',
-        icon: 'jack-jiaban',
+        icon: <Icon type={'jack-jiaban'} />,
         url: '/overtime'
       },
       {
         label: '节假日',
         key: 'vacations',
-        icon: 'jack-jiejiarishezhi',
+        icon: <Icon type={'jack-jiejiarishezhi'} />,
         url: '/vacations'
       },
       {
         label: '产能效率模板',
         key: 'rule',
-        icon: 'jack-guanlimoban1',
+        icon: <Icon type={'jack-guanlimoban1'} />,
         url: '/rule'
       }
       // {

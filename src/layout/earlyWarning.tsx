@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-22 10:34:38
+ * @LastEditTime: 2022-07-22 15:19:32
  * @Description:
  * @LastEditors: lyj
  */
@@ -60,30 +60,28 @@ const EarlyWarning = () => {
         <div className={styles.todoContent}>
           {!isEmpty(list) &&
             list.map((item, index) => (
-              <>
-                <div
-                  onClick={() => warning(item)}
-                  className={styles.containerList}
-                  key={index}
-                >
-                  {item.waringType !== '1' ? (
-                    <div className={styles.material}></div>
-                  ) : item.abnormalStatus === '1' ? (
-                    <div className={styles.circularWarning}></div>
-                  ) : (
-                    <div className={styles.circularDelay}></div>
-                  )}
+              <div
+                onClick={() => warning(item)}
+                className={styles.containerList}
+                key={index}
+              >
+                {item.waringType !== '1' ? (
+                  <div className={styles.material}></div>
+                ) : item.abnormalStatus === '1' ? (
+                  <div className={styles.circularWarning}></div>
+                ) : (
+                  <div className={styles.circularDelay}></div>
+                )}
 
-                  <span className={styles.textColor}>
-                    {item.productClientNum}
-                  </span>
-                  {item.waringType !== '1'
-                    ? '生产单进入物料预警'
-                    : item.abnormalStatus === '1'
-                    ? '生产单进入预警期'
-                    : '生产单已延期'}
-                </div>
-              </>
+                <span className={styles.textColor}>
+                  {item.productClientNum}
+                </span>
+                {item.waringType !== '1'
+                  ? '生产单进入物料预警'
+                  : item.abnormalStatus === '1'
+                  ? '生产单进入预警期'
+                  : '生产单已延期'}
+              </div>
             ))}
         </div>
       </div>
