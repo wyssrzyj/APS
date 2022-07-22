@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-06-20 14:01:43
+ * @LastEditTime: 2022-07-22 15:53:46
  * @Description:
  * @LastEditors: lyj
  */
@@ -21,8 +21,6 @@ const DynamicContent = (props: Record<string, any>) => {
   const currentUser = localStorage.getItem('currentUser')
 
   useEffect(() => {
-    console.log('currentUser', currentUser)
-
     if (currentUser != null) {
       ;(async () => {
         const params = { pageSize: 7, pageNum: 1 }

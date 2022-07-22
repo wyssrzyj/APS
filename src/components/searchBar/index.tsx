@@ -58,20 +58,18 @@ const SearchBar = (props: Record<string, any>) => {
           keys.forEach((i) => (obj[i] = item[i]))
 
           return (
-            <>
-              <Col span={8} key={idx}>
-                <div key={idx} className={styles.searchItem}>
-                  <div className={styles.searchLabel}>{item.label}</div>
-                  <div className={styles.searchValue}>
-                    <FormNode
-                      {...obj}
-                      onChange={(value) => valuesChange(value, item.field)}
-                      value={params[item.field]}
-                    ></FormNode>
-                  </div>
+            <Col span={8} key={idx}>
+              <div key={idx} className={styles.searchItem}>
+                <div className={styles.searchLabel}>{item.label}</div>
+                <div className={styles.searchValue}>
+                  <FormNode
+                    {...obj}
+                    onChange={(value) => valuesChange(value, item.field)}
+                    value={params[item.field]}
+                  ></FormNode>
                 </div>
-              </Col>
-            </>
+              </div>
+            </Col>
           )
         })}
       </Row>

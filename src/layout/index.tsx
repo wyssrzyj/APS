@@ -89,7 +89,7 @@ const MyLayout = (props: LayoutProps) => {
             </Content>
           </Layout>
         </Layout>
-      ) : null}{' '}
+      ) : null}
     </div>
   )
 }

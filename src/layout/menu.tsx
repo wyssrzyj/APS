@@ -150,10 +150,11 @@ const MenuBox = () => {
       multiple={false}
       onClick={changePage}
       onOpenChange={onOpenChange}
+      items={menus} // 4.20.0 用法升级
     >
-      {menus.map((item) => {
+      {/* {menus.map((item) => {
         return getMenuDOM(item)
-      })}
+      })} */}
     </Menu>
   )
 }
