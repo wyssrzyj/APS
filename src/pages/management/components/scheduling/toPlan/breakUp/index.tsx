@@ -640,7 +640,7 @@ const BreakUp = (props: any) => {
     {
       title: '客户款号',
       align: 'center',
-      // fixed: 'left',
+      // fixed: 'left'3,
       width: 80,
       key: 'productNum',
       dataIndex: 'productNum'
