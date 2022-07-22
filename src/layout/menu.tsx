@@ -153,7 +153,7 @@ const MenuBox = () => {
       items={menus} // 4.20.0 用法升级
     >
       {/* {menus.map((item) => {
-        return getMenuDOM(item)
+        return getMenuDOM(item).
       })} */}
     </Menu>
   )
