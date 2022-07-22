@@ -205,8 +205,9 @@ const BreakUp = (props: any) => {
       })
       //这个时候先不能渲染 这里的会慢一步
       //先渲染后处理
+      console.log(res)
 
-      setSplitType(res[0].skuType)
+      setSplitType(res[0].skuType !== null ? res[0].skuType : '1')
 
       setInitialTeamList([...res])
     } else {
@@ -300,8 +301,11 @@ const BreakUp = (props: any) => {
 
   //获取结束时间
   const endTime = async (e, record) => {
+    const sum = cloneDeep(data)
+
     if (e) {
       // c重新更改
+      record.planStartTime = moment(e).valueOf()
 
       const assignmentId = workSplitList.id
       const capacityId = record.templateId
@@ -319,13 +323,14 @@ const BreakUp = (props: any) => {
         additionalTime,
         capacityId
       })
-      if (arr.code === 200) {
-        const sum = cloneDeep(data)
-        //需要获取当前行~~~~~~
-        record.planStartTime = moment(e).valueOf()
-        record.planEndTime = arr.data
-        record.automatic = arr.data
-
+      try {
+        if (arr.code === 200) {
+          //需要获取当前行~~~~~~
+          record.planEndTime = arr.data
+          record.automatic = arr.data
+          updateData(record, sum)
+        }
+      } catch (error) {
         updateData(record, sum)
       }
     }
@@ -409,12 +414,20 @@ const BreakUp = (props: any) => {
   }
 
   function isRepeat(arr: any) {
-    const hash: any = {}
-    for (const i in arr) {
-      if (hash[arr[i]]) return true
-      hash[arr[i]] = true
+    const teamIdType = arr.every((item: any) => {
+      return item !== null && item !== undefined
+    })
+
+    if (teamIdType) {
+      const hash: any = {}
+      for (const i in arr) {
+        if (hash[arr[i]]) return true
+        hash[arr[i]] = true
+      }
+      return false
+    } else {
+      return false
     }
-    return false
   }
 
   // 保存事件
@@ -422,6 +435,7 @@ const BreakUp = (props: any) => {
     const arr = cloneDeep(data)
 
     const state = { timeState: false, number: false, teamType: false }
+    console.log(arr)
 
     //时间的过滤
     const Time = arr.filter(
@@ -463,6 +477,7 @@ const BreakUp = (props: any) => {
       arr.map((item: { teamId: any }) => {
         team.push(item.teamId)
       })
+      console.log(team)
 
       if (!isRepeat(team)) {
         const teamIdType = team.every((item: any) => {
