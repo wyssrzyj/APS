@@ -52,7 +52,7 @@ function ProductionPlan() {
           查看
         </Button>
         {/* <Button type="link" onClick={() => showSewing(record)}>
-          生成车间任务
+          生成车间任务.
         </Button> */}
       </div>
     )
