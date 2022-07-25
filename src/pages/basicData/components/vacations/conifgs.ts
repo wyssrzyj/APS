@@ -24,27 +24,24 @@ type Column = {
 }
 export const tableColumns: Array<Partial<Column>> = [
   {
-    title: '模板名称',
+    title: '节假日名称',
     align: 'center',
-    dataIndex: 'templateName',
-    width: 250
+    dataIndex: 'name'
   },
   {
-    title: '工作班组',
+    title: '节假日期',
     align: 'center',
-    dataIndex: 'teamName',
-    width: 150
+    dataIndex: 'holidays'
   },
   {
-    title: '初始效率',
+    title: '创建人',
     align: 'center',
-    dataIndex: 'startEfficiency',
-    width: 100
+    dataIndex: 'createBy'
   },
   {
-    title: '最终效率',
+    title: '创建时间',
     align: 'center',
-    dataIndex: 'finallyEfficiency',
+    dataIndex: 'createTime',
     width: 100
   },
   {

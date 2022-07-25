@@ -312,7 +312,7 @@ const Production = () => {
           storageField={'productionList'}
           columns={tableColumns}
           dataSource={data}
-          rowKey={'key'}
+          rowKey={'id'}
           scroll={{ x: 2000, y: '63vh' }}
           loading={loading}
           onChange={getSort}

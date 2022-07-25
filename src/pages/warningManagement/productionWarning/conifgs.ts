@@ -85,28 +85,24 @@ export const tableColumns: any = [
     title: '生产单号',
     align: 'center',
     dataIndex: 'externalProduceOrderNum',
-    key: 'externalProduceOrderNum',
     width: 100
   },
   {
     title: '款图',
     align: 'center',
     dataIndex: 'img',
-    key: 'img',
     width: 100
   },
   {
     title: '工厂名称',
     align: 'center',
     dataIndex: 'factoryName',
-    key: 'factoryName',
     width: 80
   },
   {
     title: '产品名称',
     align: 'center',
     dataIndex: 'productName',
-    key: 'productName',
 
     width: 80
   },
@@ -114,28 +110,23 @@ export const tableColumns: any = [
     title: '产品款号',
     align: 'center',
     dataIndex: 'productNum',
-    key: 'productNum',
     width: 80
   },
   {
     title: '客户款号',
     dataIndex: 'productClientNum',
     align: 'center',
-
-    key: 'productClientNum',
     width: 80
   },
   {
     title: '生产单总量',
     align: 'center',
-    key: 'orderSum',
     dataIndex: 'orderSum',
     width: 80
   },
   {
     title: '承诺交期',
     align: 'center',
-    key: 'orderDelivery',
     dataIndex: 'orderDelivery',
     width: 80,
     render: (date: moment.MomentInput) =>
@@ -145,7 +136,6 @@ export const tableColumns: any = [
   {
     title: '剩余工期',
     align: 'center',
-    key: 'remainingDuration',
     dataIndex: 'remainingDuration',
     width: 80
   },
@@ -153,7 +143,6 @@ export const tableColumns: any = [
     title: '计划完成日期',
     align: 'center',
     dataIndex: 'planEndDate',
-    key: 'planEndDate',
     width: 170,
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
@@ -162,7 +151,6 @@ export const tableColumns: any = [
   {
     title: '预警状态',
     align: 'center',
-    key: 'abnormalStatus',
     dataIndex: 'abnormalStatus',
     width: 100,
     render: (v) => (v === '1' ? '预警' : '延期')
@@ -171,19 +159,16 @@ export const tableColumns: any = [
   {
     title: '生产中工段',
     align: 'center',
-    key: 'currentSection',
     dataIndex: 'currentSection',
     width: 80
   },
   {
     title: '已处理',
     align: 'center',
-    key: 'disposeStatus',
     dataIndex: 'disposeStatus',
     width: 80,
     render: (v) => (v === '0' ? '未处理' : '已处理')
   },
-
   {
     title: '操作',
     align: 'center',

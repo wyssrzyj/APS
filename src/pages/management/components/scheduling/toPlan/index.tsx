@@ -91,8 +91,6 @@ function ToPlan(props: {
   }, [selectedKeys])
   //清空选中的带计划
   useEffect(() => {
-    console.log('为啥没有清空', selectedSelect)
-
     if (selectedSelect.type === 'empty') {
       setToPlanID([])
     }
@@ -239,8 +237,6 @@ function ToPlan(props: {
   }
   //获取数据
   const dataAcquisition = async (id: any) => {
-    console.log('~~~~~~~~~~~')
-
     //已计划假数据
     // 0未计划  1已计划
     const notPlan = await listProductionOrders({

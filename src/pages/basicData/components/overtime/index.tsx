@@ -45,129 +45,89 @@ function Overtime() {
     getDataList
   } = useTableChange(params, overtimedisplay)
 
-  // eslint-disable-next-line no-sparse-arrays
-  const columns: any = [
-    {
-      title: '工厂名称',
-      align: 'center',
-      dataIndex: 'factoryName',
-      width: 200
-    },
-    {
-      title: '班组名称',
-      align: 'center',
-      width: 200,
-      dataIndex: 'teamName',
-      render: (value: string, row: any) => {
-        const chars = value !== null ? value.split(',') : []
-        return (
-          <div>
-            {chars.map(
-              (
-                item:
-                  | boolean
-                  | React.ReactChild
-                  | React.ReactFragment
-                  | React.ReactPortal
-                  | null
-                  | undefined,
-                index: any | null | undefined
-              ) => (
-                // eslint-disable-next-line react/jsx-key
-                <Tag key={index}>{item}</Tag>
-              )
-            )}
-          </div>
-        )
-      }
-    },
-    {
-      title: '加班日期',
-      align: 'center',
-      dataIndex: 'date',
-      render: (value: string, row: any) => {
-        // const chars = value.split(',')
-        const chars = value !== null ? value.split(',') : []
+  tableColumns[tableColumns.length - 1].render = (_value: any, row: any) => {
+    return (
+      <div className={styles.flex}>
+        <div
+          className={styles.operation_item}
+          onClick={() => editUser(false, row)}
+        >
+          查看
+        </div>
+        <div className={styles.operation} onClick={() => editUser(true, row)}>
+          编辑
+        </div>
+      </div>
+    )
+  }
 
-        return (
-          <div>
-            {chars.map(
-              (
-                item:
-                  | boolean
-                  | React.ReactChild
-                  | React.ReactFragment
-                  | React.ReactPortal
-                  | null
-                  | undefined,
-                index: any | null | undefined
-              ) => (
-                // eslint-disable-next-line react/jsx-key
-                <Tag key={index}>{item}</Tag>
-              )
-            )}
-          </div>
-        )
-      }
-    },
-    {
-      title: '工作时间',
-      align: 'center',
-      dataIndex: 'times',
-      render: (value: string, row: any) => {
-        const chars = value.split(',')
-        return (
-          <div className={styles.flex}>
-            {chars.map(
-              (
-                item:
-                  | boolean
-                  | React.ReactChild
-                  | React.ReactFragment
-                  | React.ReactPortal
-                  | null
-                  | undefined,
-                index: any | null | undefined
-              ) => (
-                // eslint-disable-next-line react/jsx-key
-                <Tag key={index}>{item}</Tag>
-              )
-            )}
-          </div>
-        )
-      }
-    },
-    {
-      title: '备注',
-      align: 'center',
-      dataIndex: 'remark'
-    },
+  tableColumns[1].render = (value: string, row: any) => {
+    const chars = value !== null ? value.split(',') : []
+    return (
+      <div>
+        {chars.map(
+          (
+            item:
+              | boolean
+              | React.ReactChild
+              | React.ReactFragment
+              | React.ReactPortal
+              | null
+              | undefined,
+            index: any | null | undefined
+          ) => (
+            // eslint-disable-next-line react/jsx-key
+            <Tag key={index}>{item}</Tag>
+          )
+        )}
+      </div>
+    )
+  }
+  tableColumns[2].render = (value: string, row: any) => {
+    // const chars = value.split(',')
+    const chars = value !== null ? value.split(',') : []
 
-    {
-      title: '操作',
-      align: 'center',
-      dataIndex: 'address',
-      fixed: 'right',
-      render: (_value: any, row: any) => {
-        return (
-          <div className={styles.flex}>
-            <div
-              className={styles.operation_item}
-              onClick={() => editUser(false, row)}
-            >
-              查看
-            </div>
-            <div
-              className={styles.operation}
-              onClick={() => editUser(true, row)}
-            >
-              编辑
-            </div>
-          </div>
-        )
-      }
-    }
-  ]
+    return (
+      <div>
+        {chars.map(
+          (
+            item:
+              | boolean
+              | React.ReactChild
+              | React.ReactFragment
+              | React.ReactPortal
+              | null
+              | undefined,
+            index: any | null | undefined
+          ) => (
+            // eslint-disable-next-line react/jsx-key
+            <Tag key={index}>{item}</Tag>
+          )
+        )}
+      </div>
+    )
+  }
+  tableColumns[3].render = (value: string, row: any) => {
+    const chars = value.split(',')
+    return (
+      <div className={styles.flex}>
+        {chars.map(
+          (
+            item:
+              | boolean
+              | React.ReactChild
+              | React.ReactFragment
+              | React.ReactPortal
+              | null
+              | undefined,
+            index: any | null | undefined
+          ) => (
+            <Tag key={index}>{item}</Tag>
+          )
+        )}
+      </div>
+    )
+  }
 
   useEffect(() => {
     getData()
@@ -325,7 +285,7 @@ function Overtime() {
             storageField={'overtime'}
             cusBarLeft={TableLeft}
             rowSelection={rowSelection}
-            columns={columns}
+            columns={tableColumns}
             dataSource={dataSource}
             rowKey={'id'}
             // scroll={{ x: 2000, y: '60vh' }}

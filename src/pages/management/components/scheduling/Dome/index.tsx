@@ -434,7 +434,7 @@ const Dhx = (props: {
           </Dropdown>
         </>
       </div>
-      <Popup content={content} />
+      {isModalVisible ? <Popup content={content} /> : null}
     </div>
   )
 }
