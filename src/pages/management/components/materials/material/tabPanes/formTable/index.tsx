@@ -344,9 +344,9 @@ const FormTable = (props: any) => {
         }
       }
       if (!isEmpty(renderData)) {
-        setLoading(false)
         setColumnsList(renderData) //渲染结构
       }
+      setLoading(false)
     }
   }, [renderData, notData, select])
 
