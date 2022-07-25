@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-07-13 16:29:51
+ * @LastEditTime: 2022-07-25 09:18:12
  * @Description:
  * @LastEditors: lyj
  */
@@ -95,53 +95,45 @@ export const tableColumns: any = [
   {
     title: '生产单号',
     align: 'center',
-    key: 'externalProduceOrderNum',
     dataIndex: 'externalProduceOrderNum'
   },
   {
     title: '款图',
     align: 'center',
-    key: 'img',
     width: 100,
     dataIndex: 'img'
   },
   {
     title: '工厂名称',
-    key: 'factoryName',
     align: 'center',
     width: 100,
     dataIndex: 'factoryName'
   },
   {
     title: '产品名称',
-    key: 'productName',
     align: 'center',
     width: 250,
     dataIndex: 'productName'
   },
   {
     title: '产品款号',
-    key: 'productNum',
     align: 'center',
     dataIndex: 'productNum',
     width: 200
   },
   {
     title: '客户款号',
-    key: 'productClientNum',
     align: 'center',
     dataIndex: 'productClientNum'
   },
   {
     title: '生产单总量',
-    key: 'orderSum',
     align: 'center',
     dataIndex: 'orderSum',
     width: 100
   },
   {
     title: '计划完成日期',
-    key: 'planEndDate',
     align: 'center',
     dataIndex: 'planEndDate',
     width: 170,
@@ -150,7 +142,6 @@ export const tableColumns: any = [
   {
     title: '承诺交期',
     align: 'center',
-    key: 'committedDeliveryDate',
     dataIndex: 'committedDeliveryDate',
     width: 100,
     render: (v: any) => (v ? moment(v).format('YYYY-MM-DD') : null)
@@ -159,13 +150,11 @@ export const tableColumns: any = [
   {
     title: '剩余工期',
     align: 'center',
-    key: 'remainingDuration',
     dataIndex: 'remainingDuration',
     width: 100
   },
   {
     title: '外发情况',
-    key: 'outsourceType',
     align: 'center',
     dataIndex: 'outsourceType',
     render: (v: any) => (v === 1 ? '工序外发' : v === 2 ? '整单外发' : null)
@@ -174,14 +163,12 @@ export const tableColumns: any = [
   {
     title: '备注',
     align: 'center',
-    key: 'remark',
     dataIndex: 'remark',
     fixed: 'right',
     width: 100
   },
   {
     title: '延期情况',
-    key: 'delayType',
     align: 'center',
     dataIndex: 'delayType',
     fixed: 'right',
@@ -190,17 +177,15 @@ export const tableColumns: any = [
   },
   {
     title: '生产单状态',
-    key: 'status',
     align: 'center',
     dataIndex: 'status',
     fixed: 'right',
-
     render: (v: any) => map.get(v)
   },
   {
     title: '操作',
     align: 'center',
-    dataIndex: 'address',
+    dataIndex: 'operation',
     fixed: 'right'
   }
 ]

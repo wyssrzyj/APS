@@ -40,95 +40,56 @@ function Vacations() {
     getDataList
   } = useTableChange(params, holidayList)
 
-  // eslint-disable-next-line no-sparse-arrays
-  const columns: any = [
-    {
-      title: '节假日名称',
-      align: 'center',
-      dataIndex: 'name'
-    },
-    {
-      title: '节假日期',
-      align: 'center',
-      dataIndex: 'holidays',
-      render: (value: string, row: any) => {
-        const chars = value.split(',')
-        return (
-          <div className={styles.flexs}>
-            {chars.map(
-              (
-                item:
-                  | boolean
-                  | React.ReactChild
-                  | React.ReactFragment
-                  | React.ReactPortal
-                  | null
-                  | undefined,
-                index: any | null | undefined
-              ) => (
-                // eslint-disable-next-line react/jsx-key
-                <Tag key={index}>{item}</Tag>
-              )
-            )}
-          </div>
-        )
-      }
-    },
-    {
-      title: '创建人',
-      align: 'center',
-      dataIndex: 'createBy',
-      render: (value: string, row: any) => {
-        return (
-          <div>
-            <Tag key={value}>{value}</Tag>
-          </div>
-        )
-      }
-    },
-    {
-      title: '创建时间',
-      align: 'center',
-      dataIndex: 'createTime',
-      render: (value: string, row: any) => {
-        return (
-          <div>
-            <Tag key={value}>{moment(value).format('YYYY-MM-DD HH:ss')}</Tag>
-          </div>
-        )
-      }
-    },
-    {
-      title: '备注',
-      align: 'center',
-      dataIndex: 'remark'
-    },
-    {
-      title: '操作',
-      align: 'center',
-      dataIndex: 'address',
-      fixed: 'right',
-
-      render: (_value: any, _row: any) => {
-        return (
-          <div className={styles.flex}>
-            <div
-              className={styles.operation_item}
-              onClick={() => editUser(false, _row)}
-            >
-              查看
-            </div>
-            <div
-              className={styles.operation}
-              onClick={() => editUser(true, _row)}
-            >
-              编辑
-            </div>
-          </div>
-        )
-      }
-    }
-  ]
+  tableColumns[tableColumns.length - 1].render = (_value: any, _row: any) => {
+    return (
+      <div className={styles.flex}>
+        <div
+          className={styles.operation_item}
+          onClick={() => editUser(false, _row)}
+        >
+          查看
+        </div>
+        <div className={styles.operation} onClick={() => editUser(true, _row)}>
+          编辑
+        </div>
+      </div>
+    )
+  }
+  tableColumns[1].render = (value: string, row: any) => {
+    const chars = value.split(',')
+    return (
+      <div className={styles.flexs}>
+        {chars.map(
+          (
+            item:
+              | boolean
+              | React.ReactChild
+              | React.ReactFragment
+              | React.ReactPortal
+              | null
+              | undefined,
+            index: any | null | undefined
+          ) => (
+            <Tag key={index}>{item}</Tag>
+          )
+        )}
+      </div>
+    )
+  }
+  tableColumns[2].render = (value: string, row: any) => {
+    return (
+      <div>
+        <Tag key={value}>{value}</Tag>
+      </div>
+    )
+  }
+  tableColumns[3].render = (value: string, row: any) => {
+    return (
+      <div>
+        <Tag key={value}>{moment(value).format('YYYY-MM-DD HH:ss')}</Tag>
+      </div>
+    )
+  }
 
   //头部form的数据
   const FormData = (e: any) => {
@@ -227,7 +188,7 @@ function Vacations() {
             storageField={'vacations'}
             cusBarLeft={TableLeft}
             rowSelection={rowSelection}
-            columns={columns}
+            columns={tableColumns}
             dataSource={dataSource}
             rowKey={'id'}
             // scroll={{ x: 2000, y: '60vh' }}

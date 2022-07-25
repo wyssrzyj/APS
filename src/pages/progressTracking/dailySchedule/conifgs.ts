@@ -90,7 +90,6 @@ export const tableColumns: any = [
     title: '款图',
     align: 'center',
     dataIndex: 'img',
-    key: 'img',
     width: 100
   },
   {

@@ -31,15 +31,7 @@ export const searchConfigs = [
   }
 ]
 
-type Column = {
-  title: string
-  align: 'center' | 'left' | 'right'
-  dataIndex: string
-  width: number
-  fixed: 'left' | 'right'
-  render: ReactNode
-}
-export const tableColumns: Array<Partial<Column>> = [
+export const tableColumns: Array<Partial<any>> = [
   {
     title: '工作模式',
     align: 'center',
@@ -79,6 +71,7 @@ export const tableColumns: Array<Partial<Column>> = [
   {
     title: '操作',
     align: 'center',
+    dataIndex: 'operation',
     fixed: 'right',
     width: 100
   }

@@ -1,5 +1,6 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, Input, message, Modal, Tag } from 'antd'
+import Item from 'antd/lib/list/Item'
 import { cloneDeep, isEmpty } from 'lodash'
 import {
   Key,
@@ -36,6 +37,7 @@ const Index = () => {
   } = workingModeApis
 
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
+  const [list, setList] = useState<any[]>()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
@@ -53,6 +55,16 @@ const Index = () => {
     loading,
     getDataList
   } = useTableChange(params, workingModes)
+  useEffect(() => {
+    if (!isEmpty(dataSource)) {
+      dataSource.map((item, _index) => {
+        item.key = _index
+      })
+      setList(dataSource)
+    } else {
+      setList([])
+    }
+  }, [dataSource])
 
   //工厂名称
   useEffect(() => {
@@ -70,6 +82,24 @@ const Index = () => {
       setFacList(arr)
       setFactoryData(arr)
     }
+  }
+  tableColumns[tableColumns.length - 1].render = (
+    value: any,
+    row: { [x: string]: Key | null | undefined }
+  ) => {
+    return (
+      <div className={styles.flex} key={row.id}>
+        <div
+          className={styles.operation_item}
+          onClick={() => editUser(false, row)}
+        >
+          查看
+        </div>
+        <div className={styles.operation} onClick={() => editUser(true, row)}>
+          编辑
+        </div>
+      </div>
+    )
   }
   tableColumns[1].render = (
     value: any,
@@ -147,24 +177,6 @@ const Index = () => {
             <Tag key={index}>{item}</Tag>
           )
         )}
-      </div>
-    )
-  }
-  tableColumns[6].render = (
-    value: any,
-    row: { [x: string]: Key | null | undefined }
-  ) => {
-    return (
-      <div className={styles.flex}>
-        <div
-          className={styles.operation_item}
-          onClick={() => editUser(false, row)}
-        >
-          查看
-        </div>
-        <div className={styles.operation} onClick={() => editUser(true, row)}>
-          编辑
-        </div>
       </div>
     )
   }
@@ -288,13 +300,12 @@ const Index = () => {
               callback={paramsChange}
             ></SearchBar>
           </div>
-
           <CusDragTable
             storageField={'work'}
             cusBarLeft={TableLeft}
             rowSelection={rowSelection}
             columns={tableColumns}
-            dataSource={dataSource}
+            dataSource={list}
             rowKey={'id'}
             // scroll={{ x: 2000, y: '60vh' }}
             loading={loading}
@@ -309,7 +320,9 @@ const Index = () => {
               pageSizeOptions: ['10', '20', '50']
             }}
           />
-          <Popup content={content} newlyAdded={newlyAdded} />
+          {isModalVisible ? (
+            <Popup content={content} newlyAdded={newlyAdded} />
+          ) : null}
         </div>
       </div>
     </div>

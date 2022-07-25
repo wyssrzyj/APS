@@ -1,6 +1,6 @@
 import { Button, message, Popover, Tabs, Tag, Tree } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { Icon } from '@/components' //路径
@@ -34,6 +34,7 @@ function ToPlan(props: {
     publishType,
     selectedSelect
   } = props
+  const equalType = useRef({ equal: '0' })
   const location = useLocation()
   const { state }: any = location
   const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
@@ -91,8 +92,6 @@ function ToPlan(props: {
   }, [selectedKeys])
   //清空选中的带计划
   useEffect(() => {
-    console.log('为啥没有清空', selectedSelect)
-
     if (selectedSelect.type === 'empty') {
       setToPlanID([])
     }
@@ -108,6 +107,7 @@ function ToPlan(props: {
   map.set('20', '回厂加工')
 
   const callback = (key: any) => {
+    equalType.current.equal = key
     setCurrent(key)
   }
   useEffect(() => {
@@ -239,8 +239,6 @@ function ToPlan(props: {
   }
   //获取数据
   const dataAcquisition = async (id: any) => {
-    console.log('~~~~~~~~~~~')
-
     //已计划假数据
     // 0未计划  1已计划
     const notPlan = await listProductionOrders({
@@ -555,11 +553,11 @@ function ToPlan(props: {
             <div>产品款号: {data.productNum}</div>
             <div>数量: {data.orderSum}</div>
             <div>客户款号: {data.productClientNum}</div>
-            {current === '1' ? (
+            {/* {equalType.current.equal === '1' ? (
               <Tag className={styles.tag} color="gold">
                 生成车间计划
               </Tag>
-            ) : null}
+            ) : null} */}
           </div>
         ) : null}
       </div>

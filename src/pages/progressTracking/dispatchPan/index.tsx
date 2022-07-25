@@ -51,10 +51,9 @@ function ProductionPlan() {
         <Button type="link" onClick={() => handleDetailInfo(record)}>
           查看
         </Button>
-        <Button type="link" onClick={() => showSewing(record)}>
-          {/* {map.get(record.auditStatus)} */}
+        {/* <Button type="link" onClick={() => showSewing(record)}>
           生成车间任务
-        </Button>
+        </Button> */}
       </div>
     )
   }

@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-23 13:16:34
- * @LastEditTime: 2022-07-14 09:14:52
+ * @LastEditTime: 2022-07-25 09:18:49
  * @Description:
  * @LastEditors: lyj
  */
@@ -106,53 +106,45 @@ export const tableColumns: any = [
   {
     title: '生产单号',
     align: 'center',
-    key: 'externalProduceOrderNum',
     dataIndex: 'externalProduceOrderNum'
   },
   {
     title: '款图',
     align: 'center',
-    key: 'img',
     width: 100,
     dataIndex: 'img'
   },
   {
     title: '工厂名称',
-    key: 'factoryName',
     align: 'center',
     width: 100,
     dataIndex: 'factoryName'
   },
   {
     title: '产品名称',
-    key: 'productName',
     align: 'center',
     width: 250,
     dataIndex: 'productName'
   },
   {
     title: '产品款号',
-    key: 'productNum',
     align: 'center',
     dataIndex: 'productNum',
     width: 200
   },
   {
     title: '客户款号',
-    key: 'productClientNum',
     align: 'center',
     dataIndex: 'productClientNum'
   },
   {
     title: '生产单总量',
-    key: 'orderSum',
     align: 'center',
     dataIndex: 'orderSum',
     width: 100
   },
   {
     title: '计划完成日期',
-    key: 'planEndDate',
     align: 'center',
     dataIndex: 'planEndDate',
     width: 170,
@@ -160,7 +152,6 @@ export const tableColumns: any = [
   },
   {
     title: '承诺交期',
-    key: 'committedDeliveryDate',
     align: 'center',
     dataIndex: 'committedDeliveryDate',
     width: 100,
@@ -168,14 +159,12 @@ export const tableColumns: any = [
   },
   {
     title: '剩余工期',
-    key: 'remainingDuration',
     align: 'center',
     dataIndex: 'remainingDuration',
     width: 100
   },
   {
     title: '生产单权重',
-    key: 'produceWeight',
     align: 'center',
     dataIndex: 'produceWeight',
     width: 100
