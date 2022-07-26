@@ -307,7 +307,7 @@ const Production = () => {
     <div className={styles.qualification}>
       <div className={styles.content}>
         <AdvancedSearch
-          easySearch={easySearch} //普通搜索
+          easySearch={easySearch} //普通搜索.
           configs={configs} //高级搜索
           params={params}
           callback={searchParamsChange}
