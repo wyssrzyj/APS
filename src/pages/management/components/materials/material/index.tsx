@@ -312,6 +312,7 @@ function Material(props: {
           setSizeList([])
           message.success('保存成功')
         }
+
         if (methods === '切换') {
           saveSection() //保存工段
           setActiveKey(key)

@@ -3,7 +3,7 @@
 import { Button, message, Modal, Popover, Tag } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
-import { SetStateAction, useEffect, useState } from 'react'
+import { memo, SetStateAction, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { Icon } from '@/components'
@@ -21,7 +21,7 @@ const img = noneImg
 const { factoryList } = productionPlanApis
 const { periodicReportList, periodicReportListExport } = periodicReport
 
-const ProductionPlan = () => {
+const ProductionPlan = memo(() => {
   const location = useLocation()
   const { state }: any = location
   const [searchStatus, setSearchStatus] = useState(false)
@@ -265,6 +265,6 @@ const ProductionPlan = () => {
       {newlyAdded ? <Popup content={content} /> : null}
     </div>
   )
-}
+})
 
 export default ProductionPlan
