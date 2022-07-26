@@ -33,6 +33,7 @@ const useTableChange = (
       const flag = required.every((item) => keys.includes(item))
       flag && (await getDataList())
     })()
+    console.log('是否更新', params)
   }, [params, pageNum, pageSize, sorterField, order])
 
   useEffect(() => {

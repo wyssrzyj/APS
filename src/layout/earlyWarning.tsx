@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-22 15:19:32
+ * @LastEditTime: 2022-07-26 08:43:14
  * @Description:
  * @LastEditors: lyj
  */
@@ -50,11 +50,19 @@ const EarlyWarning = () => {
         ids.push(item.id)
       })
       setIds(ids)
+      console.log(res.data)
 
       setList(res.data)
     }
   }
-  const arr = (
+  const arr = (item) => {
+    return (
+      <>
+        <span> 客户款号：{item.productClientNum}</span>
+      </>
+    )
+  }
+  const container = (
     <>
       <div className={styles.pointer}>
         <div className={styles.todoContent}>
@@ -72,15 +80,17 @@ const EarlyWarning = () => {
                 ) : (
                   <div className={styles.circularDelay}></div>
                 )}
+                <Popover placement="top" content={arr(item)} trigger="hover">
+                  <span className={styles.textColor}>
+                    {item.externalProduceOrderNum}
+                  </span>
+                </Popover>
 
-                <span className={styles.textColor}>
-                  {item.productClientNum}
-                </span>
                 {item.waringType !== '1'
-                  ? '生产单进入物料预警'
+                  ? '进入物料预警'
                   : item.abnormalStatus === '1'
-                  ? '生产单进入预警期'
-                  : '生产单已延期'}
+                  ? '进入预警期'
+                  : '已延期'}
               </div>
             ))}
         </div>
@@ -92,7 +102,7 @@ const EarlyWarning = () => {
       <div className={styles.earlyWarning}>
         {list.length > 0 ? (
           <>
-            <Popover placement="top" content={arr} trigger="hover">
+            <Popover placement="top" content={container} trigger="hover">
               <img src={mailbox} className={styles.imgMailbox} alt="" />
               {/* <Icon type="jack-swyx" className={styles.previous} /> */}
               {list.length < 10 ? (

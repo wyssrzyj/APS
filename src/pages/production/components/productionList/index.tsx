@@ -1,7 +1,7 @@
 import { Button, Input, message, Modal, Tooltip } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { AdvancedSearch, CusDragTable } from '@/components'
 import change from '@/imgs/change.png'
@@ -55,6 +55,7 @@ const Production = () => {
   const [whetherEditor, setWhetherEditor] = useState<any>()
   const [data, setData] = useState<any>([])
   const [changeValue, setChangeValue] = useState<any>('') //更改的值
+  const treeSelection = useRef({ nParams: {} })
 
   const {
     tableChange,
@@ -146,7 +147,8 @@ const Production = () => {
         id: item.id,
         remark: sum
       })
-      getDataList && getDataList()
+      const nParams = cloneDeep(treeSelection.current.nParams)
+      setParams(nParams)
       message.success('更改完成')
     }
 
@@ -269,6 +271,8 @@ const Production = () => {
       nParams.startPlanEndDate = null
       nParams.endPlanEndDate = null
     }
+
+    treeSelection.current = { nParams: nParams } //设置
     setParams(nParams)
   }
   const showModal = () => {

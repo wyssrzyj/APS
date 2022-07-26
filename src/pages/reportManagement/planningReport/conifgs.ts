@@ -62,7 +62,7 @@ export const searchConfigs = [
     options: []
   },
   {
-    label: '计划完成时间',
+    label: '周期时间段',
     field: 'planEndDate',
     type: 'rangePicker',
     width: 250,
