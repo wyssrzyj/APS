@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
  * @LastEditors: lyj
- * @LastEditTime: 2022-07-14 13:42:16
+ * @LastEditTime: 2022-07-28 13:34:31
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -359,6 +359,24 @@ export const getSkuTree = async (props: any) => {
   try {
     const res: ResponseProps = await axios.get(
       `/aps/produce-assignment/get-sku-tree`,
+      props
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res.data || []
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 生成车间计划
+export const generateWorkshopPlan = async (props: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment/create-mes-plan`,
       props
     )
     if (res.code !== 200) {

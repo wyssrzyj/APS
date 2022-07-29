@@ -22,7 +22,9 @@ function Details(props: {
   update: any
 }) {
   const { setDetailsPopup, detailsPopup, editData, update } = props
-  const { getSKU, updateSewingPlan, detailsSewing } = productionPlanApis
+
+  const { generateWorkshopTask, detailsSewing, getProductionOrderSKU } =
+    productionPlanApis
   const [list, setList] = useState<any>() //table处理后的格式
 
   const [sku, setSku] = useState<any>() //后台的sku
@@ -101,6 +103,7 @@ function Details(props: {
       // auditStatus
       tableData(editData)
     }
+    console.log(editData)
   }, [editData])
   const tableData = async (v: any) => {
     setData([])
@@ -109,9 +112,14 @@ function Details(props: {
     // 判断是新增还是编辑
     //生成
     if (v.auditStatus === -1) {
-      const sku = await getSKU({ produceOrderId: v.externalProduceOrderId })
+      const sku = await getProductionOrderSKU({
+        externalProduceOrderId: v.externalProduceOrderId,
+        section: v.sectionValue
+      })
       if (!isEmpty(sku)) {
         formatProcessing(sku, v)
+      } else {
+        setLoading(false)
       }
     } else {
       const editor = await detailsSewing({
@@ -138,8 +146,9 @@ function Details(props: {
     const dome = v
 
     //生成 才设置0
-    dome.map((item: { planNum: any }) => {
-      item.planNum = item.planNum !== undefined ? item.planNum : 0
+    dome.map((item: { productionNum: any }) => {
+      item.productionNum =
+        item.productionNum !== undefined ? item.productionNum : 0
     })
 
     setSku(dome)
@@ -169,6 +178,7 @@ function Details(props: {
         })
       })
     }
+
     //转成 需要的格式
     if (!isEmpty(list)) {
       list.map((item: any, index) => {
@@ -183,6 +193,7 @@ function Details(props: {
         item.colorCode = item.list[0].colorCode
       })
     }
+
     // 处理对象嵌套
     const handleObject = list.map((item: { demo: any; list: any }) => {
       const obj = { ...item, ...item.demo }
@@ -214,15 +225,20 @@ function Details(props: {
       type: false,
       totalPrice: sum
     })
+    console.log(handleObject)
+
     setData(handleObject)
     setSize(size)
   }
 
   // 获取 a：0，b:1
-  const ownKeys = (data: { sizeName: string | number; planNum: any }[]) => {
+  const ownKeys = (
+    data: { sizeName: string | number; productionNum: any }[]
+  ) => {
     const obj = {}
-    data.map((e: { sizeName: string | number; planNum: any }) => {
-      obj[e.sizeName] = e.planNum
+
+    data.map((e: { sizeName: string | number; productionNum: any }) => {
+      obj[e.sizeName] = e.productionNum
     })
     return obj
   }
@@ -251,6 +267,7 @@ function Details(props: {
         width: 80
       })
     })
+
     goodsSize.map((item) => {
       item.render = (_value, _row: any) => {
         return (
@@ -258,13 +275,15 @@ function Details(props: {
             {_row.type ? (
               <>
                 <InputNumber
-                  value={_value !== 0 ? _value : null}
+                  value={_value !== 0 ? _value : 0}
                   disabled={disabled}
                   placeholder={`最大:${maximum(_row, item.title)} `}
                   key={_row.id}
                   max={maximum(_row, item.title)}
                   min={0}
-                  onChange={(e) => onBreakUp(e, _row, item.title, resSize)}
+                  onBlur={(e) =>
+                    onBreakUp(Number(e.target.value), _row, item.title, resSize)
+                  }
                 />
               </>
             ) : null}
@@ -309,12 +328,13 @@ function Details(props: {
       clone.splice(subscript, 1, record) //替换
       let sum = 0
       clone.map((item: { type: boolean; totalPrice: number }) => {
-        if (item.type !== false) {
+        if (item.type !== false && Number(item.totalPrice) > 0) {
           sum += item.totalPrice
         }
       })
+      console.log(Number(sum))
 
-      clone[clone.length - 1].totalPrice = sum
+      clone[clone.length - 1].totalPrice = Number(sum)
       const dome = cloneDeep(clone) //传递的时候深拷贝一下
       console.log(dome)
 
@@ -322,7 +342,6 @@ function Details(props: {
     }
   }
   //数字输入框的处理
-  let timeout: NodeJS.Timeout
   const onBreakUp = (
     e: any,
     record: Record<string, any>,
@@ -335,15 +354,13 @@ function Details(props: {
     //总和
     let sum = 0
     size.map((item: string | number) => {
-      sum += record[item]
+      if (Number(record[item]) > 0) {
+        sum += Number(record[item])
+      }
     })
     record.totalPrice = sum
-
-    clearTimeout(timeout)
-    timeout = setTimeout(() => {
-      setType(true)
-      setModifyValue({ ...record })
-    }, 200)
+    setType(true)
+    setModifyValue({ ...record })
   }
   const handleOk = async () => {
     if (disabled == false) {
@@ -351,60 +368,70 @@ function Details(props: {
         //生产
         if (editData.auditStatus === -1) {
           sku.map((item: any) => {
-            item.planNum = saveFormatConversion(item, newData)
-            item.produceSkuId = item.id
-            item.id = null
-            item.sewingPlanTaskId = ''
+            item.productColorNum = item.colorCode
+            item.productColorName = item.colorName
+            item.productSize = item.sizeName
+            item.taskNum = saveFormatConversion(item, newData)
           })
 
           // 生产
           const obj: any = {}
-          obj.billingDate = ''
-          obj.billingUserId = ''
-          obj.detailId = editData.id // 发单详情id.
-          obj.estimatedDate = editData.id // 预估工期
 
-          const estimatedDate =
-            (editData.planEndTime - editData.planStartTime) /
-            1000 /
-            60 /
-            60 /
-            24
-          obj.estimatedDate = Math.abs(Math.ceil(estimatedDate)) //预估工期
-          obj.id = null
-          obj.outType = ''
-          // 开始时间
-          obj.planStartDate = moment(editData.planStartTime).format(
-            'YYYY-MM-DD HH:mm:ss'
-          )
-          // 结束时间
-          obj.planEndDate = moment(editData.planEndTime).format(
-            'YYYY-MM-DD HH:mm:ss'
-          )
-          // 生产单id
-          obj.produceOrderId = editData.externalProduceOrderId
+          //老版缝制的
+          // obj.billingDate = ''
+          // obj.billingUserId = ''
+          // obj.detailId = editData.id // 发单详情id.
+          // obj.estimatedDate = editData.id // 预估工期
 
-          obj.sewingSkuDTOList = sku
-          obj.teamManagerId = editData.teamId
-          const res = await updateSewingPlan(obj)
-          if (res.code === 200) {
-            message.success('保存成功')
-            setDetailsPopup(false)
-            update && update()
-          }
-        } else {
-          // 编辑
-          sku.map((item: any) => {
-            item.planNum = saveFormatConversion(item, newData)
-          })
-          edit.sewingSkuDTOList = sku
-          const res = await updateSewingPlan(edit)
+          // const estimatedDate =
+          //   (editData.planEndTime - editData.planStartTime) /
+          //   1000 /
+          //   60 /
+          //   60 /
+          //   24
+          // obj.estimatedDate = Math.abs(Math.ceil(estimatedDate)) //预估工期
+          // obj.id = null
+          // obj.outType = ''
+          // // 开始时间
+          // obj.planStartDate = moment(editData.planStartTime).format(
+          //   'YYYY-MM-DD HH:mm:ss'
+          // )
+          // // 结束时间
+          // obj.planEndDate = moment(editData.planEndTime).format(
+          //   'YYYY-MM-DD HH:mm:ss'
+          // )
+          // // 生产单id
+          // obj.produceOrderId = editData.externalProduceOrderId
+
+          // obj.teamManagerId = editData.teamId
+
+          // 车间的逻辑
+          console.log(editData)
+
+          obj.detailPulishedId = editData.id
+          obj.mesWorkshopTaskSkuVOList = sku
+          const res = await generateWorkshopTask(obj)
           if (res.code === 200) {
             message.success('保存成功')
             setDetailsPopup(false)
             update && update()
           }
         }
+        //  else {
+        //   // 编辑
+        //   sku.map((item: any) => {
+        //     item.productionNum = saveFormatConversion(item, newData)
+        //   })
+        //   edit.sewingSkuDTOList = sku
+        //   console.log(edit)
+
+        //   const res = await updateSewingPlan(edit)
+        //   if (res.code === 200) {
+        //     message.success('保存成功')
+        //     setDetailsPopup(false)
+        //     update && update()
+        //   }
+        // }
       } else {
         message.error('已超出生产量总量')
       }
@@ -451,7 +478,6 @@ function Details(props: {
         maskClosable={false}
         onCancel={handleCancel}
       >
-        {console.log('DOM', newData)}
         <Table
           bordered
           loading={loading}

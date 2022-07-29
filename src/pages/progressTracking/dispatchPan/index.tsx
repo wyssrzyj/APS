@@ -51,9 +51,14 @@ function ProductionPlan() {
         <Button type="link" onClick={() => handleDetailInfo(record)}>
           查看
         </Button>
-        {/* <Button type="link" onClick={() => showSewing(record)}>
-          生成车间任务.
-        </Button> */}
+
+        <Button
+          className={record.shopTaskId === null ? null : styles.showSewing}
+          type="link"
+          onClick={() => showSewing(record)}
+        >
+          生成车间任务
+        </Button>
       </div>
     )
   }
@@ -170,22 +175,24 @@ function ProductionPlan() {
   }
 
   const showSewing = async (v: any) => {
-    //只有 -1才走这个接口
-    if (v.auditStatus === -1) {
-      const res = await makeSewingPlan({
-        produceOrderNum: v.externalProduceOrderNum,
-        teamManagerId: v.teamId
-      })
-      if (res.data) {
-        message.warning(' 已生成过缝制计划')
-      } else {
-        setEditData({ ...v })
-        setDetailsPopup(true)
-      }
-    } else {
-      setEditData({ ...v })
-      setDetailsPopup(true)
-    }
+    setEditData({ ...v })
+    setDetailsPopup(true)
+    // //只有 -1才走这个接口
+    // if (v.auditStatus === -1) {
+    //   const res = await makeSewingPlan({
+    //     produceOrderNum: v.externalProduceOrderNum,
+    //     teamManagerId: v.teamId
+    //   })
+    //   if (res.data) {
+    //     message.warning(' 已生成过缝制计划')
+    //   } else {
+    //     setEditData({ ...v })
+    //     setDetailsPopup(true)
+    //   }
+    // } else {
+    //   setEditData({ ...v })
+    //   setDetailsPopup(true)
+    // }
   }
   const update = async () => {
     getDataList && getDataList()
@@ -243,7 +250,7 @@ function ProductionPlan() {
         ></CustomModal>
       ) : null}
 
-      {/* 缝制任务 */}
+      {/* 生产车间任务 */}
       {detailsPopup && (
         <Details
           update={update}

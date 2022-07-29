@@ -6,7 +6,6 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { materialSetApis } from '@/recoil/apis'
-import login from '@/recoil/login'
 
 import styles from './index.module.less'
 import TabPanes from './tabPanes/index'

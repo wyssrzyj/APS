@@ -37,8 +37,13 @@ function ToPlan(props: {
   const equalType = useRef({ equal: '0' })
   const location = useLocation()
   const { state }: any = location
-  const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
-    schedulingApis
+  const {
+    listProductionOrders,
+    unlockWork,
+    releaseFromAssignment,
+    forDetail,
+    generateWorkshopPlan
+  } = schedulingApis
   const { workshopList, teamList, capacityList } = dockingDataApis
 
   const [list, setList] = useState<any>([]) //总
@@ -469,20 +474,43 @@ function ToPlan(props: {
     setTemplateId(res)
     setEfficiencyData(true)
   }
+  const workshopPlan = async (e) => {
+    const res = await generateWorkshopPlan({
+      produceOrderNum: e.externalProduceOrderNum,
+      section: e.section
+    })
+    message.success('操作成功')
+  }
   const content = (data: any, type: any) => {
     return (
       <div>
         {type === 1 ? (
-          <div
-            className={styles.card}
-            onClick={() => {
-              workSplit(data)
-            }}
-          >
-            <Tag className={styles.tag} color="gold">
-              任务拆分
-            </Tag>
-          </div>
+          <>
+            <div
+              className={styles.card}
+              onClick={() => {
+                workSplit(data)
+              }}
+            >
+              <Tag className={styles.tag} color="gold">
+                任务拆分
+              </Tag>
+            </div>
+            {equalType.current.equal === '1' ? (
+              <div
+                className={styles.card}
+                onClick={() => {
+                  console.log(8848)
+
+                  workshopPlan(data)
+                }}
+              >
+                <Tag className={styles.tag} color="lime">
+                  生成车间计划
+                </Tag>
+              </div>
+            ) : null}
+          </>
         ) : null}
         {type === 2 ? (
           <div className={styles.card}>
@@ -532,6 +560,20 @@ function ToPlan(props: {
                 解除分派
               </Tag>
             </div>
+            {equalType.current.equal === '1' ? (
+              <div
+                className={styles.card}
+                onClick={() => {
+                  console.log(8848)
+
+                  workshopPlan(data)
+                }}
+              >
+                <Tag className={styles.tag} color="lime">
+                  生成车间计划
+                </Tag>
+              </div>
+            ) : null}
           </>
         ) : null}
         {/* 子项处理 */}
@@ -553,11 +595,6 @@ function ToPlan(props: {
             <div>产品款号: {data.productNum}</div>
             <div>数量: {data.orderSum}</div>
             <div>客户款号: {data.productClientNum}</div>
-            {/* {equalType.current.equal === '1' ? (
-              <Tag className={styles.tag} color="gold">
-                生成车间计划
-              </Tag>
-            ) : null} */}
           </div>
         ) : null}
       </div>
