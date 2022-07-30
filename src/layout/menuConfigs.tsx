@@ -1,19 +1,10 @@
-import {
-  LoadingOutlined,
-  SettingFilled,
-  SmileOutlined,
-  StepBackwardOutlined,
-  SyncOutlined
-} from '@ant-design/icons'
-
 import Icon from '@/components/Icon'
+
 export const menus = [
   {
     label: '首页',
     key: 'home',
-    icon: <StepBackwardOutlined />,
-    // icon: <Icon type={'jack-home-fill'} />,
-
+    icon: <Icon type={'jack-home-fill'} />,
     url: '/home'
   },
   {
