@@ -143,17 +143,16 @@ const MenuBox = () => {
     <Menu
       selectedKeys={currentMenu}
       openKeys={openKey}
-      // defaultSelectedKeys={['classification']}
-      // defaultOpenKeys={[openKey]}
       mode="inline"
       style={{ flex: 1 }}
       multiple={false}
       onClick={changePage}
       onOpenChange={onOpenChange}
+      items={menus} // 4.20.0 用法升级
     >
-      {menus.map((item) => {
-        return getMenuDOM(item)
-      })}
+      {/* {menus.map((item) => {
+        return getMenuDOM(item).
+      })} */}
     </Menu>
   )
 }

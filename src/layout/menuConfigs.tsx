@@ -1,20 +1,36 @@
+import {
+  LoadingOutlined,
+  SettingFilled,
+  SmileOutlined,
+  StepBackwardOutlined,
+  SyncOutlined
+} from '@ant-design/icons'
+
+import Icon from '@/components/Icon'
 export const menus = [
-  { label: '首页', key: 'home', icon: 'jack-home-fill', url: '/home' },
+  {
+    label: '首页',
+    key: 'home',
+    icon: <StepBackwardOutlined />,
+    // icon: <Icon type={'jack-home-fill'} />,
+
+    url: '/home'
+  },
   {
     label: '系统管理',
     key: 'systemManagement',
-    icon: 'jack-set',
+    icon: <Icon type={'jack-set'} />,
     children: [
       {
         label: '系统参数设置',
         key: 'systemSettingsWork',
-        icon: 'jack-xitongcanshupeizhi',
+        icon: <Icon type={'jack-xitongcanshupeizhi'} />,
         url: '/systemSettingsWork'
       },
       {
         label: '用户管理',
         key: 'userManage',
-        icon: 'jack-yonghu3',
+        icon: <Icon type={'jack-yonghu3'} />,
         url: '/userManage'
       }
 
@@ -35,31 +51,31 @@ export const menus = [
   {
     label: '基础数据',
     key: 'basicData',
-    icon: 'jack-jichushuju',
+    icon: <Icon type={'jack-jichushuju'} />,
     url: '/',
     children: [
       {
         label: '工作模式',
         key: 'work',
-        icon: 'jack-kuaisugongzuoliu',
+        icon: <Icon type={'jack-kuaisugongzuoliu'} />,
         url: '/work'
       },
       {
         label: '加班管理',
         key: 'overtime',
-        icon: 'jack-jiaban',
+        icon: <Icon type={'jack-jiaban'} />,
         url: '/overtime'
       },
       {
         label: '节假日',
         key: 'vacations',
-        icon: 'jack-jiejiarishezhi',
+        icon: <Icon type={'jack-jiejiarishezhi'} />,
         url: '/vacations'
       },
       {
         label: '产能效率模板',
         key: 'rule',
-        icon: 'jack-guanlimoban1',
+        icon: <Icon type={'jack-guanlimoban1'} />,
         url: '/rule'
       }
       // {
@@ -91,13 +107,13 @@ export const menus = [
   {
     label: '业务单数据管理',
     key: 'production ',
-    icon: 'jack-qiyeyewu',
+    icon: <Icon type={'jack-qiyeyewu'} />,
     url: '/',
     children: [
       {
         label: '生产单列表',
         key: 'productionList',
-        icon: 'jack-shengchanguanli',
+        icon: <Icon type={'jack-shengchanguanli'} />,
         url: '/productionList'
       }
     ]
@@ -105,25 +121,25 @@ export const menus = [
   {
     label: '生产管理',
     key: 'productionManagement',
-    icon: 'jack-shengchan',
+    icon: <Icon type={'jack-shengchan'} />,
     url: '/',
     children: [
       {
         label: '班组工作日历',
         key: 'workCalendar',
-        icon: 'jack-rili',
+        icon: <Icon type={'jack-rili'} />,
         url: '/workCalendar'
       },
       {
         label: '物料齐套检查',
         key: 'materials',
-        icon: 'jack-wuliaoguanli',
+        icon: <Icon type={'jack-wuliaoguanli'} />,
         url: '/materials'
       },
       {
         label: '生产单排程',
         key: 'scheduling',
-        icon: 'jack-jihuapaicheng',
+        icon: <Icon type={'jack-jihuapaicheng'} />,
         url: '/scheduling'
       }
     ]
@@ -131,7 +147,7 @@ export const menus = [
   {
     label: '进度跟踪',
     key: 'productionManagements',
-    icon: 'jack-jindutiao',
+    icon: <Icon type={'jack-jindutiao'} />,
     url: '/',
     children: [
       // {
@@ -143,31 +159,31 @@ export const menus = [
       {
         label: '生产计划',
         key: 'dispatchPan',
-        icon: 'jack-paigong',
+        icon: <Icon type={'jack-paigong'} />,
         url: '/dispatchPan'
       },
       {
         label: '班组甘特图',
         key: 'resourcedMap',
-        icon: 'jack-ziyuan1',
+        icon: <Icon type={'jack-ziyuan1'} />,
         url: '/resourcedMap'
       },
       {
         label: '生产单甘特图',
         key: 'orderChart',
-        icon: 'jack-chartmixed',
+        icon: <Icon type={'jack-chartmixed'} />,
         url: '/orderChart'
       },
       {
         label: '班组负荷图',
         key: 'schedulingResults',
-        icon: 'jack-fuhe',
+        icon: <Icon type={'jack-fuhe'} />,
         url: '/schedulingResults'
       },
       {
         label: '生产实绩',
         key: 'actualProduction',
-        icon: 'jack-shengchanpicishiji',
+        icon: <Icon type={'jack-shengchanpicishiji'} />,
         url: '/actualProduction'
       }
     ]

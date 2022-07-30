@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-21 09:24:10
- * @LastEditTime: 2022-07-30 14:21:31
+ * @LastEditTime: 2022-07-30 15:37:51
  * @Description:
  * @LastEditors: lyj
  */
@@ -66,7 +66,7 @@ const Home = () => {
     <div>
       {type ? (
         <div>
-          home测试1
+          为啥为空12
           <div className={styles.outContainer} ref={containerRef}>
             {/* <HomePage newestHomePage={newestHomePage} /> */}
             {/* <Title title={'首页'}></Title> */}
