@@ -378,7 +378,7 @@ function Details(props: {
           // 生产
           const obj: any = {}
 
-          //老版缝制的
+          //老版缝制的.
           // obj.billingDate = ''
           // obj.billingUserId = ''
           // obj.detailId = editData.id // 发单详情id.
