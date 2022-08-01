@@ -146,6 +146,9 @@ const MenuBox = () => {
       selectedKeys={currentMenu}
       openKeys={openKey}
       mode="inline"
+      // mode="horizontal"
+      // theme={'dark'} //黑色
+      theme={'light'} //白色
       style={{ flex: 1 }}
       multiple={false}
       onClick={changePage}

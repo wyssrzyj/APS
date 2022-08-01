@@ -1,12 +1,19 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-07-07 08:44:39
+ * @LastEditTime: 2022-08-01 18:01:35
  * @Description:
  * @LastEditors: lyj
  */
-import { UserOutlined } from '@ant-design/icons'
+import {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  UploadOutlined,
+  UserOutlined,
+  VideoCameraOutlined
+} from '@ant-design/icons'
 import { Avatar, message, Popover } from 'antd'
+import { Breadcrumb } from 'antd'
 import { userInfo } from 'os'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -16,16 +23,20 @@ import Icon from '@/components/Icon'
 import { loginApis, systemSettingsApis } from '@/recoil/apis'
 import { clearLocalStorage } from '@/utils/tool'
 
-import img from '../imgs/aps_logo.png'
+import img from '../imgs/top.png'
+import CurrentLocation from './currentLocation'
 import EarlyWarning from './earlyWarning'
 import styles from './index.module.less'
+import InformationConfiguration from './informationConfiguration'
 import { editPwdModalConfig } from './menuConfigs'
+import TopSearch from './topSearch'
 
 const KeyIcon = () => <Icon type="jack-yuechi" className={styles.icon} />
 const UserIcon = () => <Icon type="jack-user" className={styles.icon} />
 const ExitIcon = () => <Icon type="jack-tuichu" className={styles.icon} />
 const { editUserInfo } = systemSettingsApis
-const Header = () => {
+const Header = (props) => {
+  const { setCollapsed, collapsed } = props
   const { logout } = loginApis
   const navigate = useNavigate()
   const [isEditPwdVisible, setIsEditPwdVisible] = useState(false)
@@ -66,11 +77,36 @@ const Header = () => {
   }
 
   return (
-    <div className={styles.header}>
-      <div className={styles.logo}>
-        <img className={styles.logImg} src={img} alt="APS" />
+    <div className={styles.header} style={{ background: 'pink' }}>
+      {collapsed ? (
+        <div className={styles.logoTitle}>杰克</div>
+      ) : (
+        <div className={styles.logo}>
+          <img className={styles.logImg} src={img} alt="APS" />
+        </div>
+      )}
+
+      <div className={styles.collapsed}>
+        {collapsed ? (
+          <MenuUnfoldOutlined
+            onClick={() => {
+              setCollapsed(false)
+            }}
+          />
+        ) : (
+          <MenuFoldOutlined
+            onClick={() => {
+              setCollapsed(true)
+            }}
+          />
+        )}
       </div>
+
+      {/* //只有左侧有这个功能 */}
+      <CurrentLocation />
+
       <div className={styles.headerR}>
+        <TopSearch />
         {/* 预警信息 */}
         <EarlyWarning />
         <div className={styles.userInfo}>
@@ -111,6 +147,8 @@ const Header = () => {
             })}
           </div>
         </div>
+        {/* 抽屉 */}
+        <InformationConfiguration />
       </div>
       {isEditPwdVisible && (
         <CustomModal

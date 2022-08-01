@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-05-19 08:38:27
- * @LastEditTime: 2022-07-25 11:19:28
+ * @LastEditTime: 2022-08-01 15:46:24
  * @Description:
  * @LastEditors: lyj
  */
@@ -172,7 +172,7 @@ function Vacations() {
   const sum = [
     // { label: '重新排程时锁定', name: 'lockTime', unit: 'lockTimeUnit' },
     {
-      label: '班组负荷图默认显示时间区间',
+      label: '班组负荷图显示时间区间',
       name: 'stockLoadTime',
       unit: 'stockLoadTimeUnit',
       width: 180
@@ -216,11 +216,14 @@ function Vacations() {
                 <Inputs onChange={undefined} list={list} item={item} />
               </Form.Item>
             ))}
-            <Form.Item label="预警显示颜色" name="waringColor">
+            <Form.Item label="生产单甘特图预警显示颜色" name="waringColor">
               {/* 颜色 */}
               <SingleColor onChange={undefined} list={list} />
             </Form.Item>
-            <Form.Item label="延期显示颜色" name="expireColorConfigs">
+            <Form.Item
+              label="生产单甘特图延期显示颜色"
+              name="expireColorConfigs"
+            >
               {/* 颜色. */}
               <Color onChange={undefined} list={list}></Color>
             </Form.Item>

@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-11 09:18:11
- * @LastEditTime: 2022-07-11 14:22:45
+ * @LastEditTime: 2022-08-01 15:45:11
  * @Description:
  * @LastEditors: lyj
  */
@@ -37,14 +37,14 @@ function WorkingHours(props: { onChange: any; list: any }) {
         <Radio defaultChecked={true}> 根据开工日期</Radio>
       </div>
       <div>
-        提前天{' '}
+        提前几天
         <InputNumber
           controls={false}
           value={data}
           style={{ width: 70 }}
           min={1}
           onBlur={getInputNumberValue}
-        />{' '}
+        />
         预警
       </div>
     </div>

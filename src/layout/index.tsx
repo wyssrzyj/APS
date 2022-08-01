@@ -1,10 +1,11 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-07-04 18:25:09
+ * @LastEditTime: 2022-08-01 16:41:14
  * @Description:
  * @LastEditors: lyj
  */
+
 import { Layout } from 'antd'
 import classNames from 'classnames'
 import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
@@ -42,15 +43,6 @@ const MyLayout = (props: LayoutProps) => {
   const [collapsed, setCollapsed] = useState(false)
   const [iframeType, setIframeType] = useState(true)
 
-  const onCollapse = (collapsed: boolean) => {
-    setCollapsed(collapsed)
-  }
-  useEffect(() => {
-    ;(async () => {
-      // const res: any = await areaApis.getArea()
-      // setAreaData(res)
-    })()
-  }, [collapsed])
   //甘特图
   useEffect(() => {
     if (pathname === '/iframeDate') {
@@ -64,7 +56,10 @@ const MyLayout = (props: LayoutProps) => {
     <div>
       {iframeType ? (
         <Layout>
-          {!headerFlag && <Header />}
+          {!headerFlag && (
+            <Header setCollapsed={setCollapsed} collapsed={collapsed} />
+          )}
+
           <Layout>
             {!headerFlag && (
               <Sider
@@ -73,12 +68,14 @@ const MyLayout = (props: LayoutProps) => {
                 style={{
                   minHeight: 'calc(100vh - 50px)'
                 }}
-                collapsible
+                // collapsible
                 collapsed={collapsed}
-                onCollapse={onCollapse}
               >
                 <Menu />
               </Sider>
+              // <>
+              //   <Menu />
+              // </>
             )}
             <Content
               className={
