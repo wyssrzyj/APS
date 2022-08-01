@@ -177,14 +177,14 @@ export const tableColumns: any = [
         dataIndex: 'tailoringCompletedAmount',
         align: 'center',
         width: 100,
-        render: (date) => (date === 0 ? '' : date)
+        render: (date) => date
       },
       {
         title: '完成率',
         dataIndex: 'tailoringCompletedRate',
         align: 'center',
         width: 100,
-        render: (date) => (date > 0 ? `${Number(date)}%` : '')
+        render: (date) => `${Number(date)}%`
       }
     ]
   },
@@ -252,14 +252,14 @@ export const tableColumns: any = [
         dataIndex: 'sewingCompletedAmount',
         align: 'center',
         width: 100,
-        render: (date) => (date === 0 ? '' : date)
+        render: (date) => date
       },
       {
         title: '完成率',
         dataIndex: 'sewingCompletedRate',
         align: 'center',
         width: 100,
-        render: (date) => (date > 0 ? `${Number(date)}%` : '')
+        render: (date) => `${Number(date)}%`
       }
     ]
   },
@@ -290,14 +290,14 @@ export const tableColumns: any = [
         dataIndex: 'trimCompletedAmount',
         align: 'center',
         width: 100,
-        render: (date) => (date === 0 ? '' : date)
+        render: (date) => date
       },
       {
         title: '完成率',
         dataIndex: 'trimCompletedRate',
         align: 'center',
         width: 100,
-        render: (date) => (date > 0 ? `${Number(date)}%` : '')
+        render: (date) => `${Number(date)}%`
       }
     ]
   },
