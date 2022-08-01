@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
  * @LastEditors: lyj
- * @LastEditTime: 2022-07-28 15:43:06
+ * @LastEditTime: 2022-08-01 10:29:48
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -85,6 +85,9 @@ export const generateWorkshopTask = async (params: any) => {
       `/aps/produce-assignment/create-mes-task`,
       params
     )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
     if (res) {
       return res
     }
