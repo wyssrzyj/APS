@@ -220,7 +220,7 @@ export const tableColumns: any = [
       },
       {
         title: '开始日期',
-        dataIndex: 'sewingStartDate',
+        dataIndex: 'sewingPlanStartDate',
         align: 'center',
         width: 100,
         render: (date: moment.MomentInput) =>
@@ -228,7 +228,7 @@ export const tableColumns: any = [
       },
       {
         title: '结束日期',
-        dataIndex: 'sewingEndDate',
+        dataIndex: 'sewingPlanEndDate',
         align: 'center',
         width: 100,
         render: (date: moment.MomentInput) =>
@@ -244,7 +244,7 @@ export const tableColumns: any = [
     children: [
       {
         title: '开始日期',
-        dataIndex: 'trimStartDate',
+        dataIndex: 'trimPlanStartDate',
         align: 'center',
         width: 100,
         render: (date: moment.MomentInput) =>
@@ -252,7 +252,7 @@ export const tableColumns: any = [
       },
       {
         title: '结束日期',
-        dataIndex: 'trimEndDate',
+        dataIndex: 'trimPlanEndDate',
         align: 'center',
         width: 100,
         render: (date: moment.MomentInput) =>

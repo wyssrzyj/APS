@@ -277,7 +277,7 @@ function Details(props: {
                 <InputNumber
                   value={_value !== 0 ? _value : 0}
                   disabled={disabled}
-                  placeholder={`最大:${maximum(_row, item.title)} `}
+                  // placeholder={`最大:${maximum(_row, item.title)} `}
                   key={_row.id}
                   max={maximum(_row, item.title)}
                   min={0}
@@ -372,6 +372,7 @@ function Details(props: {
             item.productColorName = item.colorName
             item.productSize = item.sizeName
             item.taskNum = saveFormatConversion(item, newData)
+            item.id = null
           })
 
           // 生产
@@ -410,6 +411,8 @@ function Details(props: {
 
           obj.detailPulishedId = editData.id
           obj.mesWorkshopTaskSkuVOList = sku
+          console.log(obj)
+
           const res = await generateWorkshopTask(obj)
           if (res.code === 200) {
             message.success('保存成功')
