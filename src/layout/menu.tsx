@@ -3,8 +3,10 @@ import classNames from 'classnames'
 import { cloneDeep, get, isArray, isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useRecoilState } from 'recoil'
 
 import Icon from '@/components/Icon'
+import { layout } from '@/recoil'
 
 import styles from './index.module.less'
 import { menus } from './menuConfigs'
@@ -28,6 +30,9 @@ const initOpenKeys = (data: any, callback: any) => {
 const MenuBox = () => {
   const navigate = useNavigate()
 
+  const [layoutData, setLayoutData] = useRecoilState(layout.layoutData) //全局数据
+
+  const [list, setList] = useState<any>([])
   const [currentMenu, setCurrentMenu] = useState<Array<string>>([])
   const [openKey, setOpenKey] = useState<any>([])
   const location = useLocation()
@@ -141,6 +146,55 @@ const MenuBox = () => {
     getParentKey(location.pathname.slice(1)) //获取父级
   }, [location.pathname])
 
+  //全局数据中 没有 当前项 就保存
+  const recoilDataPreservation = (v) => {
+    const cloneLayoutData = cloneDeep(layoutData)
+    const type = cloneLayoutData.every((item: any) => {
+      return item.title !== v.title
+    })
+    if (type === true) {
+      cloneLayoutData.push(v)
+      setLayoutData(cloneLayoutData)
+    }
+  }
+
+  // 获取子项的所有数据
+  const getChildrenS = (data) => {
+    const urlContainer = []
+    if (!isEmpty(data.children)) {
+      data.children.forEach((v) => {
+        urlContainer.push(v.url)
+        if (!isEmpty(v.children)) {
+          getChildrenS(v.children)
+        }
+      })
+    }
+    return urlContainer
+  }
+  //获取当前项的
+  const getLabel = (name) => {
+    const cloneMenus = cloneDeep(menus)
+    cloneMenus.forEach((item) => {
+      if (getChildrenS(item).includes(name) === true) {
+        const childrenTitle = item.children.filter((v) => v.url === name)[0]
+          .label
+
+        const current = {
+          title: childrenTitle,
+          content: ``,
+          key: name
+        }
+        recoilDataPreservation(current)
+      }
+    })
+  }
+
+  useEffect(() => {
+    const url = location.pathname
+    if (url !== '/') {
+      getLabel(url)
+    }
+  }, [location])
   return (
     <Menu
       selectedKeys={currentMenu}

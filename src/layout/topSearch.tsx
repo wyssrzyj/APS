@@ -1,3 +1,10 @@
+/*
+ * @Author: lyj
+ * @Date: 2022-08-01 17:15:50
+ * @LastEditTime: 2022-08-02 17:20:18
+ * @Description:
+ * @LastEditors: lyj
+ */
 import { Select } from 'antd'
 import { isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -14,7 +21,6 @@ const TopSearch = () => {
         container.push(item.children)
       }
     })
-    console.log(container.flat(Infinity))
     setList(container.flat(Infinity))
   }, [menus])
   const { Option } = Select
@@ -30,6 +36,7 @@ const TopSearch = () => {
   return (
     <div>
       <Select
+        allowClear
         showSearch
         style={{ width: '150px' }}
         placeholder="搜索"

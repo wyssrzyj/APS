@@ -1,25 +1,25 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-08-01 18:01:35
+ * @LastEditTime: 2022-08-02 17:04:23
  * @Description:
  * @LastEditors: lyj
  */
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  UploadOutlined,
+  UndoOutlined,
   UserOutlined,
   VideoCameraOutlined
 } from '@ant-design/icons'
-import { Avatar, message, Popover } from 'antd'
-import { Breadcrumb } from 'antd'
-import { userInfo } from 'os'
+import { Avatar, message } from 'antd'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useRecoilValue } from 'recoil'
 
 import { CustomModal } from '@/components'
 import Icon from '@/components/Icon'
+import { layout } from '@/recoil'
 import { loginApis, systemSettingsApis } from '@/recoil/apis'
 import { clearLocalStorage } from '@/utils/tool'
 
@@ -30,7 +30,6 @@ import styles from './index.module.less'
 import InformationConfiguration from './informationConfiguration'
 import { editPwdModalConfig } from './menuConfigs'
 import TopSearch from './topSearch'
-
 const KeyIcon = () => <Icon type="jack-yuechi" className={styles.icon} />
 const UserIcon = () => <Icon type="jack-user" className={styles.icon} />
 const ExitIcon = () => <Icon type="jack-tuichu" className={styles.icon} />
@@ -39,6 +38,8 @@ const Header = (props) => {
   const { setCollapsed, collapsed } = props
   const { logout } = loginApis
   const navigate = useNavigate()
+  const themeColor = useRecoilValue(layout.layoutColor)
+
   const [isEditPwdVisible, setIsEditPwdVisible] = useState(false)
 
   const exitToLogin = async () => {
@@ -77,7 +78,7 @@ const Header = (props) => {
   }
 
   return (
-    <div className={styles.header} style={{ background: 'pink' }}>
+    <div className={styles.header} style={{ background: themeColor }}>
       {collapsed ? (
         <div className={styles.logoTitle}>杰克</div>
       ) : (
@@ -101,7 +102,15 @@ const Header = (props) => {
           />
         )}
       </div>
-
+      {/* 刷新当前页面 */}
+      <span>
+        <UndoOutlined
+          onClick={() => {
+            location.reload()
+          }}
+          className={styles.refresh}
+        />
+      </span>
       {/* //只有左侧有这个功能 */}
       <CurrentLocation />
 
@@ -116,8 +125,10 @@ const Header = (props) => {
               style={{ backgroundColor: '#1890ff', marginRight: '8px' }}
               icon={<UserOutlined />}
             />
-            {JSON.parse(localStorage.getItem('currentUser')) &&
-              JSON.parse(localStorage.getItem('currentUser')).user.username}
+            <span style={{ color: '#f6f6f6' }}>
+              {JSON.parse(localStorage.getItem('currentUser')) &&
+                JSON.parse(localStorage.getItem('currentUser')).user.username}
+            </span>
           </div>
           <div className={styles.infoModal}>
             {infos.map((item, idx) => {
@@ -126,8 +137,8 @@ const Header = (props) => {
                   <div key={item.key}>
                     <div className={styles.divider} />
                     <div className={styles.modalItem} onClick={item.onClick}>
-                      {item.icon()}
-                      {item.label}
+                      <span style={{ color: '#f6f6f6' }}> {item.icon()}</span>
+                      <span style={{ color: '#f6f6f6' }}> {item.label}</span>
                     </div>
                   </div>
                 )
@@ -140,13 +151,14 @@ const Header = (props) => {
                     handleOnclick(item)
                   }}
                 >
-                  {item.icon()}
-                  {item.label}
+                  <span style={{ color: '#f6f6f6' }}> {item.icon()}</span>
+                  <span style={{ color: '#f6f6f6' }}> {item.label}</span>
                 </div>
               )
             })}
           </div>
         </div>
+
         {/* 抽屉 */}
         <InformationConfiguration />
       </div>

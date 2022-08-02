@@ -145,14 +145,12 @@ const ProductionPlan = () => {
 
     if (nParams.planEndDate !== undefined && nParams.planEndDate !== null) {
       console.log(nParams.planEndDate)
-      nParams.realityStartTime = moment(nParams.planEndDate[0]).valueOf()
-      nParams.realityEndTime = moment(nParams.planEndDate[1]).valueOf()
+      nParams.planStartTime = moment(nParams.planEndDate[0]).valueOf()
+      nParams.planEndTime = moment(nParams.planEndDate[1]).valueOf()
     } else {
-      nParams.realityStartTime = null
-      nParams.realityEndTime = null
+      nParams.planStartTime = null
+      nParams.planEndTime = null
     }
-    console.log(nParams)
-
     setParams(nParams)
   }
 

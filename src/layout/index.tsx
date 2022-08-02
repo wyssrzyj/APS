@@ -1,24 +1,22 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-08-01 16:41:14
+ * @LastEditTime: 2022-08-02 16:03:15
  * @Description:
  * @LastEditors: lyj
  */
 
-import { Layout } from 'antd'
-import classNames from 'classnames'
+import { Breadcrumb, Layout } from 'antd'
 import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useSetRecoilState } from 'recoil'
 
-import { Icon } from '@/components' //路径.
 import { areaState } from '@/recoil'
-import { areaApis } from '@/recoil/apis'
 
 import Header from './header'
 import styles from './index.module.less'
 import Menu from './menu'
+import TopLabel from './topLabel'
 const { Sider, Content } = Layout
 interface LayoutProps {
   items?: ReactElement<ReactNode>
@@ -57,7 +55,9 @@ const MyLayout = (props: LayoutProps) => {
       {iframeType ? (
         <Layout>
           {!headerFlag && (
-            <Header setCollapsed={setCollapsed} collapsed={collapsed} />
+            <>
+              <Header setCollapsed={setCollapsed} collapsed={collapsed} />
+            </>
           )}
 
           <Layout>
@@ -77,13 +77,17 @@ const MyLayout = (props: LayoutProps) => {
               //   <Menu />
               // </>
             )}
-            <Content
-              className={
-                headerFlag ? styles.fullHeight : styles.outBoxContainer
-              }
-            >
-              {props.children}
-            </Content>
+            <Layout>
+              {/* 标签 */}
+              <TopLabel />
+              <Content
+                className={
+                  headerFlag ? styles.fullHeight : styles.outBoxContainer
+                }
+              >
+                {props.children}
+              </Content>
+            </Layout>
           </Layout>
         </Layout>
       ) : null}

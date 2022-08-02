@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-08-01 14:36:12
- * @LastEditTime: 2022-08-01 16:15:58
+ * @LastEditTime: 2022-08-02 16:35:28
  * @Description:
  * @LastEditors: lyj
  */
@@ -39,7 +39,6 @@ const CurrentLocation = () => {
       if (getChildrenS(item).includes(name) === true) {
         const childrenTitle = item.children.filter((v) => v.url === name)[0]
           .label
-        console.log(childrenTitle)
 
         setList([item.label, childrenTitle])
       }
@@ -68,7 +67,7 @@ const CurrentLocation = () => {
         </Breadcrumb.Item>
         {list.map((item) => (
           <Breadcrumb.Item key={item}>
-            <span>{item}</span>
+            <span style={{ color: '#f6f6f6' }}>{item}</span>
           </Breadcrumb.Item>
         ))}
       </Breadcrumb>

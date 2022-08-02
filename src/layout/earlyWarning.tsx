@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-27 15:53:52
+ * @LastEditTime: 2022-08-02 16:16:14
  * @Description:
  * @LastEditors: lyj
  */
@@ -97,8 +97,8 @@ const EarlyWarning = () => {
     </>
   )
   return (
-    <div>
-      <div className={styles.earlyWarning}>
+    <div className={styles.earlyWarning}>
+      <div>
         {list.length > 0 ? (
           <>
             <Popover placement="top" content={container} trigger="hover">
