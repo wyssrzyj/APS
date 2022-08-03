@@ -14,7 +14,7 @@ export const easySearch = [
   },
   {
     label: '生产单号',
-    field: 'productOrderNum',
+    field: 'externalProduceOrderNum',
     type: 'input',
     allowClear: true,
     placeholder: '请输入生产单号'
@@ -113,6 +113,12 @@ export const tableColumn: Array<Partial<Column>> = [
     title: '产品款号',
     align: 'center',
     dataIndex: 'productNum',
+    width: 200
+  },
+  {
+    title: '客户款号',
+    align: 'center',
+    dataIndex: 'productClientNum',
     width: 200
   },
   {

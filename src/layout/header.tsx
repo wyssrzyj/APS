@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-08-02 17:04:23
+ * @LastEditTime: 2022-08-03 15:05:45
  * @Description:
  * @LastEditors: lyj
  */
@@ -9,13 +9,13 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UndoOutlined,
-  UserOutlined,
-  VideoCameraOutlined
+  UserOutlined
 } from '@ant-design/icons'
 import { Avatar, message } from 'antd'
-import { useState } from 'react'
+import { isEmpty } from 'lodash'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState } from 'recoil'
 
 import { CustomModal } from '@/components'
 import Icon from '@/components/Icon'
@@ -38,9 +38,12 @@ const Header = (props) => {
   const { setCollapsed, collapsed } = props
   const { logout } = loginApis
   const navigate = useNavigate()
-  const themeColor = useRecoilValue(layout.layoutColor)
+  const [systemParameter, setSystemParameter] = useRecoilState<any>(
+    layout.systemParameter
+  )
 
   const [isEditPwdVisible, setIsEditPwdVisible] = useState(false)
+  const [backgroundColor, setBackgroundColor] = useState<any>() //背景颜色
 
   const exitToLogin = async () => {
     const res = await logout()
@@ -52,6 +55,32 @@ const Header = (props) => {
     { label: '修改密码', icon: KeyIcon, key: 'change' },
     { label: '退出登录', icon: ExitIcon, key: 'exit', onClick: exitToLogin }
   ]
+  // 初始展示本地存储的
+  useEffect(() => {
+    try {
+      const data = JSON.parse(localStorage.getItem('themeSetting'))
+      if (data !== null) {
+        if (!isEmpty(data.topColor)) {
+          const current = data.topColor.filter((item) => item.type === true)
+          setBackgroundColor(current[0].color)
+        }
+      } else {
+        setBackgroundColor('#4395ff')
+      }
+    } catch (error) {}
+  }, [])
+  useEffect(() => {
+    if (!isEmpty(systemParameter.topColor)) {
+      const select = systemParameter.topColor.filter(
+        (item) => item.type === true
+      )
+      if (select[0].name === '系统颜色顶栏') {
+        setBackgroundColor(select[0].color)
+      } else {
+        setBackgroundColor(select[0].color)
+      }
+    }
+  }, [systemParameter])
 
   const handleOnclick = (item) => {
     if (item.key === 'change') setIsEditPwdVisible(true)
@@ -78,7 +107,7 @@ const Header = (props) => {
   }
 
   return (
-    <div className={styles.header} style={{ background: themeColor }}>
+    <div className={styles.header} style={{ background: backgroundColor }}>
       {collapsed ? (
         <div className={styles.logoTitle}>杰克</div>
       ) : (
@@ -137,8 +166,8 @@ const Header = (props) => {
                   <div key={item.key}>
                     <div className={styles.divider} />
                     <div className={styles.modalItem} onClick={item.onClick}>
-                      <span style={{ color: '#f6f6f6' }}> {item.icon()}</span>
-                      <span style={{ color: '#f6f6f6' }}> {item.label}</span>
+                      <span style={{ color: '#000' }}> {item.icon()}</span>
+                      <span style={{ color: '#000' }}> {item.label}</span>
                     </div>
                   </div>
                 )
@@ -151,8 +180,8 @@ const Header = (props) => {
                     handleOnclick(item)
                   }}
                 >
-                  <span style={{ color: '#f6f6f6' }}> {item.icon()}</span>
-                  <span style={{ color: '#f6f6f6' }}> {item.label}</span>
+                  <span style={{ color: '#000' }}> {item.icon()}</span>
+                  <span style={{ color: '#000' }}> {item.label}</span>
                 </div>
               )
             })}

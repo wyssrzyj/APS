@@ -277,7 +277,7 @@ function Details(props: {
                 <InputNumber
                   value={_value !== 0 ? _value : 0}
                   disabled={disabled}
-                  // placeholder={`最大:${maximum(_row, item.title)} `}
+                  placeholder={`${maximum(_row, item.title)} `}
                   key={_row.id}
                   max={maximum(_row, item.title)}
                   min={0}
@@ -451,8 +451,11 @@ function Details(props: {
     if (!isEmpty(colorCode)) {
       const remainNum = colorCode.filter(
         (item: { sizeName: any }) => item.sizeName === title
-      )[0].remainNum
-      return remainNum
+      )[0].productionNum
+      console.log(remainNum)
+      if (remainNum !== null) {
+        return remainNum
+      }
     }
   }
   //保存格式转换.

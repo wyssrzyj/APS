@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 10:02:54
- * @LastEditTime: 2022-07-12 16:53:51
+ * @LastEditTime: 2022-08-03 15:43:42
  * @Description:
  * @LastEditors: lyj
  */
@@ -41,7 +41,7 @@ const LoginContent = () => {
         lower: [
           { name: '生产单剩余工期查询', type: false },
           { name: '生产延期查询', type: true },
-          { name: '生产任务动态', type: true }
+          { name: '齐套生产单库存变动查询', type: true }
         ]
       }
       //设置配置

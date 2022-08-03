@@ -1,12 +1,12 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-08-02 16:03:15
+ * @LastEditTime: 2022-08-03 17:43:49
  * @Description:
  * @LastEditors: lyj
  */
 
-import { Breadcrumb, Layout } from 'antd'
+import { ConfigProvider, Layout } from 'antd'
 import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useSetRecoilState } from 'recoil'
@@ -34,12 +34,18 @@ const MyLayout = (props: LayoutProps) => {
     // '/control-panel'
   ]
 
-  const contentRef = useRef<HTMLElement>(null)
-
   const headerFlag = noUseHeaders.some((item) => pathname.includes(item))
-  const setAreaData = useSetRecoilState(areaState.areaInfo)
   const [collapsed, setCollapsed] = useState(false)
   const [iframeType, setIframeType] = useState(true)
+  //主题颜色
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem('themeSetting'))
+    if (data !== null) {
+      ConfigProvider.config({
+        theme: data.mergedNextColor
+      })
+    }
+  }, [])
 
   //甘特图
   useEffect(() => {

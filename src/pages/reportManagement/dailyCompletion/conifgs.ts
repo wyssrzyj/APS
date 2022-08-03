@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-29 17:32:33
- * @LastEditTime: 2022-07-20 09:32:52
+ * @LastEditTime: 2022-08-03 16:12:32
  * @Description:
  * @LastEditors: lyj
  */
@@ -111,6 +111,14 @@ export const tableColumns: any = [
     dataIndex: 'productName',
     fixed: 'left',
     key: 'productName',
+    width: 100
+  },
+  {
+    title: '客户款号',
+    align: 'center',
+    dataIndex: 'productClientNum',
+    fixed: 'left',
+    key: 'productClientNum',
     width: 100
   },
 

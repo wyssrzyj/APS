@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-08-02 16:16:14
+ * @LastEditTime: 2022-08-03 15:27:47
  * @Description:
  * @LastEditors: lyj
  */
@@ -65,7 +65,7 @@ const EarlyWarning = () => {
     <>
       <div className={styles.pointer}>
         <div className={styles.todoContent}>
-          {!isEmpty(list) &&
+          {!isEmpty(list) ? (
             list.map((item, index) => (
               <div
                 onClick={() => warning(item)}
@@ -91,7 +91,10 @@ const EarlyWarning = () => {
                   ? '进入预警期'
                   : '已延期'}
               </div>
-            ))}
+            ))
+          ) : (
+            <div className={styles.nonePresent}>暂无信息</div>
+          )}
         </div>
       </div>
     </>
@@ -114,7 +117,9 @@ const EarlyWarning = () => {
             </Popover>
           </>
         ) : (
-          <img src={mailbox} className={styles.imgMailbox} alt="" />
+          <Popover placement="top" content={container} trigger="hover">
+            <img src={mailbox} className={styles.imgMailbox} alt="" />
+          </Popover>
         )}
       </div>
     </div>

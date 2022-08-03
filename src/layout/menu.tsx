@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import { cloneDeep, get, isArray, isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 import Icon from '@/components/Icon'
 import { layout } from '@/recoil'
@@ -31,8 +31,9 @@ const MenuBox = () => {
   const navigate = useNavigate()
 
   const [layoutData, setLayoutData] = useRecoilState(layout.layoutData) //全局数据
+  const systemParameter = useRecoilValue<any>(layout.systemParameter) //全局数据
 
-  const [list, setList] = useState<any>([])
+  const [backgroundColor, setBackgroundColor] = useState<any>()
   const [currentMenu, setCurrentMenu] = useState<Array<string>>([])
   const [openKey, setOpenKey] = useState<any>([])
   const location = useLocation()
@@ -47,6 +48,39 @@ const MenuBox = () => {
   useEffect(() => {
     initOpenKeys(menus, setOpenKey)
   }, [])
+
+  //初始menu的背景颜色
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem('themeSetting'))
+    try {
+      if (data !== null) {
+        const current = data.side.filter((item) => item.type === true)
+        if (current[0].name === '亮色侧边栏') {
+          setBackgroundColor('light')
+        } else {
+          setBackgroundColor('dark')
+        }
+      } else {
+        setBackgroundColor('light')
+      }
+    } catch (error) {}
+  }, [])
+
+  //主题更新
+  useEffect(() => {
+    if (systemParameter !== null) {
+      if (!isEmpty(systemParameter.side)) {
+        const current = systemParameter.side.filter(
+          (item) => item.type === true
+        )
+        if (current[0].name === '亮色侧边栏') {
+          setBackgroundColor('light')
+        } else {
+          setBackgroundColor('dark')
+        }
+      }
+    }
+  }, [systemParameter])
 
   const getMenuDOM = (data: any) => {
     let hasChildren = false
@@ -196,23 +230,23 @@ const MenuBox = () => {
     }
   }, [location])
   return (
-    <Menu
-      selectedKeys={currentMenu}
-      openKeys={openKey}
-      mode="inline"
-      // mode="horizontal"
-      // theme={'dark'} //黑色
-      theme={'light'} //白色
-      style={{ flex: 1 }}
-      multiple={false}
-      onClick={changePage}
-      onOpenChange={onOpenChange}
-      items={menus} // 4.20.0 用法升级
-    >
-      {/* {menus.map((item) => {
+    <div className={styles.menuCurrent}>
+      <Menu
+        selectedKeys={currentMenu}
+        openKeys={openKey}
+        mode="inline"
+        theme={backgroundColor} //动态更改颜色
+        style={{ flex: 1 }}
+        multiple={false}
+        onClick={changePage}
+        onOpenChange={onOpenChange}
+        items={menus} // 4.20.0 用法升级
+      >
+        {/* {menus.map((item) => {
         return getMenuDOM(item).
       })} */}
-    </Menu>
+      </Menu>
+    </div>
   )
 }
 
