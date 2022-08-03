@@ -1,14 +1,15 @@
 /*
  * @Author: lyj
  * @Date: 2022-08-01 18:00:56
- * @LastEditTime: 2022-08-02 16:52:07
+ * @LastEditTime: 2022-08-03 08:52:40
  * @Description:
  * @LastEditors: lyj
  */
 import { SettingOutlined } from '@ant-design/icons'
-import { Divider, Drawer, Space, SpaceProps } from 'antd'
-import React, { useState } from 'react'
+import { Divider, Drawer } from 'antd'
+import { useState } from 'react'
 
+import Border from './border'
 import styles from './index.module.less'
 import ThemeColor from './themeColor'
 
@@ -36,6 +37,8 @@ function InformationConfiguration() {
         onClose={onClose}
         visible={visible}
       >
+        <Border />
+
         <p>颜色设置</p>
         <ThemeColor />
         <Divider />

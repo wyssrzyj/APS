@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-15 13:43:31
- * @LastEditTime: 2022-07-22 10:26:06
+ * @LastEditTime: 2022-08-03 10:04:39
  * @Description:
  * @LastEditors: lyj
  */
@@ -61,19 +61,16 @@ function Custom(props) {
      * record 修改后的单个值.
      * list 老数据
      */
-    const subscript = list.findIndex((item: any) => item.id === record.id)
+    const subscript = list.findIndex((item: any) => item.ids === record.ids)
     if (subscript !== -1) {
       list.splice(subscript, 1, record)
       setData([...list])
-    } else {
     }
   }
 
   const handleChange = async (e: any, record: any, type) => {
     const sum = cloneDeep(data)
     record[type] = e
-    console.log('处理后的', record)
-
     updateData(record, sum)
   }
   const columns: any = [
