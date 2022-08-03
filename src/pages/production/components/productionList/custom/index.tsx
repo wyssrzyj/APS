@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-15 13:43:31
- * @LastEditTime: 2022-08-03 10:12:56
+ * @LastEditTime: 2022-08-03 17:48:17
  * @Description:
  * @LastEditors: lyj
  */
@@ -35,7 +35,10 @@ function Custom(props) {
     const res = await customSection({
       externalProduceOrderId: currentlySelected.externalProduceOrderId
     })
-    console.log(res)
+    res.map((item) => {
+      item.customId = item.id
+    })
+
     setData(res)
   }
   //增加
@@ -43,16 +46,18 @@ function Custom(props) {
     const arr = data
     arr.push({
       key: Date.now(),
-      id: Date.now(),
+      customId: Date.now(),
       section: null,
       reservedTime: null
     })
     setData([...arr])
   }
 
-  const reduce = (id: any) => {
+  const reduce = (customId: any) => {
     const arr = cloneDeep(data)
-    const res = arr.filter((item: { id: any }) => item.id !== id)
+    const res = arr.filter(
+      (item: { customId: any }) => item.customId !== customId
+    )
     setData([...res])
   }
 
@@ -61,7 +66,9 @@ function Custom(props) {
      * record 修改后的单个值.
      * list 老数据
      */
-    const subscript = list.findIndex((item: any) => item.id === record.id)
+    const subscript = list.findIndex(
+      (item: any) => item.customId === record.customId
+    )
     if (subscript !== -1) {
       list.splice(subscript, 1, record)
       setData([...list])
@@ -154,7 +161,7 @@ function Custom(props) {
             {data.length > 1 ? (
               <Button
                 disabled={types}
-                onClick={() => reduce(_row.id)}
+                onClick={() => reduce(_row.customId)}
                 type="primary"
                 icon={<MinusOutlined />}
               />

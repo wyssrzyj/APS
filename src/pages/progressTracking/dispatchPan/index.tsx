@@ -29,11 +29,9 @@ const {
   exportProductList,
   productDetail,
   factoryList,
-  getWorkshopSectionList,
-  makeSewingPlan
+  getWorkshopSectionList
 } = productionPlanApis
 
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
 const map = new Map()
 map.set(-1, '生成缝制计划')
 map.set(0, '编辑缝制计划')

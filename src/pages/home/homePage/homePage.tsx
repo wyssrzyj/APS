@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-07-12 11:17:17
+ * @LastEditTime: 2022-08-03 15:44:49
  * @Description:
  * @LastEditors: lyj
  */
@@ -52,6 +52,7 @@ const HomePage = (props) => {
         {/* <Icon type="jack-set" className={styles.previous}  /> */}
       </div>
       <Modal
+        width={600}
         centered={true}
         title="首页配置"
         visible={isModalVisible}

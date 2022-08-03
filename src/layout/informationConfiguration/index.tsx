@@ -1,16 +1,17 @@
 /*
  * @Author: lyj
  * @Date: 2022-08-01 18:00:56
- * @LastEditTime: 2022-08-03 08:52:40
+ * @LastEditTime: 2022-08-03 17:10:16
  * @Description:
  * @LastEditors: lyj
  */
 import { SettingOutlined } from '@ant-design/icons'
 import { Divider, Drawer } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Border from './border'
 import styles from './index.module.less'
+import LayoutSettings from './layoutSettings'
 import ThemeColor from './themeColor'
 
 function InformationConfiguration() {
@@ -44,6 +45,7 @@ function InformationConfiguration() {
         <Divider />
 
         <p>布局设置</p>
+        <LayoutSettings />
         <p>Some contents...</p>
       </Drawer>
     </div>

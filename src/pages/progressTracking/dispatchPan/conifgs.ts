@@ -216,6 +216,13 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     span: 12
   },
   {
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入客户款号'
+  },
+  {
     label: '生产量',
     name: 'productionAmount',
     field: 'productionAmount',
