@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-20 10:26:25
- * @LastEditTime: 2022-08-03 15:27:47
+ * @LastEditTime: 2022-08-04 14:05:44
  * @Description:
  * @LastEditors: lyj
  */
@@ -14,8 +14,11 @@ import { Icon } from '@/components' //路径
 import { userApis } from '@/recoil/apis'
 
 import mailbox from '../imgs/smallBell.png'
+import mailboxs from '../imgs/smallBells.png'
 import styles from './index.module.less'
-const EarlyWarning = () => {
+const EarlyWarning = (props) => {
+  const { backgroundColor } = props
+
   const { newAlertMessage, closePrompt } = userApis
   const navigate = useNavigate()
   const [list, setList] = useState([])
@@ -105,7 +108,11 @@ const EarlyWarning = () => {
         {list.length > 0 ? (
           <>
             <Popover placement="top" content={container} trigger="hover">
-              <img src={mailbox} className={styles.imgMailbox} alt="" />
+              <img
+                src={backgroundColor === '#fff' ? mailboxs : mailbox}
+                className={styles.imgMailbox}
+                alt=""
+              />
               {/* <Icon type="jack-swyx" className={styles.previous} /> */}
               {list.length < 10 ? (
                 <div className={styles.individual}>{list.length}</div>
@@ -118,7 +125,11 @@ const EarlyWarning = () => {
           </>
         ) : (
           <Popover placement="top" content={container} trigger="hover">
-            <img src={mailbox} className={styles.imgMailbox} alt="" />
+            <img
+              src={backgroundColor === '#fff' ? mailboxs : mailbox}
+              className={styles.imgMailbox}
+              alt=""
+            />
           </Popover>
         )}
       </div>

@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-08-01 14:36:12
- * @LastEditTime: 2022-08-02 16:35:28
+ * @LastEditTime: 2022-08-04 17:29:00
  * @Description:
  * @LastEditors: lyj
  */
@@ -12,7 +12,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import styles from './index.module.less'
 import { menus } from './menuConfigs'
-const CurrentLocation = () => {
+const CurrentLocation = (props) => {
+  const { backgroundColor } = props
   const location = useLocation()
   const [list, setList] = useState([])
   const navigate = useNavigate()
@@ -61,13 +62,21 @@ const CurrentLocation = () => {
     <div className={styles.breadcrumbContainer}>
       <Breadcrumb>
         <Breadcrumb.Item>
-          <span className={styles.jump} onClick={jump}>
+          <span
+            style={{ color: backgroundColor === '#fff' ? '#000' : '#fff' }}
+            className={styles.jump}
+            onClick={jump}
+          >
             主页
           </span>
         </Breadcrumb.Item>
         {list.map((item) => (
           <Breadcrumb.Item key={item}>
-            <span style={{ color: '#f6f6f6' }}>{item}</span>
+            <span
+              style={{ color: backgroundColor === '#fff' ? '#000' : '#fff' }}
+            >
+              {item}
+            </span>
           </Breadcrumb.Item>
         ))}
       </Breadcrumb>

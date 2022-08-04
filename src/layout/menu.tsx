@@ -27,13 +27,15 @@ const initOpenKeys = (data: any, callback: any) => {
   }
 }
 
-const MenuBox = () => {
+const MenuBox = (props) => {
   const navigate = useNavigate()
-
+  const { layoutType } = props
   const [layoutData, setLayoutData] = useRecoilState(layout.layoutData) //全局数据
   const systemParameter = useRecoilValue<any>(layout.systemParameter) //全局数据
 
-  const [backgroundColor, setBackgroundColor] = useState<any>()
+  const [themeColor, setThemeColor] = useState<any>() //主题颜色
+  const [backgroundColor, setBackgroundColor] = useState<any>() //背景颜色
+
   const [currentMenu, setCurrentMenu] = useState<Array<string>>([])
   const [openKey, setOpenKey] = useState<any>([])
   const location = useLocation()
@@ -56,28 +58,40 @@ const MenuBox = () => {
       if (data !== null) {
         const current = data.side.filter((item) => item.type === true)
         if (current[0].name === '亮色侧边栏') {
-          setBackgroundColor('light')
+          setThemeColor('light')
         } else {
-          setBackgroundColor('dark')
+          setThemeColor('dark')
         }
+
+        const topColor = data.topColor.filter((item) => item.type === true)
+        setBackgroundColor(topColor[0].color)
       } else {
-        setBackgroundColor('light')
+        setThemeColor('light')
       }
     } catch (error) {}
   }, [])
 
   //主题更新
   useEffect(() => {
+    // 主题
     if (systemParameter !== null) {
       if (!isEmpty(systemParameter.side)) {
         const current = systemParameter.side.filter(
           (item) => item.type === true
         )
         if (current[0].name === '亮色侧边栏') {
-          setBackgroundColor('light')
+          setThemeColor('light')
         } else {
-          setBackgroundColor('dark')
+          setThemeColor('dark')
         }
+      }
+
+      //背景颜色
+      if (!isEmpty(systemParameter.topColor)) {
+        const current = systemParameter.topColor.filter(
+          (item) => item.type === true
+        )
+        setBackgroundColor(current[0].color)
       }
     }
   }, [systemParameter])
@@ -187,8 +201,10 @@ const MenuBox = () => {
       return item.title !== v.title
     })
     if (type === true) {
-      cloneLayoutData.push(v)
-      setLayoutData(cloneLayoutData)
+      if (v.title !== '首页') {
+        cloneLayoutData.push(v)
+        setLayoutData(cloneLayoutData)
+      }
     }
   }
 
@@ -230,22 +246,40 @@ const MenuBox = () => {
     }
   }, [location])
   return (
-    <div className={styles.menuCurrent}>
-      <Menu
-        selectedKeys={currentMenu}
-        openKeys={openKey}
-        mode="inline"
-        theme={backgroundColor} //动态更改颜色
-        style={{ flex: 1 }}
-        multiple={false}
-        onClick={changePage}
-        onOpenChange={onOpenChange}
-        items={menus} // 4.20.0 用法升级
-      >
-        {/* {menus.map((item) => {
-        return getMenuDOM(item).
-      })} */}
-      </Menu>
+    <div>
+      {/* 顶部布局 */}
+      {layoutType === 'top' ? (
+        <Menu
+          className={
+            backgroundColor === '#fff'
+              ? styles.topColorWhite
+              : styles.topColorBlack
+          }
+          selectedKeys={currentMenu}
+          openKeys={openKey}
+          mode="horizontal"
+          theme={'light'}
+          style={{ flex: 1, background: backgroundColor }}
+          multiple={false}
+          onClick={changePage}
+          onOpenChange={onOpenChange}
+          items={menus} // 4.20.0 用法升级
+        />
+      ) : null}
+      {/* 侧边布局 */}
+      {layoutType === 'left' ? (
+        <Menu
+          selectedKeys={currentMenu}
+          openKeys={openKey}
+          mode="inline"
+          theme={themeColor}
+          style={{ flex: 1 }}
+          multiple={false}
+          onClick={changePage}
+          onOpenChange={onOpenChange}
+          items={menus} // 4.20.0 用法升级
+        />
+      ) : null}
     </div>
   )
 }

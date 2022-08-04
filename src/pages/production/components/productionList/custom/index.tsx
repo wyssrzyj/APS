@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-15 13:43:31
- * @LastEditTime: 2022-08-03 17:48:17
+ * @LastEditTime: 2022-08-04 15:08:54
  * @Description:
  * @LastEditors: lyj
  */
@@ -121,7 +121,7 @@ function Custom(props) {
     {
       title: '固定耗时（单位：天）',
       align: 'center',
-      width: 80,
+      width: 150,
       key: 'reservedTime',
       dataIndex: 'reservedTime',
       render: (_value, _row) => {
@@ -210,6 +210,7 @@ function Custom(props) {
   return (
     <div>
       <Modal
+        width={700}
         centered={true}
         title="自定义"
         visible={customType}

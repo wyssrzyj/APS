@@ -383,10 +383,40 @@
   font-size: 20px;
   margin-left: 10px;
 }
-.menuCurrent {
-  transform: translateY(-1px);
-}
+
 .nonePresent {
   padding: 5px;
   text-align: center;
+}
+
+.topLayout {
+  width: 60vw;
+  height: 50px;
+}
+
+.topColorBlack {
+  transform: translateY(-1px);
+  :global {
+    ant-primary-color: #1890ff;
+    .ant-menu-item:after {
+      border-bottom: none !important; //杠杠
+    }
+    // 设置菜单样式
+    .ant-menu-submenu-title {
+      color: white !important;
+    }
+  }
+}
+.topColorWhite {
+  transform: translateY(-1px);
+  :global {
+    ant-primary-color: #1890ff;
+    .ant-menu-item:after {
+      border-bottom: none !important; //杠杠
+    }
+    // 设置菜单样式
+    .ant-menu-submenu-title {
+      color: #001529 !important;
+    }
+  }
 }

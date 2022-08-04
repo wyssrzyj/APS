@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-08-03 16:55:24
- * @LastEditTime: 2022-08-03 17:39:07
+ * @LastEditTime: 2022-08-04 11:08:29
  * @Description:
  * @LastEditors: lyj
  */
@@ -59,6 +59,7 @@ function LayoutSettings() {
   }
   useEffect(() => {
     localStorage.setItem('layoutSettings', JSON.stringify(parameterData))
+    setLayoutSettings(parameterData)
   }, [parameterData])
   return (
     <div className={styles.layout}>

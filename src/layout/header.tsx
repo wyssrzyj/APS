@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-08-03 15:05:45
+ * @LastEditTime: 2022-08-04 17:29:09
  * @Description:
  * @LastEditors: lyj
  */
@@ -28,6 +28,7 @@ import CurrentLocation from './currentLocation'
 import EarlyWarning from './earlyWarning'
 import styles from './index.module.less'
 import InformationConfiguration from './informationConfiguration'
+import Menu from './menu'
 import { editPwdModalConfig } from './menuConfigs'
 import TopSearch from './topSearch'
 const KeyIcon = () => <Icon type="jack-yuechi" className={styles.icon} />
@@ -35,7 +36,7 @@ const UserIcon = () => <Icon type="jack-user" className={styles.icon} />
 const ExitIcon = () => <Icon type="jack-tuichu" className={styles.icon} />
 const { editUserInfo } = systemSettingsApis
 const Header = (props) => {
-  const { setCollapsed, collapsed } = props
+  const { setCollapsed, collapsed, layoutType } = props
   const { logout } = loginApis
   const navigate = useNavigate()
   const [systemParameter, setSystemParameter] = useRecoilState<any>(
@@ -131,22 +132,33 @@ const Header = (props) => {
           />
         )}
       </div>
-      {/* 刷新当前页面 */}
-      <span>
-        <UndoOutlined
-          onClick={() => {
-            location.reload()
-          }}
-          className={styles.refresh}
-        />
-      </span>
-      {/* //只有左侧有这个功能 */}
-      <CurrentLocation />
+      {/* 顶部布局 */}
+      {layoutType === 'top' ? (
+        <div className={styles.topLayout}>
+          <Menu layoutType={layoutType} />
+        </div>
+      ) : null}
+
+      {/* 侧边布局 */}
+      {layoutType === 'left' ? (
+        <>
+          {/* 刷新当前页面 */}
+          <span>
+            <UndoOutlined
+              onClick={() => {
+                location.reload()
+              }}
+              className={styles.refresh}
+            />
+          </span>
+          <CurrentLocation backgroundColor={backgroundColor} />
+        </>
+      ) : null}
 
       <div className={styles.headerR}>
         <TopSearch />
         {/* 预警信息 */}
-        <EarlyWarning />
+        <EarlyWarning backgroundColor={backgroundColor} />
         <div className={styles.userInfo}>
           <div className={styles.user}>
             <Avatar
@@ -154,7 +166,9 @@ const Header = (props) => {
               style={{ backgroundColor: '#1890ff', marginRight: '8px' }}
               icon={<UserOutlined />}
             />
-            <span style={{ color: '#f6f6f6' }}>
+            <span
+              style={{ color: backgroundColor === '#fff' ? '#000' : '#fff' }}
+            >
               {JSON.parse(localStorage.getItem('currentUser')) &&
                 JSON.parse(localStorage.getItem('currentUser')).user.username}
             </span>
@@ -189,7 +203,7 @@ const Header = (props) => {
         </div>
 
         {/* 抽屉 */}
-        <InformationConfiguration />
+        <InformationConfiguration backgroundColor={backgroundColor} />
       </div>
       {isEditPwdVisible && (
         <CustomModal

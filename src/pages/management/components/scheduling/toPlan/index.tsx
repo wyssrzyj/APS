@@ -73,16 +73,15 @@ function ToPlan(props: {
   const [efficiencyID, setEfficiencyID] = useState<any>()
   const [templateId, setTemplateId] = useState<any>() //效率模板数据
 
-  const [productName, setProductName] = useState<any>() //订单号
+  const [productName, setProductName] = useState<any>([
+    { name: '0', id: '' },
+    { name: '1', id: '' }
+  ]) //订单号
 
-  useEffect(() => {
-    if (state !== null) {
-      const id = state.id
-      setCurrent('1')
-      setProductName(id)
-    }
-  }, [state])
-  const id = ''
+  const id = [
+    { name: '0', id: '' },
+    { name: '1', id: '' }
+  ]
   useEffect(() => {
     //清空查询条件的数据（规则排确定、校验发布、切换工厂都可以清空）
     if (publishType === true) {
@@ -121,19 +120,42 @@ function ToPlan(props: {
 
   //初始
   useEffect(() => {
-    setProductName('empty') //更新树数据 清空搜索项
+    const order = cloneDeep([
+      { name: '0', id: '' },
+      { name: '1', id: '' }
+    ])
+    setProductName(order) //更新树数据 清空搜索项
     if (formData !== undefined) {
       dataAcquisition(formData)
       //车间/班组
       workshopTeam(formData)
     } else {
       if (treeUpdate !== undefined) {
+        console.log(3)
         dataAcquisition(formData)
         //车间/班组
         workshopTeam(formData)
       }
     }
-  }, [formData, treeUpdate])
+    if (state !== null && treeUpdate === undefined) {
+      const id = state.id
+      setCurrent('1')
+      const orderId = [
+        { name: '0', id: '' },
+        { name: '1', id: id }
+      ]
+      setProductName(cloneDeep(orderId))
+    }
+  }, [formData, treeUpdate, state])
+
+  // useEffect(() => {
+  //   if (state !== null) {
+  //     const id = state.id
+  //     console.log('是否传递进来1', id)
+  //     setCurrent('1')
+  //     setProductName(id)
+  //   }
+  // }, [state])
 
   //效率模板
   useEffect(() => {
@@ -367,7 +389,8 @@ function ToPlan(props: {
   //切换
   const getCurrentTabs = (data: any[], i: any) => {
     // 待计划.
-    const stayData = cloneDeep(data[0])
+    const stayData = !isEmpty(cloneDeep(data[0])) ? cloneDeep(data[0]) : []
+
     stayData.map((item) => {
       item.id = item.externalProduceOrderId
     })
@@ -481,6 +504,7 @@ function ToPlan(props: {
     })
     message.success('操作成功')
   }
+
   const content = (data: any, type: any) => {
     return (
       <div>
@@ -732,6 +756,7 @@ function ToPlan(props: {
       <Tabs onChange={callback} activeKey={current} type="card">
         <TabPane tab="待计划" key="0">
           <Forms
+            current={'0'}
             formData={formData}
             productName={productName}
             FormData={(e) => {
@@ -754,6 +779,7 @@ function ToPlan(props: {
         </TabPane>
         <TabPane tab="已计划" key="1">
           <Forms
+            current={'1'}
             formData={formData}
             productName={productName}
             FormData={(e) => {

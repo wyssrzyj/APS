@@ -1,43 +1,85 @@
-import { TreeSelect } from 'antd'
-import { ReactNode } from 'react'
-const { SHOW_PARENT } = TreeSelect
 import moment from 'moment'
+import { ReactNode } from 'react'
+
 const FORMAT_DATE = 'YYYY-MM-DD '
 
-export const searchConfigs = [
+export const easySearch = [
   {
-    label: '工厂名称',
-    field: 'factoryId',
-    type: 'select',
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
     allowClear: true,
-    width: 250,
-    placeholder: '请选择工厂名称',
-    options: []
+    placeholder: '请输入客户款号'
   },
   {
     label: '生产单号',
     field: 'externalProduceOrderNum',
+    type: 'input',
     allowClear: true,
-    width: 250,
+    placeholder: '请输入生产单号'
+  }
+]
+export const searchConfigs = [
+  {
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入客户款号'
+  },
+  // {
+  //   label: '工厂名称',
+  //   field: 'factoryId',
+  //   type: 'select',
+  //   allowClear: true,
+  //   placeholder: '请选择工厂名称',
+  //   width: 250,
+  //   options: []
+  // },
+  {
+    label: '生产单号',
+    field: 'productOrderNum',
+    type: 'input',
+    allowClear: true,
+
+    placeholder: '请输入生产单号'
+  },
+  {
+    label: '产品名称',
+    field: 'productName',
+    allowClear: true,
+    placeholder: '请输入产品名称',
     type: 'input',
     options: []
   },
   {
     label: '产品款号',
     field: 'productNum',
+    allowClear: true,
+    placeholder: '请输入产品款号',
     type: 'input',
-    allowClear: true
+    options: []
+  },
+  {
+    label: '预警状态',
+    field: 'abnormalStatus',
+    type: 'select',
+    allowClear: true,
+    placeholder: '请选择预警状态',
+    options: [],
+    width: 250
+  },
+  {
+    label: '已处理',
+    field: 'disposeStatus',
+    type: 'select',
+    allowClear: true,
+    placeholder: '请选择生产状态',
+    options: [],
+    width: 250
   }
 ]
 
-type Column = {
-  title: string
-  align: 'center' | 'left' | 'right'
-  dataIndex: string
-  width: number
-  fixed: 'left' | 'right'
-  render: ReactNode
-}
 export const tableColumns: any = [
   {
     title: '生产单号',
@@ -49,7 +91,7 @@ export const tableColumns: any = [
     title: '款图',
     align: 'center',
     dataIndex: 'img',
-    width: 80
+    width: 100
   },
   {
     title: '工厂名称',
@@ -61,6 +103,7 @@ export const tableColumns: any = [
     title: '产品名称',
     align: 'center',
     dataIndex: 'productName',
+
     width: 80
   },
   {
@@ -72,6 +115,7 @@ export const tableColumns: any = [
   {
     title: '客户款号',
     dataIndex: 'productClientNum',
+    align: 'center',
     width: 80
   },
   {
@@ -81,15 +125,6 @@ export const tableColumns: any = [
     width: 80
   },
   {
-    title: '计划完成日期',
-    align: 'center',
-    dataIndex: 'planEndDate',
-    width: 80,
-    render: (date: moment.MomentInput) =>
-      date ? moment(date).format(FORMAT_DATE) : null
-  },
-
-  {
     title: '承诺交期',
     align: 'center',
     dataIndex: 'orderDelivery',
@@ -97,6 +132,7 @@ export const tableColumns: any = [
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
+
   {
     title: '剩余工期',
     align: 'center',
@@ -104,26 +140,34 @@ export const tableColumns: any = [
     width: 80
   },
   {
+    title: '计划完成日期',
+    align: 'center',
+    dataIndex: 'planEndDate',
+    width: 170,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
+  },
+
+  {
+    title: '预警状态',
+    align: 'center',
+    dataIndex: 'abnormalStatus',
+    width: 100,
+    render: (v) => (v === '1' ? '预警' : '延期')
+  },
+
+  {
     title: '生产中工段',
     align: 'center',
     dataIndex: 'currentSection',
     width: 80
   },
   {
-    title: '下工段物料齐套日期',
+    title: '已处理',
     align: 'center',
-    dataIndex: 'planEndDate',
-    width: 170,
-    render: (date: moment.MomentInput) =>
-      date ? moment(date).format(FORMAT_DATE) : null
-  },
-  {
-    title: '距离下工段开工日期',
-    align: 'center',
-    dataIndex: 'planEndDate',
-    width: 170,
-    render: (date: moment.MomentInput) =>
-      date ? moment(date).format(FORMAT_DATE) : null
+    dataIndex: 'disposeStatus',
+    width: 80,
+    render: (v) => (v === '0' ? '未处理' : '已处理')
   },
   {
     title: '操作',
@@ -131,106 +175,5 @@ export const tableColumns: any = [
     dataIndex: 'operate',
     width: 100,
     fixed: 'right'
-  }
-]
-type AddFormConfig = {
-  label: string
-  name: string
-  value: any
-  type: string
-  treeData: any
-  required: boolean
-  treeCheckable: boolean
-  placeholder: string
-  disabled: boolean
-  allowClear: boolean
-  options: any
-}
-export const formItemConfig: Array<Partial<AddFormConfig>> = [
-  {
-    label: '模板名称',
-    name: 'templateName',
-    value: '',
-    type: 'input',
-    required: true,
-    placeholder: '请输入模板名称',
-    allowClear: true
-  },
-  {
-    label: '工厂名称',
-    name: 'factoryId',
-    value: '',
-    required: true,
-    placeholder: '请输入工厂名称',
-    type: 'select',
-    options: []
-  },
-  {
-    label: '工作班组',
-    name: 'teamId',
-    value: '',
-    type: 'select',
-    options: [],
-    required: true,
-    placeholder: '请选择工作班组'
-  },
-  {
-    label: '备注',
-    name: 'remark',
-    value: '',
-    type: 'input',
-    placeholder: '请输入备注',
-    allowClear: true
-  }
-]
-
-type exportFormConfig = {
-  label: string
-  name: string
-  field: string
-  value: any
-  type: string
-  treeData: any
-  required: boolean
-  treeCheckable: boolean
-  placeholder: string
-  disabled: boolean
-  allowClear: boolean
-  options: any
-  span: number
-  layout: any
-  min: number
-}
-export const exportModalConfig: Array<Partial<exportFormConfig>> = [
-  {
-    label: '工厂名称',
-    name: 'factoryId',
-    value: '',
-    required: true,
-    placeholder: '请输入工厂名称',
-    type: 'select',
-    options: [],
-    allowClear: true
-  },
-  {
-    label: '工作班组',
-    name: 'teamId',
-    value: '',
-    type: 'multipleSelect',
-    options: [],
-    required: true,
-    placeholder: '请选择工作班组',
-    allowClear: true,
-    disabled: true
-  },
-  {
-    label: '天数',
-    name: 'days',
-    value: '',
-    type: 'number',
-    required: true,
-    placeholder: '请输入天数',
-    allowClear: true,
-    min: 0
   }
 ]

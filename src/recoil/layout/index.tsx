@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-08-02 10:55:41
- * @LastEditTime: 2022-08-03 17:33:46
+ * @LastEditTime: 2022-08-04 09:56:29
  * @Description:
  * @LastEditors: lyj
  */
@@ -15,10 +15,12 @@ const layoutColor = atom({
   key: 'layoutColor',
   default: '#1890ff'
 })
+//主体设置
 const systemParameter = atom({
   key: 'systemParameter',
   default: {}
 })
+//布局样式
 const layoutSettings = atom({
   key: 'layoutSettings',
   default: []

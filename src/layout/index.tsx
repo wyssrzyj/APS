@@ -1,17 +1,19 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-08-03 17:43:49
+ * @LastEditTime: 2022-08-04 14:16:58
  * @Description:
  * @LastEditors: lyj
  */
 
 import { ConfigProvider, Layout } from 'antd'
+import { divide, isEmpty } from 'lodash'
 import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useSetRecoilState } from 'recoil'
+import { useRecoilState } from 'recoil'
 
-import { areaState } from '@/recoil'
+import { layout } from '@/recoil'
 
 import Header from './header'
 import styles from './index.module.less'
@@ -37,6 +39,31 @@ const MyLayout = (props: LayoutProps) => {
   const headerFlag = noUseHeaders.some((item) => pathname.includes(item))
   const [collapsed, setCollapsed] = useState(false)
   const [iframeType, setIframeType] = useState(true)
+  const [layoutSettings, setLayoutSettings] = useRecoilState(
+    layout.layoutSettings
+  )
+
+  const [layoutType, setLayoutType] = useState('left')
+  //获取布局状态
+  const getSelectedItems = (data) => {
+    if (!isEmpty(data)) {
+      const current = data.filter((item) => item.type === true)
+      if (current[0].name === '左侧菜单布局') {
+        setLayoutType('left')
+      }
+      if (current[0].name === '顶部菜单布局') {
+        setLayoutType('top')
+      }
+    }
+  }
+  useEffect(() => {
+    getSelectedItems(layoutSettings)
+  }, [layoutSettings])
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem('layoutSettings'))
+    getSelectedItems(data)
+  }, [])
+
   //主题颜色
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem('themeSetting'))
@@ -62,27 +89,29 @@ const MyLayout = (props: LayoutProps) => {
         <Layout>
           {!headerFlag && (
             <>
-              <Header setCollapsed={setCollapsed} collapsed={collapsed} />
+              <Header
+                layoutType={layoutType}
+                setCollapsed={setCollapsed}
+                collapsed={collapsed}
+              />
             </>
           )}
-
+          {/* 侧边布局 */}
           <Layout>
-            {!headerFlag && (
-              <Sider
-                theme="light"
-                width={200}
-                style={{
-                  minHeight: 'calc(100vh - 50px)'
-                }}
-                // collapsible
-                collapsed={collapsed}
-              >
-                <Menu />
-              </Sider>
-              // <>
-              //   <Menu />
-              // </>
-            )}
+            {!headerFlag &&
+              (layoutType === 'left' ? (
+                <Sider
+                  theme="light"
+                  width={200}
+                  style={{
+                    minHeight: 'calc(100vh - 50px)'
+                  }}
+                  // collapsible
+                  collapsed={collapsed}
+                >
+                  <Menu layoutType={layoutType} />
+                </Sider>
+              ) : null)}
             <Layout>
               {/* 标签 */}
               <TopLabel />

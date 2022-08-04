@@ -23,6 +23,12 @@ export const tableColumns: any = [
     width: 100
   },
   {
+    title: '已完成量',
+    align: 'center',
+    dataIndex: 'planedAmount',
+    width: 100
+  },
+  {
     title: '前工段计划完成日',
     align: 'center',
     dataIndex: 'preSectionPlanFinishTime',

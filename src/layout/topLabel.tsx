@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-08-02 09:19:45
- * @LastEditTime: 2022-08-02 14:00:48
+ * @LastEditTime: 2022-08-04 14:46:23
  * @Description:
  * @LastEditors: lyj
  */
@@ -70,6 +70,11 @@ const TopLabel = () => {
     }
     if (newPanes.length === 1) {
       navigate('/home', {
+        replace: true
+      })
+    } else {
+      const url = newPanes[newPanes.length - 1].key
+      navigate(url, {
         replace: true
       })
     }

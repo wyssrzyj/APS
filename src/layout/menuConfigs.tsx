@@ -2,12 +2,19 @@ import Icon from '@/components/Icon'
 
 export const menus = [
   {
-    label: '首页',
-    key: 'home',
-    icon: <Icon type={'jack-home-fill'} />,
-    url: '/home'
+    label: '工作台',
+    key: 'workbench ',
+    icon: <Icon type={'jack-qiyeyewu'} />,
+    url: '/',
+    children: [
+      {
+        label: '首页',
+        key: 'home',
+        icon: <Icon type={'jack-home-fill'} />,
+        url: '/home'
+      }
+    ]
   },
-
   {
     label: '业务单数据管理',
     key: 'production ',

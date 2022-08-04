@@ -1,16 +1,17 @@
 import { Button } from 'antd'
 import { cloneDeep, map } from 'lodash'
+import moment from 'moment'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 
-import { CusDragTable, SearchBar } from '@/components'
+import { AdvancedSearch, CusDragTable } from '@/components'
 import noneImg from '@/imgs/noneImg.jpg'
 import { dockingData } from '@/recoil'
 import { productionWarning } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
-import { searchConfigs, tableColumns } from './conifgs'
+import { easySearch, searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
 import Material from './material'
 const img = noneImg
@@ -162,16 +163,45 @@ const Index = () => {
 
     tableChange && tableChange(_pagination, _filters, sorter)
   }
+  const dealDate = (date: any[], index: number) => {
+    return date ? moment(date[index]).valueOf() : null
+  }
+
+  const searchParamsChange = (values: Record<string, any>) => {
+    const nParams: any = cloneDeep(params)
+
+    Reflect.ownKeys(values).forEach((key: any) => {
+      if (['endTime', 'startTime'].includes(key)) {
+        if (key === 'startTime') {
+          nParams.startPlanStartTime = dealDate(values.startTime, 0)
+          nParams.endPlanStartTime = dealDate(values.startTime, 1)
+        }
+        if (key === 'endTime') {
+          nParams.startPlanEndTime = dealDate(values.endTime, 0)
+          nParams.endPlanEndTime = dealDate(values.endTime, 1)
+        }
+      } else {
+        nParams[key] = values[key]
+      }
+    })
+    setParams(nParams)
+  }
   return (
     <div className={styles.qualification}>
+      <AdvancedSearch
+        easySearch={easySearch} //普通搜索
+        configs={configs} //高级搜索
+        params={params}
+        callback={searchParamsChange}
+      />
       <div className={styles.content}>
-        <div className={styles.forms}>
+        {/* <div className={styles.forms}>
           <SearchBar
             configs={configs}
             params={params}
             callback={paramsChange}
           ></SearchBar>
-        </div>
+        </div> */}
 
         <CusDragTable
           storageField={'materialAlert'}
