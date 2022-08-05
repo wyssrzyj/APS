@@ -317,7 +317,7 @@ const Production = () => {
           columns={tableColumns}
           dataSource={data}
           rowKey={'id'}
-          scroll={{ x: 2000, y: '63vh' }}
+          scroll={{ x: 2000, y: '61vh' }}
           loading={loading}
           onChange={getSort}
           bordered={true} //边框线

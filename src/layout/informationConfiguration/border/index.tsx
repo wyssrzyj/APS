@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-08-03 08:52:23
- * @LastEditTime: 2022-08-03 17:13:54
+ * @LastEditTime: 2022-08-05 11:08:01
  * @Description:
  * @LastEditors: lyj
  */
@@ -23,52 +23,7 @@ const Border = () => {
 
   //判断本地是否有 有的话就获取本地 没有就用初始的
   useEffect(() => {
-    const themeSetting = {
-      side: [
-        {
-          name: '暗色侧边栏',
-          styles: styles.sideBlack,
-          type: false
-        },
-        {
-          name: '亮色侧边栏',
-          styles: styles.sideWhite,
-          type: true
-        }
-      ],
-      topColor: [
-        {
-          name: '暗色顶栏',
-          styles: styles.topColorBlack,
-          type: false,
-          color: '#001529'
-        },
-        {
-          name: '亮色顶栏',
-          styles: styles.topColorWhite,
-          type: false,
-          color: '#fff'
-        },
-        {
-          name: '系统颜色顶栏',
-          styles: styles.topColorSystem,
-          type: true,
-          color: '#4395ff'
-        }
-      ],
-      layout: [
-        {
-          name: '左侧菜单布局',
-          styles: styles.sideBlack,
-          type: false
-        },
-        {
-          name: '顶部菜单布局',
-          styles: styles.topColorWhite,
-          type: false
-        }
-      ]
-    }
+    const themeSetting = cloneDeep(systemParameter)
 
     if (isEmpty(localStorage.getItem('themeSetting'))) {
       //存初始值

@@ -443,11 +443,11 @@ function Details(props: {
       (item: { colorCode: any }) => item.colorCode === v.colorCode
     )
     if (!isEmpty(colorCode)) {
-      const remainNum = colorCode.filter(
+      const productionNum = colorCode.filter(
         (item: { sizeName: any }) => item.sizeName === title
       )[0].productionNum
-      if (remainNum !== null) {
-        return remainNum
+      if (productionNum !== null) {
+        return productionNum
       }
     }
   }

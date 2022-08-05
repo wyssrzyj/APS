@@ -502,7 +502,9 @@ function ToPlan(props: {
       produceOrderNum: e.externalProduceOrderNum,
       section: e.section
     })
-    message.success('操作成功')
+    if (res.code === 200) {
+      message.success(res.msg)
+    }
   }
 
   const content = (data: any, type: any) => {

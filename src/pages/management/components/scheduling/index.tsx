@@ -297,7 +297,7 @@ function Index() {
   return (
     <div className={styles.qualification}>
       <>
-        <div className={styles.content}>
+        <div>
           <Forms FormData={FormData}></Forms>
 
           <div className={styles.team}>
