@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-08-04 14:16:58
+ * @LastEditTime: 2022-08-05 16:09:32
  * @Description:
  * @LastEditors: lyj
  */
@@ -96,7 +96,7 @@ const MyLayout = (props: LayoutProps) => {
               />
             </>
           )}
-          {/* 侧边布局 */}
+          {/* 侧边布局... */}
           <Layout>
             {!headerFlag &&
               (layoutType === 'left' ? (
@@ -114,7 +114,8 @@ const MyLayout = (props: LayoutProps) => {
               ) : null)}
             <Layout>
               {/* 标签 */}
-              <TopLabel />
+              {headerFlag ? null : <TopLabel />}
+
               <Content
                 className={
                   headerFlag ? styles.fullHeight : styles.outBoxContainer
