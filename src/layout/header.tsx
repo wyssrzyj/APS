@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-08-04 17:29:09
+ * @LastEditTime: 2022-08-05 10:52:58
  * @Description:
  * @LastEditors: lyj
  */
@@ -120,12 +120,14 @@ const Header = (props) => {
       <div className={styles.collapsed}>
         {collapsed ? (
           <MenuUnfoldOutlined
+            style={{ color: backgroundColor === '#fff' ? '#000' : '#fff' }}
             onClick={() => {
               setCollapsed(false)
             }}
           />
         ) : (
           <MenuFoldOutlined
+            style={{ color: backgroundColor === '#fff' ? '#000' : '#fff' }}
             onClick={() => {
               setCollapsed(true)
             }}
@@ -145,6 +147,7 @@ const Header = (props) => {
           {/* 刷新当前页面 */}
           <span>
             <UndoOutlined
+              style={{ color: backgroundColor === '#fff' ? '#000' : '#fff' }}
               onClick={() => {
                 location.reload()
               }}

@@ -103,7 +103,6 @@ function Details(props: {
       // auditStatus
       tableData(editData)
     }
-    console.log(editData)
   }, [editData])
   const tableData = async (v: any) => {
     setData([])
@@ -225,7 +224,6 @@ function Details(props: {
       type: false,
       totalPrice: sum
     })
-    console.log(handleObject)
 
     setData(handleObject)
     setSize(size)
@@ -275,7 +273,7 @@ function Details(props: {
             {_row.type ? (
               <>
                 <InputNumber
-                  value={_value !== 0 ? _value : 0}
+                  value={_value !== 0 ? _value : null}
                   disabled={disabled}
                   placeholder={`${maximum(_row, item.title)} `}
                   key={_row.id}
@@ -332,11 +330,9 @@ function Details(props: {
           sum += item.totalPrice
         }
       })
-      console.log(Number(sum))
 
       clone[clone.length - 1].totalPrice = Number(sum)
       const dome = cloneDeep(clone) //传递的时候深拷贝一下
-      console.log(dome)
 
       setNewData([...dome])
     }
@@ -407,11 +403,9 @@ function Details(props: {
           // obj.teamManagerId = editData.teamId
 
           // 车间的逻辑
-          console.log(editData)
 
           obj.detailPulishedId = editData.id
           obj.mesWorkshopTaskSkuVOList = sku
-          console.log(obj)
 
           const res = await generateWorkshopTask(obj)
           if (res.code === 200) {
@@ -452,7 +446,6 @@ function Details(props: {
       const remainNum = colorCode.filter(
         (item: { sizeName: any }) => item.sizeName === title
       )[0].productionNum
-      console.log(remainNum)
       if (remainNum !== null) {
         return remainNum
       }

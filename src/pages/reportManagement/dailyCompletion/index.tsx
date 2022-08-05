@@ -9,7 +9,11 @@ import { useLocation } from 'react-router-dom'
 import { Icon } from '@/components'
 import { AdvancedSearch, CusDragTable, SearchBar } from '@/components'
 import noneImg from '@/imgs/noneImg.jpg'
-import { dailyCompletionApis, productionPlanApis } from '@/recoil/apis'
+import {
+  dailyCompletionApis,
+  dockingDataApis,
+  productionPlanApis
+} from '@/recoil/apis'
 
 import { easySearch, searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
@@ -24,7 +28,7 @@ const { teamDayCompletion, teamDayCompletionExport } = dailyCompletionApis
 function ProductionPlan() {
   const location = useLocation()
   const { state }: any = location
-
+  const { teamList } = dockingDataApis
   tableColumns[2].render = (v) => {
     return (
       <div key={v}>
@@ -52,6 +56,7 @@ function ProductionPlan() {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [newlyAdded, setNewlyAdded] = useState(false) //新增
+  const [treeData, setTreeData] = useState<any>() //班组列表
 
   useEffect(() => {
     ;(async () => {
@@ -66,14 +71,31 @@ function ProductionPlan() {
         item.label = item.deptName
         item.value = item.id
       })
+
       setFacList(data)
     } catch (err) {}
   }
+  //工厂名称
   useEffect(() => {
     const nConfigs: any[] = cloneDeep(configs)
-    nConfigs[0]['options'] = facList
+    nConfigs[4].options = facList
+    nConfigs[5].options = treeData
     setConfigs(nConfigs)
-  }, [facList])
+  }, [facList, treeData])
+
+  //班组
+  const dataDictionary = async (e: any) => {
+    const teamData = await teamList({ factoryId: e }) //班组列表
+    teamData.map(
+      (item: { label: any; teamName: any; value: any; id: any; key: any }) => {
+        item.label = item.teamName
+        item.value = item.id
+        item.key = item.id
+      }
+    )
+    console.log(teamData)
+    setTreeData(teamData)
+  }
 
   useEffect(() => {
     getReportData()
@@ -169,6 +191,12 @@ function ProductionPlan() {
         nParams[key] = values[key]
       }
     })
+
+    //获取班组
+    if (nParams.factoryId !== undefined) {
+      dataDictionary(nParams.factoryId)
+    }
+
     setParams(nParams)
   }
 

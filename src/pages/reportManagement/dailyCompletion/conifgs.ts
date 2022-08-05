@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-29 17:32:33
- * @LastEditTime: 2022-08-03 16:12:32
+ * @LastEditTime: 2022-08-05 10:36:17
  * @Description:
  * @LastEditors: lyj
  */
@@ -68,6 +68,24 @@ export const searchConfigs = [
     allowClear: true,
     placeholder: '请输入产品款号',
     type: 'input',
+    options: []
+  },
+  {
+    label: '工厂名称',
+    field: 'factoryId',
+    width: 250,
+    allowClear: true,
+    placeholder: '请选择工厂名称',
+    type: 'select',
+    options: []
+  },
+  {
+    label: '班组',
+    field: 'teamId',
+    width: 250,
+    allowClear: true,
+    placeholder: '请选择班组',
+    type: 'select',
     options: []
   }
 ]
