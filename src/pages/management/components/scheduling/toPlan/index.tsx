@@ -489,7 +489,7 @@ function ToPlan(props: {
     setIsModalVisible(false)
     dataUpdate() //数据刷新
   }
-  //效率模板..
+  //效率模板...
   const efficiencyMethods = async (id: any) => {
     setEfficiencyID(id)
     const res = await forDetail({ id })
