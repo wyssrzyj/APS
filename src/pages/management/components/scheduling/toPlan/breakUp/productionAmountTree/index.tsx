@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-14 09:31:58
- * @LastEditTime: 2022-07-21 18:21:35
+ * @LastEditTime: 2022-08-08 15:58:31
  * @Description:
  * @LastEditors: lyj
  */
@@ -182,6 +182,7 @@ const ProductionAmountTree = (props) => {
         row.type = false
         //选中的总数
         const sum = getAllChildren(colorDataList)
+
         selectSplitQuantity(sum, row, selectedItem)
       }
     }

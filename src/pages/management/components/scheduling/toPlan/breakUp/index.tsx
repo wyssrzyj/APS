@@ -95,7 +95,6 @@ const BreakUp = (props: any) => {
           item.type = false
         }
       })
-
       setData([...list])
       setLoad(false)
     } else {
@@ -205,10 +204,7 @@ const BreakUp = (props: any) => {
       })
       //这个时候先不能渲染 这里的会慢一步
       //先渲染后处理
-      console.log(res)
-
       setSplitType(res[0].skuType !== null ? res[0].skuType : '1')
-
       setInitialTeamList([...res])
     } else {
       //初始空数组 添加key防止报错
@@ -435,7 +431,6 @@ const BreakUp = (props: any) => {
     const arr = cloneDeep(data)
 
     const state = { timeState: false, number: false, teamType: false }
-    console.log(arr)
 
     //时间的过滤
     const Time = arr.filter(
@@ -477,7 +472,6 @@ const BreakUp = (props: any) => {
       arr.map((item: { teamId: any }) => {
         team.push(item.teamId)
       })
-      console.log(team)
 
       if (!isRepeat(team)) {
         const teamIdType = team.every((item: any) => {
@@ -515,6 +509,7 @@ const BreakUp = (props: any) => {
             item.id = null
           })
         }
+
         const sum = await splitMethod({
           assignmentId: workSplitList.id,
           data: arr
@@ -587,6 +582,12 @@ const BreakUp = (props: any) => {
 
   //选中拆分数量
   const selectSplitQuantity = (e, item) => {
+    if (!isEmpty(item.skuList)) {
+      item.skuList.map((item) => {
+        item.amount = item.productionNum
+      })
+    }
+
     onBreakUp(e, item, 1)
   }
   const displayTooltip = (item: any) => {
