@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-14 09:31:58
- * @LastEditTime: 2022-08-08 15:58:31
+ * @LastEditTime: 2022-08-08 16:02:00
  * @Description:
  * @LastEditors: lyj
  */
@@ -176,7 +176,7 @@ const ProductionAmountTree = (props) => {
           parentID.push(item.key)
         })
 
-        row.selectedItem = selectedItem //添加选中项
+        row.selectedItem = selectedItem //添加选中项..
         row.skuList = getChildren(parentID, selectedItem, colorDataList) //保存需要的子项
         row.skuType = '1'
         row.type = false
