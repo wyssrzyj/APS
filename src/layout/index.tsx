@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-04-07 11:22:20
- * @LastEditTime: 2022-08-05 16:09:32
+ * @LastEditTime: 2022-08-08 10:54:01
  * @Description:
  * @LastEditors: lyj
  */
@@ -10,7 +10,7 @@ import { ConfigProvider, Layout } from 'antd'
 import { divide, isEmpty } from 'lodash'
 import { ReactElement, ReactNode, useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useSetRecoilState } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { useRecoilState } from 'recoil'
 
 import { layout } from '@/recoil'
@@ -36,9 +36,13 @@ const MyLayout = (props: LayoutProps) => {
     // '/control-panel'
   ]
 
+  const systemParameter = useRecoilValue<any>(layout.systemParameter) //全局数据
+
   const headerFlag = noUseHeaders.some((item) => pathname.includes(item))
   const [collapsed, setCollapsed] = useState(false)
   const [iframeType, setIframeType] = useState(true)
+  const [themeColor, setThemeColor] = useState<any>() //主题颜色
+
   const [layoutSettings, setLayoutSettings] = useRecoilState(
     layout.layoutSettings
   )
@@ -72,7 +76,33 @@ const MyLayout = (props: LayoutProps) => {
         theme: data.mergedNextColor
       })
     }
+    if (data !== null) {
+      const current = data.side.filter((item) => item.type === true)
+      if (current[0].name === '亮色侧边栏') {
+        setThemeColor('light')
+      } else {
+        setThemeColor('dark')
+      }
+    } else {
+      setThemeColor('light')
+    }
   }, [])
+
+  useEffect(() => {
+    // 主题
+    if (systemParameter !== null) {
+      if (!isEmpty(systemParameter.side)) {
+        const current = systemParameter.side.filter(
+          (item) => item.type === true
+        )
+        if (current[0].name === '亮色侧边栏') {
+          setThemeColor('light')
+        } else {
+          setThemeColor('dark')
+        }
+      }
+    }
+  }, [systemParameter])
 
   //甘特图
   useEffect(() => {
@@ -104,12 +134,13 @@ const MyLayout = (props: LayoutProps) => {
                   theme="light"
                   width={200}
                   style={{
-                    minHeight: 'calc(100vh - 50px)'
+                    minHeight: 'calc(100vh - 50px)',
+                    background: themeColor === 'light' ? '#fff' : '#001529'
                   }}
                   // collapsible
                   collapsed={collapsed}
                 >
-                  <Menu layoutType={layoutType} />
+                  <Menu themeColor={themeColor} layoutType={layoutType} />
                 </Sider>
               ) : null)}
             <Layout>

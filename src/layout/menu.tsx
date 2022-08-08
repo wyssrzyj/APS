@@ -29,11 +29,13 @@ const initOpenKeys = (data: any, callback: any) => {
 
 const MenuBox = (props) => {
   const navigate = useNavigate()
-  const { layoutType } = props
+  /**
+   *  themeColor 主题颜色
+   */
+  const { layoutType, themeColor } = props
   const [layoutData, setLayoutData] = useRecoilState(layout.layoutData) //全局数据
   const systemParameter = useRecoilValue<any>(layout.systemParameter) //全局数据
 
-  const [themeColor, setThemeColor] = useState<any>() //主题颜色
   const [backgroundColor, setBackgroundColor] = useState<any>() //背景颜色
 
   const [currentMenu, setCurrentMenu] = useState<Array<string>>([])
@@ -56,17 +58,8 @@ const MenuBox = (props) => {
     const data = JSON.parse(localStorage.getItem('themeSetting'))
     try {
       if (data !== null) {
-        const current = data.side.filter((item) => item.type === true)
-        if (current[0].name === '亮色侧边栏') {
-          setThemeColor('light')
-        } else {
-          setThemeColor('dark')
-        }
-
         const topColor = data.topColor.filter((item) => item.type === true)
         setBackgroundColor(topColor[0].color)
-      } else {
-        setThemeColor('light')
       }
     } catch (error) {}
   }, [])
@@ -79,11 +72,6 @@ const MenuBox = (props) => {
         const current = systemParameter.side.filter(
           (item) => item.type === true
         )
-        if (current[0].name === '亮色侧边栏') {
-          setThemeColor('light')
-        } else {
-          setThemeColor('dark')
-        }
       }
 
       //背景颜色

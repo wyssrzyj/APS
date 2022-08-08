@@ -116,6 +116,12 @@ export const tableColumns: Array<Partial<Column>> = [
     width: 200
   },
   {
+    title: '客户款号',
+    align: 'center',
+    dataIndex: 'productClientNum',
+    width: 200
+  },
+  {
     title: '生产量',
     align: 'center',
     dataIndex: 'productionAmount',

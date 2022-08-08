@@ -8,7 +8,7 @@
 
 .header {
   box-sizing: border-box;
-  // background: rgb(194, 14, 14);
+  background: rgb(194, 14, 14);
   display: flex;
   width: 100%;
   min-width: 1200px;
@@ -304,6 +304,17 @@
   text-align: center;
   line-height: 17px;
   font-size: 5px;
+}
+.breadcrumbContainerColor {
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  :global {
+    .ant-breadcrumb-separator {
+      color: #fff;
+    }
+  }
 }
 .breadcrumbContainer {
   color: #fff;

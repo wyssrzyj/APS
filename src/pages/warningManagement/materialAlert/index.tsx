@@ -15,16 +15,27 @@ import { easySearch, searchConfigs, tableColumns } from './conifgs'
 import styles from './index.module.less'
 import Material from './material'
 const img = noneImg
+
+const productStatus = [
+  { label: '预警', value: '1' },
+  { label: '延期', value: '2' }
+]
+const handleList = [
+  { label: '未处理', value: '0' },
+  { label: '已处理', value: '1' }
+]
 const Index = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { state }: any = location
 
   const search = useRecoilValue(dockingData.searchConfigs)
+
   const map = new Map()
   search.forEach((item) => {
     map.set(item.value, item.name)
   })
+  console.log(map.get('1'))
 
   const [params, setParams] = useState<any>({
     pageSize: 10,
@@ -103,8 +114,8 @@ const Index = () => {
     return <div key={index}>{_text}</div>
   }
   tableColumns[9].sorter = true
-  tableColumns[10].render = (v: any) => {
-    return <div>{map.get(v)}</div>
+  tableColumns[11].render = (v: any) => {
+    return <div>{map.get(String(v))}</div>
   }
   //工厂名称
   useEffect(() => {
@@ -127,6 +138,8 @@ const Index = () => {
   const searchFactoryChange = () => {
     const nConfigs: any[] = cloneDeep(configs)
     nConfigs[0]['options'] = facList
+    nConfigs[4].options = productStatus
+    nConfigs[5].options = handleList
     setConfigs(nConfigs)
   }
 

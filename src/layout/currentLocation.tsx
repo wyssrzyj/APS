@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-08-01 14:36:12
- * @LastEditTime: 2022-08-04 17:29:00
+ * @LastEditTime: 2022-08-08 11:17:11
  * @Description:
  * @LastEditors: lyj
  */
@@ -59,7 +59,13 @@ const CurrentLocation = (props) => {
   }
 
   return (
-    <div className={styles.breadcrumbContainer}>
+    <div
+      className={
+        backgroundColor === '#fff'
+          ? styles.breadcrumbContainer
+          : styles.breadcrumbContainerColor
+      }
+    >
       <Breadcrumb>
         <Breadcrumb.Item>
           <span

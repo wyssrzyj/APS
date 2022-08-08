@@ -25,7 +25,7 @@ export const tableColumns: any = [
   {
     title: '已完成量',
     align: 'center',
-    dataIndex: 'planedAmount',
+    dataIndex: 'completedAmount',
     width: 100
   },
   {

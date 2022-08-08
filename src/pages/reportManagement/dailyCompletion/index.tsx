@@ -176,6 +176,9 @@ function ProductionPlan() {
 
   const searchParamsChange = (values: Record<string, any>) => {
     const nParams: any = cloneDeep(params)
+    if (nParams.factoryId !== values.factoryId) {
+      values.teamId = undefined
+    }
 
     Reflect.ownKeys(values).forEach((key: any) => {
       if (['endTime', 'startTime'].includes(key)) {
@@ -196,6 +199,7 @@ function ProductionPlan() {
     if (nParams.factoryId !== undefined) {
       dataDictionary(nParams.factoryId)
     }
+    console.log('nParams', nParams)
 
     setParams(nParams)
   }
