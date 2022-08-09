@@ -105,8 +105,6 @@ function Details(props: {
     }
   }, [editData])
   const tableData = async (v: any) => {
-    console.log(v)
-
     setData([])
     setLoading(true)
     setType(false)
@@ -157,9 +155,9 @@ function Details(props: {
 
     //尺码  ["xxx","xxl","l","m"]
     const size: any[] = []
-    dome.map((item: { sizeName: any }) => {
-      if (size.includes(item.sizeName) === false) {
-        size.push(item.sizeName)
+    dome.map((item: { sizeCode: any }) => {
+      if (size.includes(item.sizeCode) === false) {
+        size.push(item.sizeCode)
       }
     })
 
@@ -234,12 +232,12 @@ function Details(props: {
 
   // 获取 a：0，b:1
   const ownKeys = (
-    data: { sizeName: string | number; productionNum: any }[]
+    data: { sizeCode: string | number; productionNum: any }[]
   ) => {
     const obj = {}
 
-    data.map((e: { sizeName: string | number; productionNum: any }) => {
-      obj[e.sizeName] = e.productionNum
+    data.map((e: { sizeCode: string | number; productionNum: any }) => {
+      obj[e.sizeCode] = e.productionNum
     })
     return obj
   }
@@ -259,15 +257,19 @@ function Details(props: {
       width: number
       render?: (value: any, row: Record<string, any>, index: number) => any
     }[] = []
-    resSize.map((item: any) => {
-      goodsSize.push({
-        title: item.toUpperCase(),
-        dataIndex: item.toUpperCase(),
-        key: item.toUpperCase(),
-        align: 'center',
-        width: 80
+    if (!isEmpty(resSize)) {
+      resSize.map((item: any) => {
+        if (item !== null) {
+          goodsSize.push({
+            title: item.toUpperCase(),
+            dataIndex: item.toUpperCase(),
+            key: item.toUpperCase(),
+            align: 'center',
+            width: 80
+          })
+        }
       })
-    })
+    }
 
     goodsSize.map((item) => {
       item.render = (_value, _row: any) => {
@@ -369,7 +371,7 @@ function Details(props: {
           sku.map((item: any) => {
             item.productColorNum = item.colorCode
             item.productColorName = item.colorName
-            item.productSize = item.sizeName
+            item.productSize = item.sizeCode
             item.taskNum = saveFormatConversion(item, newData)
             item.id = null
           })
@@ -447,8 +449,9 @@ function Details(props: {
     )
     if (!isEmpty(colorCode)) {
       const productionNum = colorCode.filter(
-        (item: { sizeName: any }) => item.sizeName === title
+        (item: { sizeCode: any }) => item.sizeCode === title
       )[0].productionNum
+
       if (productionNum !== null) {
         return productionNum
       }
@@ -456,13 +459,13 @@ function Details(props: {
   }
   //保存格式转换.
   const saveFormatConversion = (
-    v: { colorCode: any; sizeName: string | number },
+    v: { colorCode: any; sizeCode: string | number },
     value: any[]
   ) => {
     const colorCode = value.filter(
       (item: { colorCode: any }) => item.colorCode === v.colorCode
     )
-    return colorCode[0][v.sizeName]
+    return colorCode[0][v.sizeCode]
   }
   //HUQOU D
   const handleCancel = () => {
