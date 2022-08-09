@@ -105,6 +105,8 @@ function Details(props: {
     }
   }, [editData])
   const tableData = async (v: any) => {
+    console.log(v)
+
     setData([])
     setLoading(true)
     setType(false)
@@ -112,6 +114,7 @@ function Details(props: {
     //生成
     if (v.auditStatus === -1) {
       const sku = await getProductionOrderSKU({
+        detailPulishedId: editData.id,
         externalProduceOrderId: v.externalProduceOrderId,
         section: v.sectionValue
       })
