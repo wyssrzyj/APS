@@ -1,5 +1,5 @@
 import { Button, message, Popover, Tabs, Tag, Tree } from 'antd'
-import { cloneDeep, isEmpty } from 'lodash'
+import { cloneDeep, divide, isEmpty } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
@@ -131,7 +131,6 @@ function ToPlan(props: {
       workshopTeam(formData)
     } else {
       if (treeUpdate !== undefined) {
-        console.log(3)
         dataAcquisition(formData)
         //车间/班组
         workshopTeam(formData)
@@ -523,18 +522,26 @@ function ToPlan(props: {
               </Tag>
             </div>
             {equalType.current.equal === '1' ? (
-              <div
-                className={styles.card}
-                onClick={() => {
-                  console.log(8848)
-
-                  workshopPlan(data)
-                }}
-              >
-                <Tag className={styles.tag} color="lime">
-                  生成车间计划
-                </Tag>
-              </div>
+              <>
+                {data.shopPlanId === undefined ? (
+                  <div
+                    className={styles.card}
+                    onClick={() => {
+                      workshopPlan(data)
+                    }}
+                  >
+                    <Tag className={styles.tag} color="lime">
+                      生成车间计划
+                    </Tag>
+                  </div>
+                ) : (
+                  <div>
+                    <Tag className={styles.tag} color="magenta">
+                      已生成车间计划
+                    </Tag>
+                  </div>
+                )}
+              </>
             ) : null}
           </>
         ) : null}
@@ -590,8 +597,6 @@ function ToPlan(props: {
               <div
                 className={styles.card}
                 onClick={() => {
-                  console.log(8848)
-
                   workshopPlan(data)
                 }}
               >

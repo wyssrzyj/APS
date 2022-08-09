@@ -211,7 +211,7 @@ function ProductionPlan() {
       </div>
       {isModalVisible ? (
         <Modal
-          width={1000}
+          width={1200}
           centered={true}
           title="日排程计划"
           visible={isModalVisible}
