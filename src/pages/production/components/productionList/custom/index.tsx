@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-07-15 13:43:31
- * @LastEditTime: 2022-08-04 15:08:54
+ * @LastEditTime: 2022-08-11 16:46:38
  * @Description:
  * @LastEditors: lyj
  */
@@ -184,15 +184,15 @@ function Custom(props) {
       message.error('不能为空')
     } else {
       if (type) {
+        data.map((item, index) => {
+          item.sectionSn = index
+        })
+
         const parameter = {
           externalProduceOrderId: currentlySelected.externalProduceOrderId,
           externalProduceOrderNum: currentlySelected.externalProduceOrderNum,
           customSections: data
         }
-
-        data.map((item, index) => {
-          item.sectionSn = index
-        })
 
         await userDefinedSectionSaving(parameter)
         setCustomType(false)
