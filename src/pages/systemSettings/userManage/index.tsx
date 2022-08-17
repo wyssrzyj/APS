@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 14:52:29
- * @LastEditTime: 2022-07-07 09:01:51
+ * @LastEditTime: 2022-08-17 13:33:07
  * @Description:
  * @LastEditors: lyj
  */
@@ -93,9 +93,13 @@ const UserManage = () => {
   const changeTableColumn = () => {
     let nColumn = cloneDeep(tableColumn)
     nColumn = nColumn.map((item) => {
-      if (item.dataIndex == 'factoryId') {
+      if (item.dataIndex === 'factoryId') {
         item.render = (text: any, record: any, index: number) => {
-          return facList.find((item) => item.id === text).deptName
+          try {
+            return facList.find((v) => v.id == text).deptName
+          } catch {
+            return '暂无工厂'
+          }
         }
       }
       if (item.dataIndex === 'status') {
