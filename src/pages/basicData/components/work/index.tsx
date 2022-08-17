@@ -159,7 +159,7 @@ const Index = () => {
     value: any,
     row: { [x: string]: Key | null | undefined }
   ) => {
-    const chars = value !== undefined ? value.split(',') : []
+    const chars = !isEmpty(value) ? value.split(',') : []
     return (
       <div>
         {chars.map(
