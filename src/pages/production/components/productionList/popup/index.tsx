@@ -1,20 +1,14 @@
 import { Button, Input, message, Modal, Table, Tabs, Tag } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
+import { dockingData } from '@/recoil'
 import { productionSingleApis } from '@/recoil/apis'
 
 import styles from './index.module.less'
 import Outgoing from './outgoing/index'
 import Popup from './popup'
-
-const map = new Map()
-map.set('1', '裁剪')
-map.set('2', '缝制')
-map.set('3', '后整')
-map.set('4', '包装')
-map.set('5', '外发')
-map.set('6', '缝制线外组')
 
 function ProductionOrder(props: { content: any }) {
   const { content } = props
@@ -25,11 +19,19 @@ function ProductionOrder(props: { content: any }) {
     getDetailsId,
     externalProduceOrderId,
     whetherEditor,
-    refreshData
+    refreshData,
+    setEmpty
   } = content
 
   const { processRoute, popupPreservation, processOutsourcing } =
     productionSingleApis
+
+  const searchConfigs = useRecoilValue(dockingData.searchConfigs)
+
+  const map = new Map()
+  searchConfigs.forEach((item) => {
+    map.set(item.value, item.name)
+  })
 
   const { TabPane } = Tabs
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -232,10 +234,11 @@ function ProductionOrder(props: { content: any }) {
           productId: getDetailsId,
           externalProduceOrderId: externalProduceOrderId,
           outsourceProcessDTOList: [], //外发全部为true且时间不为空的数据
-          processDTOList: allSaveList //工艺全部数据.
+          processDTOList: allSaveList //工艺全部数据..
         })
         if (arr) {
           message.success('保存成功')
+
           refreshData && refreshData()
           handleCancel()
         }
@@ -246,6 +249,7 @@ function ProductionOrder(props: { content: any }) {
   }
 
   const handleCancel = () => {
+    setEmpty(false)
     setIsModalVisible(false)
     refreshData && refreshData()
   }

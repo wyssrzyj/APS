@@ -3,7 +3,6 @@ import { cloneDeep, isEmpty, isError, keys } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
-import { Title } from '@/components'
 import { schedulingApis } from '@/recoil/apis'
 
 import Dome from './Dome/index'
@@ -15,13 +14,7 @@ import Verification from './verification/index'
 
 function Index() {
   const { Option } = Select
-  const [pageNum, setPageNum] = useState<number>(1)
-  const [pageSize, setPageSize] = useState<number>(10)
-  const [total] = useState<number>(0)
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
 
-  const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
-  const [materialModal, setMaterialModal] = useState(false) //物料齐套检查弹窗
   const [visibleRule, setVisibleRule] = useState(false) //规则排程弹窗
   const [visibleVerify, setVisibleVerify] = useState(false) //校验排程弹窗
   const [remind, setRemind] = useState() //甘特图高亮..
@@ -36,22 +29,24 @@ function Index() {
   const [time, setTime] = useState<any>({}) //最大时间 最小时间
   const [treeSelection, setTreeSelection] = useState<any>() //树选中
   const [treeUpdate, setTreeUpdate] = useState<any>() //树刷新
+  const [publishType, setPublishType] = useState<any>(false) //发布清除树的搜索条件
+  const [selectedSelect, setSelectedSelect] = useState<any>({}) //发布清除待计划选中的值
 
   const { figureData, productionView, workingDate } = schedulingApis
 
-  const data = []
-  for (let i = 0; i < 5; i++) {
-    data.push({
-      id: i,
-      name: `Edward King ${i}`,
-      age: 32,
-      address: `London, Park Lane no. ${i}`
-    })
+  //form切换 清空树结构的搜索条件
+  const switchFormData = (e) => {
+    if (formData !== undefined) {
+      if (e !== formData) {
+        setPublishType(true)
+      }
+    }
   }
   //头部form的数据
   const FormData = (e: any) => {
     setFormData(e)
-    setCheckIDs([])
+    switchFormData(e)
+    // setCheckIDs([])
     setSchedulingIDs([])
   }
 
@@ -75,8 +70,6 @@ function Index() {
 
   const getChart = async (id: undefined, type: any) => {
     if (type === '0') {
-      console.log('我是0')
-
       const chart: any = await figureData({ factoryId: id })
       const arr = cloneDeep(chart.data)
       if (chart.code === 200) {
@@ -94,7 +87,7 @@ function Index() {
     //班组不可工作时间
   }
 
-  //处理Gantt时间格式
+  //Gantt时间格式
   const dateFormat = (data: any, type: any) => {
     const start = []
     const end = []
@@ -131,6 +124,7 @@ function Index() {
     const cloneArr = cloneDeep(arr)
     setGunterData(cloneArr) //图
   }
+
   useEffect(() => {
     if (time.startDate !== undefined) {
       unavailableTime()
@@ -145,27 +139,15 @@ function Index() {
     })
     setNotWork(sum)
   }
-  //  图刷新
+
+  // 图刷新
   const updateMethod = () => {
     getChart(formData, gunterType)
   }
 
-  //删除
-  const start = () => {
-    if (selectedRowKeys[0] === undefined) {
-      message.warning('请至少选择一个')
-    } else {
-      setMovIsModalVisible(true)
-    }
-  }
-
-  const materials = () => {
-    setMaterialModal(true)
-  }
   //判断任务是否分派
   const toggleRuleVisible = (visible: boolean) => {
     if (visible) {
-      console.log(schedulingIDs)
       if (schedulingIDs.length > 0) {
         setVisibleRule(visible)
       } else {
@@ -175,7 +157,7 @@ function Index() {
   }
 
   const validateCheckId = () => {
-    let passflag = false
+    let passels = false
     const arr: any[] = []
 
     promptList.map((item: { externalProduceOrderNum: any }) => {
@@ -185,17 +167,17 @@ function Index() {
     //选中里有不满足的就进行提示.  .
     if (Number(arr.length) > 0) {
       message.warning(`生产单${arr.join('、')}任务未分派`)
-      passflag = false
+      passels = false
     } else {
       if (!isEmpty(checkIDs)) {
         if (arr.length <= 0) {
-          passflag = true
+          passels = true
         }
       } else {
         message.warning(`暂无已计划数据`)
-        passflag = false
+        passels = false
       }
-      return passflag
+      return passels
     }
   }
 
@@ -208,6 +190,7 @@ function Index() {
       setVisibleVerify(visible)
     }
   }
+
   //获取选中项
   const selected = (ids, stateAdd) => {
     if (!isEmpty(ids)) {
@@ -220,6 +203,7 @@ function Index() {
 
     // return ['1524211836323483650']
   }
+
   // 校验排程需要的数据
   const checkSchedule = (plannedID: any, toPlanID: any, stateAdd: any) => {
     if (!isError(stateAdd)) {
@@ -232,6 +216,7 @@ function Index() {
         ruleIds.forEach((item) => {
           ids.push(item.externalProduceOrderId)
         })
+
         setSchedulingIDs(ids.concat(toPlanID))
       } else {
         setSchedulingIDs(toPlanID)
@@ -261,9 +246,11 @@ function Index() {
       setCheckIDs(waiting.concat(toPlanID)) //把选中里可用的和已计划传递出去
     }
   }
+
   const filterList = (data: any[], v: { externalProduceOrderId: any }) => {
     return data.filter((item: any) => item === v.externalProduceOrderId)
   }
+
   //  提示  选中但是状态为满足
   const filterPrompt = (v: any, data: any[]) => {
     const arr = data.filter(
@@ -272,41 +259,52 @@ function Index() {
     )
     return arr
   }
+
   //甘特图左键
   const setHighlighted = (e: React.SetStateAction<undefined>) => {
     setRemind(e)
   }
-  function handleChange(value: any) {
+
+  const handleChange = (value: any) => {
     setGunterType(value)
   }
+
   const update = () => {
     refresh()
+    setSelectedSelect({ type: 'empty' })
   }
 
   // 树刷新
   const refresh = () => {
-    setTreeUpdate(formData)
+    const cloneFormData = cloneDeep(formData)
+    setTreeUpdate(cloneFormData)
+    setPublishType(true)
   }
+
   // 树选中
   const treeSelect = (e) => {
     setTreeSelection(e)
   }
+
   const ruleScheduling = () => {
     setVisibleRule(false)
     toggleRuleVisible(false)
     update()
     updateMethod()
+    setPublishType(false)
   }
 
   return (
     <div className={styles.qualification}>
       <>
-        <div className={styles.content}>
+        <div>
           <Forms FormData={FormData}></Forms>
 
           <div className={styles.team}>
             <div className={styles.leftContent}>
               <ToPlan
+                selectedSelect={selectedSelect}
+                publishType={publishType}
                 treeUpdate={treeUpdate}
                 treeSelect={treeSelect}
                 checkSchedule={checkSchedule}
@@ -320,7 +318,11 @@ function Index() {
                   className={styles.rules}
                   ghost
                   type="primary"
-                  onClick={() => toggleRuleVisible(true)}
+                  onClick={() => {
+                    setPublishType(false)
+                    toggleRuleVisible(true)
+                    setSelectedSelect({ type: 'initial' })
+                  }}
                 >
                   规则排程
                 </Button>
@@ -328,7 +330,11 @@ function Index() {
                   ghost
                   className={styles.heckSchedule}
                   type="primary"
-                  onClick={() => toggleVerifyVisible(true)}
+                  onClick={() => {
+                    setPublishType(false)
+
+                    toggleVerifyVisible(true)
+                  }}
                 >
                   校验排程
                 </Button>
@@ -386,11 +392,18 @@ function Index() {
       )}
       {visibleVerify && (
         <Verification
-          update={update}
+          update={() => {
+            toggleVerifyVisible(false)
+            // setCheckIDs([])
+            update()
+          }}
           setCheckIDs={setCheckIDs}
           checkIDs={checkIDs}
           visibleVerify={visibleVerify}
-          onCancel={() => toggleVerifyVisible(false)}
+          onCancel={() => {
+            toggleVerifyVisible(false)
+            setPublishType(false)
+          }}
         />
       )}
     </div>

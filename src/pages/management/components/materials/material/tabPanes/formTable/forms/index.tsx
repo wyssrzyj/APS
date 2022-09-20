@@ -19,9 +19,10 @@ const HeaderForm = (props: {
   FormData: any
   factoryData: any
   type: boolean
+  updateSection: any
+  data: []
 }) => {
-  const { FormData, factoryData, type } = props
-  const { sectionList } = materialSetApis
+  const { FormData, factoryData, type, updateSection, data } = props
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
@@ -29,29 +30,27 @@ const HeaderForm = (props: {
   const { Option } = Select
 
   const [workshop, setWorkshop] = useState<any>()
+  const [selected, setSelected] = useState<any>() //选中
+  const [timesType, setTimesType] = useState<any>(false)
 
   useEffect(() => {
-    console.log(123)
-    getWorkshopSection()
-  }, [])
-  //获取 工段列表
-  const getWorkshopSection = async () => {
-    const res = await sectionList()
-    if (!isEmpty(res)) {
-      res.map((item) => {
-        item.name = item.dictLabel
-        item.id = item.dictValue
-      })
-      setWorkshop(res)
+    setWorkshop(factoryData)
+  }, [factoryData])
+  useEffect(() => {
+    setTimesType(type)
+  }, [type])
+  useEffect(() => {
+    if (!isEmpty(data)) {
+      setTimesType(false)
+    } else {
+      setTimesType(true)
     }
-  }
+  }, [data])
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
-    console.log(values)
-
     //处理时间格式
-    const timeFormat = { ...values, ...values.planEndDate }
+    const timeFormat = { ...values }
     FormData && FormData(timeFormat)
   }, 500)
 
@@ -59,29 +58,58 @@ const HeaderForm = (props: {
     setTimeout(async () => {
       await handleSubmit()
     })
+
     if (type === 'input') {
       return event.target.value
     }
-    if (type === 'picker') {
-      if (event !== null) {
-        event.startPlanEndDate = moment(event[0]).valueOf()
-        event.endPlanEndDate = moment(event[1]).valueOf()
-        return event
-      } else {
-        return null
-      }
-    }
-    if (type === 'select') {
-      console.log(event)
 
+    if (type === 'select') {
       return event
     }
 
     return event
   }
-  const getFactoryName = (e: any) => {
-    // setListID(e)
+  //切换展示
+  useEffect(() => {
+    if (selected !== undefined) {
+      const current = workshop.filter((v) => v.id === selected.key)[0]
+      console.log(current)
+
+      if (current.value !== null && current.value !== undefined) {
+        form.setFieldsValue({
+          productNum: moment(Number(current.value))
+        })
+      } else {
+        form.setFieldsValue({
+          productNum: undefined
+        })
+      }
+    } else {
+      form.setFieldsValue({ productNum: null })
+    }
+  }, [workshop, selected])
+
+  const getFactoryName = (_e: any, item) => {
+    setSelected(item)
   }
+
+  //更新
+  const materialDateBottom = (e) => {
+    if (selected !== undefined) {
+      const current = workshop.filter((v) => v.id === selected.key)[0]
+      current.value = e !== null ? moment(e).valueOf() : undefined
+      current.allReadyTime = e !== null ? moment(e).valueOf() : undefined
+      const subscript = workshop.findIndex(
+        (item: any) => item.id === current.id
+      )
+      if (subscript !== -1) {
+        workshop.splice(subscript, 1, current)
+        setWorkshop(workshop)
+        updateSection && updateSection(workshop)
+      }
+    }
+  }
+
   return (
     <div>
       <Form form={form}>
@@ -99,32 +127,26 @@ const HeaderForm = (props: {
                 disabled={type}
                 allowClear={true}
                 onChange={getFactoryName}
-                placeholder="请选择工厂名称"
+                placeholder="请选择所属工段"
               >
                 {workshop != undefined
-                  ? workshop.map(
-                      (item: {
-                        id: React.Key | null | undefined
-                        name:
-                          | boolean
-                          | React.ReactChild
-                          | React.ReactFragment
-                          | React.ReactPortal
-                          | null
-                          | undefined
-                      }) => (
-                        <Option key={item.id} value={item.id}>
-                          {item.name}
-                        </Option>
-                      )
-                    )
+                  ? workshop.map((item: any) => (
+                      <Option key={item.section} value={item.section}>
+                        {item.name}
+                      </Option>
+                    ))
                   : null}
               </Select>
             </Form.Item>
           </Col>
           <Col span={13}>
             <Form.Item {...layout} name="productNum" label="工段物料齐套日期">
-              <Input allowClear disabled={true} />
+              <DatePicker
+                disabled={timesType}
+                onChange={(e) => {
+                  materialDateBottom(e)
+                }}
+              />
             </Form.Item>
           </Col>
         </Row>

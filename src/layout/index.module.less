@@ -2,10 +2,13 @@
   width: 100%;
   height: 100%;
 }
+.previous {
+  font-size: 25px;
+}
 
 .header {
   box-sizing: border-box;
-  background: #fff;
+  background: rgb(194, 14, 14);
   display: flex;
   width: 100%;
   min-width: 1200px;
@@ -30,7 +33,7 @@
 }
 
 .logImg {
-  width: 100px;
+  width: 170px;
 }
 
 .headerR {
@@ -164,17 +167,268 @@
 .earlyWarning {
   position: relative;
   margin-right: 30px;
+  margin-left: 30px;
   cursor: pointer;
 }
 .pointer {
   cursor: pointer;
 }
-.remind {
+.drawerContainer {
+  margin-left: 20px;
+  margin-right: 10px;
+}
+
+.warning {
   position: absolute;
   top: 0;
   right: 0;
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  background: #faad14;
+}
+.material {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #a107af;
+  margin-top: 7px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.circularWarning {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #faad14;
+  margin-top: 7px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.circularDelay {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   background: red;
+  margin-top: 7px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.containerList {
+  display: flex;
+  margin-top: 5px;
+  width: 310px;
+}
+.containerList :hover {
+  background: #7ea097;
+}
+.scrollbar {
+  background-color: #f5f5f5;
+  height: 300px;
+  width: 280px;
+  overflow: scroll; //设置滚动条
+  // overflow-y: scroll; //设置滚动条
+}
+.todoContent {
+  background-color: #f5f5f5;
+  max-height: 200px;
+  width: 310px;
+  overflow: auto;
+  border: none;
+}
+.todoContent::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 10px; /*高宽分别对应横竖滚动条的尺寸*/
+  height: 1px;
+}
+.todoContent::-webkit-scrollbar-thumb {
+  background: #e8e8e8;
+  /*滚动条里面小方块*/
+  border-radius: 10px;
+  // box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+.todoContent::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 10px;
+  /*滚动条里面轨道*/
+  // box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.overflow {
+  height: 450px;
+}
+.textColor {
+  margin-right: 5px;
+
+  color: #0d49ee;
+}
+.imgMailbox {
+  width: 20px;
+  height: 20px;
+}
+.individual {
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: red;
+  font-size: 3px !important;
+  color: rgb(241, 239, 239);
+  text-align: center;
+  line-height: 10px;
+}
+.ten {
+  position: absolute;
+  top: -5px;
+  right: -9px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: red;
+  color: #f1efef;
+  text-align: center;
+  line-height: 17px;
+  font-size: 5px;
+}
+.hundred {
+  position: absolute;
+  top: -5px;
+  right: -20px;
+  width: 27px;
+  height: 19px;
+  border-radius: 50%;
+  background: red;
+  color: #f1efef;
+  text-align: center;
+  line-height: 17px;
+  font-size: 5px;
+}
+.breadcrumbContainerColor {
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  :global {
+    .ant-breadcrumb-separator {
+      color: #fff;
+    }
+  }
+}
+.breadcrumbContainer {
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.collapsed {
+  color: #fff;
+  font-size: 20px;
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+.refresh {
+  margin-top: 14px;
+  font-size: 20px;
+
+  margin-left: 10px;
+  cursor: pointer;
+  margin-right: 20px;
+}
+.jump {
+  color: #fff;
+  cursor: pointer;
+}
+.jump:hover {
+  color: #313a64;
+}
+.logoTitle {
+  font-size: 20px;
+  color: #f1efef;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+.topLabel {
+}
+.topTabs {
+  position: relative;
+  width: 100%;
+  height: 37px;
+  background: #fff;
+}
+
+.tabsRight {
+  font-size: 24px;
+  color: rgb(223, 221, 221);
+  position: absolute;
+  right: 36px;
+  cursor: pointer;
+  top: 0px;
+}
+.tabsContainer {
+  width: 97%;
+}
+.iconCloseLeft {
+  margin-right: 7px;
+}
+.iconClose {
+  margin-bottom: 5px;
+}
+.iconClose:hover {
+  background: #b5d1ee;
+}
+.topPopover {
+  cursor: pointer;
+}
+.drawer {
+  margin-top: 7px;
+  font-size: 20px;
+  margin-left: 10px;
+}
+
+.nonePresent {
+  padding: 5px;
+  text-align: center;
+}
+
+.topLayout {
+  width: 60vw;
+  height: 50px;
+}
+
+.topColorBlack {
+  transform: translateY(-1px);
+  :global {
+    ant-primary-color: #1890ff;
+    .ant-menu-item:after {
+      border-bottom: none !important; //杠杠
+    }
+    // 设置菜单样式
+    .ant-menu-submenu-title {
+      color: white !important;
+    }
+  }
+}
+.topColorWhite {
+  // text-align: center;
+  transform: translateY(-1px);
+  :global {
+    ant-primary-color: #1890ff;
+    .ant-menu-item:after {
+      border-bottom: none !important; //杠杠
+    }
+    // 设置菜单样式
+    .ant-menu-submenu-title {
+      color: #001529 !important;
+    }
+  }
 }

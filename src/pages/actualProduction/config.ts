@@ -2,16 +2,41 @@ import moment from 'moment'
 import { number } from 'prop-types'
 import { ReactNode } from 'react'
 
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const FORMAT_DATE = 'YYYY-MM-DD HH:mm'
+
+export const easySearch = [
+  {
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入客户款号'
+  },
+  {
+    label: '生产单号',
+    field: 'externalProduceOrderNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入生产单号'
+  }
+]
 export const searchConfig = [
   {
-    label: '工厂名称',
-    field: 'factoryId',
-    type: 'select',
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
     allowClear: true,
-    placeholder: '请选择工厂名称',
-    options: []
+    placeholder: '请输入客户款号'
   },
+  // {
+  //   label: '工厂名称',
+  //   field: 'factoryId',
+  //   type: 'select',
+  //   allowClear: true,
+  //   width: 250,
+  //   placeholder: '请选择工厂名称',
+  //   options: []
+  // },
   {
     label: '生产单号',
     field: 'externalProduceOrderNum',
@@ -23,6 +48,8 @@ export const searchConfig = [
     label: '所属工段',
     field: 'section',
     type: 'select',
+    width: 250,
+
     allowClear: true,
     placeholder: '请选择所属工段',
     option: []
@@ -31,6 +58,8 @@ export const searchConfig = [
     label: '生产状态',
     field: 'isFinished',
     type: 'select',
+    width: 250,
+
     allowClear: true,
     placeholder: '请选择生产状态',
     options: [
@@ -42,6 +71,8 @@ export const searchConfig = [
     label: '延期状态',
     field: 'delay',
     type: 'select',
+    width: 250,
+
     allowClear: true,
     placeholder: '请选择延期状态',
     options: [
@@ -82,6 +113,12 @@ export const tableColumn: Array<Partial<Column>> = [
     title: '产品款号',
     align: 'center',
     dataIndex: 'productNum',
+    width: 200
+  },
+  {
+    title: '客户款号',
+    align: 'center',
+    dataIndex: 'productClientNum',
     width: 200
   },
   {

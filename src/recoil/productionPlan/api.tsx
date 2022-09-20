@@ -1,8 +1,8 @@
 /*
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
- * @LastEditors: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
- * @LastEditTime: 2022-05-12 17:15:32
+ * @LastEditors: lyj
+ * @LastEditTime: 2022-08-01 10:29:48
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -45,6 +45,22 @@ export const getSKU = async (params: any) => {
     console.log(e)
   }
 }
+// 获取生产单sku
+export const getProductionOrderSKU = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.get(
+      `/aps/produce-assignment/get-sku`,
+      params
+    )
+    if (res) {
+      return res.data
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 //新增或更新缝制计划
 export const updateSewingPlan = async (params: any) => {
   try {
@@ -60,6 +76,27 @@ export const updateSewingPlan = async (params: any) => {
     console.log(e)
   }
 }
+
+// 生成车间任务
+
+export const generateWorkshopTask = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/produce-assignment/create-mes-task`,
+      params
+    )
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res
+    }
+    return []
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 //缝制计划详情
 export const detailsSewing = async (params: any) => {
   try {

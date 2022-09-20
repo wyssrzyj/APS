@@ -24,7 +24,6 @@ export const searchConfigs = [
   },
   {
     label: '工作模式',
-    width: 250,
     field: 'workModeName',
     type: 'input',
     allowClear: true,
@@ -32,51 +31,49 @@ export const searchConfigs = [
   }
 ]
 
-type Column = {
-  title: string
-  align: 'center' | 'left' | 'right'
-  dataIndex: string
-  width: number
-  fixed: 'left' | 'right'
-  render: ReactNode
-}
-export const tableColumns: Array<Partial<Column>> = [
+export const tableColumns: Array<Partial<any>> = [
   {
-    title: '模板名称',
+    title: '工作模式',
     align: 'center',
-    dataIndex: 'templateName',
-    width: 250
-  },
-  {
-    title: '工作班组',
-    align: 'center',
-    dataIndex: 'teamName',
-    width: 150
-  },
-  {
-    title: '初始效率',
-    align: 'center',
-    dataIndex: 'startEfficiency',
+    dataIndex: 'name',
     width: 100
   },
   {
-    title: '最终效率',
+    title: '工作日',
     align: 'center',
-    dataIndex: 'finallyEfficiency',
+    dataIndex: 'weeks',
+    width: 100
+  },
+  {
+    title: '工作时间',
+    align: 'center',
+    dataIndex: 'times',
+    width: 100
+  },
+  {
+    title: '工厂名称',
+    align: 'center',
+    dataIndex: 'factoryName',
+    width: 100
+  },
+  {
+    title: '班组名称',
+    align: 'center',
+    dataIndex: 'teams',
     width: 100
   },
   {
     title: '备注',
     align: 'center',
     dataIndex: 'remark',
-    width: 300
+    width: 100
   },
   {
     title: '操作',
     align: 'center',
-    dataIndex: 'operate',
+    dataIndex: 'operation',
     fixed: 'right',
-    width: 150
+    width: 100
   }
 ]
 type AddFormConfig = {

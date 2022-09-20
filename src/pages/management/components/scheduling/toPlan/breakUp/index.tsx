@@ -3,22 +3,26 @@ import {
   Button,
   Checkbox,
   DatePicker,
+  Input,
   InputNumber,
   message,
   Modal,
   Select,
-  Table
+  Table,
+  Tooltip,
+  Tree
 } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
-import Item from 'antd/lib/list/Item'
 import { cloneDeep, isElement, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
+import change from '@/imgs/change.png'
 import { dockingDataApis, schedulingApis } from '@/recoil/apis'
 
 // import Details from './details/index'
 import styles from './index.module.less'
+import ProductionAmountTree from './productionAmountTree'
 const BreakUp = (props: any) => {
   const {
     setIsModalVisible,
@@ -29,16 +33,29 @@ const BreakUp = (props: any) => {
     empty
   } = props
 
+  const splitTypeData = [
+    { name: '颜色', id: '1' },
+    { name: '尺码', id: '2' }
+  ]
+
   const { workshopList, teamList, capacityListID } = dockingDataApis
-  const { splitMethod, breakQuery, calculateCompletionTime } = schedulingApis
+  const { splitMethod, breakQuery, calculateCompletionTime, getSkuTree } =
+    schedulingApis
 
   const { Option } = Select
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
   const [total] = useState<number>(0)
+  const [load, setLoad] = useState<any>(true)
+
   const [data, setData] = useState<any>([]) //查询的数据
+
   const [initialTeamList, setInitialTeamList] = useState<any>([]) //处理初始班组
   const [factoryName, setFactoryName] = useState<any>([]) //车间
+
+  const [splitType, setSplitType] = useState<any>('1') //拆分类型
+  const [allSelected, setAllSelected] = useState([]) //所有选中的
+  const [initial, setInitial] = useState({ name: 'initial' })
 
   useEffect(() => {
     if (formData !== undefined) {
@@ -62,6 +79,7 @@ const BreakUp = (props: any) => {
       getInterfaceData(workSplitList)
     }
   }, [workSplitList])
+
   //替换数据
   const updateData = (record: any, list: any) => {
     /**
@@ -71,7 +89,14 @@ const BreakUp = (props: any) => {
     const subscript = list.findIndex((item: any) => item.ids === record.ids)
     if (subscript !== -1) {
       list.splice(subscript, 1, record)
+
+      list.map((item, index) => {
+        if (index !== subscript) {
+          item.type = false
+        }
+      })
       setData([...list])
+      setLoad(false)
     } else {
     }
   }
@@ -88,12 +113,10 @@ const BreakUp = (props: any) => {
       return []
     }
   }
+
   //**处理班组 效率 初始值问题
   const initialHandleChange = async (shopId, teamId, record, teamDate) => {
-    // const sum = cloneDeep(teamLis)
-
     const sum = teamDate
-
     //班组
     record.teamType = true
     const team = await teamList({
@@ -154,9 +177,23 @@ const BreakUp = (props: any) => {
   }
 
   const getInterfaceData = async (data: any) => {
+    const arr = await getSkuTree({
+      externalProduceOrderId: data.externalProduceOrderId
+    })
+
     const res = await breakQuery({ assignmentId: data.id })
+
     if (!isEmpty(res)) {
       res.map(async (item: any, index) => {
+        const sum = []
+        if (!isEmpty(item.skuList)) {
+          item.skuList.map((item) => {
+            sum.push(item.id)
+          })
+        }
+        item.selectedItem = sum //选中的
+        item.type = false
+        item.tree = arr
         item.isLocked = item.isLocked === 1 ? true : false
         //拆分数量
         // item.productionAmount = item.productionAmount ? 0 : 0
@@ -167,19 +204,24 @@ const BreakUp = (props: any) => {
       })
       //这个时候先不能渲染 这里的会慢一步
       //先渲染后处理
-
+      setSplitType(res[0].skuType !== null ? res[0].skuType : '1')
       setInitialTeamList([...res])
     } else {
       //初始空数组 添加key防止报错
       // delete data.id //防止 id和父级一样.
       const res = cloneDeep(data)
+
       // res.children = []
+      res.type = false
+      res.tree = arr
       res.id = 1008611
       res.key = 2
       res.productionAmount = 0
       res.completedAmount = 0
       res.additionalTime = '0'
+      setSplitType('1')
       setData([res])
+      setLoad(false)
     }
   }
 
@@ -222,7 +264,7 @@ const BreakUp = (props: any) => {
   }
 
   //数字输入框的处理
-  let timeout: NodeJS.Timeout
+
   const onBreakUp = (
     e: any,
     record: {
@@ -243,20 +285,23 @@ const BreakUp = (props: any) => {
         message.warning('请输入大于0的数')
         updateData(record, sum)
       } else {
-        record.productionAmount = e
+        record.productionAmount = Number(e)
         updateData(record, sum)
       }
     }
     if (type === 2) {
-      record.completedAmount = e
+      record.completedAmount = Number(e)
       updateData(record, sum)
     }
   }
 
   //获取结束时间
   const endTime = async (e, record) => {
+    const sum = cloneDeep(data)
+
     if (e) {
       // c重新更改
+      record.planStartTime = moment(e).valueOf()
 
       const assignmentId = workSplitList.id
       const capacityId = record.templateId
@@ -274,13 +319,14 @@ const BreakUp = (props: any) => {
         additionalTime,
         capacityId
       })
-      if (arr.code === 200) {
-        const sum = cloneDeep(data)
-        //需要获取当前行~~~~~~
-        record.planStartTime = moment(e).valueOf()
-        record.planEndTime = arr.data
-        record.automatic = arr.data
-
+      try {
+        if (arr.code === 200) {
+          //需要获取当前行~~~~~~
+          record.planEndTime = arr.data
+          record.automatic = arr.data
+          updateData(record, sum)
+        }
+      } catch (error) {
         updateData(record, sum)
       }
     }
@@ -331,6 +377,7 @@ const BreakUp = (props: any) => {
         0
       )
       const value = arr[0].orderSum - res
+
       if (value <= 0) {
         message.warning('拆分数量以到达最大值')
       } else {
@@ -347,6 +394,8 @@ const BreakUp = (props: any) => {
           externalProduceOrderNum: arr[0].externalProduceOrderNum,
           productName: arr[0].productName,
           productNum: arr[0].productNum,
+          type: arr[0].type,
+          tree: arr[0].tree,
           completedAmount: 0
         })
         setData([...arr])
@@ -360,10 +409,29 @@ const BreakUp = (props: any) => {
     setData([...res])
   }
 
+  function isRepeat(arr: any) {
+    const teamIdType = arr.every((item: any) => {
+      return item !== null && item !== undefined
+    })
+
+    if (teamIdType) {
+      const hash: any = {}
+      for (const i in arr) {
+        if (hash[arr[i]]) return true
+        hash[arr[i]] = true
+      }
+      return false
+    } else {
+      return false
+    }
+  }
+
   // 保存事件
   const handleOk = async () => {
     const arr = cloneDeep(data)
+
     const state = { timeState: false, number: false, teamType: false }
+
     //时间的过滤
     const Time = arr.filter(
       (item: { planStartTime: undefined; planEndTime: undefined }) =>
@@ -375,75 +443,85 @@ const BreakUp = (props: any) => {
     } else {
       state.timeState = true
     }
-    // 拆分数量
-    const res = arr.reduce((total: any, current: { productionAmount: any }) => {
-      total += Math.abs(current.productionAmount)
-      return total
-    }, 0)
-    const value = res - arr[0].orderSum
-    if (value !== 0) {
-      if (value < 0) {
-        message.warning(`拆分数量总和未满足订单总量 剩余-【${value}】`)
-      } else {
-        message.warning(`拆分数量总和 超出订单总量 超出-【${Math.abs(value)}】`)
-      }
-    } else {
-      state.number = true
-    }
 
-    //工作班组 不可重复
-    //判断班组是否重复
-    const team: any = []
-    arr.map((item: { teamId: any }) => {
-      team.push(item.teamId)
-    })
-    function isRepeat(arr: any) {
-      const hash: any = {}
-      for (const i in arr) {
-        if (hash[arr[i]]) return true
-        hash[arr[i]] = true
-      }
-      return false
-    }
-
-    if (!isRepeat(team)) {
-      state.teamType = true
-    } else {
-      state.teamType = false
-      message.warning(`班组不能相同`)
-    }
-    if (
-      state.timeState === true &&
-      state.number === true &&
-      state.teamType === true
-    ) {
-      arr.map((item: any, index: any) => {
-        item.isLocked = item.isLocked === true ? 1 : 0
-        if (item.automatic === undefined || item.automatic <= 0) {
-          //手动 -旧值
-          item.additionalTime = item.planEndTime - item.used
+    if (state.timeState === true) {
+      // 拆分数量
+      const res = arr.reduce(
+        (total: any, current: { productionAmount: any }) => {
+          total += Math.abs(current.productionAmount)
+          return total
+        },
+        0
+      )
+      const value = res - arr[0].orderSum
+      if (value !== 0) {
+        if (value < 0) {
+          message.warning(`拆分数量总和未满足订单总量 剩余-【${value}】`)
         } else {
-          //手动 -自动
-          item.additionalTime = item.planEndTime - item.automatic
+          message.warning(
+            `拆分数量总和 超出订单总量 超出-【${Math.abs(value)}】`
+          )
         }
-      })
-      if (arr[0].id === 1008611) {
-        arr.map((item) => {
-          item.id = null
-        })
+      } else {
+        state.number = true
       }
 
-      const sum = await splitMethod({
-        assignmentId: workSplitList.id,
-        data: arr
+      //工作班组 不可重复
+      //判断班组是否重复
+      const team: any = []
+      arr.map((item: { teamId: any }) => {
+        team.push(item.teamId)
       })
 
-      if (sum) {
-        message.success('保存成功')
-        breakSave && breakSave()
-        empty && empty()
+      if (!isRepeat(team)) {
+        const teamIdType = team.every((item: any) => {
+          return item !== null && item !== undefined
+        })
+
+        if (teamIdType) {
+          state.teamType = true
+        } else {
+          state.teamType = false
+          message.warning(`班组不能为空`)
+        }
       } else {
-        message.error('保存失败')
+        state.teamType = false
+        message.warning(`班组不能相同`)
+      }
+
+      if (
+        state.timeState === true &&
+        state.number === true &&
+        state.teamType === true
+      ) {
+        arr.map((item: any, index: any) => {
+          item.isLocked = item.isLocked === true ? 1 : 0
+          if (item.automatic === undefined || item.automatic <= 0) {
+            //手动 -旧值
+            item.additionalTime = item.planEndTime - item.used
+          } else {
+            //手动 -自动
+            item.additionalTime = item.planEndTime - item.automatic
+          }
+        })
+        if (arr[0].id === 1008611) {
+          arr.map((item) => {
+            item.id = null
+          })
+        }
+
+        const sum = await splitMethod({
+          assignmentId: workSplitList.id,
+          data: arr
+        })
+
+        if (sum) {
+          message.success('保存成功')
+          breakSave && breakSave()
+          empty && empty()
+        } else {
+          message.error('保存失败')
+        }
       }
     }
   }
@@ -455,7 +533,67 @@ const BreakUp = (props: any) => {
     setPageNum(page)
     setPageSize(pageSize)
   }
+  const onVisibleChange = (e) => {
+    console.log(e)
+  }
 
+  //获取所有的选中值
+  useEffect(() => {
+    const sum = []
+    const initialData = []
+    data.forEach((item) => {
+      if (!isEmpty(item.selectedItem)) {
+        sum.push(item.selectedItem)
+      } else {
+        //初始
+        if (!isEmpty(item.skuList)) {
+          const ids = []
+          item.skuList.forEach((v) => {
+            ids.push(v.id)
+          })
+          initialData.push(ids)
+        }
+      }
+    })
+    //初始 先用 initial
+    // 操作 用 sum
+
+    if (initial.name === 'splitType') {
+      setAllSelected([])
+    } else {
+      if (!isEmpty(sum.flat(Infinity))) {
+        setAllSelected(sum.flat(Infinity))
+      } else {
+        setAllSelected(initialData.flat(Infinity))
+      }
+    }
+  }, [data, initial])
+
+  //切换清空 选中、所有的数据
+  useEffect(() => {
+    if (initial.name !== 'initial') {
+      data.map((item) => {
+        item.selectedItem = []
+      })
+      setData(data)
+      setAllSelected([])
+    }
+  }, [splitType])
+
+  //选中拆分数量
+  const selectSplitQuantity = (e, item) => {
+    if (!isEmpty(item.skuList)) {
+      item.skuList.map((item) => {
+        item.amount = item.productionNum
+      })
+    }
+
+    onBreakUp(e, item, 1)
+  }
+  const displayTooltip = (item: any) => {
+    item.type = true
+    onBreakUp(item.productionAmount, item, 1)
+  }
   // eslint-disable-next-line no-sparse-arrays
   const columns: any = [
     {
@@ -469,14 +607,14 @@ const BreakUp = (props: any) => {
         return <div key={_value}>{index + 1}</div>
       }
     },
-    {
-      title: '生产单号',
-      align: 'center',
-      fixed: 'left',
-      width: 80,
-      key: 'externalProduceOrderNum',
-      dataIndex: 'externalProduceOrderNum'
-    },
+    // {
+    //   title: '生产单号',
+    //   align: 'center',
+    //   fixed: 'left',
+    //   width: 80,
+    //   key: 'externalProduceOrderNum',
+    //   dataIndex: 'externalProduceOrderNum'
+    // },
     {
       title: '产品名称',
       align: 'center',
@@ -501,23 +639,91 @@ const BreakUp = (props: any) => {
       dataIndex: 'orderSum'
     },
     {
+      title: '客户款号',
+      align: 'center',
+      // fixed: 'left'3,
+      width: 80,
+      key: 'productNum',
+      dataIndex: 'productNum'
+    },
+    {
+      title: '拆分类型',
+      align: 'center',
+      width: 160,
+      key: 'splitType',
+      dataIndex: 'splitType',
+      render: (_value, v, index) => {
+        return (
+          <div>
+            {index === 0 ? (
+              <Select
+                placeholder="请选择拆分类型"
+                defaultValue={splitType}
+                style={{ width: 130 }}
+                onChange={(e) => {
+                  setSplitType(e)
+                  setInitial({ name: 'splitType' })
+                }}
+              >
+                {splitTypeData.map((item: any) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                ))}
+              </Select>
+            ) : null}
+          </div>
+        )
+      }
+    },
+    {
       title: '拆分数量',
       align: 'center',
-      width: 120,
+      width: 160,
       dataIndex: 'productionAmount',
       key: 'productionAmount',
 
       render: (_value: any, _row: any) => {
         return (
-          <div>
-            <InputNumber
-              min={0}
-              disabled={_row.createPlanStatus}
-              value={_value}
-              max={_row.orderSum} //最大值是生产单总量
-              onBlur={(e) => onBreakUp(e.target.value, _row, 1)}
-            />
-          </div>
+          <>
+            <div className={styles.remainingDuration}>
+              <InputNumber
+                controls={false}
+                min={0}
+                // disabled={_row.createPlanStatus}
+                value={_value}
+                max={_row.orderSum} //最大值是生产单总量
+                onBlur={(e) => onBreakUp(e.target.value, _row, 1)}
+              />
+
+              <Tooltip
+                color={'#fff'}
+                onVisibleChange={onVisibleChange}
+                trigger={'click'}
+                visible={_row.type}
+                placement="topLeft"
+                title={
+                  <ProductionAmountTree
+                    setInitial={setInitial}
+                    initial={initial}
+                    allSelected={allSelected}
+                    split={splitType}
+                    row={_row}
+                    selectSplitQuantity={selectSplitQuantity}
+                  />
+                }
+                key={_row.id}
+              >
+                <span
+                  onClick={() => {
+                    displayTooltip(_row)
+                  }}
+                >
+                  <img src={change} alt="" className={styles.imgChange} />
+                </span>
+              </Tooltip>
+            </div>
+          </>
         )
       }
     },
@@ -553,7 +759,7 @@ const BreakUp = (props: any) => {
               placeholder="请选择工作车间"
               defaultValue={_value}
               style={{ width: 120 }}
-              disabled={_row.createPlanStatus}
+              // disabled={_row.createPlanStatus}
               onChange={(e) => handleChange(1, e, _row)}
             >
               {factoryName.map((item: any) => (
@@ -579,11 +785,9 @@ const BreakUp = (props: any) => {
           <>
             <Select
               disabled={
-                _row.createPlanStatus === false
-                  ? _row.shopId
-                    ? false
-                    : true
-                  : _row.createPlanStatus
+                // _row.createPlanStatus === false
+                _row.shopId ? false : true
+                // : _row.createPlanStatus
               }
               // disabled={_row.createPlanStatus}
               placeholder="请选择工作班组"
@@ -715,14 +919,11 @@ const BreakUp = (props: any) => {
         return (
           <div className={styles.flex}>
             {data.length > 1 ? (
-              <>
-                {console.log(data)}
-                <Button
-                  onClick={() => reduce(_row.ids)}
-                  type="primary"
-                  icon={<MinusOutlined />}
-                />
-              </>
+              <Button
+                onClick={() => reduce(_row.ids)}
+                type="primary"
+                icon={<MinusOutlined />}
+              />
             ) : null}
           </div>
         )
@@ -743,6 +944,7 @@ const BreakUp = (props: any) => {
         <Table
           className={styles.table}
           bordered
+          loading={load}
           columns={columns}
           scroll={{ x: 1500, y: 500 }}
           dataSource={data}

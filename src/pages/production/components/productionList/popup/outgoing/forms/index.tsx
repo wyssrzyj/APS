@@ -1,14 +1,17 @@
 import { Col, Form, Input, Row, Select, TreeSelect } from 'antd'
 import { cloneDeep, debounce, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
 import { getChild } from '@/components/getChild/index'
+import { dockingData } from '@/recoil'
 import { dockingDataApis } from '@/recoil/apis'
 
 const HeaderForm = (props: { FormData: any }) => {
   const { FormData } = props
   const { sectionLists } = dockingDataApis
   const { Option } = Select
+  const searchConfigs = useRecoilValue(dockingData.searchConfigs)
 
   const layout = {
     labelCol: {
@@ -25,28 +28,12 @@ const HeaderForm = (props: { FormData: any }) => {
   const [form] = Form.useForm()
   const { validateFields } = form
   const [list, setList] = useState<any>({}) //总数据
-  const [treeData, setTreeData] = useState<any>() //所属工段
 
   useEffect(() => {
     if (!isEmpty(list)) {
       form.setFieldsValue(list)
     }
   }, [list])
-
-  //加班班组
-  useEffect(() => {
-    dataDictionary()
-  }, [])
-  const dataDictionary = async () => {
-    const teamData = await sectionLists() //所属工段
-    teamData.map((item) => {
-      item.name = item.dictLabel
-      item.value = item.dictValue
-      item.id = item.dictValue
-    })
-
-    setTreeData(teamData)
-  }
 
   const handleSubmit = debounce(async () => {
     const values = await validateFields()
@@ -95,25 +82,11 @@ const HeaderForm = (props: { FormData: any }) => {
               }
             >
               <Select placeholder="请选择所属工段" allowClear>
-                {!isEmpty(treeData)
-                  ? treeData.map(
-                      (item: {
-                        id: React.Key | null | undefined
-                        value: any
-                        name:
-                          | boolean
-                          | React.ReactChild
-                          | React.ReactFragment
-                          | React.ReactPortal
-                          | null
-                          | undefined
-                      }) => (
-                        <Option key={item.id} value={item.value}>
-                          {item.name}
-                        </Option>
-                      )
-                    )
-                  : null}
+                {searchConfigs.map((item: any) => (
+                  <Option key={item.id} value={item.id}>
+                    {item.name}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
           </Col>

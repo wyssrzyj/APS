@@ -1,7 +1,7 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-11 10:02:54
- * @LastEditTime: 2022-06-20 12:45:12
+ * @LastEditTime: 2022-08-03 15:43:42
  * @Description:
  * @LastEditors: lyj
  */
@@ -13,6 +13,8 @@ import Icon from '@/components/Icon'
 import { loginApis } from '@/recoil/apis'
 import { clearLocalStorage } from '@/utils/tool'
 
+import aps_left from '../../imgs/aps_left.png'
+import aps_logo from '../../imgs/aps_logo.png'
 import styles from './index.module.less'
 
 const UserIcon = () => <Icon type="jack-yonghuming" className={styles.icon} />
@@ -37,9 +39,9 @@ const LoginContent = () => {
           { name: '生产任务动态', type: true }
         ],
         lower: [
+          { name: '生产单剩余工期查询', type: false },
           { name: '生产延期查询', type: true },
-          { name: '生产任务动态', type: true },
-          { name: '生产单剩余工期查询', type: false }
+          { name: '齐套生产单库存变动查询', type: true }
         ]
       }
       //设置配置
@@ -56,17 +58,11 @@ const LoginContent = () => {
     <div className={styles.container}>
       <div className={styles.logoContainer}>
         <div className={styles.imgContainerLeft}>
-          <img
-            src="https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/aps_left.png"
-            alt="logo"
-          />
+          <img src={aps_left} alt="logo" />
         </div>
         <div className={styles.section}>
           <div className={styles.imgContainer}>
-            <img
-              src="https://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/aps/aps_logo.png"
-              alt="logo"
-            />
+            <img src={aps_logo} alt="logo" />
           </div>
           <Form
             form={form}

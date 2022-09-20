@@ -5,11 +5,22 @@ import { cloneDeep } from 'lodash'
 import moment, { Moment } from 'moment'
 import React, { SetStateAction, useCallback, useEffect, useState } from 'react'
 
-import { CusDragTable, CustomModal, SearchBar, Title } from '@/components'
+import { Icon } from '@/components'
+import {
+  AdvancedSearch,
+  CusDragTable,
+  CustomModal,
+  SearchBar
+} from '@/components'
 import { productionPlanApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
-import { formItemConfig, searchConfigs, tableColumns } from './conifgs'
+import {
+  easySearch,
+  formItemConfig,
+  searchConfigs,
+  tableColumns
+} from './conifgs'
 import Details from './details/index'
 import styles from './index.module.less'
 
@@ -18,11 +29,9 @@ const {
   exportProductList,
   productDetail,
   factoryList,
-  getWorkshopSectionList,
-  makeSewingPlan
+  getWorkshopSectionList
 } = productionPlanApis
 
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
 const map = new Map()
 map.set(-1, '生成缝制计划')
 map.set(0, '编辑缝制计划')
@@ -40,11 +49,14 @@ function ProductionPlan() {
         <Button type="link" onClick={() => handleDetailInfo(record)}>
           查看
         </Button>
-        {/* {record.section === '缝制' ? (
-          <Button type="link" onClick={() => showSewing(record)}>
-            {map.get(record.auditStatus)}
-          </Button>
-        ) : null} */}
+
+        <Button
+          className={record.shopTaskId === null ? null : styles.showSewing}
+          type="link"
+          onClick={() => showSewing(record)}
+        >
+          生成车间任务
+        </Button>
       </div>
     )
   }
@@ -54,13 +66,13 @@ function ProductionPlan() {
     pageNum: 1
   })
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [rowInfo, setRowInfo] = useState() //展示弹窗
   const [facList, setFacList] = useState([])
   const [workshopSectionList, setWorkshopSectionList] = useState([])
   const [detailsPopup, setDetailsPopup] = useState<any>(false) //编辑详情
   const [editData, setEditData] = useState<any>() //编辑数据
+  const [searchStatus, setSearchStatus] = useState(false)
 
   const {
     tableChange,
@@ -160,38 +172,27 @@ function ProductionPlan() {
     setIsModalVisible(visible)
   }
 
-  const rowSelection:
-    | {
-        selectedRowKeys: never[]
-        onChange: (selectedRowKeys: SetStateAction<never[]>) => void
-      }
-    | any = {
-    selectedRowKeys,
-    onChange: (selectedRowKeys: SetStateAction<never[]>) => {
-      setSelectedRowKeys(selectedRowKeys)
-    }
-  }
   const showSewing = async (v: any) => {
-    //只有 -1才走这个接口
-    if (v.auditStatus === -1) {
-      const res = await makeSewingPlan({
-        produceOrderNum: v.externalProduceOrderNum,
-        teamManagerId: v.teamId
-      })
-      if (res.data) {
-        message.warning(' 已生成过缝制计划')
-      } else {
-        setEditData({ ...v })
-        setDetailsPopup(true)
-      }
-    } else {
-      setEditData({ ...v })
-      setDetailsPopup(true)
-    }
+    setEditData({ ...v })
+    setDetailsPopup(true)
+    // //只有 -1才走这个接口
+    // if (v.auditStatus === -1) {
+    //   const res = await makeSewingPlan({
+    //     produceOrderNum: v.externalProduceOrderNum,
+    //     teamManagerId: v.teamId
+    //   })
+    //   if (res.data) {
+    //     message.warning(' 已生成过缝制计划')
+    //   } else {
+    //     setEditData({ ...v })
+    //     setDetailsPopup(true)
+    //   }
+    // } else {
+    //   setEditData({ ...v })
+    //   setDetailsPopup(true)
+    // }
   }
   const update = async () => {
-    console.log('更新数据')
-
     getDataList && getDataList()
     // const arr = await productList(params)
   }
@@ -208,23 +209,21 @@ function ProductionPlan() {
 
   return (
     <div className={styles.qualification}>
-      <div className={styles.forms}>
-        <SearchBar
-          configs={configs}
-          params={params}
-          callback={searchParamsChange}
-        ></SearchBar>
-      </div>
-
+      <AdvancedSearch
+        easySearch={easySearch} //普通搜索
+        configs={configs} //高级搜索
+        params={params}
+        callback={searchParamsChange}
+      />
       <div>
         <CusDragTable
           storageField={'dispatchPan'}
-          rowSelection={rowSelection}
           cusBarLeft={TableLeft}
           columns={tableColumns}
           dataSource={dataSource}
           rowKey={'id'}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 2000, y: '80vh' }}
+          dispatchPan
           onChange={tableChange}
           pagination={{
             //分页
@@ -249,7 +248,7 @@ function ProductionPlan() {
         ></CustomModal>
       ) : null}
 
-      {/* 缝制任务 */}
+      {/* 生产车间任务 */}
       {detailsPopup && (
         <Details
           update={update}

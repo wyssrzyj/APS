@@ -2,10 +2,151 @@ import Icon from '@/components/Icon'
 
 export const menus = [
   {
-    label: '首页',
-    key: 'home',
-    icon: <Icon type={'jack-home-fill'} />,
-    url: '/home'
+    label: '工作台',
+    key: 'workbench ',
+    icon: <Icon type={'jack-qiyeyewu'} />,
+    url: '/',
+    children: [
+      {
+        label: '首页',
+        key: 'home',
+        icon: <Icon type={'jack-home-fill'} />,
+        url: '/home'
+      }
+    ]
+  },
+  {
+    label: '业务单数据管理',
+    key: 'production ',
+    icon: <Icon type={'jack-qiyeyewu'} />,
+    url: '/',
+    children: [
+      {
+        label: '生产单列表',
+        key: 'productionList',
+        icon: <Icon type={'jack-shengchanguanli'} />,
+        url: '/productionList'
+      }
+    ]
+  },
+  {
+    label: '生产管理',
+    key: 'productionManagement',
+    icon: <Icon type={'jack-shengchan'} />,
+
+    url: '/',
+    children: [
+      {
+        label: '班组工作日历',
+        key: 'workCalendar',
+        icon: <Icon type={'jack-rili'} />,
+        url: '/workCalendar'
+      },
+      {
+        label: '物料齐套检查',
+        key: 'materials',
+        icon: <Icon type={'jack-wuliaoguanli'} />,
+        url: '/materials'
+      },
+      {
+        label: '生产单排程',
+        key: 'scheduling',
+        icon: <Icon type={'jack-jihuapaicheng'} />,
+        url: '/scheduling'
+      }
+    ]
+  },
+  {
+    label: '进度跟踪',
+    key: 'productionManagements',
+    icon: <Icon type={'jack-jindutiao'} />,
+
+    url: '/',
+    children: [
+      {
+        label: '日排程管理',
+        key: 'dailySchedule',
+        icon: <Icon type={'jack-dysp'} />,
+        url: '/dailySchedule'
+      },
+      {
+        label: '生产计划',
+        key: 'dispatchPan',
+        icon: <Icon type={'jack-paigong'} />,
+        url: '/dispatchPan'
+      },
+      {
+        label: '班组甘特图',
+        key: 'resourcedMap',
+        icon: <Icon type={'jack-ziyuan1'} />,
+        url: '/resourcedMap'
+      },
+      {
+        label: '生产单甘特图',
+        key: 'orderChart',
+        icon: <Icon type={'jack-chartmixed'} />,
+        url: '/orderChart'
+      },
+      {
+        label: '班组负荷图',
+        key: 'schedulingResults',
+        icon: <Icon type={'jack-fuhe'} />,
+        url: '/schedulingResults'
+      },
+      {
+        label: '生产实绩',
+        key: 'actualProduction',
+        icon: <Icon type={'jack-shengchanpicishiji'} />,
+        url: '/actualProduction'
+      }
+    ]
+  },
+  {
+    label: '预警管理',
+    key: 'earlyWarning',
+    icon: <Icon type={'jack-feeds'} />,
+    url: '/',
+    children: [
+      {
+        label: '生产预警管理',
+        key: 'productionWarning',
+        icon: <Icon type={'jack-shebeiguanli'} />,
+
+        url: '/productionWarning'
+      },
+      {
+        label: '物料预警管理',
+        key: 'materialAlert',
+        icon: <Icon type={'jack-sgg_1'} />,
+        url: '/materialAlert'
+      }
+    ]
+  },
+  {
+    label: '报表管理',
+    key: 'reportManagement',
+    icon: <Icon type={'jack-xianshijieguo'} />,
+    url: '/',
+    children: [
+      {
+        label: '生产完成报表',
+        key: 'productionCycle',
+        icon: <Icon type={'jack-qiyeyewu'} />,
+        url: '/productionCycle'
+      },
+      {
+        label: '生产计划报表',
+        key: 'planningReport',
+        icon: <Icon type={'jack-jichushuju'} />,
+        url: '/planningReport'
+      },
+      {
+        label: '班组日完成报表',
+        key: 'dailyCompletion',
+        icon: <Icon type={'jack-jihuapaicheng'} />,
+        url: '/dailyCompletion'
+      }
+    ]
   },
   {
     label: '系统管理',
@@ -92,91 +233,6 @@ export const menus = [
       //     }
       //   ]
       // }
-    ]
-  },
-
-  {
-    label: '业务单数据管理',
-    key: 'production ',
-    icon: <Icon type={'jack-qiyeyewu'} />,
-    url: '/',
-    children: [
-      {
-        label: '生产单列表',
-        key: 'productionList',
-        icon: <Icon type={'jack-shengchanguanli'} />,
-        url: '/productionList'
-      }
-    ]
-  },
-  {
-    label: '生产管理',
-    key: 'productionManagement',
-    icon: <Icon type={'jack-shengchan'} />,
-    url: '/',
-    children: [
-      {
-        label: '班组工作日历',
-        key: 'workCalendar',
-        icon: <Icon type={'jack-rili'} />,
-        url: '/workCalendar'
-      },
-      {
-        label: '物料齐套检查',
-        key: 'materials',
-        icon: <Icon type={'jack-wuliaoguanli'} />,
-        url: '/materials'
-      },
-      {
-        label: '生产单排程',
-        key: 'scheduling',
-        icon: <Icon type={'jack-jihuapaicheng'} />,
-        url: '/scheduling'
-      }
-    ]
-  },
-  {
-    label: '进度跟踪',
-    key: 'productionManagements',
-    icon: <Icon type={'jack-jindutiao'} />,
-    url: '/',
-    children: [
-      // {
-      //   label: '日排程管理',
-      //   key: 'dailySchedule',
-      //   icon: 'jack-paigong',
-      //   url: '/dailySchedule'
-      // },
-      {
-        label: '生产计划',
-        key: 'dispatchPan',
-        icon: <Icon type={'jack-paigong'} />,
-        url: '/dispatchPan'
-      },
-      {
-        label: '班组甘特图',
-        key: 'resourcedMap',
-        icon: <Icon type={'jack-ziyuan1'} />,
-        url: '/resourcedMap'
-      },
-      {
-        label: '生产单甘特图',
-        key: 'orderChart',
-        icon: <Icon type={'jack-chartmixed'} />,
-        url: '/orderChart'
-      },
-      {
-        label: '班组负荷图',
-        key: 'schedulingResults',
-        icon: <Icon type={'jack-fuhe'} />,
-        url: '/schedulingResults'
-      },
-      {
-        label: '生产实绩',
-        key: 'actualProduction',
-        icon: <Icon type={'jack-shengchanpicishiji'} />,
-        url: '/actualProduction'
-      }
     ]
   }
   // {

@@ -1,10 +1,11 @@
 /*
  * @Author: zjr
  * @Date: 2022-06-01 15:20:19
- * @LastEditTime: 2022-06-02 16:41:04
+ * @LastEditTime: 2022-08-05 09:48:59
  * @Description:
  * @LastEditors: lyj
  */
+import { Col, Row } from 'antd'
 import { cloneDeep, debounce } from 'lodash'
 import React, { useEffect, useMemo, useRef } from 'react'
 
@@ -14,6 +15,15 @@ import styles from './index.module.less'
 
 const SearchBar = (props: Record<string, any>) => {
   const { params, callback, configs } = props
+
+  const sliceIntoChunks = (arr, chunkSize) => {
+    const res = []
+    for (let i = 0; i < arr.length; i += chunkSize) {
+      const chunk = arr.slice(i, i + chunkSize)
+      res.push(chunk)
+    }
+    return res
+  }
 
   const paramsRef = useRef(params)
 
@@ -28,36 +38,42 @@ const SearchBar = (props: Record<string, any>) => {
   }, 200)
 
   const Search = useMemo(() => {
-    return configs.map((item: Record<string, any>, idx: number) => {
-      const keys = [
-        'type',
-        'options',
-        'field',
-        'placeholder',
-        'allowClear',
-        'filterOption',
-        'showSearch',
-        'onSearch',
-        'treeData',
-        'width'
-      ]
-      const obj: any = {}
+    return sliceIntoChunks(configs, 3).map((v, indexS) => (
+      <Row key={indexS}>
+        {v.map((item: Record<string, any>, idx: number) => {
+          const keys = [
+            'type',
+            'options',
+            'field',
+            'placeholder',
+            'allowClear',
+            'filterOption',
+            'showSearch',
+            'onSearch',
+            'treeData',
+            'width'
+          ]
+          const obj: any = {}
 
-      keys.forEach((i) => (obj[i] = item[i]))
+          keys.forEach((i) => (obj[i] = item[i]))
 
-      return (
-        <div key={idx} className={styles.searchItem}>
-          <span className={styles.searchLabel}>{item.label}</span>
-          <div className={styles.searchValue}>
-            <FormNode
-              {...obj}
-              onChange={(value) => valuesChange(value, item.field)}
-              value={params[item.field]}
-            ></FormNode>
-          </div>
-        </div>
-      )
-    })
+          return (
+            <Col span={8} key={idx}>
+              <div key={idx} className={styles.searchItem}>
+                <div className={styles.searchLabel}>{item.label}</div>
+                <div className={styles.searchValue}>
+                  <FormNode
+                    {...obj}
+                    onChange={(value) => valuesChange(value, item.field)}
+                    value={params[item.field]}
+                  ></FormNode>
+                </div>
+              </div>
+            </Col>
+          )
+        })}
+      </Row>
+    ))
   }, [configs, params])
 
   return (

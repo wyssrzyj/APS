@@ -1,7 +1,7 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-10 13:28:44
- * @LastEditTime: 2022-06-24 13:28:42
+ * @LastEditTime: 2022-07-12 17:21:42
  * @Description:
  * @LastEditors: lyj
  */
@@ -17,6 +17,8 @@ import { orderApis } from '@/recoil/apis'
 import { practice } from '@/recoil/apis'
 
 import styles from './index.module.less'
+const LOADING =
+  'http://capacity-platform.oss-cn-hangzhou.aliyuncs.com/capacity-platform/20210730/a1c35459662045c986e0298759f70f70.gif'
 
 function IframeDome() {
   const location = useLocation()
@@ -29,12 +31,15 @@ function IframeDome() {
   const [chart, setChart] = useState<any>([]) //图
   const [line, setLine] = useState<any>([]) //线
   const [iframeType, setIframeType] = useState<any>() //iframe类型
+  const [loadingStatus, setLoadingStatus] = useState<any>(false) //iframe类型
+
   const {
     productionSingleView,
     resourceMap,
     getLine,
     comparisonChart,
-    productionView
+    productionView,
+    comparisonAlgorithm
   } = orderApis
 
   function parse(search) {
@@ -82,19 +87,16 @@ function IframeDome() {
       console.log('对比图 2')
       const newID = id.split(',')
       const res = await comparisonChart({ idList: newID })
-
+      setLoadingStatus(true)
       parent.postMessage({ data: res.data }, '*') //传递给父级
-
       setValue(res.data)
-
       return res
     }
     //对比图
     if (type === '3') {
-      console.log(' 对比图 3')
-
       const newID = id.split(',')
-      const res = await comparisonChart({ idList: newID })
+      const res = await comparisonAlgorithm({ idList: newID })
+      setLoadingStatus(true)
       return res
     }
     //对比图
@@ -109,7 +111,6 @@ function IframeDome() {
   // 甘特图数据
   const getChart = async (v) => {
     const id = v.id
-    console.log('🚀 ~ file: index.tsx ~ line 82 ~ getChart ~ v.id', v.id)
     const type = v.type
     const chart: any = await getGanttData(type, id)
     const arr = cloneDeep(chart.data)
@@ -157,7 +158,7 @@ function IframeDome() {
     if (!isEmpty(gunterData)) {
       setChart(gunterData)
     }
-    setLine([]) //线 //初始的时候传空
+    setLine([]) //线 //初始的时候传空.
   }, [gunterData])
 
   // 合并图线
@@ -179,9 +180,30 @@ function IframeDome() {
   const leftData = async (e: any) => {
     setSelect(e)
   }
+  // 是否加载完毕
+  const loading = () => {
+    const locationId: any = parse(location.search)
+    if (locationId.type == 2 || locationId.type == 3) {
+      if (loadingStatus === false) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return false
+    }
+  }
+
   return (
-    <div>
+    <div className={styles.loadingBox}>
       <div className={styles.ganttContent}>
+        {loading() ? (
+          <>
+            <img className={styles.loadingImg} src={LOADING} alt="" />
+            <span>加载中</span>
+          </>
+        ) : null}
+
         <Gantt
           select={select}
           update={iframeType}

@@ -1,17 +1,41 @@
 import moment from 'moment'
 import { ReactNode } from 'react'
 
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
+const FORMAT_DATE = 'YYYY-MM-DD HH:mm'
 
+export const easySearch = [
+  {
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入客户款号'
+  },
+  {
+    label: '生产单号',
+    field: 'externalProduceOrderNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入生产单号'
+  }
+]
 export const searchConfigs = [
   {
-    label: '工厂名称',
-    field: 'factoryId',
-    type: 'select',
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
     allowClear: true,
-    placeholder: '请选择工厂名称',
-    options: []
+    placeholder: '请输入客户款号'
   },
+  // {
+  //   label: '工厂名称',
+  //   field: 'factoryId',
+  //   type: 'select',
+  //   width: 250,
+  //   allowClear: true,
+  //   placeholder: '请选择工厂名称',
+  //   options: []
+  // },
   {
     label: '生产单号',
     field: 'externalProduceOrderNum',
@@ -39,6 +63,8 @@ export const searchConfigs = [
     label: '生产状态',
     field: 'productStatus',
     type: 'select',
+    width: 250,
+
     allowClear: true,
     placeholder: '请选择生产状态',
     options: []
@@ -64,7 +90,7 @@ export const tableColumns: any = [
     title: '款图',
     align: 'center',
     dataIndex: 'img',
-    width: 200
+    width: 100
   },
   {
     title: '工厂名称',
@@ -87,26 +113,28 @@ export const tableColumns: any = [
   {
     title: '客户款号',
     align: 'center',
-    dataIndex: 'img',
+    dataIndex: 'productClientNum',
     width: 200
   },
   {
     title: '生产单总量',
     align: 'center',
-    dataIndex: 'shopName',
+    dataIndex: 'orderSum',
     width: 200
   },
   {
     title: '承诺交期',
     align: 'center',
-    dataIndex: 'teamName',
-    width: 200
+    dataIndex: 'committedDeliveryDate',
+    width: 200,
+    render: (date: moment.MomentInput) =>
+      date ? moment(date).format(FORMAT_DATE) : null
   },
 
   {
     title: '剩余工期',
     align: 'center',
-    dataIndex: 'productionAmount',
+    dataIndex: 'remainingDuration',
     width: 100
   },
   {
@@ -141,12 +169,7 @@ export const tableColumns: any = [
     render: (date: moment.MomentInput) =>
       date ? moment(date).format(FORMAT_DATE) : null
   },
-  {
-    title: '备注',
-    align: 'center',
-    dataIndex: 'productionAmount',
-    width: 100
-  },
+
   {
     title: '操作',
     align: 'center',

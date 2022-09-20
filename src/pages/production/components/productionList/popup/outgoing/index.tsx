@@ -2,21 +2,15 @@ import { Button, Checkbox, Input, Popconfirm, Table } from 'antd'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
+import { dockingData } from '@/recoil'
 import { productionSingleApis } from '@/recoil/apis'
 
 import Forms from './forms'
 // import Excl from '@/components/excel/Import/index'
 import styles from './index.module.less'
 import Popup from './Popup/index'
-
-const map = new Map()
-map.set('1', '裁剪')
-map.set('2', '缝制')
-map.set('3', '后整')
-map.set('4', '包装')
-map.set('5', '外发')
-map.set('6', '缝制线外组')
 
 const Outgoing = (props: any) => {
   const {
@@ -29,6 +23,13 @@ const Outgoing = (props: any) => {
   } = props
   const { processOutsourcing, wholeOrder, wholeSingleOugoing } =
     productionSingleApis
+
+  const searchConfigs = useRecoilValue(dockingData.searchConfigs)
+
+  const map = new Map()
+  searchConfigs.forEach((item) => {
+    map.set(item.value, item.name)
+  })
 
   const [pageNum, setPageNum] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)

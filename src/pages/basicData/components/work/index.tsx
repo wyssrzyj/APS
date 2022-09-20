@@ -1,5 +1,6 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { Button, Input, message, Modal, Tag } from 'antd'
+import Item from 'antd/lib/list/Item'
 import { cloneDeep, isEmpty } from 'lodash'
 import {
   Key,
@@ -16,9 +17,7 @@ import { workingModeApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 
 import { searchConfigs, tableColumns } from './conifgs'
-import Forms from './forms'
 import styles from './index.module.less'
-import MovPopup from './movPopup'
 import Popup from './popup'
 
 const Index = () => {
@@ -38,12 +37,12 @@ const Index = () => {
   } = workingModeApis
 
   const [configs, setConfigs] = useState<any[]>(searchConfigs)
+  const [list, setList] = useState<any[]>()
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) //选中的值
   const [isModalVisible, setIsModalVisible] = useState(false) //展示弹窗
   const [type, setType] = useState(1) //编辑或者新增
   const [edit, setEdit] = useState() //编辑数据
-  const [movIsModalVisible, setMovIsModalVisible] = useState(false) //删除弹窗
   const [factoryData, setFactoryData] = useState<any>([]) //工厂
   const [facList, setFacList] = useState([]) // 选中的值
 
@@ -56,6 +55,16 @@ const Index = () => {
     loading,
     getDataList
   } = useTableChange(params, workingModes)
+  useEffect(() => {
+    if (!isEmpty(dataSource)) {
+      dataSource.map((item, _index) => {
+        item.key = _index
+      })
+      setList(dataSource)
+    } else {
+      setList([])
+    }
+  }, [dataSource])
 
   //工厂名称
   useEffect(() => {
@@ -74,87 +83,33 @@ const Index = () => {
       setFactoryData(arr)
     }
   }
-  // eslint-disable-next-line no-sparse-arrays
-  const columns: any = [
-    {
-      title: '工作模式',
-      align: 'center',
-      dataIndex: 'name'
-    },
-    {
-      title: '工作日',
-      align: 'center',
-      dataIndex: 'weeks',
-      render: (value: any, row: { [x: string]: Key | null | undefined }) => {
-        const chars = value.split(',')
-        return (
-          <div>
-            {!isEmpty(chars)
-              ? chars.map(
-                  (
-                    item:
-                      | boolean
-                      | ReactChild
-                      | ReactFragment
-                      | ReactPortal
-                      | null
-                      | undefined,
-                    index: Key | null | undefined
-                  ) => (
-                    // eslint-disable-next-line react/jsx-key
-                    <Tag key={index}>{item}</Tag>
-                  )
-                )
-              : null}
-          </div>
-        )
-      }
-    },
-    {
-      title: '工作时间',
-      align: 'center',
-      dataIndex: 'times',
-      render: (value: any, row: { [x: string]: Key | null | undefined }) => {
-        const chars = value.split(',')
-        return (
-          <div className={styles.tags}>
-            {chars.map(
-              (
-                item:
-                  | boolean
-                  | ReactChild
-                  | ReactFragment
-                  | ReactPortal
-                  | null
-                  | undefined,
-                index: Key | null | undefined
-              ) => (
-                // eslint-disable-next-line react/jsx-key
-                <Tag className={styles.tag} key={index}>
-                  {item}
-                </Tag>
-              )
-            )}
-          </div>
-        )
-      }
-    },
-    {
-      title: '工厂名称',
-      align: 'center',
-      dataIndex: 'factoryName',
-      width: 200
-    },
-    {
-      title: '班组名称',
-      align: 'center',
-      dataIndex: 'teams',
-      width: 150,
-      render: (value: any, row: { [x: string]: Key | null | undefined }) => {
-        const chars = value !== null ? value.split(',') : []
-        return (
-          <div>
-            {chars.map(
+  tableColumns[tableColumns.length - 1].render = (
+    value: any,
+    row: { [x: string]: Key | null | undefined }
+  ) => {
+    return (
+      <div className={styles.flex} key={row.id}>
+        <div
+          className={styles.operation_item}
+          onClick={() => editUser(false, row)}
+        >
+          查看
+        </div>
+        <div className={styles.operation} onClick={() => editUser(true, row)}>
+          编辑
+        </div>
+      </div>
+    )
+  }
+  tableColumns[1].render = (
+    value: any,
+    row: { [x: string]: Key | null | undefined }
+  ) => {
+    const chars = value.split(',')
+    return (
+      <div>
+        {!isEmpty(chars)
+          ? chars.map(
               (
                 item:
                   | boolean
@@ -168,54 +123,62 @@ const Index = () => {
                 // eslint-disable-next-line react/jsx-key
                 <Tag key={index}>{item}</Tag>
               )
-            )}
-          </div>
-        )
-      }
-    },
-    // {
-    //   title: '班组人数',
-    //   align: 'center',
-    //   dataIndex: 'remark'
-    // },
-    {
-      title: '备注',
-      align: 'center',
-      dataIndex: 'remark'
-    },
-    {
-      title: '操作',
-      align: 'center',
-      // width: 150,
-      dataIndex: 'address',
-      render: (_value: any, row: any) => {
-        return (
-          <div className={styles.flex}>
-            <div
-              className={styles.operation_item}
-              onClick={() => editUser(false, row)}
-            >
-              查看
-            </div>
-            <div
-              className={styles.operation}
-              onClick={() => editUser(true, row)}
-            >
-              编辑
-            </div>
-          </div>
-        )
-      }
-    }
-  ]
-
-  //头部form的数据
-  const FormData = (e: any) => {
-    if (e.factoryId !== undefined) {
-      setParams({ pageNum: 1, pageSize, ...e })
-    } else {
-      setParams({ pageNum, pageSize, ...e })
-    }
+            )
+          : null}
+      </div>
+    )
+  }
+  tableColumns[2].render = (
+    value: any,
+    row: { [x: string]: Key | null | undefined }
+  ) => {
+    const chars = value.split(',')
+    return (
+      <div className={styles.tags}>
+        {chars.map(
+          (
+            item:
+              | boolean
+              | ReactChild
+              | ReactFragment
+              | ReactPortal
+              | null
+              | undefined,
+            index: Key | null | undefined
+          ) => (
+            // eslint-disable-next-line react/jsx-key
+            <Tag className={styles.tag} key={index}>
+              {item}
+            </Tag>
+          )
+        )}
+      </div>
+    )
+  }
+  tableColumns[4].render = (
+    value: any,
+    row: { [x: string]: Key | null | undefined }
+  ) => {
+    const chars = !isEmpty(value) ? value.split(',') : []
+    return (
+      <div>
+        {chars.map(
+          (
+            item:
+              | boolean
+              | ReactChild
+              | ReactFragment
+              | ReactPortal
+              | null
+              | undefined,
+            index: Key | null | undefined
+          ) => (
+            // eslint-disable-next-line react/jsx-key
+            <Tag key={index}>{item}</Tag>
+          )
+        )}
+      </div>
+    )
   }
 
   const editUser = async (type: boolean, value: any) => {
@@ -234,7 +197,7 @@ const Index = () => {
     if (selectedRowKeys[0] === undefined) {
       message.warning('请至少选择一个')
     } else {
-      setMovIsModalVisible(true)
+      showDeleteConfirm()
     }
   }
   const movApi = async () => {
@@ -272,7 +235,7 @@ const Index = () => {
         >
           新增
         </Button>
-        <Button type="primary" danger onClick={showDeleteConfirm}>
+        <Button type="primary" danger onClick={start}>
           删除
         </Button>
       </>
@@ -311,9 +274,6 @@ const Index = () => {
       item.value = item.id
     })
     nConfigs[1]['options'] = list
-    // if (isEmpty(list)) {
-    //   nConfigs[1]['field'] = '6366'
-    // }
 
     setConfigs(nConfigs)
   }
@@ -326,12 +286,11 @@ const Index = () => {
     }
     setParams({ ...values })
   }
-  //---替换----结束-
 
   const content = { isModalVisible, setIsModalVisible, type, edit, factoryData }
+
   return (
     <div className={styles.qualification}>
-      <div>{/* <Title title={'工作模式'} /> */}</div>
       <div>
         <div className={styles.content}>
           <div className={styles.forms}>
@@ -341,39 +300,31 @@ const Index = () => {
               callback={paramsChange}
             ></SearchBar>
           </div>
-
-          {/* <Forms factoryData={factoryData} FormData={FormData}></Forms> */}
           <CusDragTable
             storageField={'work'}
             cusBarLeft={TableLeft}
             rowSelection={rowSelection}
-            columns={columns}
-            dataSource={dataSource}
+            columns={tableColumns}
+            dataSource={list}
             rowKey={'id'}
-            scroll={{ x: 1000 }}
+            // scroll={{ x: 2000, y: '60vh' }}
             loading={loading}
             onChange={tableChange}
+            bordered={true} //边框线
             pagination={{
               //分页
               showSizeChanger: true,
-              // showQuickJumper: true, //是否快速查找
               pageSize: pageSize, //每页条数
               current: pageNum, //	当前页数
               total, //数据总数
-              // position: ['bottomCenter'], //居中
               pageSizeOptions: ['10', '20', '50']
             }}
           />
-
-          <Popup content={content} newlyAdded={newlyAdded} />
+          {isModalVisible ? (
+            <Popup content={content} newlyAdded={newlyAdded} />
+          ) : null}
         </div>
       </div>
-      {/* <MovPopup
-        type="mov"
-        movIsModalVisible={movIsModalVisible}
-        setMovIsModalVisible={setMovIsModalVisible}
-        movApi={movApi}
-      /> */}
     </div>
   )
 }

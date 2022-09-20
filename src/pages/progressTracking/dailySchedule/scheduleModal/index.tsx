@@ -1,37 +1,149 @@
 /*
  * @Author: lyj
  * @Date: 2022-06-21 13:18:16
- * @LastEditTime: 2022-06-23 15:32:25
+ * @LastEditTime: 2022-07-20 15:57:00
  * @Description:
  * @LastEditors: lyj
  */
-import { Space, Table, Tag } from 'antd'
-import type { ColumnsType } from 'antd/lib/table'
-import React from 'react'
+import { Button, message, Modal, Table } from 'antd'
+import { isEmpty } from 'lodash'
+import { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
+
+import { dockingData } from '@/recoil'
+import { dailySchedule, productionWarning } from '@/recoil/apis'
 
 import { tableColumns } from './conifgs'
 import MultistageTable from './multistageTable'
 
-const index = () => {
-  const data: any[] = [
-    {
-      serial: '1',
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-      tags: ['nice', 'developer']
+const WarningModal = (props) => {
+  const { current } = props
+  const searchConfigs = useRecoilValue(dockingData.searchConfigs)
+  const map = new Map()
+  searchConfigs.forEach((item) => {
+    map.set(item.value, item.name)
+  })
+  const { getAssignmentList } = productionWarning
+  const { updateDailyScheduleList } = dailySchedule
+  tableColumns[tableColumns.length - 1].render = (
+    _text: any,
+    record: any,
+    index: number
+  ) => {
+    return (
+      <div key={index}>
+        {record.section === '5' ? null : (
+          <Button
+            type="link"
+            onClick={() => {
+              setIsModalVisible(true)
+              setSubitemData(record)
+            }}
+          >
+            编辑
+          </Button>
+        )}
+      </div>
+    )
+  }
+  tableColumns[1].render = (v) => {
+    return <div>{map.get(v)}</div>
+  }
+
+  const [data, setData] = useState([])
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [subitemData, setSubitemData] = useState()
+  const [saveData, setSaveData] = useState<any>([]) //保存数据
+
+  useEffect(() => {
+    getProductionWarning()
+  }, [])
+
+  const getProductionWarning = async () => {
+    const res = await getAssignmentList({
+      externalProduceOrderId: current.externalProduceOrderId
+    })
+    if (res.code === 200) {
+      setData(res.data)
     }
-  ]
+  }
+
   const onChang = (e) => {
-    console.log('处理后的数据-用于保存', e)
+    setSaveData(e)
+  }
+  //计划数量总合必须 =总计划数量
+  const totalQuantity = (e) => {
+    if (!isEmpty(e.dailyScheduleVOS)) {
+      const sumList = []
+      e.dailyScheduleVOS.forEach((item) => {
+        const res = item.detailVOS.reduce(
+          (total, current, currentIndex, arr) => {
+            total += current.planAmount
+            return total
+          },
+          0
+        )
+        sumList.push(res)
+      })
+
+      const sum = sumList.reduce((total, current, currentIndex, arr) => {
+        total += current
+        return total
+      }, 0)
+      if (current.orderSum === sum) {
+        return true
+      } else {
+        if (sum > current.orderSum) {
+          message.warning(
+            `详情数量 【${sum}】大于 总计划数量【${current.orderSum}】`
+          )
+        }
+        if (sum < current.orderSum) {
+          message.warning(
+            `详情数量 【${sum}】小于 总计划数量【${current.orderSum}】`
+          )
+        }
+
+        return false
+      }
+    } else {
+      return true
+    }
+  }
+
+  const handleOk = async () => {
+    if (totalQuantity(saveData)) {
+      const res = await updateDailyScheduleList({
+        ...saveData
+      })
+
+      if (res.code === 200) {
+        message.success('保存成功')
+        setIsModalVisible(false)
+        getProductionWarning() //刷新数据
+      }
+    }
+  }
+  const handleCancel = () => {
+    setIsModalVisible(false)
   }
   return (
     <div>
-      <Table columns={tableColumns} dataSource={data} />
-      <MultistageTable onChang={onChang} />
+      <Table scroll={{ y: 800 }} columns={tableColumns} dataSource={data} />
+      {isModalVisible && (
+        <Modal
+          maskClosable={false}
+          width={1000}
+          centered={true}
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <MultistageTable current={subitemData} onChang={onChang} />
+        </Modal>
+      )}
     </div>
   )
 }
 
-export default index
+export default WarningModal

@@ -2,7 +2,7 @@
  * @Author: 卢英杰 9433298+lyjlol@user.noreply.gitee.com
  * @Date: 2022-05-07 08:56:53
  * @LastEditors: lyj
- * @LastEditTime: 2022-06-24 10:01:16
+ * @LastEditTime: 2022-07-12 17:07:41
  * @FilePath: \jack-aps\src\recoil\systemParameters\api.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -82,7 +82,25 @@ export const comparisonChart = async (params: any) => {
     console.log(e)
   }
 }
+//对比图 算法2
 
+export const comparisonAlgorithm = async (params: any) => {
+  try {
+    const res: ResponseProps = await axios.post(
+      `/aps/algorithm/butt-joint-algorithm-schedule1`,
+      params
+    )
+
+    if (res.code !== 200) {
+      message.error(res.msg)
+    }
+    if (res) {
+      return res || []
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
 //资源图
 export const resourceMap = async (params: any) => {
   try {

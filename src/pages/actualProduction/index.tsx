@@ -3,18 +3,20 @@ import { cloneDeep } from 'lodash'
 import moment from 'moment'
 import React, { SetStateAction, useCallback, useEffect, useState } from 'react'
 
-import { CusDragTable, SearchBar, Title } from '@/components'
+import { Icon } from '@/components'
+import { AdvancedSearch, CusDragTable, SearchBar } from '@/components'
 import { actualProductionApis, commonApis } from '@/recoil/apis'
 import { changeBolbToXls } from '@/utils/tool'
 import useTableChange from '@/utils/useTableChange'
 
-import { searchConfig, tableColumn } from './config'
+import { easySearch, searchConfig, tableColumn } from './config'
 import EditActualProduction from './editModal'
 import styles from './index.module.less'
 const { factoryList, getWorkshopSectionList, teamList } = commonApis
 const { efficiencyList, exportEfficiency, efficiencyDetailInfo } =
   actualProductionApis
 function ActualProductionList() {
+  const [searchStatus, setSearchStatus] = useState(false)
   const [columns, setColumns] = useState<any[]>()
   const [facList, setFacList] = useState([])
   const [workshopSectionList, setWorkshopSectionList] = useState([])
@@ -101,18 +103,6 @@ function ActualProductionList() {
     setEditModalVisible(visible)
   }
 
-  const rowSelection:
-    | {
-        selectedRowKeys: never[]
-        onChange: (selectedRowKeys: SetStateAction<never[]>) => void
-      }
-    | any = {
-    selectedRowKeys,
-    onChange: (selectedRowKeys: SetStateAction<never[]>) => {
-      setSelectedRowKeys(selectedRowKeys)
-    }
-  }
-
   const exportFile = () => {
     exportEfficiency({ ...params }).then((res) => {
       changeBolbToXls(res, '生产实绩')
@@ -158,25 +148,23 @@ function ActualProductionList() {
 
   return (
     <div className={styles.outContainer}>
-      {/* <Title title={'生产实绩'}></Title> */}
-      <div className={styles.forms}>
-        <SearchBar
-          configs={configs}
-          params={params}
-          callback={paramsChange}
-        ></SearchBar>
-      </div>
+      <AdvancedSearch
+        easySearch={easySearch} //普通搜索
+        configs={configs} //高级搜索
+        params={params}
+        callback={paramsChange}
+      />
 
       {columns && columns.length ? (
         <CusDragTable
           rowKey={'id'}
-          storageField={'efficiencyList'}
+          storageField={'actualProduction'}
           columns={columns}
           cusBarLeft={TableLeft}
           dataSource={dataSource}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 2000, y: '60vh' }}
           onChange={tableChange}
-          rowSelection={rowSelection}
+          bordered={true} //边框线
           pagination={{
             showSizeChanger: true,
             // showQuickJumper: true, //是否快速查找

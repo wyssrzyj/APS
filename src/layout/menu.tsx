@@ -3,8 +3,10 @@ import classNames from 'classnames'
 import { cloneDeep, get, isArray, isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 import Icon from '@/components/Icon'
+import { layout } from '@/recoil'
 
 import styles from './index.module.less'
 import { menus } from './menuConfigs'
@@ -25,8 +27,16 @@ const initOpenKeys = (data: any, callback: any) => {
   }
 }
 
-const MenuBox = () => {
+const MenuBox = (props) => {
   const navigate = useNavigate()
+  /**
+   *  themeColor 主题颜色
+   */
+  const { layoutType, themeColor } = props
+  const [layoutData, setLayoutData] = useRecoilState(layout.layoutData) //全局数据
+  const systemParameter = useRecoilValue<any>(layout.systemParameter) //全局数据
+
+  const [backgroundColor, setBackgroundColor] = useState<any>() //背景颜色
 
   const [currentMenu, setCurrentMenu] = useState<Array<string>>([])
   const [openKey, setOpenKey] = useState<any>([])
@@ -42,6 +52,37 @@ const MenuBox = () => {
   useEffect(() => {
     initOpenKeys(menus, setOpenKey)
   }, [])
+
+  //初始menu的背景颜色
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem('themeSetting'))
+    try {
+      if (data !== null) {
+        const topColor = data.topColor.filter((item) => item.type === true)
+        setBackgroundColor(topColor[0].color)
+      }
+    } catch (error) {}
+  }, [])
+
+  //主题更新
+  useEffect(() => {
+    // 主题
+    if (systemParameter !== null) {
+      if (!isEmpty(systemParameter.side)) {
+        const current = systemParameter.side.filter(
+          (item) => item.type === true
+        )
+      }
+
+      //背景颜色
+      if (!isEmpty(systemParameter.topColor)) {
+        const current = systemParameter.topColor.filter(
+          (item) => item.type === true
+        )
+        setBackgroundColor(current[0].color)
+      }
+    }
+  }, [systemParameter])
 
   const getMenuDOM = (data: any) => {
     let hasChildren = false
@@ -91,33 +132,25 @@ const MenuBox = () => {
   }
 
   const changePage = (event: any) => {
-    console.log(event)
-
     const { key } = event
     const target = findRoute(menus, key) || '/home'
     navigate(target)
   }
 
-  const getSelectKey = (menus: any) => {
-    menus.forEach((item: any) => {
-      const url = get(item, 'url', '')
-      const children = get(item, 'children', [])
-      if (url && new RegExp(url).test(location.pathname)) {
-        setCurrentMenu([item.key])
-      } else if (!isEmpty(children)) {
-        getSelectKey(children)
-      }
-    })
-  }
+  // const getSelectKey = (menus: any) => {
+  //   menus.forEach((item: any) => {
+  //     const url = get(item, 'url', '')
+  //     const children = get(item, 'children', [])
+  //     if (url && new RegExp(url).test(location.pathname)) {
+  //       setCurrentMenu([item.key])
+  //     } else if (!isEmpty(children)) {
+  //       getSelectKey(children)
+  //     }
+  //   })
+  // }
   const onOpenChange = (keys: any) => {
     setOpenKey([keys[keys.length - 1]])
   }
-
-  useEffect(() => {
-    // getSelectKey(menus)
-    // setCurrentMenu(menuKeys.get(location.pathname))
-    // setOpenKeys(subsMap.get(location.pathname))
-  }, [location.pathname])
 
   useEffect(() => {
     for (let i = 0; i < menus.length; i++) {
@@ -133,27 +166,109 @@ const MenuBox = () => {
       }
     }
   }, [])
+  const getParentKey = (name) => {
+    menus.forEach((item, index) => {
+      if (!isEmpty(item.children)) {
+        item.children.forEach((v) => {
+          if (v.key === name) {
+            setOpenKey([item.key])
+          }
+        })
+      }
+    })
+  }
   useEffect(() => {
-    // console.log('测试', currentMenu)
     setCurrentMenu([location.pathname.slice(1)])
+    getParentKey(location.pathname.slice(1)) //获取父级
   }, [location.pathname])
 
+  //全局数据中 没有 当前项 就保存
+  const recoilDataPreservation = (v) => {
+    const cloneLayoutData = cloneDeep(layoutData)
+    const type = cloneLayoutData.every((item: any) => {
+      return item.title !== v.title
+    })
+    if (type === true) {
+      if (v.title !== '首页') {
+        cloneLayoutData.push(v)
+        setLayoutData(cloneLayoutData)
+      }
+    }
+  }
+
+  // 获取子项的所有数据
+  const getChildrenS = (data) => {
+    const urlContainer = []
+    if (!isEmpty(data.children)) {
+      data.children.forEach((v) => {
+        urlContainer.push(v.url)
+        if (!isEmpty(v.children)) {
+          getChildrenS(v.children)
+        }
+      })
+    }
+    return urlContainer
+  }
+  //获取当前项的
+  const getLabel = (name) => {
+    const cloneMenus = cloneDeep(menus)
+    cloneMenus.forEach((item) => {
+      if (getChildrenS(item).includes(name) === true) {
+        const childrenTitle = item.children.filter((v) => v.url === name)[0]
+          .label
+
+        const current = {
+          title: childrenTitle,
+          content: ``,
+          key: name
+        }
+        recoilDataPreservation(current)
+      }
+    })
+  }
+
+  useEffect(() => {
+    const url = location.pathname
+    if (url !== '/') {
+      getLabel(url)
+    }
+  }, [location])
   return (
-    // <div className={classNames(styles.menu, collapsed && styles.miniMenu)}>
-    <Menu
-      selectedKeys={currentMenu}
-      openKeys={openKey}
-      mode="inline"
-      style={{ flex: 1 }}
-      multiple={false}
-      onClick={changePage}
-      onOpenChange={onOpenChange}
-      items={menus} // 4.20.0 用法升级
-    >
-      {/* {menus.map((item) => {
-        return getMenuDOM(item).
-      })} */}
-    </Menu>
+    <div>
+      {/* 顶部布局 */}
+      {layoutType === 'top' ? (
+        <Menu
+          className={
+            backgroundColor === '#fff'
+              ? styles.topColorWhite
+              : styles.topColorBlack
+          }
+          selectedKeys={currentMenu}
+          openKeys={openKey}
+          mode="horizontal"
+          theme={'light'}
+          style={{ flex: 1, background: backgroundColor }}
+          multiple={false}
+          onClick={changePage}
+          onOpenChange={onOpenChange}
+          items={menus} // 4.20.0 用法升级
+        />
+      ) : null}
+      {/* 侧边布局 */}
+      {layoutType === 'left' ? (
+        <Menu
+          selectedKeys={currentMenu}
+          openKeys={openKey}
+          mode="inline"
+          theme={themeColor}
+          style={{ flex: 1 }}
+          multiple={false}
+          onClick={changePage}
+          onOpenChange={onOpenChange}
+          items={menus} // 4.20.0 用法升级
+        />
+      ) : null}
+    </div>
   )
 }
 

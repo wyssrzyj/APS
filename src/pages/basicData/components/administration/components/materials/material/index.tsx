@@ -168,7 +168,6 @@ function Material(props: {
     } else {
       if (!isEmpty(data)) {
         if (data[0].bottomTime !== null) {
-          console.log(data)
           return true
         } else {
           data.map((item) => {

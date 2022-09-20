@@ -1,11 +1,11 @@
 /*
  * @Author: zjr
  * @Date: 2022-05-12 13:03:02
- * @LastEditTime: 2022-06-20 08:49:14
+ * @LastEditTime: 2022-07-12 08:58:26
  * @Description:
  * @LastEditors: lyj
  */
-import { Form, Input, Select } from 'antd'
+import { Form, Input, InputNumber, Select } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import { useEffect, useState } from 'react'
 
@@ -13,23 +13,31 @@ import { CusDragTable, SearchBar } from '@/components'
 import { commonApis, productionSingleApis } from '@/recoil/apis'
 import useTableChange from '@/utils/useTableChange'
 const { factoryList } = commonApis
-import { delayTableColumns, inventoryTableColumns } from '../configs'
+import {
+  delayTableColumns,
+  durationQuery,
+  inventoryTableColumns
+} from '../configs'
 import styles from '../index.module.less'
 const { Option } = Select
-const { productionDelayList, productionChangeList } = productionSingleApis
+const { productionDelayList, productionChangeList, listRemainingDuration } =
+  productionSingleApis
 const DynamicTable = (props: Record<string, any>) => {
-  const { title, isDelay } = props
+  const { title, isDelay, type } = props
   const [facList, setFacList] = useState([])
   const [selectOptions, setSelectOptions] = useState([])
   const [form] = Form.useForm()
   const [params, setParams] = useState<Record<string, any>>({
     pageSize: 5,
-    pageNum: 1,
-    day: 7
+    pageNum: 1
   })
   const { tableChange, dataSource } = useTableChange(
     params,
-    isDelay ? productionDelayList : productionChangeList
+    type === 'productDelayTable'
+      ? productionDelayList
+      : type === 'productChangeTable'
+      ? productionChangeList
+      : listRemainingDuration
   )
   useEffect(() => {
     ;(async () => {
@@ -57,14 +65,16 @@ const DynamicTable = (props: Record<string, any>) => {
   const onChange = (values) => {
     const key = Object.keys(values)[0]
     const nParams = cloneDeep(params)
-    console.log(typeof values[key])
     nParams[key] = values[key]
-
     setParams(nParams)
   }
 
   const changeTableColumn = () => {
-    return isDelay ? delayTableColumns : inventoryTableColumns
+    return type === 'productDelayTable'
+      ? delayTableColumns
+      : type === 'productChangeTable'
+      ? inventoryTableColumns
+      : durationQuery
   }
 
   return (
@@ -92,18 +102,20 @@ const DynamicTable = (props: Record<string, any>) => {
             allowClear
           />
         </Form.Item>
-        <Form.Item name="day" label="最近">
-          <Select
-            placeholder="请选择"
-            style={{ width: '100px' }}
-            allowClear
-            className={styles.mb18}
-          >
-            <Option value={7}>7天</Option>
-            <Option value={14}>14天</Option>
-            <Option value={30}>30天</Option>
-          </Select>
+        <Form.Item name="day" label="剩余">
+          <InputNumber
+            addonAfter="天"
+            min={1}
+            className={styles.durationQuery}
+          />
         </Form.Item>
+        {/* {type === 'durationQuery' ? (
+          <Form.Item name="day" label="剩余">
+            <InputNumber addonAfter="天" className={styles.durationQuery} />
+          </Form.Item>
+        ) : (
+         
+        )} */}
       </Form>
       <div className={styles.dynamicTable}>
         <CusDragTable

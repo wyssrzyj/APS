@@ -75,7 +75,7 @@ export const tableColumns: Array<Partial<Column>> = [
     align: 'center',
     dataIndex: 'operate',
     fixed: 'right',
-    width: 150
+    width: 100
   }
 ]
 type AddFormConfig = {

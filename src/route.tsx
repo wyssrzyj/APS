@@ -79,8 +79,30 @@ const SchedulingResults = React.lazy(
 //进度跟踪 - 生产实绩
 const ActualProduction = React.lazy(() => import('@/pages/actualProduction'))
 
+// 预警管理
+
 //生产预警
-const ProductionWarning = React.lazy(() => import('@/pages/productionWarning'))
+const ProductionWarning = React.lazy(
+  () => import('@/pages/warningManagement/productionWarning')
+)
+// 物料预警
+const MaterialAlert = React.lazy(
+  () => import('@/pages/warningManagement/materialAlert')
+)
+
+//报表管理- 生产周期完成报表
+const ProductionCycle = React.lazy(
+  () => import('@/pages/reportManagement/productionCycle')
+)
+//报表管理- 生产周期计划报表
+const PlanningReport = React.lazy(
+  () => import('@/pages/reportManagement/planningReport')
+)
+//报表管理- 班组日完成报表
+const DailyCompletion = React.lazy(
+  () => import('@/pages/reportManagement/dailyCompletion')
+)
+
 const route = [
   { path: 'home/:id', element: <Home /> },
   { path: 'login', element: <Login /> },
@@ -120,6 +142,16 @@ const route = [
 
   //生产预警
   { path: '/productionWarning', element: <ProductionWarning /> },
+  // 物料预警
+  { path: '/materialAlert', element: <MaterialAlert /> },
+  //报表管理
+  //  生产周期完成报表
+  { path: '/productionCycle', element: <ProductionCycle /> },
+
+  //  生产周期计划报表
+  { path: '/planningReport', element: <PlanningReport /> },
+  //  班组日完成报表
+  { path: '/dailyCompletion', element: <DailyCompletion /> },
   //空白例子
   // 无匹配路由 放置在最后一个路由的位置
   { path: '*', element: <Home /> }

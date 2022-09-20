@@ -1,33 +1,35 @@
 /*
  * @Author: lyj
  * @Date: 2022-05-30 09:06:43
- * @LastEditTime: 2022-06-20 09:01:33
+ * @LastEditTime: 2022-07-29 16:38:03
  * @Description:
  * @LastEditors: lyj
  */
 import { Button, message, Modal } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
+import { dockingData } from '@/recoil'
 import { productionSingleApis } from '@/recoil/apis'
 
 import Forms from './forms/index'
 import styles from './index.module.less'
 import Tables from './tables/index'
 
-const map = new Map()
-map.set('1', '裁剪')
-map.set('2', '缝制')
-map.set('3', '后整')
-map.set('4', '包装')
-map.set('5', '外发')
-map.set('6', '缝制线外组')
-
 function Popup(props: any) {
   const { operation, setOperation, types, getDetailsId, externalProduceOrder } =
     props
   const { workingProcedure, processSave, processOutsourcing } =
     productionSingleApis
+
+  const searchConfigs = useRecoilValue(dockingData.searchConfigs)
+
+  const map = new Map()
+  searchConfigs.forEach((item) => {
+    map.set(item.value, item.name)
+  })
+
   const [total, setTotal] = useState() //存放总数.
   const defaultPageSize = 5
   const [caseIds, setCaseIds] = useState([]) //存放id
@@ -47,13 +49,15 @@ function Popup(props: any) {
         pageNum: 1,
         pageSize: defaultPageSize,
         externalProduceOrderId: externalProduceOrder.externalProduceOrderId,
-        section: externalProduceOrder.section
+        section: externalProduceOrder.section,
+        sectionSn: externalProduceOrder.sectionSn
       }
       const all = {
         pageNum: 1,
         pageSize: 1000,
         externalProduceOrderId: externalProduceOrder.externalProduceOrderId,
-        section: externalProduceOrder.section
+        section: externalProduceOrder.section,
+        sectionSn: externalProduceOrder.sectionSn
       }
       getDetails('1', sum)
       getDetails('2', all)

@@ -13,7 +13,9 @@ import {
 import { cloneDeep, isEmpty } from 'lodash'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
+import { dockingData } from '@/recoil'
 import { dockingDataApis, schedulingApis } from '@/recoil/apis'
 function Popup(props: { content: any }) {
   const { content } = props
@@ -33,6 +35,7 @@ function Popup(props: { content: any }) {
     calculateCompletionTime
   } = schedulingApis
   const { teamList } = dockingDataApis
+  const searchConfigs = useRecoilValue(dockingData.searchConfigs)
 
   const [form] = Form.useForm()
   const [list, setList] = useState<any>() //总数据
@@ -46,12 +49,10 @@ function Popup(props: { content: any }) {
   const [sectionType, setSectionType] = useState<any>(true) //外发 车间、班组非必填
 
   const map = new Map()
-  map.set('1', '裁剪工段')
-  map.set('2', '缝制工段')
-  map.set('3', '后整工段')
-  map.set('4', '包装工段')
-  map.set('5', '外发工段')
-  map.set('6', '缝制线外组')
+  searchConfigs.forEach((item) => {
+    map.set(item.value, item.name)
+  })
+
   const layout = {
     labelCol: {
       span: 8
@@ -236,12 +237,14 @@ function Popup(props: { content: any }) {
         additionalTime,
         capacityId
       })
+      console.log(arr)
+
       if (arr.code === 200) {
         const cloneLis = cloneDeep(list)
         const time = moment(arr.data)
         // 用于保存
         setEndTimeData(moment(arr.data).valueOf())
-        // setEndTimeData(1653321600416)
+        // setEndTimeData(1653321600416).
         cloneLis.planStartTime = moment(e)
         cloneLis.planEndTime = time
         setList({ ...cloneLis })

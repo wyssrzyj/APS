@@ -36,8 +36,10 @@ const useTableChange = (
   }, [params, pageNum, pageSize, sorterField, order])
 
   useEffect(() => {
-    setPageNum(1)
-    setPageSize(10)
+    if (!params.sortType) {
+      setPageNum(1)
+      setPageSize(10)
+    }
   }, [params])
 
   const getDataList = async () => {
@@ -45,6 +47,7 @@ const useTableChange = (
     let target: Target = {}
     target.pageNum = pageNum
     target.pageSize = pageSize
+
     const keys = Reflect.ownKeys(params)
 
     if (keys.length > 0) {

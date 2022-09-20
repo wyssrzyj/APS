@@ -1,17 +1,40 @@
 import moment from 'moment'
 import { ReactNode } from 'react'
 
-const FORMAT_DATE = 'YYYY-MM-DD HH:mm:ss'
-
+const FORMAT_DATE = 'YYYY-MM-DD HH:mm'
+export const easySearch = [
+  {
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入客户款号'
+  },
+  {
+    label: '生产单号',
+    field: 'externalProduceOrderNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入生产单号'
+  }
+]
 export const searchConfigs = [
   {
-    label: '工厂名称',
-    field: 'factoryId',
-    type: 'select',
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
     allowClear: true,
-    placeholder: '请选择工厂名称',
-    options: []
+    placeholder: '请输入客户款号'
   },
+  // {
+  //   label: '工厂名称',
+  //   field: 'factoryId',
+  //   type: 'select',
+  //   width: 250,
+  //   allowClear: true,
+  //   placeholder: '请选择工厂名称',
+  //   options: []
+  // },
   {
     label: '生产单号',
     field: 'externalProduceOrderNum',
@@ -24,6 +47,7 @@ export const searchConfigs = [
     field: 'section',
     allowClear: true,
     placeholder: '请选择所属工段',
+    width: 250,
     type: 'select',
     options: []
   },
@@ -39,6 +63,7 @@ export const searchConfigs = [
     label: '计划结束时间',
     field: 'endTime',
     allowClear: true,
+
     placeholder: '请选择计划结束时间',
     type: 'rangePicker'
     // showTime: true
@@ -88,6 +113,12 @@ export const tableColumns: Array<Partial<Column>> = [
     title: '产品款号',
     align: 'center',
     dataIndex: 'productNum',
+    width: 200
+  },
+  {
+    title: '客户款号',
+    align: 'center',
+    dataIndex: 'productClientNum',
     width: 200
   },
   {
@@ -189,6 +220,13 @@ export const formItemConfig: Array<Partial<viewFormConfig>> = [
     placeholder: '请输入产品款号',
     allowClear: true,
     span: 12
+  },
+  {
+    label: '客户款号',
+    field: 'productClientNum',
+    type: 'input',
+    allowClear: true,
+    placeholder: '请输入客户款号'
   },
   {
     label: '生产量',

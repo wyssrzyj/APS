@@ -33,41 +33,34 @@ type Column = {
 }
 export const tableColumns: Array<Partial<Column>> = [
   {
-    title: '模板名称',
+    title: '工厂名称',
     align: 'center',
-    dataIndex: 'templateName',
-    width: 250
+    dataIndex: 'factoryName'
   },
   {
-    title: '工作班组',
+    title: '班组名称',
     align: 'center',
-    dataIndex: 'teamName',
-    width: 150
+    dataIndex: 'teamName'
   },
   {
-    title: '初始效率',
+    title: '加班日期',
     align: 'center',
-    dataIndex: 'startEfficiency',
-    width: 100
+    dataIndex: 'date'
   },
   {
-    title: '最终效率',
+    title: '工作时间',
     align: 'center',
-    dataIndex: 'finallyEfficiency',
-    width: 100
+    dataIndex: 'times'
   },
   {
     title: '备注',
     align: 'center',
-    dataIndex: 'remark',
-    width: 300
+    dataIndex: 'remark'
   },
   {
     title: '操作',
     align: 'center',
-    dataIndex: 'operate',
-    fixed: 'right',
-    width: 150
+    dataIndex: 'address'
   }
 ]
 type AddFormConfig = {

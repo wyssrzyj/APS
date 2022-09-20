@@ -1,6 +1,7 @@
-import { message, Popover, Tabs, Tag, Tree } from 'antd'
-import { cloneDeep, isEmpty } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import { Button, message, Popover, Tabs, Tag, Tree } from 'antd'
+import { cloneDeep, divide, isEmpty } from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 import { Icon } from '@/components' //路径
 import { dockingDataApis, schedulingApis } from '@/recoil/apis'
@@ -13,6 +14,7 @@ import TheEfficiency from './theEfficiency'
 
 const { TabPane } = Tabs
 function ToPlan(props: {
+  publishType: any
   treeUpdate: any
   remind: any
   formData: any
@@ -20,6 +22,7 @@ function ToPlan(props: {
   updateMethod: any
   checkSchedule: any
   treeSelect
+  selectedSelect: any
 }) {
   const {
     remind,
@@ -27,10 +30,20 @@ function ToPlan(props: {
     updateMethod,
     checkSchedule,
     treeSelect,
-    treeUpdate
+    treeUpdate,
+    publishType,
+    selectedSelect
   } = props
-  const { listProductionOrders, unlockWork, releaseFromAssignment, forDetail } =
-    schedulingApis
+  const equalType = useRef({ equal: '0' })
+  const location = useLocation()
+  const { state }: any = location
+  const {
+    listProductionOrders,
+    unlockWork,
+    releaseFromAssignment,
+    forDetail,
+    generateWorkshopPlan
+  } = schedulingApis
   const { workshopList, teamList, capacityList } = dockingDataApis
 
   const [list, setList] = useState<any>([]) //总
@@ -60,11 +73,34 @@ function ToPlan(props: {
   const [efficiencyID, setEfficiencyID] = useState<any>()
   const [templateId, setTemplateId] = useState<any>() //效率模板数据
 
+  const [productName, setProductName] = useState<any>([
+    { name: '0', id: '' },
+    { name: '1', id: '' }
+  ]) //订单号
+
+  const id = [
+    { name: '0', id: '' },
+    { name: '1', id: '' }
+  ]
+  useEffect(() => {
+    //清空查询条件的数据（规则排确定、校验发布、切换工厂都可以清空）
+    if (publishType === true) {
+      setProductName(cloneDeep(id))
+    }
+  }, [publishType])
+
   useEffect(() => {
     if (selectedKeys !== null && selectedKeys !== undefined) {
       treeSelect(selectedKeys[0])
     }
   }, [selectedKeys])
+  //清空选中的带计划
+  useEffect(() => {
+    if (selectedSelect.type === 'empty') {
+      setToPlanID([])
+    }
+  }, [selectedSelect])
+
   const map = new Map()
   map.set('1', '裁剪工段')
   map.set('2', '缝制工段')
@@ -75,25 +111,51 @@ function ToPlan(props: {
   map.set('20', '回厂加工')
 
   const callback = (key: any) => {
+    equalType.current.equal = key
     setCurrent(key)
   }
   useEffect(() => {
     checkSchedule && checkSchedule(toPlanID, plannedID, stateAdd)
-    console.log('已计划id', plannedID)
   }, [plannedID, toPlanID, stateAdd])
+
   //初始
   useEffect(() => {
+    const order = cloneDeep([
+      { name: '0', id: '' },
+      { name: '1', id: '' }
+    ])
+    setProductName(order) //更新树数据 清空搜索项
     if (formData !== undefined) {
       dataAcquisition(formData)
       //车间/班组
       workshopTeam(formData)
+    } else {
+      if (treeUpdate !== undefined) {
+        dataAcquisition(formData)
+        //车间/班组
+        workshopTeam(formData)
+      }
     }
-    if (treeUpdate !== undefined) {
-      dataAcquisition(formData)
-      //车间/班组
-      workshopTeam(formData)
+    if (state !== null && treeUpdate === undefined) {
+      const id = state.id
+      setCurrent('1')
+      const orderId = [
+        { name: '0', id: '' },
+        { name: '1', id: id }
+      ]
+      setProductName(cloneDeep(orderId))
     }
-  }, [formData, treeUpdate])
+  }, [formData, treeUpdate, state])
+
+  // useEffect(() => {
+  //   if (state !== null) {
+  //     const id = state.id
+  //     console.log('是否传递进来1', id)
+  //     setCurrent('1')
+  //     setProductName(id)
+  //   }
+  // }, [state])
+
   //效率模板
   useEffect(() => {
     efficiency()
@@ -326,7 +388,8 @@ function ToPlan(props: {
   //切换
   const getCurrentTabs = (data: any[], i: any) => {
     // 待计划.
-    const stayData = cloneDeep(data[0])
+    const stayData = !isEmpty(cloneDeep(data[0])) ? cloneDeep(data[0]) : []
+
     stayData.map((item) => {
       item.id = item.externalProduceOrderId
     })
@@ -425,29 +488,62 @@ function ToPlan(props: {
     setIsModalVisible(false)
     dataUpdate() //数据刷新
   }
-  //效率模板
+  //效率模板...
   const efficiencyMethods = async (id: any) => {
     setEfficiencyID(id)
     const res = await forDetail({ id })
-    console.log(res)
 
     setTemplateId(res)
     setEfficiencyData(true)
   }
+  const workshopPlan = async (e) => {
+    const res = await generateWorkshopPlan({
+      produceOrderNum: e.externalProduceOrderNum,
+      section: e.section
+    })
+    if (res.code === 200) {
+      message.success(res.msg)
+    }
+  }
+
   const content = (data: any, type: any) => {
     return (
       <div>
         {type === 1 ? (
-          <div
-            className={styles.card}
-            onClick={() => {
-              workSplit(data)
-            }}
-          >
-            <Tag className={styles.tag} color="gold">
-              任务拆分
-            </Tag>
-          </div>
+          <>
+            <div
+              className={styles.card}
+              onClick={() => {
+                workSplit(data)
+              }}
+            >
+              <Tag className={styles.tag} color="gold">
+                任务拆分
+              </Tag>
+            </div>
+            {equalType.current.equal === '1' ? (
+              <>
+                {data.shopPlanId === undefined ? (
+                  <div
+                    className={styles.card}
+                    onClick={() => {
+                      workshopPlan(data)
+                    }}
+                  >
+                    <Tag className={styles.tag} color="lime">
+                      生成车间计划
+                    </Tag>
+                  </div>
+                ) : (
+                  <div>
+                    <Tag className={styles.tag} color="magenta">
+                      已生成车间计划
+                    </Tag>
+                  </div>
+                )}
+              </>
+            ) : null}
+          </>
         ) : null}
         {type === 2 ? (
           <div className={styles.card}>
@@ -497,6 +593,18 @@ function ToPlan(props: {
                 解除分派
               </Tag>
             </div>
+            {equalType.current.equal === '1' ? (
+              <div
+                className={styles.card}
+                onClick={() => {
+                  workshopPlan(data)
+                }}
+              >
+                <Tag className={styles.tag} color="lime">
+                  生成车间计划
+                </Tag>
+              </div>
+            ) : null}
           </>
         ) : null}
         {/* 子项处理 */}
@@ -514,9 +622,10 @@ function ToPlan(props: {
         ) : null}
         {type === 4 ? (
           <div className={styles.card}>
-            <div>款名：{data.productName}</div>
-            <div>款号: {data.productNum}</div>
+            <div>产品名称：{data.productName}</div>
+            <div>产品款号: {data.productNum}</div>
             <div>数量: {data.orderSum}</div>
+            <div>客户款号: {data.productClientNum}</div>
           </div>
         ) : null}
       </div>
@@ -619,12 +728,12 @@ function ToPlan(props: {
   }
   //搜索
   const FormData = async (e, type) => {
+    //搜素不需要和规则、校验联动
     //先清除 后添加
-    setWaitingTreeData([])
-    setTreeData([])
     if (type === 'stay') {
+      setTreeData([])
       const notPlan = await listProductionOrders({
-        factoryId: formData,
+        factoryId: formData === undefined ? e.factoryId : formData, //物料预警跳转 工厂id会获取不到
         isPlanned: 0,
         externalProduceOrderNum: e.productName
       })
@@ -633,77 +742,72 @@ function ToPlan(props: {
       setList(sum)
       getData(sum[Number('0')], '0')
     }
+
     if (type === 'already') {
+      setWaitingTreeData([])
       const planned = await listProductionOrders({
-        factoryId: formData,
+        factoryId: formData === undefined ? e.factoryId : formData,
         isPlanned: 1,
         externalProduceOrderNum: e.productName
       })
-
-      if (!isEmpty(planned)) {
-        const plannedData = planned.map((item: any) => {
-          return item.externalProduceOrderId
-        })
-        setPlannedID(plannedData)
-      } else {
-        setPlannedID([])
-      }
       //添加字段
       const sum = [list[0], fieldChanges(planned)]
       setList(sum)
       getData(sum[Number('1')], '1')
     }
-    // }
   }
+
   return (
     <div className={styles.tree}>
-      {!isModalVisible ? (
-        <Tabs onChange={callback} activeKey={current} type="card">
-          <TabPane tab="待计划" key="0">
-            <Forms
-              formData={formData}
-              FormData={(e) => {
-                FormData(e, 'stay')
-                // setProductName(e)
-              }}
-            ></Forms>
-            {treeData !== undefined && treeData.length > 0 ? (
-              <div>
-                <Tree
-                  checkable
-                  height={500}
-                  selectedKeys={keys}
-                  defaultExpandAll={true}
-                  onSelect={onSelect}
-                  onCheck={onCheck}
-                  treeData={treeData}
-                />
-              </div>
-            ) : null}
-          </TabPane>
-          <TabPane tab="已计划" key="1">
-            <Forms
-              formData={formData}
-              FormData={(e) => {
-                FormData(e, 'already')
-                // setProductName(e)
-              }}
-            ></Forms>
-            {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
-              <div>
-                <Tree
-                  height={500}
-                  selectedKeys={keys}
-                  defaultExpandAll={true}
-                  onSelect={onSelect}
-                  onCheck={onCheck}
-                  treeData={WaitingTreeData}
-                />
-              </div>
-            ) : null}
-          </TabPane>
-        </Tabs>
-      ) : null}
+      {/* {!isModalVisible ? ( */}
+      <Tabs onChange={callback} activeKey={current} type="card">
+        <TabPane tab="待计划" key="0">
+          <Forms
+            current={'0'}
+            formData={formData}
+            productName={productName}
+            FormData={(e) => {
+              FormData(e, 'stay')
+            }}
+          ></Forms>
+          {treeData !== undefined && treeData.length > 0 ? (
+            <div>
+              <Tree
+                checkable
+                height={500}
+                selectedKeys={keys}
+                defaultExpandAll={true}
+                onSelect={onSelect}
+                onCheck={onCheck}
+                treeData={treeData}
+              />
+            </div>
+          ) : null}
+        </TabPane>
+        <TabPane tab="已计划" key="1">
+          <Forms
+            current={'1'}
+            formData={formData}
+            productName={productName}
+            FormData={(e) => {
+              FormData(e, 'already')
+            }}
+          ></Forms>
+          {WaitingTreeData !== undefined && WaitingTreeData.length > 0 ? (
+            <div>
+              <Tree
+                height={500}
+                selectedKeys={keys}
+                defaultExpandAll={true}
+                onSelect={onSelect}
+                onCheck={onCheck}
+                treeData={WaitingTreeData}
+              />
+            </div>
+          ) : null}
+        </TabPane>
+      </Tabs>
+      {/* ) : null} */}
       {/* 拆分 */}
       {isModalVisible && (
         <BreakUp

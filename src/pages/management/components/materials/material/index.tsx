@@ -6,7 +6,6 @@ import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { materialSetApis } from '@/recoil/apis'
-import login from '@/recoil/login'
 
 import styles from './index.module.less'
 import TabPanes from './tabPanes/index'
@@ -20,7 +19,9 @@ function Material(props: {
 }) {
   const { materialModal, setMaterialModal, materialList, update, refreshList } =
     props
-  const { getTheSize, materialData, materialSaved, checked } = materialSetApis
+
+  const { getTheSize, materialData, materialSaved, checked, saveMaterialTime } =
+    materialSetApis
 
   const [selectedData, setSelectedData] = useState<any>([]) //外层 选中的数据
   const [tableList, setTableList] = useState<any>() //table的数据
@@ -29,19 +30,7 @@ function Material(props: {
   const [activeKey, setActiveKey] = useState<any>() //当前激活的key
   const [select, setSelect] = useState<any>() //当前选中的值
   const [recheck, setRecheck] = useState<any>() //重进检查
-
-  // const [storeData, setstoreData] = useState([])
-  // useEffect(() => {
-  //   let isFlag = false
-  //   getData().then((res) => {
-  //     if (!isFlag) {
-  //       setstoreData(res)
-  //     }
-  //   })
-  //   return () => {
-  //     isFlag = true
-  //   }
-  // }, [])
+  const [section, setSection] = useState<any>([]) //所属工段
 
   useEffect(() => {
     if (materialList && !isEmpty(materialList)) {
@@ -108,6 +97,7 @@ function Material(props: {
       if (!isEmpty(resData)) {
         resData[0].bottomTime = getMaxTime(resData)
       }
+
       setTableList(resData)
     }
     //  已检查.
@@ -121,7 +111,7 @@ function Material(props: {
       if (!isEmpty(resData.tableContent)) {
         resData.tableContent[0].bottomTime = resData.prepareTime
       }
-
+      console.log('追呗传递', resData)
       setTableList(resData.tableContent)
     }
     //  重新检查 特殊处理-待定
@@ -234,6 +224,7 @@ function Material(props: {
           selectedData[1].tableContent = recheck
           const res = await materialSaved(current)
           if (res) {
+            saveSection() //保存工段
             refreshList && refreshList()
             setMaterialModal(false)
             update()
@@ -286,6 +277,16 @@ function Material(props: {
       return true
     }
   }
+  const saveSection = async () => {
+    const externalProduceOrderId = select.externalProduceOrderId
+    const externalProduceOrderNum = select.externalProduceOrderNum
+    const checkProductTimeEntityList = section
+    const res = await saveMaterialTime({
+      externalProduceOrderId,
+      externalProduceOrderNum,
+      checkProductTimeEntityList
+    })
+  }
   //保存
   const added = async (current: any, next: any, methods: any, key: any) => {
     const type: any = meetConditions(modifyData) //判断当前是否满足条件
@@ -302,6 +303,7 @@ function Material(props: {
         //更改数据
         uncheckedModification()
         if (methods === '确认') {
+          saveSection() //保存工段
           //先刷新在关闭
           refreshList && refreshList()
           setMaterialModal(false)
@@ -309,7 +311,9 @@ function Material(props: {
           setSizeList([])
           message.success('保存成功')
         }
+
         if (methods === '切换') {
+          saveSection() //保存工段
           setActiveKey(key)
           tableData(next)
         }
@@ -380,6 +384,10 @@ function Material(props: {
   const setRecheckData = (e: any) => {
     setRecheck(e)
   }
+  //工段保存
+  const sectionPreservation = (e) => {
+    setSection(e)
+  }
 
   return (
     <div>
@@ -398,6 +406,7 @@ function Material(props: {
             selectedData.map((item: any, index: any) => (
               <TabPane tab={item.name} key={item.id}>
                 <TabPanes
+                  sectionPreservation={sectionPreservation}
                   setRecheckData={setRecheckData}
                   select={select}
                   switchSave={switchSave}

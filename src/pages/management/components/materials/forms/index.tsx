@@ -17,8 +17,12 @@ const arr = [
   { name: '生产中', id: '3' },
   { name: '生产完成', id: '4' }
 ]
-const HeaderForm = (props: { FormData: any; factoryData: any }) => {
-  const { FormData, factoryData } = props
+const HeaderForm = (props: {
+  FormData: any
+  factoryData: any
+  display: any
+}) => {
+  const { FormData, factoryData, display } = props
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [form] = Form.useForm()
   const { validateFields } = form
@@ -56,130 +60,149 @@ const HeaderForm = (props: { FormData: any; factoryData: any }) => {
   }
   return (
     <div>
-      <Form form={form}>
-        <Row>
-          <Col span={8}>
-            <Form.Item
-              {...layout}
-              name="factoryId"
-              label="工厂名称"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'select')
-              }
-            >
-              <Select
-                allowClear={true}
-                onChange={getFactoryName}
-                placeholder="请选择工厂名称"
+      {display === 'formHide' ? (
+        <Form form={form}>
+          <Row>
+            <Col span={8}>
+              <Form.Item
+                {...layout}
+                name="productOrderNum"
+                label="生产单号"
+                getValueFromEvent={(event: InputEvent) =>
+                  getValueFromEvent(event, 'input')
+                }
               >
-                {factoryData != undefined
-                  ? factoryData.map(
-                      (item: {
-                        id: React.Key | null | undefined
-                        name:
-                          | boolean
-                          | React.ReactChild
-                          | React.ReactFragment
-                          | React.ReactPortal
-                          | null
-                          | undefined
-                      }) => (
-                        <Option key={item.id} value={item.id}>
-                          {item.name}
-                        </Option>
-                      )
-                    )
-                  : null}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              {...layout}
-              name="productOrderNum"
-              label="生产单号"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
-              }
-            >
-              <Input placeholder="请输入生产单号" allowClear />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              {...layout}
-              name="productName"
-              label="产品名称"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
-              }
-            >
-              <Input placeholder="请输入产品名称" allowClear />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={8}>
-            <Form.Item
-              {...layout}
-              name="productNum"
-              label="产品款号"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'input')
-              }
-            >
-              <Input placeholder="请输入产品款号" allowClear />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              {...layout}
-              name="status"
-              label="生产单状态"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'select')
-              }
-            >
-              <Select
-                allowClear={true}
-                onChange={getFactoryName}
-                placeholder="请选择生产单状态"
+                <Input placeholder="请输入生产单号" allowClear />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      ) : (
+        <Form form={form}>
+          <Row>
+            <Col span={8}>
+              <Form.Item
+                {...layout}
+                name="factoryId"
+                label="工厂名称"
+                getValueFromEvent={(event: InputEvent) =>
+                  getValueFromEvent(event, 'select')
+                }
               >
-                {arr != undefined
-                  ? arr.map(
-                      (item: {
-                        id: React.Key | null | undefined
-                        name:
-                          | boolean
-                          | React.ReactChild
-                          | React.ReactFragment
-                          | React.ReactPortal
-                          | null
-                          | undefined
-                      }) => (
-                        <Option key={item.id} value={item.id}>
-                          {item.name}
-                        </Option>
+                <Select
+                  allowClear={true}
+                  onChange={getFactoryName}
+                  placeholder="请选择工厂名称"
+                >
+                  {factoryData != undefined
+                    ? factoryData.map(
+                        (item: {
+                          id: React.Key | null | undefined
+                          name:
+                            | boolean
+                            | React.ReactChild
+                            | React.ReactFragment
+                            | React.ReactPortal
+                            | null
+                            | undefined
+                        }) => (
+                          <Option key={item.id} value={item.id}>
+                            {item.name}
+                          </Option>
+                        )
                       )
-                    )
-                  : null}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              {...layout}
-              name="planEndDate"
-              label="计划完成日期"
-              getValueFromEvent={(event: InputEvent) =>
-                getValueFromEvent(event, 'picker')
-              }
-            >
-              <RangePicker />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
+                    : null}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                {...layout}
+                name="productOrderNum"
+                label="生产单号"
+                getValueFromEvent={(event: InputEvent) =>
+                  getValueFromEvent(event, 'input')
+                }
+              >
+                <Input placeholder="请输入生产单号" allowClear />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                {...layout}
+                name="productName"
+                label="产品名称"
+                getValueFromEvent={(event: InputEvent) =>
+                  getValueFromEvent(event, 'input')
+                }
+              >
+                <Input placeholder="请输入产品名称" allowClear />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={8}>
+              <Form.Item
+                {...layout}
+                name="productNum"
+                label="产品款号"
+                getValueFromEvent={(event: InputEvent) =>
+                  getValueFromEvent(event, 'input')
+                }
+              >
+                <Input placeholder="请输入产品款号" allowClear />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                {...layout}
+                name="status"
+                label="生产单状态"
+                getValueFromEvent={(event: InputEvent) =>
+                  getValueFromEvent(event, 'select')
+                }
+              >
+                <Select
+                  allowClear={true}
+                  onChange={getFactoryName}
+                  placeholder="请选择生产单状态"
+                >
+                  {arr != undefined
+                    ? arr.map(
+                        (item: {
+                          id: React.Key | null | undefined
+                          name:
+                            | boolean
+                            | React.ReactChild
+                            | React.ReactFragment
+                            | React.ReactPortal
+                            | null
+                            | undefined
+                        }) => (
+                          <Option key={item.id} value={item.id}>
+                            {item.name}
+                          </Option>
+                        )
+                      )
+                    : null}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                {...layout}
+                name="planEndDate"
+                label="计划完成日期"
+                getValueFromEvent={(event: InputEvent) =>
+                  getValueFromEvent(event, 'picker')
+                }
+              >
+                <RangePicker />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      )}
     </div>
   )
 }

@@ -1,3 +1,10 @@
+/*
+ * @Author: lyj
+ * @Date: 2022-06-23 10:34:18
+ * @LastEditTime: 2022-07-05 13:14:34
+ * @Description:
+ * @LastEditors: lyj
+ */
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons'
 import { Button, Col, Input, InputNumber, Popover, Row, Select } from 'antd'
 import { isEmpty, isNil } from 'lodash'
@@ -16,9 +23,7 @@ function WorkingHours(props: { onChange: any; list: any }) {
   // 回显
   useEffect(() => {
     if (!isEmpty(list)) {
-      if (!isEmpty(list.expireColorConfigs)) {
-        setData(list.expireColorConfigs)
-      }
+      setData([{ id: '1', expireTime: 1, color: list.waringColor }])
     }
   }, [list])
   //随机颜色
@@ -50,11 +55,7 @@ function WorkingHours(props: { onChange: any; list: any }) {
     data[index].color = e.hex
     setData([...data])
   }
-  // 修改数字输入框
-  const inputValue = (value: any, index: number) => {
-    data[index].expireTime = value
-    setData([...data])
-  }
+
   useEffect(() => {
     onChange(data) //把数据传递出去
   }, [data])
@@ -75,7 +76,7 @@ function WorkingHours(props: { onChange: any; list: any }) {
               <Popover
                 content={
                   <SketchPicker
-                    color={item.color}
+                    color={item.color !== null ? item.color : 'red'}
                     onChange={(e) => {
                       setSubtitleFontColor(e, index)
                     }}
@@ -87,7 +88,7 @@ function WorkingHours(props: { onChange: any; list: any }) {
                 trigger="click"
               >
                 <div
-                  className={styles.color}
+                  className={styles.colors}
                   style={{ background: `${item.color}` }}
                 ></div>
               </Popover>
