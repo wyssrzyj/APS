@@ -1,14 +1,4 @@
-/*
- * @Author: zjr
- * @Date: 2022-04-21 09:24:10
-<<<<<<< HEAD
- * @LastEditTime: 2022-07-30 15:46:34
-=======
- * @LastEditTime: 2022-08-01 08:43:57
->>>>>>> dev
- * @Description:
- * @LastEditors: lyj
- */
+
 import { Col, Divider, Row, Space } from 'antd'
 import { cloneDeep, isEmpty } from 'lodash'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
